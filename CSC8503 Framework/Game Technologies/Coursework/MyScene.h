@@ -48,9 +48,7 @@ class MyScene : public Scene {
 	Shader* m_OverlayShader;
 	EndGameStates	m_EndState;
 	std::stringstream m_HighScoreNameStream;
-	bool			m_DisplayOverlay;
 	void UpdateName();
 	void DisplayHighScores(float startX, float startY);
 
-	void RenderOverlay();
 };

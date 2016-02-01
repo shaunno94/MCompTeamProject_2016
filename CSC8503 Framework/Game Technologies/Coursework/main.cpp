@@ -4,7 +4,6 @@
 #include <ncltech\PhysicsEngine.h>
 #include <ncltech\NCLDebug.h>
 #include <future>
-#include "ScoreManager.h"
 #include "ncltech\CommonMeshes.h"
 
 Scene* scene = NULL;

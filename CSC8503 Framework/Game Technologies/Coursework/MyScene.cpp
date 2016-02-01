@@ -12,15 +12,14 @@
 #include <ncltech\NCLDebug.h>
 #include "ncltech\OctreeSpacePartition.h"
 #include "ncltech\PositioningState.h"
-#include "TardisGameObject.h"
 #include "GoalkeeperGameObject.h"
-#include "ScoreManager.h"
 #include "ScoreHistory.h"
 #include "ncltech/PyramidCollisionShape.h"
 #include "TestCases.h"
 
 
-MyScene::MyScene(Window& window) : Scene(window) {
+MyScene::MyScene(Window& window) : Scene(window)
+{
 	if (init == true)
 		init = InitialiseGL();
 	PhysicsEngine::Instance()->SetUpdateTimestep(1.0f / 120.0f);
@@ -28,7 +27,6 @@ MyScene::MyScene(Window& window) : Scene(window) {
 	m_RenderMode = NormalRenderMode;
 	m_DisplayHighScores = false;
 
-	m_DisplayOverlay = false;
 	m_OverlayShader = new Shader(SHADERDIR"OverlayVertex.glsl", SHADERDIR"OverlayFragment.glsl");
 	if (!m_OverlayShader->IsOperational())
 		return;
@@ -37,7 +35,8 @@ MyScene::MyScene(Window& window) : Scene(window) {
 	m_ProjectileTex = SOIL_load_OGL_texture(TEXTUREDIR"rocks1.jpg", SOIL_LOAD_AUTO, SOIL_CREATE_NEW_ID, SOIL_FLAG_MIPMAPS | SOIL_FLAG_NTSC_SAFE_RGB | SOIL_FLAG_COMPRESS_TO_DXT);
 }
 
-MyScene::~MyScene() {
+MyScene::~MyScene()
+{
 	for (GameObject* go : m_Resources)
 		delete go;
 
@@ -47,7 +46,8 @@ MyScene::~MyScene() {
 	glDeleteTextures(1, &m_ProjectileTex);
 }
 
-bool MyScene::InitialiseGL() {
+bool MyScene::InitialiseGL()
+{
 	m_Camera->SetPosition(Vec3Physics(-6.25f, 2.0f, 10.0f));
 
 	//Create Ground
@@ -82,31 +82,6 @@ bool MyScene::InitialiseGL() {
 	TestCases::AddWall(this, Vec3Physics(0.0f, 0.0f, 60.0f), Vec3Physics(60.0f, 15.0f, 0.5f));
 	TestCases::AddWall(this, Vec3Physics(0.0f, 0.0f, -60.0f), Vec3Physics(60.0f, 15.0f, 0.5f));
 
-	//Create a 'Player'
-	//Player* player = new Player("Player1");
-	//player->SetColour(Vec4Graphics(1.0f, 1.0f, 1.0f, 1.0f));
-	//player->SetBoundingRadius(2.0f);
-	//player->Physics()->SetInverseMass(1.0f / 10.0F);
-	//player->Physics()->SetCollisionShape(new CuboidCollisionShape(Vec3Physics(1.0f, 1.0f, 1.0f)));
-	//player->Physics()->SetPosition(Vec3Physics(0.0f, 1.1f, 0.0f));
-	//player->Physics()->NeverRest();
-	//player->Physics()->SetInverseInertia(player->Physics()->GetCollisionShape()->BuildInverseInertia(player->Physics()->GetInverseMass()));
-	////player->Physics()->SetOrientation(QuatGraphics(0.0f, 0.0f, 0.5f, 1.0f));
-	//this->AddGameObject(player);
-	//m_Resources.push_back(player);
-
-	TardisGameObject* tardis = new TardisGameObject();
-	tardis->SetColour(Vec4Graphics(1.0f, 1.0f, 1.0f, 1.0f));
-	tardis->Physics()->SetPosition(Vec3Physics(20.0f, 15.0f, 20.0f));
-	tardis->Physics()->NeverRest();
-
-	this->AddGameObject(tardis);
-	m_Resources.push_back(tardis);
-
-	m_Goalkeeper = new GoalkeeperGameObject(tardis->Physics(), 15.0f);
-	this->AddGameObject(m_Goalkeeper);
-	m_Resources.push_back(m_Goalkeeper);
-
 	m_Overlay = new SimpleMeshObject("Overlay", nullptr);
 	m_Overlay->SetMesh(Mesh::GenerateQuadTexCoordCol(Vec2Physics(1.f, 1.f), Vec2Physics(0.0f, 1.0f), Vec4Physics(1.0f, 1.0f, 1.0f, 1.0f)), true);
 	m_Resources.push_back(m_Overlay);
@@ -118,12 +93,14 @@ bool MyScene::InitialiseGL() {
 //	return new EndScene(window);;
 //}
 
-void MyScene::Cleanup() {
+void MyScene::Cleanup()
+{
 	for (GameObject* go : m_Resources)
 		go->Ditach();
 }
 
-void MyScene::UpdateScene(float sec) {
+void MyScene::UpdateScene(float sec)
+{
 	sceneUpdateTimer.GetTimedMS();
 	std::lock_guard<std::mutex> guard(PhysicsObject::g_ExternalChanges);
 
@@ -190,28 +167,10 @@ void MyScene::UpdateScene(float sec) {
 	if (keyboard->KeyTriggered(KEYBOARD_H))
 		m_DisplayHighScores = !m_DisplayHighScores;
 
-	if (!m_DisplayOverlay) {
-		if (ScoreManager::Instance()->GetGameOver()) {
-			if (ScoreManager::Instance()->GetGameOver())
-				m_EndState = LoseGameState;
-			else if (ScoreHistory::Instance()->IsHeighScore(ScoreManager::Instance()->GetScore()))
-				m_EndState = HighScoreGameState;
-			else
-				m_EndState = QuitGameState;
-
-			m_DisplayOverlay = true;
-			PhysicsEngine::Instance()->SetPaused(true);
-			keyboard->UpdateHolds();
-		}
-		if (keyboard->KeyTriggered(KEYBOARD_X) || keyboard->KeyTriggered(KEYBOARD_ESCAPE)) {
-			if (ScoreHistory::Instance()->IsHeighScore(ScoreManager::Instance()->GetScore()))
-				m_EndState = HighScoreGameState;
-			else
-				m_EndState = QuitGameState;
-			keyboard->UpdateHolds();
-			PhysicsEngine::Instance()->SetPaused(true);
-			m_DisplayOverlay = true;
-		}
+	if (keyboard->KeyTriggered(KEYBOARD_X) || keyboard->KeyTriggered(KEYBOARD_ESCAPE)) {
+		m_EndState = QuitGameState;
+		keyboard->UpdateHolds();
+		PhysicsEngine::Instance()->SetPaused(true);
 	}
 
 	float scoreSize = 20.0f;
@@ -220,7 +179,7 @@ void MyScene::UpdateScene(float sec) {
 
 	static const size_t buffLength = 100;
 	char buff[buffLength];
-	auto needed = _snprintf_s(&buff[0], sizeof(buff), buffLength, "SCORE: %u", ScoreManager::Instance()->GetScore());
+	auto needed = _snprintf_s(&buff[0], sizeof(buff), buffLength, "SCORE: %u", 100);
 	NCLDebug::DrawTextClipSpace(Vec4Graphics(1.0f, 1.0f - cs_size_y, 0.0f, 1.0f), scoreSize, std::string(buff, needed < 0 ? buffLength : needed), TEXTALIGN_RIGHT, Vec4Graphics::ONES);
 	NCLDebug::DrawTextClipSpace(Vec4Graphics(1.0f, 1.0f - (cs_size_y * 2.0f), 0.0f, 1.0f), 16.0f, "Press H To Toggle High Score", TEXTALIGN_RIGHT, Vec4Graphics::ONES);
 
@@ -232,8 +191,6 @@ void MyScene::UpdateScene(float sec) {
 		}
 	}
 
-	if (m_Goalkeeper)
-		NCLDebug::AddStatusEntry(Vec4Graphics::ONES, "Goalkeeper: %s (Press K to toggle)", m_Goalkeeper->Physics()->IsEnabled() ? "Enabled" : "Disabled");
 
 	if ((RenderModeMasks[m_RenderMode] & RenderModeMasks[DebugRenderMode]) != 0) {
 		PhysicsEngine::Instance()->DebugRender();
@@ -251,14 +208,24 @@ void MyScene::UpdateScene(float sec) {
 	Scene::UpdateScene(sec);
 }
 
-void MyScene::RenderScene() {
+void MyScene::RenderScene()
+{
 	if ((RenderModeMasks[m_RenderMode] & RenderModeMasks[NormalRenderMode]) != 0) {
 		glClearColor(0.6f, 0.6f, 0.6f, 1.f);
 		if ((RenderModeMasks[m_RenderMode] & RenderModeMasks[DebugRenderMode]) == 0)
 			//force buffer swap and previous buffer cleanup
 			NCLDebug::g_NewData = true;
 		Scene::RenderScene();
-		RenderOverlay();
+		switch (m_EndState) {
+		case LoseGameState:
+			break;
+		case QuitGameState:
+			m_EndScene = true;
+			break;
+		case HighScoreGameState:
+			m_EndScene = true;
+			break;
+		}
 	} else {
 		glClearColor(0.0f, 0.0f, 0.0f, 1.f);
 		glBindFramebuffer(GL_FRAMEBUFFER, m_ScreenFBO);
@@ -268,80 +235,8 @@ void MyScene::RenderScene() {
 	}
 }
 
-void MyScene::RenderOverlay() {
-	if (m_DisplayOverlay) {
-		static const float startLine = 5.0f;
-		static const float Header1Size = 40.0f;
-		static const float Header2Size = 35.0f;
-		static const float DefaultSize = 25.0f;
-		float cs_Header1Size_x = Header1Size / Window::GetWindow().GetScreenSize().x * 2.0f;
-		float cs_Header1Size_y = Header1Size / Window::GetWindow().GetScreenSize().y * 2.0f;
-		float cs_Header2Size_x = Header2Size / Window::GetWindow().GetScreenSize().x * 2.0f;
-		float cs_Header2Size_y = Header2Size / Window::GetWindow().GetScreenSize().y * 2.0f;
-		float cs_DefaultSize_x = DefaultSize / Window::GetWindow().GetScreenSize().x * 2.0f;
-		float cs_DefaultSize_y = DefaultSize / Window::GetWindow().GetScreenSize().y * 2.0f;
-
-		float currentLine = cs_Header1Size_y * (startLine + 0.0f);
-		float xPos = -0.25f;
-		Keyboard* keyboard = Window::GetKeyboard();
-
-		switch (m_EndState) {
-		case LoseGameState:
-			NCLDebug::DrawTextClipSpace(Vec4Graphics(xPos, 1.0f - currentLine, 0.0f, 1.0f), Header1Size, "You Lose!", TEXTALIGN_LEFT, Vec4Graphics::ONES);
-			currentLine += cs_Header1Size_y;
-			NCLDebug::DrawTextClipSpace(Vec4Graphics(xPos, 1.0f - currentLine, 0.0f, 1.0f), Header1Size, "High Scores:", TEXTALIGN_LEFT, Vec4Graphics::ONES);
-			currentLine += cs_Header1Size_y + cs_Header1Size_y;
-			DisplayHighScores(xPos, currentLine);
-
-			if (keyboard->KeyTriggered(KEYBOARD_RETURN) || keyboard->KeyTriggered(KEYBOARD_ESCAPE))
-				m_EndScene = true;
-			break;
-
-		case QuitGameState:
-			/*NCLDebug::DrawTextClipSpace(Vec4Graphics(xPos, 1.0f - currentLine, 0.0f, 1.0f), Header1Size, "High Scores:", TEXTALIGN_LEFT, Vec4Graphics::ONES);
-			currentLine += cs_Header1Size_y + cs_Header1Size_y;
-			DisplayHighScores(xPos, currentLine);
-
-			if (keyboard->KeyTriggered(KEYBOARD_RETURN) || keyboard->KeyTriggered(KEYBOARD_ESCAPE))*/
-				m_EndScene = true;
-			break;
-
-		case HighScoreGameState:
-			NCLDebug::DrawTextClipSpace(Vec4Graphics(xPos, 1.0f - currentLine, 0.0f, 1.0f), Header1Size, "High Score!", TEXTALIGN_LEFT, Vec4Graphics::ONES);
-			currentLine += cs_Header1Size_y;
-			NCLDebug::DrawTextClipSpace(Vec4Graphics(xPos, 1.0f - currentLine, 0.0f, 1.0f), Header1Size, "Set Name:", TEXTALIGN_LEFT, Vec4Graphics::ONES);
-			currentLine += cs_Header1Size_y;
-			NCLDebug::DrawTextClipSpace(Vec4Graphics(xPos, 1.0f - currentLine, 0.0f, 1.0f), Header1Size, m_HighScoreNameStream.str(), TEXTALIGN_LEFT, Vec4Graphics::ONES);
-			currentLine += cs_Header1Size_y;
-			NCLDebug::DrawTextClipSpace(Vec4Graphics(xPos, 1.0f - currentLine, 0.0f, 1.0f), Header1Size, std::to_string(ScoreManager::Instance()->GetScore()), TEXTALIGN_LEFT, Vec4Graphics::ONES);
-			currentLine += cs_Header1Size_y + cs_Header1Size_y;
-			DisplayHighScores(xPos, currentLine);
-
-			UpdateName();
-
-			if (keyboard->KeyTriggered(KEYBOARD_RETURN) || keyboard->KeyTriggered(KEYBOARD_ESCAPE)) {
-				ScoreHistory::Instance()->AddScore(m_HighScoreNameStream.str(), ScoreManager::Instance()->GetScore());
-				ScoreHistory::Instance()->Save();
-				m_EndScene = true;
-			}
-			break;
-		}
-
-		Mat4Graphics oldProj = projMatrix;
-		projMatrix = Mat4Physics::Orthographic(-1, 1, 1, 0, 1, 0);
-
-		SetCurrentShader(m_OverlayShader);
-		UpdateShaderMatrices();
-		glBindFramebuffer(GL_FRAMEBUFFER, m_ScreenFBO);
-
-		DrawNode(m_Overlay);
-		projMatrix = oldProj;
-
-		RenderDebug();
-	}
-}
-
-void MyScene::UpdateName() {
+void MyScene::UpdateName()
+{
 	Keyboard* keyboard = Window::GetKeyboard();
 
 	unsigned int size = KEYBOARD_Z - KEYBOARD_A;
@@ -364,7 +259,8 @@ void MyScene::UpdateName() {
 }
 
 
-void MyScene::DisplayHighScores(float startX, float startY) {
+void MyScene::DisplayHighScores(float startX, float startY)
+{
 	unsigned int lineNo = 0;
 	float fontSize = 25.0f;
 	float cs_Size_y = fontSize / Window::GetWindow().GetScreenSize().y * 2.0f;
