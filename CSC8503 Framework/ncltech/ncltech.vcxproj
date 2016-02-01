@@ -1,0 +1,155 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="14.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|Win32">
+      <Configuration>Debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|Win32">
+      <Configuration>Release</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectGuid>{9FD1ABBA-7FDF-451C-BF1F-030F93B1AE7E}</ProjectGuid>
+    <RootNamespace>ncltech</RootNamespace>
+    <WindowsTargetPlatformVersion>8.1</WindowsTargetPlatformVersion>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>v120</PlatformToolset>
+    <CharacterSet>MultiByte</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>v120</PlatformToolset>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>MultiByte</CharacterSet>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <LibraryPath>..\SOIL\$(Configuration);..\GLEW\lib\$(Configuration);$(LibraryPath)</LibraryPath>
+    <IncludePath>..\;..\GLEW\include;..\SOIL;$(IncludePath)</IncludePath>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <IncludePath>..\;..\GLEW\include;..\SOIL;$(IncludePath)</IncludePath>
+    <LibraryPath>..\GLEW\lib\$(Configuration);..\SOIL\$(Configuration);$(LibraryPath)</LibraryPath>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <Optimization>Disabled</Optimization>
+      <SDLCheck>true</SDLCheck>
+      <PreprocessorDefinitions>NOMINMAX;_MBCS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+    </ClCompile>
+    <Link>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <Optimization>MaxSpeed</Optimization>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <SDLCheck>true</SDLCheck>
+      <PreprocessorDefinitions>NDEBUG;NOMINMAX;_MBCS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+    </ClCompile>
+    <Link>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <ClCompile Include="CollisionListener.cpp" />
+    <ClCompile Include="CollisionState.cpp" />
+    <ClCompile Include="DataSourceState.cpp" />
+    <ClCompile Include="PyramidCollisionShape.cpp" />
+    <ClCompile Include="ReceiverState.cpp" />
+    <ClCompile Include="ReceiverTransition.cpp" />
+    <ClCompile Include="SignalState.cpp" />
+    <ClCompile Include="StateMachine.cpp" />
+    <ClCompile Include="CollisionDetection.cpp" />
+    <ClCompile Include="CommonMeshes.cpp" />
+    <ClCompile Include="Constraint.cpp" />
+    <ClCompile Include="CuboidCollisionShape.cpp" />
+    <ClCompile Include="CollisionTransition.cpp" />
+    <ClCompile Include="NCLDebug.cpp" />
+    <ClCompile Include="GameObject.cpp" />
+    <ClCompile Include="Hull.cpp" />
+    <ClCompile Include="Manifold.cpp" />
+    <ClCompile Include="OctreeSpacePartition.cpp" />
+    <ClCompile Include="PhysicsEngine.cpp" />
+    <ClCompile Include="PhysicsObject.cpp" />
+    <ClCompile Include="Scene.cpp" />
+    <ClCompile Include="SimpleMeshObject.cpp" />
+    <ClCompile Include="SphereCollisionShape.cpp" />
+    <ClCompile Include="State.cpp" />
+    <ClCompile Include="StateTransition.cpp" />
+    <ClCompile Include="PositioningState.cpp" />
+    <ClCompile Include="TrackerGameObject.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="CollisionDetection.h" />
+    <ClInclude Include="CollisionListener.h" />
+    <ClInclude Include="CollisionShape.h" />
+    <ClInclude Include="CollisionState.h" />
+    <ClInclude Include="CollisionTransition.h" />
+    <ClInclude Include="CommonMeshes.h" />
+    <ClInclude Include="constants.h" />
+    <ClInclude Include="Constraint.h" />
+    <ClInclude Include="CuboidCollisionShape.h" />
+    <ClInclude Include="DataSourceState.h" />
+    <ClInclude Include="DistanceConstraint.h" />
+    <ClInclude Include="NCLDebug.h" />
+    <ClInclude Include="GameObject.h" />
+    <ClInclude Include="Hull.h" />
+    <ClInclude Include="Manifold.h" />
+    <ClInclude Include="OctreeSpacePartition.h" />
+    <ClInclude Include="PhysicsEngine.h" />
+    <ClInclude Include="PhysicsObject.h" />
+    <ClInclude Include="PyramidCollisionShape.h" />
+    <ClInclude Include="ReceiverState.h" />
+    <ClInclude Include="ReceiverTransition.h" />
+    <ClInclude Include="Scene.h" />
+    <ClInclude Include="SignalState.h" />
+    <ClInclude Include="SimpleMeshObject.h" />
+    <ClInclude Include="SphereCollisionShape.h" />
+    <ClInclude Include="State.h" />
+    <ClInclude Include="StateMachine.h" />
+    <ClInclude Include="StateTransition.h" />
+    <ClInclude Include="TardisState.h" />
+    <ClInclude Include="TrackerGameObject.h" />
+    <ClInclude Include="TSingleton.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Game Technologies\Memory\Memory.vcxproj">
+      <Project>{4390ef1e-39ee-4c7e-8409-58d7723b0c7f}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\Helpers\Helpers.vcxproj">
+      <Project>{73bfcc5e-6926-4c81-a0bf-c149bb75c307}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\Math\Math.vcxproj">
+      <Project>{fa94d7df-f3ea-417b-9f3e-bf308390e96c}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\nclgl\nclgl.vcxproj">
+      <Project>{98d6b51b-cb0a-4389-adc6-24082b967c3f}</Project>
+    </ProjectReference>
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>
