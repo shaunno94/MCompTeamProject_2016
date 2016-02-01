@@ -231,5 +231,5 @@ $RECYCLE.BIN/
 *.lnk
 
 # Exclude Dependencies and Assets folder
-![Dd]ependencies/
-![Aa]ssets/
+!**/[Dd]ependencies/**
+!**/[Aa]ssets/**
