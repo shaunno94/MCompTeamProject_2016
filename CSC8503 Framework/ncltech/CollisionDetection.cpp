@@ -84,10 +84,10 @@ bool CollisionDetection::CheckPolyhedronSphereCollision(const PhysicsObject* obj
 	CollisionData best_colData;
 	best_colData.penetration = -FLT_MAX;
 
-	std::vector<Vec3Physics, STLManagedAllocator<int, 16>> possibleCollisionAxes;
+	std::vector<Vec3Physics> possibleCollisionAxes;
 	complexShape->GetCollisionAxes(complexObj, &possibleCollisionAxes);
 
-	std::vector<CollisionEdge, STLManagedAllocator<int, 16>> complex_shape_edges;
+	std::vector<CollisionEdge> complex_shape_edges;
 
 	complexShape->GetEdges(complexObj, &complex_shape_edges);
 

@@ -32,7 +32,7 @@ Mat3Physics SphereCollisionShape::BuildInverseInertia(float invMass) const
 	return inertia;
 }
 
-void SphereCollisionShape::GetCollisionAxes(const PhysicsObject* currentObject, std::vector<Vec3Physics, STLManagedAllocator<int, 16>>* out_axes) const
+void SphereCollisionShape::GetCollisionAxes(const PhysicsObject* currentObject, std::vector<Vec3Physics>* out_axes) const
 {
 	/* There is infinite edges so handle seperately */
 }

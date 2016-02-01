@@ -49,8 +49,8 @@ typedef Vector2Simple Vec2Physics;
 
 typedef Vector3Simple Vec3;
 typedef Vector3Simple Vec3Graphics;
-//typedef Vector3Simple Vec3Physics;
-typedef Vector3_1Intrinsics Vec3Physics;
+typedef Vector3Simple Vec3Physics;
+//typedef Vector3_1Intrinsics Vec3Physics;
 
 typedef Vector4Simple Vec4;
 typedef Vector4Simple Vec4Graphics;
@@ -62,5 +62,5 @@ typedef Matrix3Simple Mat3Physics;
 
 typedef Matrix4Simple Mat4;
 typedef Matrix4Simple Mat4Graphics;
-typedef Matrix4Intrinsics Mat4Physics;
-//typedef Matrix4Simple Mat4Physics;
+//typedef Matrix4Intrinsics Mat4Physics;
+typedef Matrix4Simple Mat4Physics;

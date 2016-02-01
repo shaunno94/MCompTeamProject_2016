@@ -58,7 +58,7 @@ public:
 	/* Returns a list of all possible axes that need to be checked when doing the collision detection. 
 	   These are equivilant to a list of all the face normals without duplicates, and parallel vectors.
 	*/
-	virtual void GetCollisionAxes(const PhysicsObject* currentObject, std::vector<Vec3Physics, STLManagedAllocator<int, 16>>* out_axes) const = 0;
+	virtual void GetCollisionAxes(const PhysicsObject* currentObject, std::vector<Vec3Physics>* out_axes) const = 0;
 
 	/* Returns a list of all edges AB that form the convex hull of the collision shape. These are
 		used to check edge/edge collisions aswell as finding the closest point to a sphere. */

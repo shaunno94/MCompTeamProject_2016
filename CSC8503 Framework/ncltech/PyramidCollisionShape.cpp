@@ -52,7 +52,7 @@ Mat3Physics PyramidCollisionShape::BuildInverseInertia(float invMass) const {
 	return inertia;
 }
 
-void PyramidCollisionShape::GetCollisionAxes(const PhysicsObject* currentObject, std::vector<Vec3Physics, STLManagedAllocator<int, 16>>* out_axes) const {
+void PyramidCollisionShape::GetCollisionAxes(const PhysicsObject* currentObject, std::vector<Vec3Physics>* out_axes) const {
 	if (out_axes) {
 		Mat3Physics objOrientation = currentObject->GetOrientation().ToMatrix3();
 		out_axes->push_back(objOrientation * m_Normals[0]);

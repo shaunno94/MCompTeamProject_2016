@@ -45,7 +45,7 @@ Mat3Physics CuboidCollisionShape::BuildInverseInertia(float invMass) const
 	return inertia;
 }
 
-void CuboidCollisionShape::GetCollisionAxes(const PhysicsObject* currentObject, std::vector<Vec3Physics, STLManagedAllocator<int, 16>>* out_axes) const
+void CuboidCollisionShape::GetCollisionAxes(const PhysicsObject* currentObject, std::vector<Vec3Physics>* out_axes) const
 {
 	if (out_axes)
 	{

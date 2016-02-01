@@ -23,7 +23,11 @@ public:
     inline FixedSizeAllocatorManager* getAllocationManager() const
     {
         return m_allocManager;
-    }
+	}
+	inline unsigned* getGetInstanceCount() const
+	{
+		return m_InstanceCount;
+	}
 
     typedef STLManagedAllocator<T, _Alignment> other;
     typedef T value_type;
@@ -83,7 +87,7 @@ public:
     template<class _Other>
     STLManagedAllocator(const STLManagedAllocator<_Other, _Alignment>& other) _THROW0()
     {
-		m_InstanceCount = other.m_InstanceCount;
+		m_InstanceCount = other.getGetInstanceCount();
         m_allocManager = other.getAllocationManager();
 		++(*m_InstanceCount);
     }

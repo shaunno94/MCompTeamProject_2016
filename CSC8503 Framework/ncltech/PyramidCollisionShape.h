@@ -11,7 +11,7 @@ class PyramidCollisionShape : public CollisionShape {
 	//Collision Shape Functionality
 	virtual Mat3Physics BuildInverseInertia(float invMass) const override;
 
-	virtual void GetCollisionAxes(const PhysicsObject* currentObject, std::vector<Vec3Physics, STLManagedAllocator<int, 16>>* out_axes) const override;
+	virtual void GetCollisionAxes(const PhysicsObject* currentObject, std::vector<Vec3Physics>* out_axes) const override;
 	virtual void GetEdges(const PhysicsObject* currentObject, std::vector<CollisionEdge>* out_edges) const override;
 
 	virtual void GetMinMaxVertexOnAxis(const PhysicsObject* currentObject, const Vec3Physics& axis, Vec3Physics* out_min, Vec3Physics* out_max) const override;
