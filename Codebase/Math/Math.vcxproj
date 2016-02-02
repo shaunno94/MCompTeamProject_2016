@@ -11,8 +11,8 @@
     </ProjectConfiguration>
   </ItemGroup>
   <PropertyGroup Label="Globals">
-    <ProjectGuid>{B7A9766D-22D7-48E8-B28A-C48C6E42AF98}</ProjectGuid>
-    <RootNamespace>Rendering</RootNamespace>
+    <ProjectGuid>{BBDEE9F7-C011-44DC-A8F4-86CC2B87ADC7}</ProjectGuid>
+    <RootNamespace>Math</RootNamespace>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
@@ -44,15 +44,11 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>NOMINMAX;SFML_STATIC;GLEW_STATIC;_MBCS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>$(SolutionDir)Dependencies\SFML-2.3.2\include;$(SolutionDir);$(SolutionDir)Dependencies;$(SolutionDir)Dependencies\glew-1.13.0\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
     </Link>
-    <Lib>
-      <AdditionalLibraryDirectories>$(SolutionDir)Dependencies\SFML-2.3.2\lib;$(SolutionDir)Dependencies;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-    </Lib>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ClCompile>
@@ -61,35 +57,46 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>NOMINMAX;NDEBUG;SFML_STATIC;GLEW_STATIC;_MBCS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>$(SolutionDir)Dependencies\SFML-2.3.2\include;$(SolutionDir);$(SolutionDir)Dependencies;$(SolutionDir)Dependencies\glew-1.13.0\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
     </Link>
-    <Lib>
-      <AdditionalLibraryDirectories>$(SolutionDir)Dependencies\SFML-2.3.2\lib;$(SolutionDir)Dependencies;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-    </Lib>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="Mesh.h" />
-    <ClInclude Include="OGLRenderer.h" />
-    <ClInclude Include="Renderer.h" />
-    <ClInclude Include="Shader.h" />
-    <ClInclude Include="Window.h" />
+    <ClCompile Include="Matrix3Intrinsics.cpp" />
+    <ClCompile Include="Matrix3Simple.cpp" />
+    <ClCompile Include="Matrix4Intrinsics.cpp" />
+    <ClCompile Include="Matrix4Simple.cpp" />
+    <ClCompile Include="QuaternionIntrinsics.cpp" />
+    <ClCompile Include="QuaternionSimple.cpp" />
+    <ClCompile Include="Vector2Simple.cpp" />
+    <ClCompile Include="Vector3Intrinsics.cpp" />
+    <ClCompile Include="Vector3Simple.cpp" />
+    <ClCompile Include="Vector3_1Intrinsics.cpp" />
+    <ClCompile Include="Vector4Intrinsics.cpp" />
+    <ClCompile Include="Vector4Simple.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="Mesh.cpp" />
-    <ClCompile Include="OGLRenderer.cpp" />
-    <ClCompile Include="Renderer.cpp" />
-    <ClCompile Include="Shader.cpp" />
-    <ClCompile Include="Window.cpp" />
+    <ClInclude Include="Matrix3Intrinsics.h" />
+    <ClInclude Include="Matrix3Simple.h" />
+    <ClInclude Include="Matrix4Intrinsics.h" />
+    <ClInclude Include="Matrix4Simple.h" />
+    <ClInclude Include="nclglMath.h" />
+    <ClInclude Include="QuaternionIntrinsics.h" />
+    <ClInclude Include="QuaternionSimple.h" />
+    <ClInclude Include="Vector2Simple.h" />
+    <ClInclude Include="Vector3Intrinsics.h" />
+    <ClInclude Include="Vector3Simple.h" />
+    <ClInclude Include="Vector3_1Intrinsics.h" />
+    <ClInclude Include="Vector4Intrinsics.h" />
+    <ClInclude Include="Vector4Simple.h" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Helpers\Helpers.vcxproj">
-      <Project>{dd6d26aa-e01c-4600-8bc6-2f768a74ca8b}</Project>
+    <ProjectReference Include="..\Memory\Memory.vcxproj">
+      <Project>{84f8e699-7dc9-4e84-9677-c38fb5f2bf2f}</Project>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

@@ -8,7 +8,7 @@ inline MeasuringTimer& MeasuringTimer::operator=(const MeasuringTimer& other) {
 	if(this != &other) {
 		indentation = other.indentation;
 		endLine = other.endLine;
-		const_cast<uint&>(maxSize) = other.maxSize;
+		const_cast<unsigned&>(maxSize) = other.maxSize;
 		m_endIndex = other.m_endIndex;
 
 		if(m_logs) delete[] m_logs;
@@ -18,11 +18,11 @@ inline MeasuringTimer& MeasuringTimer::operator=(const MeasuringTimer& other) {
 	return *this;
 }
 
-//float MeasuringTimer::DurationOf(uint index, float timeResolution) const {
+//float MeasuringTimer::DurationOf(unsigned index, float timeResolution) const {
 //	assert(("Performance::Time::period used index out of range", index < m_endIndex));
 //	assert(("Performance::Time::period used index not refering to a start of a period", m_logs[index].isStart));
-//	uint counter = 0;
-//	for(uint i = index + 1; i < m_endIndex; ++i) {
+//	unsigned counter = 0;
+//	for(unsigned i = index + 1; i < m_endIndex; ++i) {
 //		if(m_logs[i].isStart)
 //			++counter; //counting up on start of other periods
 //		else if(counter) //if still in other period
@@ -35,7 +35,7 @@ inline MeasuringTimer& MeasuringTimer::operator=(const MeasuringTimer& other) {
 //}
 
 
-void MeasuringTimer::Print(std::ostream& os, uint startLevel, uint maxDepth, float timeResolution) const {
+void MeasuringTimer::Print(std::ostream& os, unsigned startLevel, unsigned maxDepth, float timeResolution) const {
 	os << "Scale: 1/" << timeResolution << " sec" << LINE_SEPARATOR << LINE_SEPARATOR;
 	//collection for calculating average durations per sibling group in a level
 	//[level][sibling group][duration]
@@ -48,16 +48,16 @@ void MeasuringTimer::Print(std::ostream& os, uint startLevel, uint maxDepth, flo
 	siblingGroupOpenOnLevel.push_back(false);
 
 	//max level to print out based on the depth
-	uint maxLevel = startLevel + maxDepth;
+	unsigned maxLevel = startLevel + maxDepth;
 	if(maxLevel < maxDepth)
 		maxLevel = UINT_MAX;
 
 	//variable to store indentation or relative level
-	uint indentCount;
+	unsigned indentCount;
 	//counter to keep track of the current nesting level
-	uint counter = 0;
+	unsigned counter = 0;
 
-	for(uint i = 0; i < m_endIndex; ++i) {
+	for(unsigned i = 0; i < m_endIndex; ++i) {
 		if(m_logs[i].isStart) {
 			if(counter >= startLevel && counter <= maxLevel) { //if in range for printing
 				indentCount = counter - startLevel;
@@ -69,7 +69,7 @@ void MeasuringTimer::Print(std::ostream& os, uint startLevel, uint maxDepth, flo
 					siblingGroupOpenOnLevel.push_back(false);
 				}
 
-				for(uint j = 0; j < indentCount; ++j)
+				for(unsigned j = 0; j < indentCount; ++j)
 					os << indentation;
 
 				os << indentCount << '-' << siblingDurationsPerLevel[indentCount]->size() - 1 << " { " << m_logs[i].text << endLine;
@@ -80,7 +80,7 @@ void MeasuringTimer::Print(std::ostream& os, uint startLevel, uint maxDepth, flo
 			--counter; //counting down on end of periods
 			if(counter >= startLevel && counter <= maxLevel) { //if in range for printing
 				indentCount = counter - startLevel;
-				for(uint j = 0; j < indentCount; ++j)
+				for(unsigned j = 0; j < indentCount; ++j)
 					os << indentation;
 
 				if(siblingGroupOpenOnLevel[indentCount + 1]) { //if child sibling group exists
@@ -105,20 +105,20 @@ void MeasuringTimer::Print(std::ostream& os, uint startLevel, uint maxDepth, flo
 	if(siblingDurationsPerLevel.size()) {
 		os << LINE_SEPARATOR << "Averages:" << LINE_SEPARATOR;
 
-		uint levelCount = siblingDurationsPerLevel.size();
-		for(uint levelIndex = 0; levelIndex < levelCount; ++levelIndex) {
+		unsigned levelCount = siblingDurationsPerLevel.size();
+		for(unsigned levelIndex = 0; levelIndex < levelCount; ++levelIndex) {
 			auto level = siblingDurationsPerLevel[levelIndex];
-			uint siblingSetCount = level->size();
-			for(uint siblingSetIndex = 0; siblingSetIndex != siblingSetCount; ++siblingSetIndex) {
+			unsigned siblingSetCount = level->size();
+			for(unsigned siblingSetIndex = 0; siblingSetIndex != siblingSetCount; ++siblingSetIndex) {
 
 				auto siblingSet = (*level)[siblingSetIndex];
-				uint durationCount = siblingSet->size();
+				unsigned durationCount = siblingSet->size();
 				if(durationCount) { //disregarding empty sibling groups at the end of each nesting level
 					double sum = 0.0;
-					for(uint i = 0; i < durationCount; ++i)
+					for(unsigned i = 0; i < durationCount; ++i)
 						sum += (*siblingSet)[i];
 
-					for(uint i = 0; i < levelIndex; ++i)
+					for(unsigned i = 0; i < levelIndex; ++i)
 						os << indentation;
 
 					os << levelIndex << '-' << siblingSetIndex << " : " << sum / durationCount << endLine;

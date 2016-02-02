@@ -1,7 +1,7 @@
 #pragma once
 
-#include "SFML/Window.hpp"
-#include "SFML/OpenGL.hpp"
+//#include "SFML/Window.hpp"
+//#include "SFML/OpenGL.hpp"
 
 #include "Helpers/common.h"
 
@@ -9,21 +9,22 @@
 #include <fstream>
 #include <vector>
 
-//#include "GL/glew.h"
-//#include "GL/wglew.h"
+#include "GL/glew.h"
+#include "GL/wglew.h"
 
 #include "SOIL2/SOIL2.h"
 
-//#include "Math/nclglMath.h"
-//#include "Window.h"
+#include "Math/nclglMath.h"
+#include "Window.h"
 //#include "light.h"
 
-//#include "Shader.h"		//Students make this file...
-//#include "Mesh.h"		//And this one...
+#include "Shader.h"		//Students make this file...
+#include "Mesh.h"		//And this one...
 
-//#pragma comment(lib, "opengl32.lib")
-//#pragma comment(lib, "glew32.lib")
+#pragma comment(lib, "opengl32.lib")
+#pragma comment(lib, "glew-1.13.0/lib/Release/Win32/glew32s.lib")
 
+/*
 #pragma comment(lib, "opengl32.lib")
 #pragma comment(lib, "winmm.lib")
 #pragma comment(lib, "gdi32.lib")
@@ -34,7 +35,7 @@
 #pragma comment(lib, "sfml-system-s.lib")
 #pragma comment(lib, "sfml-window-s.lib")
 #endif
-
+*/
 #pragma comment(lib, "SOIL2/soil2.lib")
 
 
@@ -46,56 +47,56 @@
 
 //#define OPENGL_DEBUGGING
 
-//static const float biasValues[16] =
-//{
-//	0.5, 0.0, 0.0, 0.0,
-//	0.0, 0.5, 0.0, 0.0,
-//	0.0, 0.0, 0.5, 0.0,
-//	0.5, 0.5, 0.5, 1.0
-//};
-//static const Mat4Graphics biasMatrix(biasValues);
-//
-//enum DebugDrawMode
-//{
-//	DEBUGDRAW_ORTHO,
-//	DEBUGDRAW_PERSPECTIVE
-//};
-//
-//struct DebugDrawData
-//{
-//	vector<Vec3Graphics> lines;
-//	vector<Vec3Graphics> colours;
-//
-//	GLuint array;
-//	GLuint buffers[2];
-//
-//	DebugDrawData();
-//	void Draw();
-//
-//	~DebugDrawData()
-//	{
-//		glDeleteVertexArrays(1, &array);
-//		glDeleteBuffers(2, buffers);
-//	}
-//
-//	inline void Clear()
-//	{
-//		lines.clear();
-//		colours.clear();
-//	}
-//
-//	inline void AddLine(const Vec3Graphics& from, const Vec3Graphics& to, const Vec3Graphics& fromColour, const Vec3Graphics& toColour)
-//	{
-//		lines.push_back(from);
-//		lines.push_back(to);
-//
-//		colours.push_back(fromColour);
-//		colours.push_back(toColour);
-//	}
-//};
-//
-//
-//class Shader;
+static const float biasValues[16] =
+{
+	0.5, 0.0, 0.0, 0.0,
+	0.0, 0.5, 0.0, 0.0,
+	0.0, 0.0, 0.5, 0.0,
+	0.5, 0.5, 0.5, 1.0
+};
+static const Mat4Graphics biasMatrix(biasValues);
+
+enum DebugDrawMode
+{
+	DEBUGDRAW_ORTHO,
+	DEBUGDRAW_PERSPECTIVE
+};
+
+struct DebugDrawData
+{
+	vector<Vec3Graphics> lines;
+	vector<Vec3Graphics> colours;
+
+	GLuint array;
+	GLuint buffers[2];
+
+	DebugDrawData();
+	void Draw();
+
+	~DebugDrawData()
+	{
+		glDeleteVertexArrays(1, &array);
+		glDeleteBuffers(2, buffers);
+	}
+
+	inline void Clear()
+	{
+		lines.clear();
+		colours.clear();
+	}
+
+	inline void AddLine(const Vec3Graphics& from, const Vec3Graphics& to, const Vec3Graphics& fromColour, const Vec3Graphics& toColour)
+	{
+		lines.push_back(from);
+		lines.push_back(to);
+
+		colours.push_back(fromColour);
+		colours.push_back(toColour);
+	}
+};
+
+
+class Shader;
 
 class OGLRenderer
 {
