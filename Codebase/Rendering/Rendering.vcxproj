@@ -74,22 +74,32 @@
     </Lib>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="constants.h" />
+    <ClInclude Include="Material.h" />
     <ClInclude Include="Mesh.h" />
     <ClInclude Include="OGLRenderer.h" />
     <ClInclude Include="Renderer.h" />
     <ClInclude Include="Shader.h" />
+    <ClInclude Include="TextureGroup.h" />
+    <ClInclude Include="TextureSetup.h" />
     <ClInclude Include="Window.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Material.cpp" />
     <ClCompile Include="Mesh.cpp" />
     <ClCompile Include="OGLRenderer.cpp" />
     <ClCompile Include="Renderer.cpp" />
     <ClCompile Include="Shader.cpp" />
+    <ClCompile Include="TextureGroup.cpp" />
+    <ClCompile Include="TextureSetup.cpp" />
     <ClCompile Include="Window.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Helpers\Helpers.vcxproj">
       <Project>{dd6d26aa-e01c-4600-8bc6-2f768a74ca8b}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\Input\Input.vcxproj">
+      <Project>{c60fce67-02e6-493e-ba76-03cc04043046}</Project>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

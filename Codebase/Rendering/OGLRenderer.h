@@ -12,8 +12,6 @@
 #include "GL/glew.h"
 #include "GL/wglew.h"
 
-#include "SOIL2/SOIL2.h"
-
 #include "Math/nclglMath.h"
 #include "Window.h"
 //#include "light.h"
@@ -36,8 +34,8 @@
 #pragma comment(lib, "sfml-window-s.lib")
 #endif
 */
-#pragma comment(lib, "SOIL2/soil2.lib")
 
+#include <vector>
 
 #ifdef _DEBUG
 #define GL_BREAKPOINT glUniform4uiv(0,0,0);//Invalid, but triggers gdebugger ;)
@@ -64,8 +62,8 @@ enum DebugDrawMode
 
 struct DebugDrawData
 {
-	vector<Vec3Graphics> lines;
-	vector<Vec3Graphics> colours;
+	std::vector<Vec3Graphics> lines;
+	std::vector<Vec3Graphics> colours;
 
 	GLuint array;
 	GLuint buffers[2];

@@ -1,6 +1,6 @@
 #include "Window.h"
-#include "Mouse.h"
-#include "Keyboard.h"
+#include "Input/Mouse.h"
+#include "Input/Keyboard.h"
 
 Window* Window::window;
 
@@ -121,9 +121,9 @@ Window::Window(std::string title, int sizeX, int sizeY, bool fullScreen)	{
 		mouse		= new Mouse(windowHandle);
 	}
 	//if(!timer) {
-		timer		= new GameTimer();
+		timer		= new DeltaTimer<float>();
 	//}
-	elapsedMS	= timer->GetMS();
+	elapsedMS	= timer->Age(1000.0f);
 
 	Window::GetMouse()->SetAbsolutePositionBounds((unsigned int)size.x,(unsigned int)size.y);
 
@@ -165,7 +165,7 @@ void	Window::SetRenderer(OGLRenderer* r)	{
 bool	Window::UpdateWindow() {
 	MSG		msg;
 
-	float diff = timer->GetMS()-elapsedMS;
+	float diff = timer->Age(1000.0f)-elapsedMS;
 
 	Window::GetMouse()->UpdateDoubleClick(diff);
 
@@ -176,7 +176,7 @@ bool	Window::UpdateWindow() {
 		CheckMessages(msg); 
 	}
 
-	elapsedMS = timer->GetMS();
+	elapsedMS = timer->Age(1000.0f);
 
 	return !forceQuit;
 }

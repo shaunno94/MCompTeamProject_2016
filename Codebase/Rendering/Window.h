@@ -16,7 +16,7 @@ Description:Creates and handles the Window, including the initialisation of the 
 #include "OGLRenderer.h"
 #include "Input/Keyboard.h"
 #include "Input/Mouse.h"
-#include "GameTimer.h"
+#include "Helpers/DeltaTimer.h"
 
 #define WIN32_LEAN_AND_MEAN
 #define VC_EXTRALEAN
@@ -49,7 +49,7 @@ public:
 	static Keyboard*	GetKeyboard()	{return keyboard;}
 	static Mouse*		GetMouse()		{return mouse;}
 
-	GameTimer*   GetTimer()		{return timer;}
+	DeltaTimer<float>*   GetTimer()		{return timer;}
 
 protected:
 	void	CheckMessages(MSG &msg);
@@ -61,7 +61,7 @@ protected:
 	static Keyboard*	keyboard;
 	static Mouse*		mouse;
 
-	GameTimer*	timer;
+	DeltaTimer<float>*	timer;
 
 	OGLRenderer*		renderer;
 
