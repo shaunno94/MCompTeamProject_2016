@@ -5,6 +5,10 @@ VisualStudioVersion = 12.0.40629.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Application", "Application\Application.vcxproj", "{28A90E4B-CBFC-404E-9934-2146F19A8C64}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Rendering", "Rendering\Rendering.vcxproj", "{B7A9766D-22D7-48E8-B28A-C48C6E42AF98}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Helpers", "Helpers\Helpers.vcxproj", "{DD6D26AA-E01C-4600-8BC6-2F768A74CA8B}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Win32 = Debug|Win32
@@ -15,6 +19,14 @@ Global
 		{28A90E4B-CBFC-404E-9934-2146F19A8C64}.Debug|Win32.Build.0 = Debug|Win32
 		{28A90E4B-CBFC-404E-9934-2146F19A8C64}.Release|Win32.ActiveCfg = Release|Win32
 		{28A90E4B-CBFC-404E-9934-2146F19A8C64}.Release|Win32.Build.0 = Release|Win32
+		{B7A9766D-22D7-48E8-B28A-C48C6E42AF98}.Debug|Win32.ActiveCfg = Debug|Win32
+		{B7A9766D-22D7-48E8-B28A-C48C6E42AF98}.Debug|Win32.Build.0 = Debug|Win32
+		{B7A9766D-22D7-48E8-B28A-C48C6E42AF98}.Release|Win32.ActiveCfg = Release|Win32
+		{B7A9766D-22D7-48E8-B28A-C48C6E42AF98}.Release|Win32.Build.0 = Release|Win32
+		{DD6D26AA-E01C-4600-8BC6-2F768A74CA8B}.Debug|Win32.ActiveCfg = Debug|Win32
+		{DD6D26AA-E01C-4600-8BC6-2F768A74CA8B}.Debug|Win32.Build.0 = Debug|Win32
+		{DD6D26AA-E01C-4600-8BC6-2F768A74CA8B}.Release|Win32.ActiveCfg = Release|Win32
+		{DD6D26AA-E01C-4600-8BC6-2F768A74CA8B}.Release|Win32.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
