@@ -92,6 +92,7 @@
     <ClCompile Include="SphereCollisionShape.cpp" />
     <ClCompile Include="State.cpp" />
     <ClCompile Include="StateMachine.cpp" />
+    <ClCompile Include="StateManager.cpp" />
     <ClCompile Include="StateTransition.cpp" />
     <ClCompile Include="TrackerGameObject.cpp" />
   </ItemGroup>
@@ -117,6 +118,7 @@
     <ClInclude Include="SphereCollisionShape.h" />
     <ClInclude Include="State.h" />
     <ClInclude Include="StateMachine.h" />
+    <ClInclude Include="StateManager.h" />
     <ClInclude Include="StateTransition.h" />
     <ClInclude Include="TrackerGameObject.h" />
     <ClInclude Include="TSingleton.h" />

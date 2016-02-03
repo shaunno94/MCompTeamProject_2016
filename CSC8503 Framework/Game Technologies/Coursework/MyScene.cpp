@@ -82,13 +82,33 @@ bool MyScene::InitialiseGL()
 	TestCases::AddWall(this, Vec3Physics(0.0f, 0.0f, 60.0f), Vec3Physics(60.0f, 15.0f, 0.5f));
 	TestCases::AddWall(this, Vec3Physics(0.0f, 0.0f, -60.0f), Vec3Physics(60.0f, 15.0f, 0.5f));
 
-	TestCases::AddSphere(this, Vec3Physics(0.0f, 0.0f, 0.0f), 5);
+	SimpleMeshObject* sphere = new SimpleMeshObject("Ball");
+	sphere->SetMesh(CommonMeshes::Sphere(), false);
+	sphere->SetLocalTransform(Mat4Physics::Scale(Vector3Simple(3, 3, 3))); //80m width, 1m height, 80m depth
+	sphere->SetColour(Vec4Graphics(0.8f, 0.8f, 0.8f, 1.0f));
+	sphere->SetBoundingRadius(3);
+	sphere->IsBoundingSphere(false);
+	sphere->SetBoundingHalfVolume(Vector3Simple(3, 3, 3));
+
+	sphere->Physics()->SetPosition(Vec3Physics(0.0f, 3.0f, 0.0f));
+	sphere->Physics()->SetCollisionShape(new SphereCollisionShape(3.0f));
+	sphere->Physics()->SetInverseMass(1.0f / (3.0f * 10.0f));
+	sphere->Physics()->SetInverseInertia(sphere->Physics()->GetCollisionShape()->BuildInverseInertia(sphere->Physics()->GetInverseMass()));
+
+	AddGameObject(sphere);
+	m_Resources.push_back(sphere);
 
 	m_Overlay = new SimpleMeshObject("Overlay", nullptr);
 	m_Overlay->SetMesh(Mesh::GenerateQuadTexCoordCol(Vec2Physics(1.f, 1.f), Vec2Physics(0.0f, 1.0f), Vec4Physics(1.0f, 1.0f, 1.0f, 1.0f)), true);
 	m_Resources.push_back(m_Overlay);
 
 	return true;
+}
+
+void MyScene::initStateMachine()
+{
+	StateMachine* stateMachine = new StateMachine();
+	stateMachine->AddState()
 }
 
 //Scene* MyScene::GetNextScene(Window& window) {

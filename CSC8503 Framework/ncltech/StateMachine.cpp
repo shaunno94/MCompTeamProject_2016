@@ -53,7 +53,7 @@ void StateMachine::Update(float deltaTime) {
 	//		using the index held in the pair. Also start this new state.
 	for (std::pair<StateTransition*, unsigned int> transition : StateTransitions[m_CurrentStateIndex])
 	{
-		if(transition.first->Transition()) {
+		if(transition.first->CheckTrigger()) {
 			m_CurrentState->End();
 			m_CurrentStateIndex = transition.second;
 			State* oldState = m_CurrentState;

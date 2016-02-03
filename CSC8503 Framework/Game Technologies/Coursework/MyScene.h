@@ -31,6 +31,9 @@ class MyScene : public Scene {
 	~MyScene();
 
 	bool InitialiseGL()	override;
+	
+	void initStateMachine();
+
 	void RenderScene() override;
 	void UpdateScene(float dt)  override;
 	void	Cleanup() override;

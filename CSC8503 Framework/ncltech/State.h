@@ -23,7 +23,7 @@ public:
 
 	virtual void Start();
 
-	virtual void Update(float deltaTime) = 0;
+	virtual void Update(float deltaTime);
 
 	virtual void End();
 
