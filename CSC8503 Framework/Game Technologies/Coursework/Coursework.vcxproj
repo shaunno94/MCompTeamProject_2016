@@ -11,7 +11,6 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="GoalkeeperGameObject.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="MyScene.cpp" />
     <ClCompile Include="Player.cpp" />
@@ -19,13 +18,21 @@
     <ClCompile Include="TestCases.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="GoalkeeperGameObject.h" />
     <ClInclude Include="MyScene.h" />
     <ClInclude Include="Player.h" />
     <ClInclude Include="ScoreHistory.h" />
     <ClInclude Include="TestCases.h" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\BulletPhysics\build3\vs2010\BulletCollision.vcxproj">
+      <Project>{b0081e42-d2b0-544a-8c66-fed0d22e7515}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\..\BulletPhysics\build3\vs2010\BulletDynamics.vcxproj">
+      <Project>{a49119d7-9c22-6845-ac38-a255f2225392}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\..\BulletPhysics\build3\vs2010\LinearMath.vcxproj">
+      <Project>{69e47fbf-ae1e-f147-b00b-dec58fa0436e}</Project>
+    </ProjectReference>
     <ProjectReference Include="..\..\Helpers\Helpers.vcxproj">
       <Project>{73bfcc5e-6926-4c81-a0bf-c149bb75c307}</Project>
     </ProjectReference>
@@ -73,7 +80,7 @@
     <LibraryPath>..\..\GLEW\lib;..\..\SOIL\$(Configuration);..\$(Configuration)\;.\nclgl\$(Configuration)\;..\..\GLEW\lib\$(Configuration);$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-    <IncludePath>..\..\GLEW\include;..\..\SOIL;..\..\;$(IncludePath)</IncludePath>
+    <IncludePath>..\..\BulletPhysics\src;..\..\GLEW\include;..\..\SOIL;..\..\;$(IncludePath)</IncludePath>
     <LibraryPath>..\..\GLEW\lib;..\..\SOIL\$(Configuration);..\$(Configuration)\;.\nclgl\$(Configuration)\;..\..\GLEW\lib\$(Configuration);$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
@@ -82,6 +89,7 @@
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>NOMINMAX;_MBCS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
