@@ -1,5 +1,6 @@
 #include <cstdio>
 #include "Rendering\Window.h"
+#include "Rendering\Renderer.h"
 
 
 int main() {
@@ -10,7 +11,7 @@ int main() {
 	//Initialise the Window
 	if (!Window::Initialise("Game Technologies - Framework Example", 1280, 800, false)) {
 		Window::Destroy();
-		return 0;
+		return -1;
 	}
 
 	Window::GetWindow().LockMouseToWindow(true);
@@ -19,12 +20,13 @@ int main() {
 	/*CommonMeshes::InitializeMeshes();
 	NCLDebug::LoadShaders();*/
 
-	while (Window::GetWindow().UpdateWindow()) {
-		//Note that for the sake of simplicity, all calculations with time will be done in seconds (ms * 0.001)
-		// this is to simplify physics, as I cant visualise how fast 0.02 meters per millisecond is.
-		float dt = Window::GetWindow().GetTimer()->Get();	//How many milliseconds since last update?
+	Renderer renderer(Window::GetWindow());
+	if (!renderer.HasInitialised()) {
+		return -1;
+	}
 
-		//scene->RenderScene();
+	while (Window::GetWindow().UpdateWindow() && !Window::GetKeyboard()->KeyDown(KEYBOARD_ESCAPE)){
+		renderer.RenderScene();
 	}
 
 	//Cleanup

@@ -7,7 +7,7 @@
 #define SHADER_TES 4
 #define SHADER_MAX_STAGE_COUNT 5
 
-#define SHADER_DIR	"../Shaders/"
-#define MESH_DIR	"../Meshes/"
-#define TEXTURE_DIR  "../Textures/"
-#define SOUNDS_DIR	"../Sounds/"
+#define SHADER_DIR	"../Assets/Shaders/"
+#define MESH_DIR	"../Assets/Meshes/"
+#define TEXTURE_DIR  "../Assets/Textures/"
+#define SOUNDS_DIR	"../Assets/Sounds/"
