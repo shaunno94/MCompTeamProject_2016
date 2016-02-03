@@ -1,6 +1,6 @@
 #include <cstdio>
 #include "Rendering\Window.h"
-#include "Rendering\Renderer.h"
+#include "Rendering\ShadowRenderer.h"
 
 
 int main() {
@@ -20,7 +20,7 @@ int main() {
 	/*CommonMeshes::InitializeMeshes();
 	NCLDebug::LoadShaders();*/
 
-	Renderer renderer(Window::GetWindow());
+	ShadowRenderer renderer(Window::GetWindow());
 	if (!renderer.HasInitialised()) {
 		return -1;
 	}
