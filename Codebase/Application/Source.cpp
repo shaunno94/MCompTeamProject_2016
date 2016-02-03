@@ -26,6 +26,7 @@ int main() {
 	}
 
 	while (Window::GetWindow().UpdateWindow() && !Window::GetKeyboard()->KeyDown(KEYBOARD_ESCAPE)){
+		renderer.UpdateScene(Window::GetWindow().GetTimer()->Get(1000.0f));
 		renderer.RenderScene();
 	}
 
