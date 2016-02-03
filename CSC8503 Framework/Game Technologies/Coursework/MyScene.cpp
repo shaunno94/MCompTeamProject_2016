@@ -62,7 +62,7 @@ bool MyScene::InitialiseGL()
 	this->AddGameObject(ground);
 	m_Resources.push_back(ground);
 
-	TestCases::AddCuboidStack(this, Vec3Physics(-40.0f, 0.5f, -10.0f), 10);
+	/*TestCases::AddCuboidStack(this, Vec3Physics(-40.0f, 0.5f, -10.0f), 10);
 	TestCases::AddStackedPyramidTestcase(this, Vec3Physics(-40.0f, 0.0f, -5.0f), true);
 	TestCases::AddStackedPyramidTestcase(this, Vec3Physics(-35.0f, 0.0f, -7.0f), true);
 	TestCases::AddPlaneTestcase(this, Vec3Physics(-40.0f, 0.0f, -40.0f));
@@ -76,11 +76,13 @@ bool MyScene::InitialiseGL()
 	TestCases::AddSimpleStackedRestingTestcase(this, Vec3Physics(-55.0f, 0.0f, 55.0f));
 	TestCases::AddSimpleStackedRestingTestcase(this, Vec3Physics(-50.0f, 0.0f, 50.0f));
 	TestCases::AddSimpleSwingingTestcase(this, Vec3Physics(-45.0f, 0.0f, 45.0f));
-
+*/
 	TestCases::AddWall(this, Vec3Physics(-60.0f, 0.0f, 0.0f), Vec3Physics(0.5f, 15.0f, 60.0f));
 	TestCases::AddWall(this, Vec3Physics(60.0f, 0.0f, 0.0f), Vec3Physics(0.5f, 15.0f, 60.0f));
 	TestCases::AddWall(this, Vec3Physics(0.0f, 0.0f, 60.0f), Vec3Physics(60.0f, 15.0f, 0.5f));
 	TestCases::AddWall(this, Vec3Physics(0.0f, 0.0f, -60.0f), Vec3Physics(60.0f, 15.0f, 0.5f));
+
+	TestCases::AddSphere(this, Vec3Physics(0.0f, 0.0f, 0.0f), 5);
 
 	m_Overlay = new SimpleMeshObject("Overlay", nullptr);
 	m_Overlay->SetMesh(Mesh::GenerateQuadTexCoordCol(Vec2Physics(1.f, 1.f), Vec2Physics(0.0f, 1.0f), Vec4Physics(1.0f, 1.0f, 1.0f, 1.0f)), true);
@@ -116,7 +118,7 @@ void MyScene::UpdateScene(float sec)
 
 	static unsigned int projectileCounter = 0;
 
-	if (keyboard->KeyTriggered(KEYBOARD_J)) {
+	if (keyboard->KeyTriggered(KEYBOARD_E)) {
 		Vec3Physics position = m_Camera->GetPosition();
 		Vec3Physics viewDirection = -Vec3Physics(viewMatrix.values[2], viewMatrix.values[6], viewMatrix.values[10]);
 		viewDirection.Normalize();
@@ -167,7 +169,7 @@ void MyScene::UpdateScene(float sec)
 	if (keyboard->KeyTriggered(KEYBOARD_H))
 		m_DisplayHighScores = !m_DisplayHighScores;
 
-	if (keyboard->KeyTriggered(KEYBOARD_X) || keyboard->KeyTriggered(KEYBOARD_ESCAPE)) {
+	if (keyboard->KeyTriggered(KEYBOARD_ESCAPE) || keyboard->KeyTriggered(KEYBOARD_ESCAPE)) {
 		m_EndState = QuitGameState;
 		keyboard->UpdateHolds();
 		PhysicsEngine::Instance()->SetPaused(true);

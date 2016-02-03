@@ -1,13 +1,9 @@
 #pragma once
-
-class GameObject;
 class State;
 
 class StateTransition
 {
 protected:
-	static void* empty;
-	bool m_Active;
 	State* m_OldState;
 	State* m_NewState;
 
@@ -16,10 +12,13 @@ public:
 
 	virtual ~StateTransition(void);
 
-	virtual void Start();
+	// Does this transition require something to be set up?
+	virtual void Start() = 0;
 
-	virtual bool Transition();
+	// Check the trigger to see if transition is required
+	virtual bool CheckTrigger() = 0;
 
-	virtual void End();
+	// Clean up
+	virtual void End() = 0;
 };
 

@@ -75,18 +75,11 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="CollisionListener.cpp" />
-    <ClCompile Include="CollisionState.cpp" />
-    <ClCompile Include="DataSourceState.cpp" />
     <ClCompile Include="PyramidCollisionShape.cpp" />
-    <ClCompile Include="ReceiverState.cpp" />
-    <ClCompile Include="ReceiverTransition.cpp" />
-    <ClCompile Include="SignalState.cpp" />
-    <ClCompile Include="StateMachine.cpp" />
     <ClCompile Include="CollisionDetection.cpp" />
     <ClCompile Include="CommonMeshes.cpp" />
     <ClCompile Include="Constraint.cpp" />
     <ClCompile Include="CuboidCollisionShape.cpp" />
-    <ClCompile Include="CollisionTransition.cpp" />
     <ClCompile Include="NCLDebug.cpp" />
     <ClCompile Include="GameObject.cpp" />
     <ClCompile Include="Hull.cpp" />
@@ -98,21 +91,18 @@
     <ClCompile Include="SimpleMeshObject.cpp" />
     <ClCompile Include="SphereCollisionShape.cpp" />
     <ClCompile Include="State.cpp" />
+    <ClCompile Include="StateMachine.cpp" />
     <ClCompile Include="StateTransition.cpp" />
-    <ClCompile Include="PositioningState.cpp" />
     <ClCompile Include="TrackerGameObject.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="CollisionDetection.h" />
     <ClInclude Include="CollisionListener.h" />
     <ClInclude Include="CollisionShape.h" />
-    <ClInclude Include="CollisionState.h" />
-    <ClInclude Include="CollisionTransition.h" />
     <ClInclude Include="CommonMeshes.h" />
     <ClInclude Include="constants.h" />
     <ClInclude Include="Constraint.h" />
     <ClInclude Include="CuboidCollisionShape.h" />
-    <ClInclude Include="DataSourceState.h" />
     <ClInclude Include="DistanceConstraint.h" />
     <ClInclude Include="NCLDebug.h" />
     <ClInclude Include="GameObject.h" />
@@ -122,16 +112,12 @@
     <ClInclude Include="PhysicsEngine.h" />
     <ClInclude Include="PhysicsObject.h" />
     <ClInclude Include="PyramidCollisionShape.h" />
-    <ClInclude Include="ReceiverState.h" />
-    <ClInclude Include="ReceiverTransition.h" />
     <ClInclude Include="Scene.h" />
-    <ClInclude Include="SignalState.h" />
     <ClInclude Include="SimpleMeshObject.h" />
     <ClInclude Include="SphereCollisionShape.h" />
     <ClInclude Include="State.h" />
     <ClInclude Include="StateMachine.h" />
     <ClInclude Include="StateTransition.h" />
-    <ClInclude Include="TardisState.h" />
     <ClInclude Include="TrackerGameObject.h" />
     <ClInclude Include="TSingleton.h" />
   </ItemGroup>

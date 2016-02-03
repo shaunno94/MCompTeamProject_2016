@@ -10,8 +10,8 @@ class StateMachine
 	unsigned int m_CurrentStateIndex; 
 public:
 
-	std::vector<State*> States;
-	std::vector<std::vector<std::pair<StateTransition*, unsigned int>>> StateTransitions;
+	std::vector<State*> States;		// Vector of states in this FSM
+	std::vector<std::vector<std::pair<StateTransition*, unsigned int>>> StateTransitions;	// Transitions: 1- transition, 2- index of dest state in state vector
 
 	StateMachine(void);
 	~StateMachine(void);
