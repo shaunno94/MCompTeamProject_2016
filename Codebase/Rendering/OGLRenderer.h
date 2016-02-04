@@ -11,7 +11,6 @@
 
 #include "GL/glew.h"
 #include "GL/wglew.h"
-
 #include "Math/nclglMath.h"
 #include "Window.h"
 //#include "light.h"
