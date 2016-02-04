@@ -29,6 +29,11 @@ vec3 normal = normalize ( TBN *( texture2D ( bumpTex , IN . texCoord ). rgb * 2.
 
 vec4 diffuse = texture2D ( diffuseTex , IN.texCoord );
 
+//temp texture override//
+normal = IN.normal;
+diffuse.xyz = IN.colour;
+//-----//
+
 vec3 incident = normalize ( lightPos - IN.worldPos );
 float lambert = max (0.0 , dot ( incident , normal )); // Different !
 
