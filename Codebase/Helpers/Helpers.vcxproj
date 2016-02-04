@@ -74,6 +74,10 @@
     <ClInclude Include="DeltaTimer.h" />
     <ClInclude Include="interpolation.h" />
     <ClInclude Include="MeasuringTimer.h" />
+    <ClInclude Include="MGLDebug.h" />
+    <ClInclude Include="MGLExceptions.h" />
+    <ClInclude Include="MGLFile.h" />
+    <ClInclude Include="MGLUtil.h" />
     <ClInclude Include="ObjectPool.h" />
     <ClInclude Include="RNG.h" />
     <ClInclude Include="stb_c_lexer.h" />
@@ -89,6 +93,8 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="MeasuringTimer.cpp" />
+    <ClCompile Include="MGLDebug.cpp" />
+    <ClCompile Include="MGLFile.cpp" />
     <ClCompile Include="RNG.cpp" />
     <ClCompile Include="Timer.cpp" />
   </ItemGroup>

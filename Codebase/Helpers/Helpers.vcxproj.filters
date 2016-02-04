@@ -16,6 +16,9 @@
     <Filter Include="STB">
       <UniqueIdentifier>{3eb00e8c-75c5-4772-b9aa-fc0ac54385f2}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Extra">
+      <UniqueIdentifier>{d405c6b2-fd0a-4faa-9361-146513efb904}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="binary.h">
@@ -78,6 +81,18 @@
     <ClInclude Include="stb_truetype.h">
       <Filter>STB</Filter>
     </ClInclude>
+    <ClInclude Include="MGLFile.h">
+      <Filter>Extra</Filter>
+    </ClInclude>
+    <ClInclude Include="MGLDebug.h">
+      <Filter>Extra</Filter>
+    </ClInclude>
+    <ClInclude Include="MGLUtil.h">
+      <Filter>Extra</Filter>
+    </ClInclude>
+    <ClInclude Include="MGLExceptions.h">
+      <Filter>Extra</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="MeasuringTimer.cpp">
@@ -88,6 +103,12 @@
     </ClCompile>
     <ClCompile Include="Timer.cpp">
       <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="MGLFile.cpp">
+      <Filter>Extra</Filter>
+    </ClCompile>
+    <ClCompile Include="MGLDebug.cpp">
+      <Filter>Extra</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>
