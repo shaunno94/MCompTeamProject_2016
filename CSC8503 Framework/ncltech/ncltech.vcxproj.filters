@@ -43,6 +43,12 @@
     <Filter Include="Source Files\AI\States">
       <UniqueIdentifier>{18eff78a-be99-4ce1-9387-54beb05fe3cc}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\AI\Triggers">
+      <UniqueIdentifier>{548bafb5-2a34-4c86-8f42-d1bf2e01d283}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\AI\Triggers">
+      <UniqueIdentifier>{2aa8de82-273f-4f68-84cc-eb7c0d432867}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Scene.cpp">
@@ -96,14 +102,17 @@
     <ClCompile Include="PyramidCollisionShape.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Trigger.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="StateMachine.cpp">
       <Filter>Source Files\AI</Filter>
     </ClCompile>
     <ClCompile Include="State.cpp">
       <Filter>Source Files\AI</Filter>
+    </ClCompile>
+    <ClCompile Include="Trigger.cpp">
+      <Filter>Source Files\AI</Filter>
+    </ClCompile>
+    <ClCompile Include="DistanceTrigger.cpp">
+      <Filter>Source Files\AI\Triggers</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -170,14 +179,17 @@
     <ClInclude Include="PyramidCollisionShape.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Trigger.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="StateMachine.h">
       <Filter>Header Files\AI</Filter>
     </ClInclude>
     <ClInclude Include="State.h">
       <Filter>Header Files\AI</Filter>
+    </ClInclude>
+    <ClInclude Include="Trigger.h">
+      <Filter>Header Files\AI</Filter>
+    </ClInclude>
+    <ClInclude Include="DistanceTrigger.h">
+      <Filter>Header Files\AI\Triggers</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

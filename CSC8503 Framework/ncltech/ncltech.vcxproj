@@ -75,6 +75,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="CollisionListener.cpp" />
+    <ClCompile Include="DistanceTrigger.cpp" />
     <ClCompile Include="PyramidCollisionShape.cpp" />
     <ClCompile Include="CollisionDetection.cpp" />
     <ClCompile Include="CommonMeshes.cpp" />
@@ -104,6 +105,7 @@
     <ClInclude Include="Constraint.h" />
     <ClInclude Include="CuboidCollisionShape.h" />
     <ClInclude Include="DistanceConstraint.h" />
+    <ClInclude Include="DistanceTrigger.h" />
     <ClInclude Include="NCLDebug.h" />
     <ClInclude Include="GameObject.h" />
     <ClInclude Include="Hull.h" />
