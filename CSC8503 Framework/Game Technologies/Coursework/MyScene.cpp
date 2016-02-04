@@ -11,7 +11,6 @@
 #include <ncltech\DistanceConstraint.h>
 #include <ncltech\NCLDebug.h>
 #include "ncltech\OctreeSpacePartition.h"
-#include "ncltech\PositioningState.h"
 #include "GoalkeeperGameObject.h"
 #include "ScoreHistory.h"
 #include "ncltech/PyramidCollisionShape.h"
@@ -108,7 +107,6 @@ bool MyScene::InitialiseGL()
 void MyScene::initStateMachine()
 {
 	StateMachine* stateMachine = new StateMachine();
-	stateMachine->AddState()
 }
 
 //Scene* MyScene::GetNextScene(Window& window) {
