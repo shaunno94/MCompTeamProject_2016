@@ -30,8 +30,14 @@ _-_-_-_-_-_-_-""  ""
 
 #include <btBulletDynamicsCommon.h>
 
-class PhysicsEngine;
-
+enum GameObjectComponents
+{
+	RenderingComponent = 0, //for mesh, material, textures
+	AIComponent = 1, //for AI
+	PhysicsComponent = 2,
+	AudioComponent,
+	MaxGameObjectComponents
+};
 
 
 class GameObject
@@ -39,70 +45,73 @@ class GameObject
 protected:
 	Mat4Physics					m_LocalTransform;
 	Mat4Physics					m_WorldTransform;
-	Vec4Graphics				m_Colour;
 	Vec3Physics					m_Scale;
 	Vec3Physics					m_BoundingHalfVolume;
+	void*						m_components[MaxGameObjectComponents];
 
 public:
-	GameObject(const std::string& name = "", PhysicsObject* physicsObj = new PhysicsObject());
+	GameObject(const std::string& name = "", btRigidBody* physicsObj = nullptr);
 	~GameObject();
 
-	PhysicsObject*		Physics() { return m_PhysicsObject; }
+	btRigidBody*		Physics()
+	{
+		return m_PhysicsObject;
+	}
 
-	const std::string&	GetName()			{ return m_Name; }
-	std::vector<GameObject*>& GetChildren() { return m_Children; }
+	const std::string&	GetName()
+	{
+		return m_Name;
+	}
+	std::vector<GameObject*>& GetChildren()
+	{
+		return m_Children;
+	}
 
-	inline const Vec3Physics& GetScale() { return m_Scale; }
-	inline void	SetScale(const Vec3Physics& scale) { m_Scale = scale; }
+	inline const Vec3Physics& GetScale()
+	{
+		return m_Scale;
+	}
+	inline void	SetScale(const Vec3Physics& scale)
+	{
+		m_Scale = scale;
+	}
 
 	GameObject*			FindGameObject(const std::string& name);
 	void				AddChildObject(GameObject* child);
 
-	void AddPhysics(PhysicsObject* physicsObj = new PhysicsObject());
+	void AddPhysics(btRigidBody* physicsObj);
 	void RemovePhysics();
 
 
-	void			SetLocalTransform(const Mat4Physics& transform)			{ m_LocalTransform = transform; }
-	const Mat4Physics&  GetLocalTransform()									{ return m_LocalTransform; }
+	void	SetLocalTransform(const Mat4Physics& transform)
+	{
+		m_LocalTransform = transform;
+	}
+	const Mat4Physics&  GetLocalTransform()
+	{
+		return m_LocalTransform;
+	}
 
 
-	void			SetColour(const Vec4Graphics& colour)	{ m_Colour = colour; }
-	const Vec4Graphics&	GetColour()							{ return m_Colour; }
+	void	SetBoundingHalfVolume(const Vec3Physics& vec)
+	{
+		m_BoundingHalfVolume = vec;
+	}
+	const Vec3Physics&	GetBoundingHalfVolume()	const
+	{
+		return m_BoundingHalfVolume;
+	}
 
-	void				SetBoundingRadius(float radius)					{ m_BoundingRadius = radius; }
-	float				GetBoundingRadius()	const						{ return m_BoundingRadius; }
-	void				SetBoundingHalfVolume(const Vec3Physics& vec)	{ m_BoundingHalfVolume = vec; }
-	const Vec3Physics&	GetBoundingHalfVolume()	const					{ return m_BoundingHalfVolume; }
-
-	bool IsBoundingSphere() const { return m_IsBoundingSphere; }
-	void IsBoundingSphere(bool sphereOrAABB) { m_IsBoundingSphere = sphereOrAABB; }
-
-	Scene* GetScene() { return m_Scene; }
-	void SetScene(Scene* scene) { m_Scene = scene; }
-
-	StateMachine* GetStateMachine() { return m_StateMachine; }
-	void SetStateMachine(StateMachine* sm) { m_StateMachine = sm; }
-
-	void Ditach();
-
-	MEM_ALIGN_NEW_DELETE
 
 protected:
 	virtual void OnRenderObject()				{};				//Handles OpenGL calls to Render the object
-	virtual void OnUpdateObject(float dt)		{
-		if(m_StateMachine)
-			m_StateMachine->Update(dt);
+	virtual void OnUpdateObject(float dt)
+	{
 	};				//Override to handle things like AI etc on update loop
 
-	bool m_IsBoundingSphere;
-
 	std::string					m_Name;
-	Scene*						m_Scene;
 	GameObject*					m_Parent;
 	std::vector<GameObject*>	m_Children;
 
-	PhysicsObject*				m_PhysicsObject;
-	StateMachine*				m_StateMachine;
-
-	float						m_BoundingRadius;	//For Frustum Culling
+	btRigidBody*				m_PhysicsObject;
 };

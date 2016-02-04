@@ -10,7 +10,8 @@ int main()
 	//-------------------
 
 	//Initialise the Window
-	if (!Window::Initialise("Game Technologies - Framework Example", 1280, 800, false)) {
+	if (!Window::Initialise("Game Technologies - Framework Example", 1280, 800, false))
+	{
 		Window::Destroy();
 		return -1;
 	}
@@ -22,7 +23,8 @@ int main()
 	NCLDebug::LoadShaders();*/
 
 	Renderer renderer(Window::GetWindow());
-	if (!renderer.HasInitialised()) {
+	if (!renderer.HasInitialised())
+	{
 		return -1;
 	}
 	//Broadphase collision
@@ -41,13 +43,13 @@ int main()
 
 	//Static plane collision object
 	btCollisionShape* groundShape = new btStaticPlaneShape(btVector3(0, 1, 0), 1);
-	
+
 	//Sphere collision object
 	btCollisionShape* fallShape = new btSphereShape(1);
 
-	//Motion state (http://www.bulletphysics.org/mediawiki-1.5.8/index.php/MotionStates) - for plane object 
+	//Motion state (http://www.bulletphysics.org/mediawiki-1.5.8/index.php/MotionStates) - for plane object
 	btDefaultMotionState* groundMotionState =
-		new btDefaultMotionState(btTransform(btQuaternion(0, 0, 0, 1), btVector3(0, -1, 0)));
+	  new btDefaultMotionState(btTransform(btQuaternion(0, 0, 0, 1), btVector3(0, -1, 0)));
 
 	//Construct rigid body object
 	btRigidBody::btRigidBodyConstructionInfo groundRigidBodyCI(0, groundMotionState, groundShape, btVector3(0, 0, 0));
@@ -56,10 +58,10 @@ int main()
 	//Add plane to physics world
 	dynamicsWorld->addRigidBody(groundRigidBody);
 
-	//Motion state - for sphere object 
+	//Motion state - for sphere object
 	btDefaultMotionState* fallMotionState =
-		new btDefaultMotionState(btTransform(btQuaternion(0, 0, 0, 1), btVector3(0, 50, 0)));
-	
+	  new btDefaultMotionState(btTransform(btQuaternion(0, 0, 0, 1), btVector3(0, 50, 0)));
+
 	//Calculate inertia tensor
 	fallShape->calculateLocalInertia(1.0, btVector3(0, 0, 0));
 	//Construct rigid body object
@@ -79,7 +81,7 @@ int main()
 
 	/*for (unsigned int i = 0; i < 300; ++i)
 	{
-		
+
 		//Model matrix
 		btTransform trans;
 		fallRigidBody->getMotionState()->getWorldTransform(trans);

@@ -4,7 +4,7 @@
 #include "constants.h"
 
 
-Material::Material(Shader* shader, bool hasTranslucency) : shader(shader), hasTranslucency(hasTranslucency), colour(Vec4Graphics::ONES), castsShadows(false) {
+Material::Material(Shader* shader, bool hasTranslucency) : shader(shader), hasTranslucency(hasTranslucency), colour(Vec4Graphics::ONES) {
 	assert(("Material class constructor was given a non operational shader.", shader->IsOperational()));
 }
 
@@ -18,8 +18,8 @@ void Material::UpdateTextures(){
 	}
 }
 
-void Material::AddTexture(const std::string& uniformName, TextureSetup* texture) {
+void Material::AddTexture(const std::string& uniformName, Texture* texture) {
 	int location = glGetUniformLocation(shader->GetProgram(), uniformName.c_str());
 	if(location >= 0)
-		uniformTextures.push_back(std::pair<int, TextureSetup*>(location, texture));
+		uniformTextures.push_back(std::pair<int, Texture*>(location, texture));
 }

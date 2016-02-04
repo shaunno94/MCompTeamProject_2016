@@ -81,8 +81,7 @@
     <ClInclude Include="OGLRenderer.h" />
     <ClInclude Include="Renderer.h" />
     <ClInclude Include="Shader.h" />
-    <ClInclude Include="TextureGroup.h" />
-    <ClInclude Include="TextureSetup.h" />
+    <ClInclude Include="Texture.h" />
     <ClInclude Include="Window.h" />
   </ItemGroup>
   <ItemGroup>
@@ -92,8 +91,7 @@
     <ClCompile Include="OGLRenderer.cpp" />
     <ClCompile Include="Renderer.cpp" />
     <ClCompile Include="Shader.cpp" />
-    <ClCompile Include="TextureGroup.cpp" />
-    <ClCompile Include="TextureSetup.cpp" />
+    <ClCompile Include="Texture.cpp" />
     <ClCompile Include="Window.cpp" />
   </ItemGroup>
   <ItemGroup>
