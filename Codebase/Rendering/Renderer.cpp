@@ -40,3 +40,6 @@ void Renderer::RenderScene()	{
 	SwapBuffers();
 }
 
+void Renderer::RenderScene(Scene currentScene){
+	//STUB
+}
