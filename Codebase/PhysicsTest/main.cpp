@@ -52,7 +52,7 @@ int main()
 	//Construct rigid body object
 	btRigidBody::btRigidBodyConstructionInfo groundRigidBodyCI(0, groundMotionState, groundShape, btVector3(0, 0, 0));
 	btRigidBody* groundRigidBody = new btRigidBody(groundRigidBodyCI);
-
+	
 	//Add plane to physics world
 	dynamicsWorld->addRigidBody(groundRigidBody);
 
