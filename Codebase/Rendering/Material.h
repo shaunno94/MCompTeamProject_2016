@@ -1,6 +1,5 @@
 #pragma once
 
-#include "GL/glew.h"
 #include "Shader.h"
 #include "Math/nclglMath.h"
 #include <functional>
@@ -8,17 +7,37 @@
 #include "constants.h"
 #include <string>
 #include "Texture.h"
-#include <utility>
 
-class SceneObject;
-class Renderer;
-class Camera;
-
-class Material {
- protected:
+class Material
+{
+protected:
 	Shader* shader;
-	Vec4Graphics colour;
-	std::vector<std::pair<int, Texture*>> uniformTextures;
+	std::vector<std::pair<int, Texture*>> m_uniformTextures;
+
+	template<typename T>
+	static void setUniformValue(std::vector<std::pair<int, T>>& container, int uniformLocation, const T& value)
+	{
+		if (uniformLocation >= 0)
+		{
+			for (auto it = container.begin(); it != container.end(); ++it)
+			{
+				if (it->first == uniformLocation)
+				{
+					it->second = value;
+					return;
+				}
+			}
+			container.push_back(std::pair<int, T>(uniformLocation, value));
+		}
+	}
+
+	template<typename T>
+	static int setUniformValue(std::vector<std::pair<int, T>>& container, Shader* shader, const std::string& uniformName, const T& value)
+	{
+		int location = glGetUniformLocation(shader->GetProgram(), uniformName.c_str());
+		setUniformValue(container, location, value);
+		return location;
+	}
 
 public:
 	bool hasTranslucency;
@@ -26,9 +45,13 @@ public:
 	Material(Shader* shader, bool hasTranslucency = false);
 	virtual ~Material();
 
-	inline const Shader* GetShader() const { return shader; }
+	inline const Shader* GetShader() const
+	{
+		return shader;
+	}
 
-	void AddTexture(const std::string& uniformName, Texture* texture);
+	int Set(const std::string& uniformName, Texture* texture);
+	void Set(int uniformLocation, Texture* texture);
 
 	void UpdateTextures();
 };

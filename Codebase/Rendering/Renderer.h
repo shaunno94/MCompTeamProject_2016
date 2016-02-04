@@ -5,6 +5,9 @@
 
 class Renderer : public OGLRenderer	{
 public:
+
+	static Renderer* GetInstance() { return m_renderer; }
+
 	Renderer(Window &parent);
 	virtual ~Renderer(void);
 
@@ -14,4 +17,6 @@ public:
 protected:
 	Mesh*	triangle;
 	Camera*	camera;
+
+	static Renderer* m_renderer;
 };
