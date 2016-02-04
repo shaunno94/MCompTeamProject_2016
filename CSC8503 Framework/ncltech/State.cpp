@@ -1,18 +1,28 @@
 #include "State.h"
 
 
-State::State(string name, GameObject& go) {
-	m_GameObject = &go;
-	m_Active = false;
-	stateName = name;
+State::State()
+{
+	m_activeChildState = 0;
 }
 
 
-State::~State(void) {
+State::~State()
+{
 }
 
+void State::Update(float dt)
+{
 
+}
 
-void State::Start() { m_Active = true; }
+void State::AddChildState(State* childState)
+{
+	m_childStates.push_back(childState);
+}
 
-void State::End() { m_Active = false; }
+void State::AddTrigger(Trigger* trigger , unsigned int destState)
+{
+	m_triggers.push_back(new std::pair<Trigger*, unsigned int>(trigger, destState));
+}
+

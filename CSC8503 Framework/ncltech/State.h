@@ -1,34 +1,25 @@
 #pragma once
 #include <vector>
-
-using namespace std;
-
-class GameObject;
+#include "Trigger.h"
 
 class State
 {
-protected:
-	GameObject* m_GameObject;
-	bool m_Active;
-
-	// Is this a hierarchical FSM in which this state has sub-states?
-	vector<State*> m_ChildStates;
-
-	// If so, which of these child states are active
-	int m_activeState;
-
 public:
-	State(string name, GameObject& go);
-	virtual ~State(void);
+	State();
+	~State();
 
-	virtual void Start();
+	virtual void Update(float dt);
+	void CheckTriggers();
 
-	virtual void Update(float deltaTime);
+	void AddChildState(State* childState);
+	void AddTrigger(Trigger* trigger, unsigned int destState);
+	
+protected:
+	typedef std::pair<Trigger, unsigned int> triggerPair;
 
-	virtual void End();
+	std::vector<State*> m_childStates;
+	int m_activeChildState; // = 0 if no children
 
-	// Helper variable for debugging purposes
-	string stateName;
-
+	std::vector<triggerPair*> m_triggers;
 };
 

@@ -1,65 +1,50 @@
 #include "StateMachine.h"
 
 
-StateMachine::StateMachine(void) {
-	m_CurrentState = nullptr;
-	m_CurrentStateIndex = 0;
+StateMachine::StateMachine()
+{
+	m_stateMap = new stateMapping();
 }
 
 
-StateMachine::~StateMachine(void) {
-
-	// Delete States
-	for (State* state : States)
-		delete state;
-	States.clear();
-
-	// Delete Transitions
-	for (std::vector<std::pair<StateTransition*, unsigned int>>& transitionSet : StateTransitions) {
-		for (std::pair<StateTransition*, unsigned int>& transition : transitionSet)
-			delete transition.first;
-		transitionSet.clear();
-	}
-	StateTransitions.clear();
-}
-
-/// <summary>
-/// Add a state to the state machine
-/// </summary>
-/// <param name="state"> The new state</param>
-/// <param name="transitions"> Transition-integer pairs defining the transitions associated with this new state, and
-///		connecting them to the index of the destination state </param>
-void StateMachine::AddState(State* state, std::vector<std::pair<StateTransition*, unsigned int>>& transitions) {
-	States.push_back(state);
-	StateTransitions.push_back(transitions);
-}
-
-/// <summary>
-/// Calls the update function on the currently active state in the FSM
-/// </summary>
-/// <param name="deltaTime"> Time since last frame </param>
-void StateMachine::Update(float deltaTime) {
-
-	// If no state has been assigned, take state from available states and start it
-	if(!m_CurrentState) {
-		m_CurrentState = States[m_CurrentStateIndex];
-		m_CurrentState->Start();
-	}
-
-	// Call appropriate update function on the gameobject
-	m_CurrentState->Update(deltaTime);
-
-	// Iterate through each transition pair, and if a transition is triggered, make the change to the new state
-	//		using the index held in the pair. Also start this new state.
-	for (std::pair<StateTransition*, unsigned int> transition : StateTransitions[m_CurrentStateIndex])
+StateMachine::~StateMachine()
+{
+	for (stateMapping::iterator it = m_stateMap->begin();
+	     it != m_stateMap->end();
+	     it++)
 	{
-		if(transition.first->CheckTrigger()) {
-			m_CurrentState->End();
-			m_CurrentStateIndex = transition.second;
-			State* oldState = m_CurrentState;
-			m_CurrentState = States[m_CurrentStateIndex];
-			m_CurrentState->Start();
-			return;
-		}
+		delete it->second;
+		m_stateMap->erase(it);
 	}
 }
+
+void StateMachine::Update(float dt)
+{
+	activeState->Update(dt);
+}
+
+/// <summary>
+///		Check if state has already been added to the StateManager and if not load in
+/// </summary>
+/// <param name="stateName"> Identifier for State </param>
+/// <param name="state"> Actual State object</param>
+void StateMachine::AddState(std::string stateName, State* state)
+{
+	if ((*m_stateMap)[stateName] != nullptr)
+		(*m_stateMap)[stateName] = state;
+}
+
+/// <summary>
+///		Get specific State
+/// </summary>
+/// <param name="stateName"> Name of state to change to </param>
+/// <returns> State matching </returns>
+bool StateMachine::ChangeState(std::string stateName)
+{
+	if ((*m_stateMap)[stateName] != nullptr) {
+		activeState = (*m_stateMap)[stateName];
+		return true;
+	}
+	return false;
+}
+

@@ -96,17 +96,14 @@
     <ClCompile Include="PyramidCollisionShape.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Trigger.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
     <ClCompile Include="StateMachine.cpp">
       <Filter>Source Files\AI</Filter>
     </ClCompile>
     <ClCompile Include="State.cpp">
       <Filter>Source Files\AI</Filter>
-    </ClCompile>
-    <ClCompile Include="StateTransition.cpp">
-      <Filter>Source Files\AI</Filter>
-    </ClCompile>
-    <ClCompile Include="StateManager.cpp">
-      <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -173,17 +170,14 @@
     <ClInclude Include="PyramidCollisionShape.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Trigger.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
     <ClInclude Include="StateMachine.h">
       <Filter>Header Files\AI</Filter>
     </ClInclude>
     <ClInclude Include="State.h">
       <Filter>Header Files\AI</Filter>
-    </ClInclude>
-    <ClInclude Include="StateTransition.h">
-      <Filter>Header Files\AI</Filter>
-    </ClInclude>
-    <ClInclude Include="StateManager.h">
-      <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

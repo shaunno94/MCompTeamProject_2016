@@ -1,26 +1,30 @@
 #pragma once
-
+#include <map>
 #include "State.h"
-#include "StateTransition.h"
-#include <vector>
 
 class StateMachine
 {
-	State* m_CurrentState;
-	unsigned int m_CurrentStateIndex; 
 public:
+	StateMachine();
+	~StateMachine();
 
-	std::vector<State*> States;		// Vector of states in this FSM
-	std::vector<std::vector<std::pair<StateTransition*, unsigned int>>> StateTransitions;	// Transitions: 1- transition, 2- index of dest state in state vector
+	// Call update function on active state
+	void Update(float dt);
 
-	StateMachine(void);
-	~StateMachine(void);
+	// Add new State to the state machine
+	void AddState(std::string stateName, State* state);
+	// Change currently active state - true if success
+	bool ChangeState(std::string stateName);
 
-	void AddState(State* state, std::vector<std::pair<StateTransition*, unsigned int>>& transitions);
+	State* GetCurrentState()
+	{
+		return activeState;
+	}
 
-	void Update(float deltaTime);
+protected:
+	typedef std::map<std::string, State*> stateMapping;
+	stateMapping* m_stateMap;
+	State* activeState;
 
-	State* GetCurrentState();
-	unsigned int GetCurrentStateIndex();
 };
 
