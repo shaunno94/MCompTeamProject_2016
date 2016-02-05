@@ -1,5 +1,8 @@
 # MCompTeamProject_2016
 
+[Google Docs Folder](https://drive.google.com/folderview?id=0ByexR4up3uIQcVJLd3lkWHFvaHc&usp=sharing)
+> For design documentation and such
+
 ##Scrum Meetings:
 
 **Mon** 12:00 | **Tue** 14:00 | **Wed** 12:00 | **Thu** 12:00 | **Fri** 14:00
