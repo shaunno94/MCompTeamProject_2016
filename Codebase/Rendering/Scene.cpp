@@ -10,7 +10,7 @@ Scene::~Scene()
 {
 }
 
-/*GameObject* getOpaqueObjects()
+GameObject* getOpaqueObjects()
 {
 	//STUB
 	return nullptr;
@@ -25,4 +25,4 @@ GameObject* getAllObjects()
 	//STUB
 	return nullptr;
 
-}*/
+}

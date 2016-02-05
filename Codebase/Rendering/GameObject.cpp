@@ -61,7 +61,7 @@ void GameObject::InitPhysics(double mass, Vec3Physics inertia, QuatPhysics orien
 		//Rigid body object (http://www.bulletphysics.org/mediawiki-1.5.8/index.php/Rigid_Bodies)
 		m_ConstructionInfo = new btRigidBody::btRigidBodyConstructionInfo(mass, m_MotionState, m_ColShape, btVector3(0, 0, 0));
 		m_RigidPhysicsObject = new btRigidBody(*m_ConstructionInfo);
-		//Add the body to the physics environment.
+		//Add the body to the physics environment - with group ID 0 and mask 0 this should prevent particles colliding with everything.
 		PhysicsEngineInstance::Instance()->addRigidBody(m_RigidPhysicsObject, 0, 0);
 		break;
 	}
@@ -80,14 +80,14 @@ GameObject*	GameObject::FindGameObject(const std::string& name)
 	{
 		//Has the object in question got the same name?
 		GameObject* cObj = child->FindGameObject(name);
-		if (cObj != NULL)
+		if (cObj)
 		{
 			return cObj;
 		}
 	}
 
 	//Object not found with the given name
-	return NULL;
+	return nullptr;
 }
 
 void GameObject::AddChildObject(GameObject* child)

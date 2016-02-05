@@ -38,8 +38,9 @@ int main() {
 		renderer.UpdateScene(Window::GetWindow().GetTimer()->Get(1000.0f));
 		renderer.RenderScene();
 	}
-
+	
 	//Cleanup
+	PhysicsEngineInstance::Release();
 	Window::Destroy();
 	return 0;
 }
