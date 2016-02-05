@@ -79,12 +79,3 @@ private:
 	static btSequentialImpulseConstraintSolver* solver;
 	static ParticleFilterCallback* filter;
 };
-
-//Finally make sure that the instance is initialised to NULL at the start of the program
-std::mutex PhysicsEngineInstance::m_mConstructed;
-btDiscreteDynamicsWorld* PhysicsEngineInstance::m_pInstance = nullptr;
-btBroadphaseInterface* PhysicsEngineInstance::bf = nullptr;
-btDefaultCollisionConfiguration* PhysicsEngineInstance::collisionConfiguration = nullptr;
-btCollisionDispatcher* PhysicsEngineInstance::dispatcher = nullptr;
-btSequentialImpulseConstraintSolver* PhysicsEngineInstance::solver = nullptr;
-ParticleFilterCallback* PhysicsEngineInstance::filter = nullptr;

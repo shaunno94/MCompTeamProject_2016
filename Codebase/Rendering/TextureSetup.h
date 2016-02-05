@@ -1,6 +1,6 @@
 #pragma once
 
-#include "SOIL2/SOIL2.h"
+#include "Dependencies/SOIL2/SOIL2.h"
 #pragma comment(lib, "SOIL2/soil2.lib")
 
 #include <string>
