@@ -9,10 +9,6 @@ ExtendedMaterial::~ExtendedMaterial()
 {
 }
 
-int ExtendedMaterial::Set(const std::string& uniformName, const Mat4Graphics& mat4)
-{
-	return setUniformValue(m_uniformMat4s, shader, uniformName, mat4);
-}
 int ExtendedMaterial::Set(const std::string& uniformName, const Mat3Graphics& mat3)
 {
 	return setUniformValue(m_uniformMat3s, shader, uniformName, mat3);
@@ -38,10 +34,6 @@ int ExtendedMaterial::Set(const std::string& uniformName, int i)
 	return setUniformValue(m_uniformInts, shader, uniformName, i);
 }
 
-void ExtendedMaterial::Set(int uniformLocation, const Mat4Graphics& mat4)
-{
-	setUniformValue(m_uniformMat4s, uniformLocation, mat4);
-}
 void ExtendedMaterial::Set(int uniformLocation, const Mat3Graphics& mat3)
 {
 	setUniformValue(m_uniformMat3s, uniformLocation, mat3);

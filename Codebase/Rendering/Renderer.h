@@ -2,21 +2,28 @@
 
 #include "OGLRenderer.h"
 #include "Camera.h"
+#include "Scene.h"
+#include "constants.h"
 
 class Renderer : public OGLRenderer	{
 public:
 
-	static Renderer* GetInstance() { return m_renderer; }
+	static Renderer* GetInstance() { return s_renderer; }
 
 	Renderer(Window &parent);
 	virtual ~Renderer(void);
 
-	void RenderScene();
+	void RenderScene(float msec);
+	void SetCurrentScene(Scene* s) { currentScene = s; }
 	void UpdateScene(float msec);
 
 protected:
+
+	Scene* currentScene;
+	//--Contained in Scene--//
 	Mesh*	triangle;
 	Camera*	camera;
 
-	static Renderer* m_renderer;
+	static Renderer* s_renderer;
+	//----------------------//
 };

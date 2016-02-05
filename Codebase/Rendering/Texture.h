@@ -1,7 +1,7 @@
 #pragma once
 
 #include "GL/glew.h"
-#include "SOIL2/SOIL2.h"
+#include "Dependencies/SOIL2/SOIL2.h"
 #pragma comment(lib, "SOIL2/soil2.lib")
 
 #include <string>
@@ -16,7 +16,6 @@ Texture uploading to gpu management class.
 class Texture
 {
 public:
-	~Texture();
 
 	//Loads texture into a texture unit
 	void Load(unsigned int textureUnit);
@@ -36,6 +35,7 @@ public:
 	Texture(const Texture&) = delete;
 
 protected:
+	~Texture();
 
 	static std::unordered_map<std::string, std::vector<Texture*>> s_textureRecords;
 

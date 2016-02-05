@@ -45,7 +45,7 @@
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>NOMINMAX;GLEW_STATIC;_MBCS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>$(SolutionDir);$(SolutionDir)Dependencies\glew-1.13.0\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\BulletPhysics\src;$(SolutionDir);$(SolutionDir)Dependencies\glew-1.13.0\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
@@ -60,7 +60,7 @@
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>NOMINMAX;NDEBUG;GLEW_STATIC;_MBCS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>$(SolutionDir);$(SolutionDir)Dependencies\glew-1.13.0\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\BulletPhysics\src;$(SolutionDir);$(SolutionDir)Dependencies\glew-1.13.0\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
@@ -73,6 +73,24 @@
     <ClCompile Include="Source.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\BulletPhysics\build3\vs2010\BulletCollision.vcxproj">
+      <Project>{40ea9fb9-b6a7-0546-bb80-77339701554e}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\BulletPhysics\build3\vs2010\BulletDynamics.vcxproj">
+      <Project>{dc95e089-a36f-e041-a7cd-54df1737639b}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\BulletPhysics\build3\vs2010\LinearMath.vcxproj">
+      <Project>{e9a76716-ef48-2d48-b6ae-09a54f748cae}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\Input\Input.vcxproj">
+      <Project>{c60fce67-02e6-493e-ba76-03cc04043046}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\Math\Math.vcxproj">
+      <Project>{bbdee9f7-c011-44dc-a8f4-86cc2b87adc7}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\PhysicsEngine\PhysicsEngine.vcxproj">
+      <Project>{2cc601e3-e95d-4c55-b786-474f898780f5}</Project>
+    </ProjectReference>
     <ProjectReference Include="..\Rendering\Rendering.vcxproj">
       <Project>{b7a9766d-22d7-48e8-b28a-c48c6e42af98}</Project>
     </ProjectReference>

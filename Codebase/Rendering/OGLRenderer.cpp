@@ -248,6 +248,7 @@ void OGLRenderer::UpdateScene(float msec)
 
 }
 
+
 /*
 Updates the uniform matrices of the current shader. Assumes that
 the shader has uniform matrices called modelMatrix, viewMatrix,
@@ -262,9 +263,11 @@ void OGLRenderer::UpdateShaderMatrices()
 		glUniformMatrix4fv(glGetUniformLocation(currentShader->GetProgram(), "modelMatrix"), 1, false, (float*)&modelMatrix);
 		glUniformMatrix4fv(glGetUniformLocation(currentShader->GetProgram(), "viewMatrix"), 1, false, (float*)&viewMatrix);
 		glUniformMatrix4fv(glGetUniformLocation(currentShader->GetProgram(), "projMatrix"), 1, false, (float*)&projMatrix);
-		glUniformMatrix4fv(glGetUniformLocation(currentShader->GetProgram(), "textureMatrix"), 1, false, (float*)&textureMatrix);
+		//part of the material now
+		//glUniformMatrix4fv(glGetUniformLocation(currentShader->GetProgram(), "textureMatrix"), 1, false, (float*)&textureMatrix);
 	}
 }
+
 
 void OGLRenderer::SetCurrentShader(Shader* s)
 {
@@ -411,16 +414,16 @@ void	OGLRenderer::DrawDebugBox(DebugDrawMode mode, const Vec3Graphics& at, const
 	DebugDrawData* target = (mode == DEBUGDRAW_ORTHO ? target = orthoDebugData : target = perspectiveDebugData);
 
 	target->AddLine(at + Vec3Graphics(-scale.x * 0.5f, scale.y * 0.5f, 0),
-	                at + Vec3Graphics(-scale.x * 0.5f, -scale.y * 0.5f, 0), colour, colour);
+		at + Vec3Graphics(-scale.x * 0.5f, -scale.y * 0.5f, 0), colour, colour);
 
 	target->AddLine(at + Vec3Graphics(-scale.x * 0.5f, -scale.y * 0.5f, 0),
-	                at + Vec3Graphics(scale.x * 0.5f, -scale.y * 0.5f, 0), colour, colour);
+		at + Vec3Graphics(scale.x * 0.5f, -scale.y * 0.5f, 0), colour, colour);
 
 	target->AddLine(at + Vec3Graphics(scale.x * 0.5f, -scale.y * 0.5f, 0),
-	                at + Vec3Graphics(scale.x * 0.5f, scale.y * 0.5f, 0), colour, colour);
+		at + Vec3Graphics(scale.x * 0.5f, scale.y * 0.5f, 0), colour, colour);
 
 	target->AddLine(at + Vec3Graphics(scale.x * 0.5f, scale.y * 0.5f, 0),
-	                at + Vec3Graphics(-scale.x * 0.5f, scale.y * 0.5f, 0), colour, colour);
+		at + Vec3Graphics(-scale.x * 0.5f, scale.y * 0.5f, 0), colour, colour);
 
 }
 
@@ -429,10 +432,10 @@ void	OGLRenderer::DrawDebugCross(DebugDrawMode mode, const Vec3Graphics& at, con
 	DebugDrawData* target = (mode == DEBUGDRAW_ORTHO ? target = orthoDebugData : target = perspectiveDebugData);
 
 	target->AddLine(at + Vec3Graphics(-scale.x * 0.5f, -scale.y * 0.5f, 0),
-	                at + Vec3Graphics(scale.x * 0.5f, scale.y * 0.5f, 0), colour, colour);
+		at + Vec3Graphics(scale.x * 0.5f, scale.y * 0.5f, 0), colour, colour);
 
 	target->AddLine(at + Vec3Graphics(scale.x * 0.5f, -scale.y * 0.5f, 0),
-	                at + Vec3Graphics(-scale.x * 0.5f, scale.y * 0.5f, 0), colour, colour);
+		at + Vec3Graphics(-scale.x * 0.5f, scale.y * 0.5f, 0), colour, colour);
 
 }
 
@@ -455,7 +458,7 @@ void	OGLRenderer::DrawDebugCircle(DebugDrawMode mode, const Vec3Graphics& at, co
 		float endy = radius * (float)sin(DegToRad((i + 1) * divisor)) + at.y;
 
 		target->AddLine(Vec3Graphics(startx, starty, at.z),
-		                Vec3Graphics(endx, endy, at.z), colour, colour);
+			Vec3Graphics(endx, endy, at.z), colour, colour);
 	}
 }
 

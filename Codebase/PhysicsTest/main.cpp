@@ -54,7 +54,7 @@ int main()
 	//Construct rigid body object
 	btRigidBody::btRigidBodyConstructionInfo groundRigidBodyCI(0, groundMotionState, groundShape, btVector3(0, 0, 0));
 	btRigidBody* groundRigidBody = new btRigidBody(groundRigidBodyCI);
-
+	
 	//Add plane to physics world
 	dynamicsWorld->addRigidBody(groundRigidBody);
 
@@ -75,8 +75,8 @@ int main()
 	{
 		//Step simulation
 		dynamicsWorld->stepSimulation(1.0 / 60.0, 10);
-		renderer.UpdateScene(Window::GetWindow().GetTimer()->Get(1000.0f));
-		renderer.RenderScene();
+		//renderer.UpdateScene(Window::GetWindow().GetTimer()->Get(1000.0f));
+		renderer.RenderScene(Window::GetWindow().GetTimer()->Get(1000.0f));
 	}
 
 	/*for (unsigned int i = 0; i < 300; ++i)

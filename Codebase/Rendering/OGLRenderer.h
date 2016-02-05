@@ -11,7 +11,6 @@
 
 #include "GL/glew.h"
 #include "GL/wglew.h"
-
 #include "Math/nclglMath.h"
 #include "Window.h"
 //#include "light.h"
@@ -103,7 +102,7 @@ public:
 	OGLRenderer(Window& parent);
 	virtual ~OGLRenderer(void);
 
-	virtual void	RenderScene() = 0;
+	virtual void	RenderScene(float msec) = 0;
 	virtual void	UpdateScene(float msec);
 	void			SwapBuffers();
 
@@ -124,11 +123,21 @@ public:
 	{
 		return currentShader;
 	}
+	void			SetCurrentShader(Shader* s);
+
+	void UpdateUniform(GLint location, const Mat4Graphics& mat4);
+	void UpdateUniform(GLint location, const Mat3Graphics& mat3);
+	void UpdateUniform(GLint location, const Vec4Graphics& vec4);
+	void UpdateUniform(GLint location, const Vec3Graphics& vec3);
+	void UpdateUniform(GLint location, const Vec2Graphics& vec2);
+	void UpdateUniform(GLint location, float f);
+	void UpdateUniform(GLint location, double d);
+	void UpdateUniform(GLint location, int i);
+	void UpdateUniform(GLint location, unsigned int u);
+	void			UpdateShaderMatrices();
 
 protected:
 	virtual void	Resize(int x, int y);
-	void			UpdateShaderMatrices();
-	void			SetCurrentShader(Shader* s);
 
 	void			SetTextureRepeating(GLuint target, bool state);
 
@@ -159,16 +168,6 @@ protected:
 	static Shader*		  debugDrawShader;
 
 
-
-	void UpdateUniform(GLint location, const Mat4Graphics& mat4);
-	void UpdateUniform(GLint location, const Mat3Graphics& mat3);
-	void UpdateUniform(GLint location, const Vec4Graphics& vec4);
-	void UpdateUniform(GLint location, const Vec3Graphics& vec3);
-	void UpdateUniform(GLint location, const Vec2Graphics& vec2);
-	void UpdateUniform(GLint location, float f);
-	void UpdateUniform(GLint location, double d);
-	void UpdateUniform(GLint location, int i);
-	void UpdateUniform(GLint location, unsigned int u);
 
 #ifdef _DEBUG
 	static void CALLBACK DebugCallback(GLuint source, GLuint type, GLuint id, GLuint severity,

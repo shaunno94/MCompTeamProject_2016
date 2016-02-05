@@ -5,6 +5,7 @@
 #include <ncltech\NCLDebug.h>
 #include <future>
 #include "ncltech\CommonMeshes.h"
+#include <btBulletDynamicsCommon.h>
 
 Scene* scene = NULL;
 
@@ -69,9 +70,9 @@ int main() {
 			previousScene = nullptr;
 		}
 	};
-
-	/*CommonMeshes::InitializeMeshes();
-	NCLDebug::LoadShaders();*/
+	btBroadphaseInterface* broadphase = new btDbvtBroadphase();
+	CommonMeshes::InitializeMeshes();
+	NCLDebug::LoadShaders();
 
 	while (scene) {
 		GameLoop(scene);
@@ -85,9 +86,9 @@ int main() {
 	PhysicsEngine::g_Running = false;
 	physicsEngineHandle.get();
 
-	/*CommonMeshes::ReleaseMeshes();
-	NCLDebug::ReleaseShaders();*/
-
+	CommonMeshes::ReleaseMeshes();
+	NCLDebug::ReleaseShaders();
+	delete broadphase;
 	//Cleanup
 	return Quit();
 }
