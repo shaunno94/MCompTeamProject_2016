@@ -5,71 +5,93 @@
 #include <sstream>
 
 
-std::unordered_map<std::string, Texture*> Texture::s_textureRecords;
-Texture*	Texture::s_boundTextureSlots[MAX_BOUND_TEXTURE_COUNT] = {};
-bool		Texture::s_textureSlotActive[MAX_BOUND_TEXTURE_COUNT] = {};
-unsigned int Texture::s_nextTextureSlot = 0;
-
+std::unordered_map<std::string, std::vector<Texture*>> Texture::s_textureRecords;
 int Texture::s_memoryUsage = 0;
-
 
 
 Texture* Texture::Make(const std::string& filePath, bool preload)
 {
-	std::unordered_map<std::string, Texture*>::const_iterator match = s_textureRecords.find(filePath);
+	Texture* newTexture;
+	std::unordered_map<std::string, std::vector<Texture*>>::iterator match = s_textureRecords.find(filePath);
 	if (match != s_textureRecords.end())
 	{
-		++(match->second->m_referenceCount);
-		return match->second;
+		newTexture = new Texture(filePath, match->second.size(), preload);
+		match->second.push_back(newTexture);
 	}
-
-	Texture* newTexture = new Texture(filePath, preload);
-	s_textureRecords.insert(std::unordered_map<std::string, Texture*>::value_type(filePath, newTexture));
+	else
+	{
+		newTexture = new Texture(filePath, 0, preload);
+		s_textureRecords.insert(std::pair<std::string, std::vector<Texture*>>(filePath, std::vector<Texture*>())).first->second.push_back(newTexture);
+	}
 	return newTexture;
 }
 
+Texture* Texture::Get(const std::string& filePath, bool preload)
+{
+	Texture* newTexture;
+	std::unordered_map<std::string, std::vector<Texture*>>::iterator match = s_textureRecords.find(filePath);
+	if (match != s_textureRecords.end())
+	{
+		Texture* tex = match->second.back();
+		++(tex->m_referenceCount);
+		return tex;
+	}
+	else
+	{
+		newTexture = new Texture(filePath, 0, preload);
+		s_textureRecords.insert(std::pair<std::string, std::vector<Texture*>>(filePath, std::vector<Texture*>())).first->second.push_back(newTexture);
+	}
+	return newTexture;
+}
+
+//needs testing!
 void Texture::Clear(Texture* tex)
 {
+	//if this was the last reference for the texture
 	if (!--(tex->m_referenceCount))
 	{
-		if (s_boundTextureSlots[tex->texSlot] == tex)
+		std::unordered_map<std::string, std::vector<Texture*>>::iterator match = s_textureRecords.find(tex->filePath);
+		if (match != s_textureRecords.end())
 		{
-			s_boundTextureSlots[tex->texSlot] = nullptr;
-			s_textureSlotActive[tex->texSlot] = false;
+			std::vector<Texture*>& textures = match->second;
+			Texture** foundTex = &textures[tex->textureCopyIndex];
+			//double check if referenced texture is correct
+			if (tex == *foundTex)
+			{
+				delete tex;
+				*foundTex = nullptr;
+				//if this was the latest texture copy in the collection , then shrink the collection
+				if (textures.size() - 1 == tex->textureCopyIndex)
+				{
+					auto rend = textures.rend();
+					for (auto rit = textures.rbegin(); rit != rend;)
+					{
+						//loop over and erase records from the back until not empty
+						if (*rit == nullptr)
+							textures.erase((++rit).base());
+						else
+							break;
+					}
+					if (textures.size() == 0)
+						s_textureRecords.erase(tex->filePath);
+				}
+			}
 		}
-		s_textureRecords.erase(tex->filePath);
-		delete tex;
 	}
 }
 
 void Texture::ClearAll()
 {
-	memset(s_boundTextureSlots, 0, sizeof(Texture*) * MAX_BOUND_TEXTURE_COUNT);
-	memset(s_textureSlotActive, 0, sizeof(bool) * MAX_BOUND_TEXTURE_COUNT);
-	for (auto i = s_textureRecords.begin(); i != s_textureRecords.end() ; ++i)
+	for (auto it = s_textureRecords.begin(); it != s_textureRecords.end() ; ++it)
 	{
-		delete i->second;
+		auto end2 = it->second.end();
+		for (auto it2 = it->second.begin(); it2 != end2; ++it2)
+		{
+			if (*it2)
+				delete *it2;
+		}
 	}
 	s_textureRecords.clear();
-}
-
-unsigned int Texture::GetNextTextureSlot()
-{
-	unsigned int prev;
-	unsigned int counter = 0;
-	do
-	{
-		prev = s_nextTextureSlot;
-		s_nextTextureSlot = (s_nextTextureSlot + 1) % MAX_BOUND_TEXTURE_COUNT;
-		if (++counter == MAX_BOUND_TEXTURE_COUNT) break;
-	}
-	while (s_textureSlotActive[prev]);
-	return prev;
-}
-
-void Texture::DrawBoundingReset()
-{
-	memset(s_textureSlotActive, 0, sizeof(bool) * MAX_BOUND_TEXTURE_COUNT);
 }
 
 
@@ -116,25 +138,16 @@ void Texture::MeasureMemoryUsageSubstract(GLuint textureId)
 
 
 
-Texture::Texture(const std::string& filepath, bool preload) : filePath(filepath), textureId(0)
+Texture::Texture(const std::string& filepath, size_t index, bool preload) : filePath(filepath)
 {
-	texSlot = GetNextTextureSlot();
+	textureId = 0;
+	textureCopyIndex = index;
 	m_referenceCount = 1;
-	if(preload) Load();
+	if (preload) LoadFromFile();
 }
 
 Texture::~Texture()
 {
-	Texture** record = &s_boundTextureSlots[texSlot];
-
-	if(*record == this)
-	{
-		s_textureSlotActive[TEXTURE_UNIT_START + texSlot] = false;
-		glActiveTexture(TEXTURE_UNIT_START + texSlot);
-		glBindTexture(GL_TEXTURE_2D, 0);
-		delete *record;
-		*record = nullptr;
-	}
 	if(textureId)
 	{
 		MeasureMemoryUsageSubstract(textureId);
@@ -146,6 +159,12 @@ Texture::~Texture()
 
 void Texture::LoadFromFile()
 {
+	if (textureId)
+	{
+		MeasureMemoryUsageSubstract(textureId);
+		glDeleteTextures(1, &textureId);
+		textureId = 0;
+	}
 	textureId = SOIL_load_OGL_texture(
 	              filePath.c_str(),
 	              SOIL_LOAD_AUTO,
@@ -169,32 +188,9 @@ void Texture::LoadFromFile()
 /// Loads a texture to it's texture unit for use in shaders
 /// </summary>
 /// <returns></returns>
-GLuint Texture::Load()
+void Texture::Load(unsigned int textureUnit)
 {
-	Texture** record = &s_boundTextureSlots[texSlot];
-	if (*record != nullptr)
-	{
-		if (*record != this)
-		{
-			if (s_textureSlotActive[texSlot])
-			{
-				texSlot = GetNextTextureSlot();
-				record = &s_boundTextureSlots[texSlot];
-			}
-			*record = this;
-			glActiveTexture(TEXTURE_UNIT_START + texSlot);
-			if (!textureId) LoadFromFile();
-			glBindTexture(GL_TEXTURE_2D, textureId);
-		}
-	}
-	else
-	{
-		*record = this;
-		glActiveTexture(TEXTURE_UNIT_START + texSlot);
-		if (!textureId) LoadFromFile();
-		glBindTexture(GL_TEXTURE_2D, textureId);
-	}
-	s_textureSlotActive[texSlot] = true;
-
-	return textureId;
+	glActiveTexture(GL_TEXTURE0 + textureUnit);
+	if (!textureId) LoadFromFile();
+	glBindTexture(GL_TEXTURE_2D, textureId);
 }

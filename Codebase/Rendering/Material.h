@@ -39,6 +39,9 @@ protected:
 		return location;
 	}
 
+
+	static const GLuint TEXTURE_UNIT_START = GL_TEXTURE0;
+
 public:
 	bool hasTranslucency;
 
@@ -53,6 +56,6 @@ public:
 	int Set(const std::string& uniformName, Texture* texture);
 	void Set(int uniformLocation, Texture* texture);
 
-	void UpdateTextures();
+	virtual void Setup();
 };
 

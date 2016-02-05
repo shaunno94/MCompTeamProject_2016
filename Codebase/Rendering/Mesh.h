@@ -34,6 +34,11 @@ enum MeshBuffer {
 	MAX_BUFFER
 };
 
+
+
+
+
+
 class Mesh	{
 public:
 	friend class MD5Mesh;

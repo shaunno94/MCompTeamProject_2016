@@ -15,7 +15,7 @@ protected:
 	std::vector<std::pair<int, int>> m_uniformInts;
 
 public:
-	ExtendedMaterial();
+	ExtendedMaterial(Shader* shader, bool hasTranslucency = false);
 	~ExtendedMaterial();
 
 	int Set(const std::string& uniformName, const Mat4Graphics& mat4);
