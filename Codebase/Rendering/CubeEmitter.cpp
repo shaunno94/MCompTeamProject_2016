@@ -17,8 +17,7 @@ CubeEmitter::CubeEmitter()
 {}
 
 void CubeEmitter::EmitParticle(Particle& particle)
-{
-	
+{	
 	float x = RNG32::Rand(MinWidth, MaxWidth);
 	float y = RNG32::Rand(MinHeight, MaxHeight);
 	float z = RNG32::Rand(MinDepth, MaxDepth);

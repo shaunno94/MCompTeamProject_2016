@@ -17,7 +17,12 @@ void ParticleManager::RemoveSystem(ParticleSystem* system)
 void ParticleManager::Update(float delta)
 {
 	for (unsigned int i = 0; i < m_Systems.size(); ++i)
-		m_Systems[i]->Update(delta);
+	{
+		if (!m_Systems[i]->Update(delta))
+		{
+			delete m_Systems[i];
+		}
+	}
 }
 
 void ParticleManager::Render()

@@ -3,10 +3,9 @@
 #include "Mesh.h"
 #include "Camera.h"
 #include "Particle.h"
-
+#include "ParticleEmitter.h"
 
 enum SystemType {BILLBOARD, TRAIL, BEAM};
-
 
 class ParticleSystem
 {
@@ -28,15 +27,19 @@ public:
 		Vec2Graphics m_Tex;
 	};
 
-	void Update(float delta);
+	void EmitParticles();
+	void BuildVertexBuffer();
+	bool Update(float delta);
 	void Render();
 
 	bool LoadTexture(const std::string& fileName);
 
 protected:
 	void RandomizePos();
+	void EmitParticle(Particle &particle);
 private:
 	Camera*					m_Camera;
+	ParticleEmitter*		m_ParticleEmitter;
 	GLuint					m_Texture;
 	SystemType				m_SystemType;
 	Particle* 				m_Particles;
