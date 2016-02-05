@@ -6,14 +6,15 @@ Renderer::Renderer(Window& parent) : OGLRenderer(parent)
 {
 	triangle = Mesh::GenerateTriangle();
 	camera = new Camera(0.0f, 0.0f, Vec3Graphics(0, 0, 0));
-	modelMatrix.SetTranslation(Vec3Graphics(0.0, 0.0, -2.0));
+
+	currentShader = nullptr;
 	//TODO: change SHADERDIR to SHADER_DIR
-	currentShader = new Shader(SHADER_DIR"basicVertex.glsl", SHADER_DIR"colourFragment.glsl");
+	/*currentShader = new Shader(SHADER_DIR"basicVertex.glsl", SHADER_DIR"colourFragment.glsl");
 
 	if (!currentShader->IsOperational())
 	{
 		return;
-	}
+	}*/
 
 	projMatrix = Mat4Graphics::Perspective(1.0f, 15000.0f, (float)width / (float)height, 45.0f);
 	//projMatrix = Mat4Graphics::Orthographic(-1, 1, 1, -1, -1, 1);
@@ -42,16 +43,18 @@ void Renderer::UpdateScene(float msec)
 		viewMatrix = camera->BuildViewMatrix();
 		//viewMatrix.ToIdentity();
 	}
+	//TODO: This will not work. As each object could have its own shader, the update needs to be called for each game object.
+	//TODO: When we add UBOs this approach will be valid again, so no need to spend a lot of time fixing this issue.
 	UpdateShaderMatrices();
 }
 
-//TODO:: Probably needs to be seperate from UpdateScene call if you want to update the scene once and draw several times (like for the cube shadow maps)
+//TODO:: Might need to be seperate from UpdateScene call if you want to update the scene once and draw several times (like for the cube shadow maps)
 void Renderer::RenderScene(float msec)
 {
 	UpdateScene(msec);
 	glClear(GL_COLOR_BUFFER_BIT);
 
-	glUseProgram(currentShader->GetProgram());
+	//glUseProgram(currentShader->GetProgram());
 
 	//Draws all objects attatched to the current scene.
 	if (currentScene)
@@ -61,16 +64,12 @@ void Renderer::RenderScene(float msec)
 		{
 			currentScene->getOpaqueObject(i)->OnUpdateObject(msec);
 			currentScene->getOpaqueObject(i)->OnRenderObject();
-			modelMatrix = currentScene->getOpaqueObject(i)->GetLocalTransform();
-			UpdateModelMatrix();
 		}
 		//Draw transparent
 		for (unsigned int i = 0; i < currentScene->getNumTransparentObjects(); ++i)
 		{
 			currentScene->getTransparentObject(i)->OnUpdateObject(msec);
 			currentScene->getTransparentObject(i)->OnRenderObject();
-			modelMatrix = currentScene->getTransparentObject(i)->GetLocalTransform();
-			UpdateModelMatrix();
 		}
 	}
 	else

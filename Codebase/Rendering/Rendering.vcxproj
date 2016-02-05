@@ -83,8 +83,8 @@
     <ClInclude Include="Material.h" />
     <ClInclude Include="Mesh.h" />
     <ClInclude Include="OGLRenderer.h" />
+    <ClInclude Include="RenderComponent.h" />
     <ClInclude Include="Renderer.h" />
-    <ClInclude Include="RenderingComponent.h" />
     <ClInclude Include="Scene.h" />
     <ClInclude Include="Shader.h" />
     <ClInclude Include="Texture.h" />

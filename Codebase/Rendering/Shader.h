@@ -32,7 +32,7 @@ public:
 	Shader(string vertex, string fragment , string geometry = "", string tcsFile = "", string tesFile = "");
 	~Shader(void);
 
-	GLuint  GetProgram() { return program;}
+	GLuint  GetProgram() const { return program;}
 	inline bool IsOperational() const { return operational == GL_TRUE; }
 
 protected:

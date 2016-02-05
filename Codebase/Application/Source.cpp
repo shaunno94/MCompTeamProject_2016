@@ -36,8 +36,14 @@ int main() {
 	//Game objects added to scene are delete by the scene so don't delete twice.
 	GameObject* test = new GameObject("test");
 	GameObject* floor = new GameObject("floor");
-	floor->SetMesh(Mesh::GenerateQuad());
-	test->SetMesh(Mesh::GenerateIcosphere(1));
+
+	Shader* simpleShader = new Shader(SHADER_DIR"basicVertex.glsl", SHADER_DIR"colourFragment.glsl");
+	if (!simpleShader->IsOperational())
+		return -1;
+	Material* material = new Material(simpleShader);
+
+	floor->SetRenderComponent(new RenderComponent(material, Mesh::GenerateQuad()));
+	test->SetRenderComponent(new RenderComponent(material, Mesh::GenerateIcosphere(1)));
 	test->InitPhysics();
 	myScene->addGameObject(test);
 	//myScene->addGameObject(floor);

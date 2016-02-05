@@ -8,7 +8,6 @@
 #include <string>
 #include "Texture.h"
 
-class Renderer;
 
 class Material
 {
@@ -38,12 +37,19 @@ protected:
 		return location;
 	}
 
+	template<typename T>
+	static void UpdateUniformValue(std::vector<std::pair<int, T>>& container)
+	{
+		for (auto it = container.begin(); it != container.end(); ++it)
+			Renderer::UpdateUniform(it->first, it->second);
+	}
+
 	static const GLuint TEXTURE_UNIT_START = GL_TEXTURE0;
+	static Material* s_LastMaterialInUse;
 
 
 	Shader* shader;
 	std::vector<std::pair<int, Texture*>> m_uniformTextures;
-	std::vector<std::pair<int, Mat4Graphics>> m_uniformMat4s;
 
 public:
 	bool hasTranslucency;
@@ -56,12 +62,11 @@ public:
 		return shader;
 	}
 
+	virtual void Setup();
+
 	int Set(const std::string& uniformName, Texture* texture);
-	int Set(const std::string& uniformName, const Mat4Graphics& mat4);
 
 	void Set(int uniformLocation, Texture* texture);
-	void Set(int uniformLocation, const Mat4Graphics& mat4);
 
-	virtual void Setup(Renderer* r);
 };
 

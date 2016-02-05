@@ -9,13 +9,13 @@ class Renderer;
 class RenderComponent
 {
 public:
-	RenderComponent();
+	RenderComponent(Material* material, Mesh* mesh);
 	~RenderComponent();
 
-	Material*	m_material;
-	Mesh*		m_mesh;
+	Material*	m_Material;
+	Mesh*		m_Mesh;
 
-	void Draw(Renderer* r);
+	void Draw();
 
 	void SetParent(GameObject* go);
 

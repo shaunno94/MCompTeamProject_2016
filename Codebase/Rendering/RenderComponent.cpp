@@ -1,8 +1,10 @@
 #include "RenderComponent.h"
 #include "Renderer.h"
 
-RenderComponent::RenderComponent()
+RenderComponent::RenderComponent(Material* material, Mesh* mesh)
 {
+	m_Material = material;
+	m_Mesh = mesh;
 	m_GameObject = nullptr;
 	m_ModelMatrixLocattion = -1;
 }
@@ -12,13 +14,15 @@ RenderComponent::~RenderComponent()
 {
 }
 
-void RenderComponent::Draw(Renderer* r) {
-	m_material->Setup(r);
-
-	glUniformMatrix4fv(glGetUniformLocation(currentShader->GetProgram(), "modelMatrix"), 1, false, (float*)&modelMatrix);
-	r->UpdateUniform("modelMatrix")
+//TODO: !!! Save available Mesh Texture locations on the Render Component !!!
+void RenderComponent::Draw() {
+	m_Material->Setup();
+	Renderer::UpdateUniform(m_ModelMatrixLocattion, m_GameObject->GetWorldTransform());
+	m_Mesh->Draw();
 }
 
 void RenderComponent::SetParent(GameObject* go) {
 	m_GameObject = go;
+	//TODO: move modelMatrix string to constants header file
+	m_ModelMatrixLocattion = glGetUniformLocation(m_Material->GetShader()->GetProgram(), "modelMatrix");
 }

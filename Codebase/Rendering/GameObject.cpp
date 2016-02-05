@@ -27,6 +27,10 @@ GameObject::~GameObject()
 		m_MotionState = nullptr;
 		m_RigidPhysicsObject = nullptr;
 	}
+	if (m_RenderComponent) {
+		delete m_RenderComponent;
+		m_RenderComponent = nullptr;
+	}
 }
 
 void GameObject::InitPhysics(double mass, const Vec3Physics& inertia, const QuatPhysics& orientation,

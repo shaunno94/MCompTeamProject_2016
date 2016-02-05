@@ -4,7 +4,8 @@
 #include <iostream>
 #include <cmath>
 
-Mesh::Mesh(void)	{
+Mesh::Mesh(void)
+{
 	glGenVertexArrays(1, &arrayObject);
 
 	for(int i = 0; i < MAX_BUFFER; ++i)
@@ -27,7 +28,8 @@ Mesh::Mesh(void)	{
 	transformCoords = true;
 }
 
-Mesh::~Mesh(void)	{
+Mesh::~Mesh(void)
+{
 	glDeleteVertexArrays(1, &arrayObject);			//Delete our VAO
 	glDeleteBuffers(MAX_BUFFER, bufferObject);		//Delete our VBOs
 
@@ -43,25 +45,26 @@ Mesh::~Mesh(void)	{
 	delete[]colours;
 }
 
-void Mesh::Draw(bool update)	{
-	if(update) {
-		glActiveTexture(GL_TEXTURE0);
-		glBindTexture(GL_TEXTURE_2D, texture);
+void Mesh::Draw()
+{
+	glActiveTexture(GL_TEXTURE0);
+	glBindTexture(GL_TEXTURE_2D, texture);
 
-		glActiveTexture(GL_TEXTURE1);
-		glBindTexture(GL_TEXTURE_2D, bumpTexture);
-	}
+	glActiveTexture(GL_TEXTURE1);
+	glBindTexture(GL_TEXTURE_2D, bumpTexture);
 
 	glBindVertexArray(arrayObject);
 	if(bufferObject[INDEX_BUFFER])
 		glDrawElements(type, numIndices, GL_UNSIGNED_INT, 0);
-	else {
+	else
+	{
 		glDrawArrays(type, 0, numVertices);	//Draw the triangle!
 	}
 	glBindVertexArray(0);
 }
 
-Mesh* Mesh::GenerateTriangle()	{
+Mesh* Mesh::GenerateTriangle()
+{
 	Mesh* m = new Mesh();
 	m->numVertices = 3;
 
@@ -87,7 +90,8 @@ Mesh* Mesh::GenerateTriangle()	{
 	return m;
 }
 
-unsigned int IcosphereGetMidPoint(int p1, int p2, std::map<int64_t, unsigned int>& savedPoints, std::vector<Vec3Graphics>& vertices, unsigned int& currentIndex) {
+unsigned int IcosphereGetMidPoint(int p1, int p2, std::map<int64_t, unsigned int>& savedPoints, std::vector<Vec3Graphics>& vertices, unsigned int& currentIndex)
+{
 	// first check if we have it already
 	bool firstIsSmaller = p1 < p2;
 	int64_t smallerIndex = firstIsSmaller ? p1 : p2;
@@ -109,9 +113,11 @@ unsigned int IcosphereGetMidPoint(int p1, int p2, std::map<int64_t, unsigned int
 	return currentIndex++;
 }
 
-Mesh* Mesh::GenerateIcosphere(unsigned int tessalationLevel) {
-	struct TriangleIndices {
-	 public:
+Mesh* Mesh::GenerateIcosphere(unsigned int tessalationLevel)
+{
+	struct TriangleIndices
+	{
+	public:
 		unsigned int v1;
 		unsigned int v2;
 		unsigned int v3;
@@ -177,9 +183,11 @@ Mesh* Mesh::GenerateIcosphere(unsigned int tessalationLevel) {
 
 
 	// refine triangles
-	for(int i = 0; i < tessalationLevel; i++) {
+	for(int i = 0; i < tessalationLevel; i++)
+	{
 		auto tempFaces = new std::vector<TriangleIndices>();
-		for(auto tri : *faces) {
+		for(auto tri : *faces)
+		{
 			// replace triangle by 4 triangles
 			int a = IcosphereGetMidPoint(tri.v1, tri.v2, tessalatedPoints, vertices, currentIndex);
 			int b = IcosphereGetMidPoint(tri.v2, tri.v3, tessalatedPoints, vertices, currentIndex);
@@ -195,7 +203,8 @@ Mesh* Mesh::GenerateIcosphere(unsigned int tessalationLevel) {
 	}
 
 	// done, now add triangles to mesh
-	for(auto tri : *faces) {
+	for(auto tri : *faces)
+	{
 		indices.push_back(tri.v1);
 		indices.push_back(tri.v2);
 		indices.push_back(tri.v3);
@@ -204,13 +213,15 @@ Mesh* Mesh::GenerateIcosphere(unsigned int tessalationLevel) {
 	Mesh* m = new Mesh();
 	m->numVertices = vertices.size();
 	m->vertices = new Vec3Graphics[m->numVertices];
-	for(unsigned int i = 0; i < m->numVertices; ++i) {
+	for(unsigned int i = 0; i < m->numVertices; ++i)
+	{
 		m->vertices[i] = vertices[i];
 	}
 	m->numIndices = indices.size();
 	m->indices = new unsigned int[m->numIndices];
 	unsigned int counter = 0;
-	for(auto face : *faces) {
+	for(auto face : *faces)
+	{
 		m->indices[counter++] = face.v1;
 		m->indices[counter++] = face.v2;
 		m->indices[counter++] = face.v3;
@@ -224,7 +235,8 @@ Mesh* Mesh::GenerateIcosphere(unsigned int tessalationLevel) {
 }
 
 
-Mesh* Mesh::GenerateQuad()	{
+Mesh* Mesh::GenerateQuad()
+{
 	Mesh* m = new Mesh();
 
 	m->numVertices = 4;
@@ -246,7 +258,8 @@ Mesh* Mesh::GenerateQuad()	{
 	m->textureCoords[2] = Vec2Graphics(1.0f,	1.0f);
 	m->textureCoords[3] = Vec2Graphics(1.0f,	0.0f);
 
-	for(int i = 0; i < 4; ++i) {
+	for(int i = 0; i < 4; ++i)
+	{
 		m->colours[i] = Vec4Graphics(1.0f, 1.0f,1.0f,1.0f);
 		m->normals[i] = Vec3Graphics(0.0f, 0.0f,-1.0f);
 		m->tangents[i] = Vec3Graphics(1.0f, 0.0f,0.0f);
@@ -258,7 +271,8 @@ Mesh* Mesh::GenerateQuad()	{
 }
 
 
-Mesh* Mesh::GenerateQuadAlt()	{
+Mesh* Mesh::GenerateQuadAlt()
+{
 	Mesh* m = new Mesh();
 
 	m->numVertices = 4;
@@ -280,7 +294,8 @@ Mesh* Mesh::GenerateQuadAlt()	{
 	m->textureCoords[2] = Vec2Graphics(1.0f,	0.0f);
 	m->textureCoords[3] = Vec2Graphics(1.0f,	1.0f);
 
-	for(int i = 0; i < 4; ++i) {
+	for(int i = 0; i < 4; ++i)
+	{
 		m->colours[i] = Vec4Graphics(1.0f, 1.0f,1.0f,1.0f);
 		m->normals[i] = Vec3Graphics(0.0f, 0.0f,-1.0f);
 		m->tangents[i] = Vec3Graphics(1.0f, 0.0f,0.0f);
@@ -291,7 +306,8 @@ Mesh* Mesh::GenerateQuadAlt()	{
 	return m;
 }
 //NX 01/11/2012
-Mesh* Mesh::GenerateQuadTexCoordCol(Vec2Graphics scale, Vec2Graphics texCoord, Vec4Graphics colour)	{
+Mesh* Mesh::GenerateQuadTexCoordCol(Vec2Graphics scale, Vec2Graphics texCoord, Vec4Graphics colour)
+{
 	Mesh* m = new Mesh();
 
 	m->numVertices = 4;
@@ -313,7 +329,8 @@ Mesh* Mesh::GenerateQuadTexCoordCol(Vec2Graphics scale, Vec2Graphics texCoord, V
 	m->textureCoords[1] = Vec2Graphics(texCoord.y,	texCoord.x);
 	m->textureCoords[3] = Vec2Graphics(texCoord.y,	texCoord.y);
 
-	for(int i = 0; i < 4; ++i) {
+	for(int i = 0; i < 4; ++i)
+	{
 		m->colours[i] = colour;
 		m->normals[i] = Vec3Graphics(0.0f, 0.0f, 1.0f);
 		m->tangents[i] = Vec3Graphics(1.0f, 0.0f,0.0f);
@@ -324,7 +341,8 @@ Mesh* Mesh::GenerateQuadTexCoordCol(Vec2Graphics scale, Vec2Graphics texCoord, V
 	return m;
 }
 
-void	Mesh::BufferData()	{
+void	Mesh::BufferData()
+{
 	//GenerateNormals();
 	//GenerateTangents();
 
@@ -338,7 +356,8 @@ void	Mesh::BufferData()	{
 	glEnableVertexAttribArray(VERTEX_BUFFER);
 
 	//Buffer texture data
-	if(textureCoords) {
+	if(textureCoords)
+	{
 		glGenBuffers(1, &bufferObject[TEXTURE_BUFFER]);
 		glBindBuffer(GL_ARRAY_BUFFER, bufferObject[TEXTURE_BUFFER]);
 		glBufferData(GL_ARRAY_BUFFER, numVertices*sizeof(Vec2Graphics), textureCoords, GL_STATIC_DRAW);
@@ -347,7 +366,8 @@ void	Mesh::BufferData()	{
 	}
 
 	//buffer colour data
-	if(colours)	{
+	if(colours)
+	{
 		glGenBuffers(1, &bufferObject[COLOUR_BUFFER]);
 		glBindBuffer(GL_ARRAY_BUFFER, bufferObject[COLOUR_BUFFER]);
 		glBufferData(GL_ARRAY_BUFFER, numVertices*sizeof(Vec4Graphics), colours, GL_STATIC_DRAW);
@@ -356,7 +376,8 @@ void	Mesh::BufferData()	{
 	}
 
 	//Buffer normal data
-	if(normals) {
+	if(normals)
+	{
 		glGenBuffers(1, &bufferObject[NORMAL_BUFFER]);
 		glBindBuffer(GL_ARRAY_BUFFER, bufferObject[NORMAL_BUFFER]);
 		glBufferData(GL_ARRAY_BUFFER, numVertices*sizeof(Vec3Graphics), normals, GL_STATIC_DRAW);
@@ -365,7 +386,8 @@ void	Mesh::BufferData()	{
 	}
 
 	//Buffer tangent data
-	if(tangents) {
+	if(tangents)
+	{
 		glGenBuffers(1, &bufferObject[TANGENT_BUFFER]);
 		glBindBuffer(GL_ARRAY_BUFFER, bufferObject[TANGENT_BUFFER]);
 		glBufferData(GL_ARRAY_BUFFER, numVertices*sizeof(Vec3Graphics), tangents, GL_STATIC_DRAW);
@@ -374,7 +396,8 @@ void	Mesh::BufferData()	{
 	}
 
 	//buffer index data
-	if(indices) {
+	if(indices)
+	{
 		glGenBuffers(1, &bufferObject[INDEX_BUFFER]);
 		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, bufferObject[INDEX_BUFFER]);
 		glBufferData(GL_ELEMENT_ARRAY_BUFFER, numIndices*sizeof(GLuint), indices, GL_STATIC_DRAW);
@@ -387,17 +410,20 @@ void	Mesh::BufferData()	{
 Stuff for later tutorials...
 */
 
-void	Mesh::GenerateNormals()	{
+void	Mesh::GenerateNormals()
+{
 	if(!normals)
 		normals = new Vec3Graphics[numVertices];
 	for(GLuint i = 0; i < numVertices; ++i)
 		normals[i] = Vec3Graphics();
 
-	if(indices) {
+	if(indices)
+	{
 		GLuint i = 0;
 
 		int test = 0;
-		for(i = 0; i < numIndices; i+=3) {
+		for(i = 0; i < numIndices; i+=3)
+		{
 			int a = indices[i];
 			int b = indices[i+1];
 			int c = indices[i+2];
@@ -411,9 +437,12 @@ void	Mesh::GenerateNormals()	{
 			test+=3;
 		}
 		bool asdf = true;
-	} else {
+	}
+	else
+	{
 		//It's just a list of triangles, so generate face normals
-		for(GLuint i = 0; i < numVertices; i+=3) {
+		for(GLuint i = 0; i < numVertices; i+=3)
+		{
 			Vec3Graphics& a = vertices[i];
 			Vec3Graphics& b = vertices[i+1];
 			Vec3Graphics& c = vertices[i+2];
@@ -430,7 +459,8 @@ void	Mesh::GenerateNormals()	{
 		normals[i].Normalize();
 }
 
-void Mesh::GenerateTangents() {
+void Mesh::GenerateTangents()
+{
 	//Extra! stops rare occurrence of this function being called
 	//on a mesh without tex coords, which would break quite badly!
 	if(!textureCoords)
@@ -441,8 +471,10 @@ void Mesh::GenerateTangents() {
 	for(GLuint i = 0; i < numVertices; ++i)
 		tangents[i] = Vec3Graphics();
 
-	if(indices) {
-		for(GLuint i = 0; i < numIndices; i+=3) {
+	if(indices)
+	{
+		for(GLuint i = 0; i < numIndices; i+=3)
+		{
 			int a = indices[i];
 			int b = indices[i+1];
 			int c = indices[i+2];
@@ -453,8 +485,11 @@ void Mesh::GenerateTangents() {
 			tangents[b] += tangent;
 			tangents[c] += tangent;
 		}
-	} else {
-		for(GLuint i = 0; i < numVertices; i+=3) {
+	}
+	else
+	{
+		for(GLuint i = 0; i < numVertices; i+=3)
+		{
 			Vec3Graphics tangent = GenerateTangent(vertices[i],vertices[i+1],vertices[i+2],textureCoords[i],textureCoords[i+1],textureCoords[i+2]);
 
 			tangents[i]   += tangent;
@@ -466,7 +501,8 @@ void Mesh::GenerateTangents() {
 		tangents[i].Normalize();
 }
 
-Vec3Graphics Mesh::GenerateTangent(const Vec3Graphics& a,const Vec3Graphics& b,const Vec3Graphics& c,const Vec2Graphics& ta,const Vec2Graphics& tb,const Vec2Graphics& tc)	 {
+Vec3Graphics Mesh::GenerateTangent(const Vec3Graphics& a,const Vec3Graphics& b,const Vec3Graphics& c,const Vec2Graphics& ta,const Vec2Graphics& tb,const Vec2Graphics& tc)
+{
 	Vec2Graphics coord1  = tb-ta;
 	Vec2Graphics coord2  = tc-ta;
 
@@ -480,8 +516,10 @@ Vec3Graphics Mesh::GenerateTangent(const Vec3Graphics& a,const Vec3Graphics& b,c
 	return axis * factor;
 }
 
-void Mesh::DrawDebugNormals(float length)	{
-	if(numVertices > 0) {
+void Mesh::DrawDebugNormals(float length)
+{
+	if(numVertices > 0)
+	{
 		GLuint array;
 		GLuint buffer;
 		GLuint cbuffer;
@@ -492,7 +530,8 @@ void Mesh::DrawDebugNormals(float length)	{
 		Vec3Graphics* tempV = new Vec3Graphics[numVertices*2];
 		Vec3Graphics* tempC = new Vec3Graphics[numVertices*2];
 
-		for(GLuint i = 0; i < numVertices; ++i) {
+		for(GLuint i = 0; i < numVertices; ++i)
+		{
 			tempC[(i*2)]  = Vec3Graphics(1,0,0);
 			tempC[(i*2)+1] = Vec3Graphics(1,1,1);
 
@@ -534,8 +573,10 @@ void Mesh::DrawDebugNormals(float length)	{
 	//}
 }
 
-void Mesh::DrawDebugTangents(float length)	{
-	if(numVertices > 0) {
+void Mesh::DrawDebugTangents(float length)
+{
+	if(numVertices > 0)
+	{
 		GLuint array;
 		GLuint buffer;
 		GLuint cbuffer;
@@ -546,7 +587,8 @@ void Mesh::DrawDebugTangents(float length)	{
 		Vec3Graphics* tempV = new Vec3Graphics[numVertices*2];
 		Vec3Graphics* tempC = new Vec3Graphics[numVertices*2];
 
-		for(GLuint i = 0; i < numVertices; ++i) {
+		for(GLuint i = 0; i < numVertices; ++i)
+		{
 			tempC[(i*2)]  = Vec3Graphics(1,1,1);
 			tempC[(i*2)+1] = Vec3Graphics(0,1,0);
 

@@ -69,9 +69,13 @@ public:
 	{
 		m_LocalTransform = transform;
 	}
-	const Mat4Graphics&  GetLocalTransform()
+	const Mat4Graphics&  GetLocalTransform() const
 	{
 		return m_LocalTransform;
+	}
+	const Mat4Graphics&  GetWorldTransform() const
+	{
+		return m_WorldTransform;
 	}
 
 	//Initialise physics body: mass (a mass of 0 will result in a static object), inertia, orientation, position
@@ -92,7 +96,7 @@ public:
 		m_RenderComponent = comp;
 		m_RenderComponent->SetParent(this);
 	}
-	RenderComponent* GetRenderingComp()
+	RenderComponent* GetRenderComponent()
 	{
 		return m_RenderComponent;
 	}
