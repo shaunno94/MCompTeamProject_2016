@@ -2,15 +2,16 @@
 
 GameObject::GameObject(const std::string& name)
 {
-	m_Scene = nullptr;
 	m_Parent = nullptr;
 	m_Name = name;
 	m_RigidPhysicsObject = nullptr;
 	m_MotionState = nullptr;
 	m_ColShape = nullptr;
+	mesh = nullptr;
+	mat = nullptr;
 
 	m_Colour = Vec4Graphics(1.0f, 1.0f, 1.0f, 1.0f);
-	m_BoundingRadius = 1.f;
+	m_BoundingRadius = 1.0f;
 
 	m_LocalTransform.ToIdentity();
 	m_WorldTransform.ToIdentity();
@@ -94,5 +95,56 @@ void GameObject::AddChildObject(GameObject* child)
 {
 	m_Children.push_back(child);
 	child->m_Parent = this;
-	child->m_Scene = this->m_Scene;
+}
+
+void GameObject::OnRenderObject()				
+{
+	for (auto child : m_Children)
+	{
+		if (child->mesh)
+			child->mesh->Draw();
+	}
+	if (mesh)
+		mesh->Draw();
+}
+
+void GameObject::OnUpdateObject(float dt)
+{
+	for (auto child : m_Children)
+	{
+		if (child->m_RigidPhysicsObject)
+			child->UpdateTransform(true);
+	}
+	if (m_RigidPhysicsObject)
+		UpdateTransform();
+}
+
+void GameObject::UpdateTransform(bool isChild)
+{
+	if (!m_RigidPhysicsObject)
+		return;
+
+	//Bullet physics native containers: matrix, vec3, quaternion
+	btTransform trans;
+	btVector3 pos;
+	btQuaternion rot;
+
+	//Our containers
+	Vec3Graphics p;
+	QuatGraphics r;
+
+	//Get current position and rotation of object.
+	m_RigidPhysicsObject->getMotionState()->getWorldTransform(trans);
+	pos = trans.getOrigin();
+	rot = trans.getRotation();
+
+	//Convert
+	p = Vec3Graphics(pos.x(), pos.y(), pos.z());
+	r = QuatGraphics(rot.x(), rot.y(), rot.z(), rot.w());
+	
+	//Update model matrix 
+	m_LocalTransform = m_LocalTransform * r.ToMatrix4() * Mat4Graphics::Translation(p);
+
+	if (isChild)
+		m_LocalTransform = m_Parent->m_LocalTransform * m_LocalTransform;
 }

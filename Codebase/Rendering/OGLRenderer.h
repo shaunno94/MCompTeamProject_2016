@@ -102,7 +102,7 @@ public:
 	OGLRenderer(Window& parent);
 	virtual ~OGLRenderer(void);
 
-	virtual void	RenderScene() = 0;
+	virtual void	RenderScene(float msec) = 0;
 	virtual void	UpdateScene(float msec);
 	void			SwapBuffers();
 
@@ -127,6 +127,7 @@ public:
 protected:
 	virtual void	Resize(int x, int y);
 	void			UpdateShaderMatrices();
+	void			UpdateModelMatrix();
 	void			SetCurrentShader(Shader* s);
 
 	void			SetTextureRepeating(GLuint target, bool state);

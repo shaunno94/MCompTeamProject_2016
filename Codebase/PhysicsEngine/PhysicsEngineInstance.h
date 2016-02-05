@@ -1,6 +1,8 @@
 #pragma once
 #include <stddef.h>
 #include <mutex>
+#define BT_USE_SSE
+#define BT_USE_SSE_IN_API
 #include <btBulletDynamicsCommon.h>
 
 //Collision callback which should return false if the entity is a particle i.e. group ID == 0 and mask == 0.

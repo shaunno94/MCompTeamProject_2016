@@ -29,7 +29,7 @@ _-_-_-_-_-_-_-""  ""
 #include "Material.h"
 #include "Mesh.h"
 #include <vector>
-
+class Renderer;
 enum CollisionShape
 {
 	SPHERE, CUBOID, CYLINDER, CONE, PLANE
@@ -42,44 +42,47 @@ enum PhysicsType
 
 class GameObject
 {
-	//This is the only class that can manually set the world transform
-	friend class Scene;
+	//Allows renderer to call OnUpdateObject and OnRenderObject functions
+	friend class Renderer;
 
 public:
 	GameObject(const std::string& name = "");
 	~GameObject();
-	
+
 	btRigidBody* Physics() { return m_RigidPhysicsObject; }
 
-	const std::string&	GetName()			{ return m_Name; }
+	const std::string& GetName()			{ return m_Name; }
 	std::vector<GameObject*>& GetChildren() { return m_Children; }
 
-	GameObject*			FindGameObject(const std::string& name);
-	void				AddChildObject(GameObject* child);
+	GameObject*	FindGameObject(const std::string& name);
+	void AddChildObject(GameObject* child);
 
-
-	void			SetLocalTransform(const Mat4Graphics& transform)			{ m_LocalTransform = transform; }
-	const Mat4Graphics&  GetLocalTransform()									{ return m_LocalTransform; }
-
+	void SetLocalTransform(const Mat4Graphics& transform)	{ m_LocalTransform = transform; }
+	const Mat4Graphics&  GetLocalTransform()				{ return m_LocalTransform; }
 
 	void SetColour(const Vec4Graphics& colour)	{ m_Colour = colour; }
-	const Vec4Graphics&	GetColour()							{ return m_Colour; }
+	const Vec4Graphics&	GetColour()				{ return m_Colour; }
 
 	//Initialise physics body: mass (a mass of 0 will result in a static object), inertia, orientation, position
 	void InitPhysics(double mass = 1.0, Vec3Physics inertia = Vec3Physics(0, 0, 0), QuatPhysics orientation = QuatPhysics(0, 0, 0, 1),
 		Vec3Physics position = Vec3Physics(0, 0, 0), PhysicsType type = RIGID);
 
-	void			SetBoundingRadius(float radius)		{ m_BoundingRadius = radius; }
-	float			GetBoundingRadius()					{ return m_BoundingRadius; }
+	void SetBoundingRadius(float radius)	{ m_BoundingRadius = radius; }
+	float GetBoundingRadius()				{ return m_BoundingRadius; }
+
+	void SetMesh(Mesh* m)	{ mesh = m; }
+	Mesh* GetMesh()			{ return mesh; }
+
+	void SetMaterial(Material* m) { mat = m; }
+	Material* GetMaterial()		  { return mat; }
 
 protected:
-	virtual void OnRenderObject()				{};				//Handles OpenGL calls to Render the object
-	virtual void OnUpdateObject(float dt)		{};				//Override to handle things like AI etc on update loop
+	virtual void OnRenderObject();			//Handles OpenGL calls to Render the object
+	virtual void OnUpdateObject(float dt);	//Override to handle things like AI etc on update loop
+	void UpdateTransform(bool isChild = false);	//Updates local transform matrix with positional data from bullet physics
 
 
-protected:
 	std::string					m_Name;
-	Scene*						m_Scene;
 	GameObject*					m_Parent;
 	std::vector<GameObject*>	m_Children;
 

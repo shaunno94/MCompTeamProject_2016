@@ -3,26 +3,33 @@
 
 Scene::Scene()
 {
+	cam = new Camera(0.0f, 0.0f, Vec3Graphics(0, 0, 0));
 }
 
 
 Scene::~Scene()
 {
+	for (auto obj : transparentObjects)
+	{
+		delete obj;
+	}
+	for (auto obj : opaqueObjects)
+	{
+		delete obj;
+	}
+	delete cam;
+	transparentObjects.clear();
+	opaqueObjects.clear();
 }
 
-GameObject* getOpaqueObjects()
+void Scene::addGameObject(GameObject* obj, bool transparent)
 {
-	//STUB
-	return nullptr;
-}
-GameObject* getTransparentObjects()
-{
-	//STUB
-	return nullptr;
-}
-GameObject* getAllObjects()
-{
-	//STUB
-	return nullptr;
-
+	if (transparent)
+	{
+		transparentObjects.push_back(obj);
+	}
+	else
+	{
+		opaqueObjects.push_back(obj);
+	}
 }

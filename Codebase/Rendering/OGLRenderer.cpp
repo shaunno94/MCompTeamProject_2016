@@ -246,6 +246,12 @@ void OGLRenderer::UpdateShaderMatrices()	{
 	}
 }
 
+void OGLRenderer::UpdateModelMatrix()
+{
+	if (currentShader)
+		glUniformMatrix4fv(glGetUniformLocation(currentShader->GetProgram(), "modelMatrix"), 1, false, (float*)&modelMatrix);
+}
+
 void OGLRenderer::SetCurrentShader(Shader* s) {
 	currentShader = s;
 

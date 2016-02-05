@@ -1,7 +1,5 @@
 #include "Renderer.h"
 
-#include "constants.h"
-
 Renderer::Renderer(Window &parent) : OGLRenderer(parent)	{
 	triangle = Mesh::GenerateTriangle();
 	camera = new Camera(0.0f, 0.0f, Vec3Graphics(0, 0, 0));
@@ -17,6 +15,7 @@ Renderer::Renderer(Window &parent) : OGLRenderer(parent)	{
 	//projMatrix = Mat4Graphics::Orthographic(-1, 1, 1, -1, -1, 1);
 	glClearColor(0.2f, 0.2f, 0.2f, 1.0f);
 
+	currentScene = nullptr;
 	init = true;
 }
 Renderer::~Renderer(void)	{
@@ -24,22 +23,52 @@ Renderer::~Renderer(void)	{
 }
 
 void Renderer::UpdateScene(float msec)	{
-	camera->UpdateCamera(msec);
-	viewMatrix = camera->BuildViewMatrix();
-	//viewMatrix.ToIdentity();
+	if (currentScene)
+	{
+		currentScene->getCamera()->UpdateCamera(msec);
+		viewMatrix = currentScene->getCamera()->BuildViewMatrix();
+	}
+	else
+	{
+		camera->UpdateCamera(msec);
+		viewMatrix = camera->BuildViewMatrix();
+		//viewMatrix.ToIdentity();
+	}
 	UpdateShaderMatrices();
 }
 
-void Renderer::RenderScene()	{
+void Renderer::RenderScene(float msec)
+{
+	UpdateScene(msec);
 	glClear(GL_COLOR_BUFFER_BIT);
 
 	glUseProgram(currentShader->GetProgram());
-	triangle->Draw();
+
+	//Draws all objects attatched to the current scene.
+	if (currentScene)
+	{
+		//Draw opaques
+		for (unsigned int i = 0; i < currentScene->getNumOpaqueObjects(); ++i)
+		{
+			currentScene->getOpaqueObject(i)->OnUpdateObject(msec);
+			currentScene->getOpaqueObject(i)->OnRenderObject();
+			modelMatrix = currentScene->getOpaqueObject(i)->GetLocalTransform();
+			UpdateModelMatrix();
+		}
+		//Draw transparent
+		for (unsigned int i = 0; i < currentScene->getNumTransparentObjects(); ++i)
+		{
+			currentScene->getTransparentObject(i)->OnUpdateObject(msec);
+			currentScene->getTransparentObject(i)->OnRenderObject();
+			modelMatrix = currentScene->getTransparentObject(i)->GetLocalTransform();
+			UpdateModelMatrix();
+		}
+	}
+	else
+	{
+		triangle->Draw();
+	}
 	glUseProgram(0);
 
 	SwapBuffers();
-}
-
-void Renderer::RenderScene(Scene currentScene){
-	//STUB
 }
