@@ -10,8 +10,7 @@ GameObject::GameObject(const std::string& name)
 	m_RenderComponent = nullptr;
 	m_BoundingRadius = 1.0f;
 
-	m_LocalTransform.ToIdentity();
-	m_WorldTransform.ToIdentity();
+	m_ModelMatrix.ToIdentity();
 }
 
 GameObject::~GameObject()
@@ -109,20 +108,16 @@ void GameObject::OnRenderObject()
 		m_RenderComponent->Draw();
 }
 
-//TODO:: Needs recursive OnUpdateObject call for further children in the ralationship!!
 void GameObject::OnUpdateObject(float dt)
 {
 	for (auto child : m_Children)
 	{
-		if (child->m_RigidPhysicsObject)
-			child->UpdateTransform(true);
+		child->OnUpdateObject(dt);
 	}
-	if (m_RigidPhysicsObject)
-		UpdateTransform();
+	UpdateTransform();
 }
 
-//TODO:: can you not just check if(m_Parent) rather than if (isChild); is isChild input needed?
-void GameObject::UpdateTransform(bool isChild)
+void GameObject::UpdateTransform()
 {
 	if (!m_RigidPhysicsObject)
 		return;
@@ -146,8 +141,8 @@ void GameObject::UpdateTransform(bool isChild)
 	r = QuatGraphics(rot.x(), rot.y(), rot.z(), rot.w());
 	
 	//Update model matrix 
-	m_LocalTransform = m_LocalTransform * r.ToMatrix4() * Mat4Graphics::Translation(p);
+	m_ModelMatrix = m_ModelMatrix * r.ToMatrix4() * Mat4Graphics::Translation(p);
 
-	if (isChild)
-		m_LocalTransform = m_Parent->m_LocalTransform * m_LocalTransform;
+	if (m_Parent)
+		m_ModelMatrix = m_Parent->m_ModelMatrix * m_ModelMatrix;
 }

@@ -65,17 +65,14 @@ public:
 	GameObject*	FindGameObject(const std::string& name);
 	void AddChildObject(GameObject* child);
 
-	void SetLocalTransform(const Mat4Graphics& transform)
+	void SetWorldTransform(const Mat4Graphics& transform)
 	{
-		m_LocalTransform = transform;
+		m_ModelMatrix = transform;
 	}
-	const Mat4Graphics&  GetLocalTransform() const
-	{
-		return m_LocalTransform;
-	}
+
 	const Mat4Graphics&  GetWorldTransform() const
 	{
-		return m_WorldTransform;
+		return m_ModelMatrix;
 	}
 
 	//Initialise physics body: mass (a mass of 0 will result in a static object), inertia, orientation, position
@@ -104,7 +101,7 @@ public:
 protected:
 	virtual void OnRenderObject();			//Handles OpenGL calls to Render the object
 	virtual void OnUpdateObject(float dt);	//Override to handle things like AI etc on update loop
-	void UpdateTransform(bool isChild = false);	//Updates local transform matrix with positional data from bullet physics
+	void UpdateTransform();	//Updates local transform matrix with positional data from bullet physics
 
 
 	std::string					m_Name;
@@ -119,6 +116,5 @@ protected:
 	RenderComponent*			m_RenderComponent;
 
 	float						m_BoundingRadius;	//For Frustum Culling
-	Mat4Graphics				m_LocalTransform;
-	Mat4Graphics				m_WorldTransform;
+	Mat4Graphics				m_ModelMatrix;
 };
