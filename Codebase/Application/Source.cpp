@@ -27,19 +27,38 @@ int main() {
 	if (!renderer.HasInitialised()) {
 		return -1;
 	}
-
+	
 	//Initialise Bullet physics engine.
-	PhysicsEngineInstance::Instance();
 	PhysicsEngineInstance::Instance()->setGravity(btVector3(0, -9.81, 0));
+
+	//Test Scenario - one 'icosphere' which will be affected by bullet physics
+	Scene* myScene = new Scene();
+	//Game objects added to scene are delete by the scene so don't delete twice.
+	GameObject* test = new GameObject("test");
+	GameObject* floor = new GameObject("floor");
+
+	Shader* simpleShader = new Shader(SHADER_DIR"basicVertex.glsl", SHADER_DIR"colourFragment.glsl");
+	if (!simpleShader->IsOperational())
+		return -1;
+	Material* material = new Material(simpleShader);
+
+	floor->SetRenderComponent(new RenderComponent(material, Mesh::GenerateQuad()));
+	test->SetRenderComponent(new RenderComponent(material, Mesh::GenerateIcosphere(1)));
+	test->InitPhysics();
+	myScene->addGameObject(test);
+	//myScene->addGameObject(floor);
+
+	renderer.SetCurrentScene(myScene);
 
 	while (Window::GetWindow().UpdateWindow() && !Window::GetKeyboard()->KeyDown(KEYBOARD_ESCAPE))
 	{
 		PhysicsEngineInstance::Instance()->stepSimulation(TIME_STEP, SUB_STEPS);
-		renderer.UpdateScene(Window::GetWindow().GetTimer()->Get(1000.0f));
-		renderer.RenderScene();
+		renderer.RenderScene(Window::GetWindow().GetTimer()->Get(1000.0f));
 	}
-
+	
 	//Cleanup
+	PhysicsEngineInstance::Release();
 	Window::Destroy();
+	delete myScene;
 	return 0;
 }

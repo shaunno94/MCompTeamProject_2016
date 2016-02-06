@@ -2,24 +2,39 @@
 
 #include <cassert>
 #include "constants.h"
+#include "Renderer.h"
 
 
-Material::Material(Shader* shader, bool hasTranslucency) : shader(shader), hasTranslucency(hasTranslucency), colour(Vec4Graphics::ONES), castsShadows(false) {
+Material* Material::s_LastMaterialInUse = nullptr;
+
+Material::Material(Shader* shader, bool hasTranslucency) : shader(shader), hasTranslucency(hasTranslucency)
+{
 	assert(("Material class constructor was given a non operational shader.", shader->IsOperational()));
 }
 
 Material::~Material(void) {}
 
+void Material::Setup()
+{
+	if (s_LastMaterialInUse == this) return;
 
-void Material::UpdateTextures(){
-	for(auto it = uniformTextures.begin(); it != uniformTextures.end(); ++it) {
-		it->second->Load();
-		glUniform1i(it->first, it->second->GetTextureUnitIndex());
+	//TODO: Does Renderer need to store current shader?
+	Renderer::GetInstance()->SetCurrentShader(shader);
+	unsigned int textureUnit = MaxMeshTextureMapSlots;
+	for(auto it = m_uniformTextures.begin(); it != m_uniformTextures.end(); ++it)
+	{
+		it->second->Load(textureUnit);
+		Renderer::UpdateUniform(it->first, textureUnit++);
 	}
+	s_LastMaterialInUse = this;
 }
 
-void Material::AddTexture(const std::string& uniformName, TextureSetup* texture) {
-	int location = glGetUniformLocation(shader->GetProgram(), uniformName.c_str());
-	if(location >= 0)
-		uniformTextures.push_back(std::pair<int, TextureSetup*>(location, texture));
+int Material::Set(const std::string& uniformName, Texture* texture)
+{
+	return setUniformValue(m_uniformTextures, shader, uniformName, texture);
+}
+
+void Material::Set(int uniformLocation, Texture* texture)
+{
+	setUniformValue(m_uniformTextures, uniformLocation, texture);
 }

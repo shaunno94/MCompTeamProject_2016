@@ -102,7 +102,7 @@ public:
 	OGLRenderer(Window& parent);
 	virtual ~OGLRenderer(void);
 
-	virtual void	RenderScene() = 0;
+	virtual void	RenderScene(float msec) = 0;
 	virtual void	UpdateScene(float msec);
 	void			SwapBuffers();
 
@@ -123,11 +123,21 @@ public:
 	{
 		return currentShader;
 	}
+	void			SetCurrentShader(Shader* s);
+
+	static void UpdateUniform(GLint location, const Mat4Graphics& mat4);
+	static void UpdateUniform(GLint location, const Mat3Graphics& mat3);
+	static void UpdateUniform(GLint location, const Vec4Graphics& vec4);
+	static void UpdateUniform(GLint location, const Vec3Graphics& vec3);
+	static void UpdateUniform(GLint location, const Vec2Graphics& vec2);
+	static void UpdateUniform(GLint location, float f);
+	static void UpdateUniform(GLint location, double d);
+	static void UpdateUniform(GLint location, int i);
+	static void UpdateUniform(GLint location, unsigned int u);
+	void			UpdateShaderMatrices();
 
 protected:
 	virtual void	Resize(int x, int y);
-	void			UpdateShaderMatrices();
-	void			SetCurrentShader(Shader* s);
 
 	void			SetTextureRepeating(GLuint target, bool state);
 
@@ -140,7 +150,6 @@ protected:
 
 
 	Mat4Graphics projMatrix;		//Projection matrix
-	Mat4Graphics modelMatrix;	//Model matrix. NOT MODELVIEW
 	Mat4Graphics viewMatrix;		//View matrix
 	Mat4Graphics textureMatrix;	//Texture matrix
 
@@ -156,6 +165,8 @@ protected:
 
 	static OGLRenderer*	  debugDrawingRenderer;
 	static Shader*		  debugDrawShader;
+
+
 
 #ifdef _DEBUG
 	static void CALLBACK DebugCallback(GLuint source, GLuint type, GLuint id, GLuint severity,

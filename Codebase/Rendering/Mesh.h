@@ -34,13 +34,18 @@ enum MeshBuffer {
 	MAX_BUFFER
 };
 
+
+
+
+
+
 class Mesh	{
 public:
 	friend class MD5Mesh;
 	Mesh(void);
 	virtual ~Mesh(void);
 
-	virtual void Draw(bool update = true);
+	void Draw();
 
 	//Generates a single triangle, with RGB colours
 	static Mesh*	GenerateTriangle();

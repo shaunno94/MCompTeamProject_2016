@@ -11,3 +11,15 @@
 #define MESH_DIR	"../Assets/Meshes/"
 #define TEXTURE_DIR  "../Assets/Textures/"
 #define SOUNDS_DIR	"../Assets/Sounds/"
+
+
+enum ResurvedMeshTextureSlots {
+	MeshDiffuseMapSlot = 0,
+	MeshSpecularColourMapSlot = 1,
+	MeshSpecularHighlightMapSlot = 2,
+	MeshAlphaMapSlot,
+	MeshBumpMapSlot,
+	MaxMeshTextureMapSlots
+};
+
+#define MAX_BOUND_TEXTURE_COUNT 32;

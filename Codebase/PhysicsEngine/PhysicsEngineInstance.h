@@ -1,8 +1,12 @@
 #pragma once
 #include <stddef.h>
 #include <mutex>
+#define BT_USE_SSE
+#define BT_USE_SSE_IN_API
 #include <btBulletDynamicsCommon.h>
 
+//Collision callback which should return false if the entity is a particle i.e. group ID == 0 and mask == 0.
+//This will tell bullet to not consider particles in collision detection / response (hopefully - untested) 
 struct ParticleFilterCallback : public btOverlapFilterCallback
 {
 	virtual bool needBroadphaseCollision(btBroadphaseProxy* proxy0, btBroadphaseProxy* proxy1) const override
@@ -26,7 +30,7 @@ public:
 			std::lock_guard<std::mutex> lock(m_mConstructed);		//Lock is required here though, to prevent multiple threads initialising multiple instances of the class when it turns out it has not been initialised yet
 			if (!m_pInstance) //Check to see if a previous thread has already initialised an instance in the time it took to acquire a lock.
 			{
-				//Broadphase collision
+				//Broadphase collision object - Dynamic tree AABB
 				bf = new btDbvtBroadphase();
 
 				//Narrowphase collision configuration
@@ -54,7 +58,17 @@ public:
 		if (m_pInstance)
 		{
 			delete m_pInstance;
-			m_pInstance = NULL;
+			delete bf;
+			delete collisionConfiguration;
+			delete dispatcher;
+			delete solver;
+			delete filter;
+			bf = nullptr;
+			collisionConfiguration = nullptr;
+			dispatcher = nullptr;
+			solver = nullptr;
+			filter = nullptr;
+			m_pInstance = nullptr;
 		}
 	}
 

@@ -2,18 +2,15 @@
 
 GameObject::GameObject(const std::string& name)
 {
-	m_Scene = nullptr;
 	m_Parent = nullptr;
 	m_Name = name;
 	m_RigidPhysicsObject = nullptr;
 	m_MotionState = nullptr;
 	m_ColShape = nullptr;
+	m_RenderComponent = nullptr;
+	m_BoundingRadius = 1.0f;
 
-	m_Colour = Vec4Graphics(1.0f, 1.0f, 1.0f, 1.0f);
-	m_BoundingRadius = 1.f;
-
-	m_LocalTransform.ToIdentity();
-	m_WorldTransform.ToIdentity();
+	m_ModelMatrix.ToIdentity();
 }
 
 GameObject::~GameObject()
@@ -29,10 +26,14 @@ GameObject::~GameObject()
 		m_MotionState = nullptr;
 		m_RigidPhysicsObject = nullptr;
 	}
+	if (m_RenderComponent) {
+		delete m_RenderComponent;
+		m_RenderComponent = nullptr;
+	}
 }
 
-void GameObject::InitPhysics(double mass, Vec3Physics inertia, QuatPhysics orientation,
-	Vec3Physics position, PhysicsType type)
+void GameObject::InitPhysics(double mass, const Vec3Physics& inertia, const QuatPhysics& orientation,
+	const Vec3Physics& position, PhysicsType type)
 {		
 	//Motion state (http://www.bulletphysics.org/mediawiki-1.5.8/index.php/MotionStates)
 	m_MotionState = new btDefaultMotionState(btTransform(btQuaternion(orientation.x, orientation.y, orientation.z, orientation.w),
@@ -61,7 +62,7 @@ void GameObject::InitPhysics(double mass, Vec3Physics inertia, QuatPhysics orien
 		//Rigid body object (http://www.bulletphysics.org/mediawiki-1.5.8/index.php/Rigid_Bodies)
 		m_ConstructionInfo = new btRigidBody::btRigidBodyConstructionInfo(mass, m_MotionState, m_ColShape, btVector3(0, 0, 0));
 		m_RigidPhysicsObject = new btRigidBody(*m_ConstructionInfo);
-		//Add the body to the physics environment.
+		//Add the body to the physics environment - with group ID 0 and mask 0 this should prevent particles colliding with everything.
 		PhysicsEngineInstance::Instance()->addRigidBody(m_RigidPhysicsObject, 0, 0);
 		break;
 	}
@@ -80,19 +81,68 @@ GameObject*	GameObject::FindGameObject(const std::string& name)
 	{
 		//Has the object in question got the same name?
 		GameObject* cObj = child->FindGameObject(name);
-		if (cObj != NULL)
+		if (cObj)
 		{
 			return cObj;
 		}
 	}
 
 	//Object not found with the given name
-	return NULL;
+	return nullptr;
 }
 
 void GameObject::AddChildObject(GameObject* child)
 {
 	m_Children.push_back(child);
 	child->m_Parent = this;
-	child->m_Scene = this->m_Scene;
+}
+
+//TODO:: Parent-child relationship needs to be undone for sorted drawing!!
+void GameObject::OnRenderObject()				
+{
+	for (auto child : m_Children)
+	{
+		child->OnRenderObject();
+	}
+	if (m_RenderComponent)
+		m_RenderComponent->Draw();
+}
+
+void GameObject::OnUpdateObject(float dt)
+{
+	for (auto child : m_Children)
+	{
+		child->OnUpdateObject(dt);
+	}
+	UpdateTransform();
+}
+
+void GameObject::UpdateTransform()
+{
+	if (!m_RigidPhysicsObject)
+		return;
+
+	//Bullet physics native containers: matrix, vec3, quaternion
+	btTransform trans;
+	btVector3 pos;
+	btQuaternion rot;
+
+	//Our containers
+	Vec3Graphics p;
+	QuatGraphics r;
+
+	//Get current position and rotation of object.
+	m_RigidPhysicsObject->getMotionState()->getWorldTransform(trans);
+	pos = trans.getOrigin();
+	rot = trans.getRotation();
+
+	//Convert
+	p = Vec3Graphics(pos.x(), pos.y(), pos.z());
+	r = QuatGraphics(rot.x(), rot.y(), rot.z(), rot.w());
+	
+	//Update model matrix 
+	m_ModelMatrix = m_ModelMatrix * r.ToMatrix4() * Mat4Graphics::Translation(p);
+
+	if (m_Parent)
+		m_ModelMatrix = m_Parent->m_ModelMatrix * m_ModelMatrix;
 }
