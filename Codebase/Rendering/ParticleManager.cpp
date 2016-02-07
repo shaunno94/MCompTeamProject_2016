@@ -10,7 +10,7 @@ void ParticleManager::RemoveSystem(ParticleSystem* system)
 	for (unsigned int i = 0; i < m_Systems.size(); ++i)
 	{
 		if (m_Systems[i] == system)
-			m_Systems.erase[i];
+			m_Systems.empty();
 	}
 }
 
@@ -38,7 +38,7 @@ void ParticleManager::Shutdown()
 
 bool ParticleManager::DoesExist()
 {
-	if (m_Systems.empty)
+	if (m_Systems.empty())
 		return false;
 	else
 		return true;

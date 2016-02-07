@@ -7,6 +7,8 @@
 
 enum SystemType {BILLBOARD, TRAIL, BEAM};
 
+
+
 class ParticleSystem
 {
 public:
@@ -42,7 +44,6 @@ private:
 	ParticleEmitter*		m_ParticleEmitter;
 	GLuint					m_Texture;
 	SystemType				m_SystemType;
-	Particle* 				m_Particles;
 	unsigned int			m_NumAlive;
 	std::vector<Particle>	m_Particles;
 	std::vector<Vertex>		m_VertexBuffer;

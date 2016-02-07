@@ -1,7 +1,6 @@
 #pragma once
-#include "ncltech\GameObject.h"
 
-class Particle : public GameObject
+struct Particle 
 {
 	Particle() : m_Position(Vec3Graphics(0, 0, 0)),
 	m_OldPos(Vec3Graphics(0, 0, 0)),
