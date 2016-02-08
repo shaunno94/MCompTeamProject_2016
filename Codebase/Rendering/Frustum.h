@@ -19,10 +19,11 @@ private:
 		btScalar addSingleResult(btManifoldPoint& cp, const btCollisionObjectWrapper* colObj0Wrap, int partId0, int index0, 
 		const btCollisionObjectWrapper* colObj1Wrap, int partId1, int index1)
 		{
-			cp.getPositionWorldOnA();
 			// your callback code here
+			context->inFrustum = true;
 			return 0;
 		}
+		Frustum* context;
 	};
 	struct Plane
 	{
@@ -40,4 +41,10 @@ private:
 	};
 	ContactFrustumCallback callback;
 	vector<Plane*> planes;
+	btRigidBody* fBox;
+	btDefaultMotionState*		m_MotionState;
+	btCollisionShape*			m_CollisionShape;
+	btRigidBody::btRigidBodyConstructionInfo* m_ConstructionInfo;
+
+	bool inFrustum;
 };

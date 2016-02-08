@@ -7,7 +7,7 @@ void Frustum::FromMatrix(const Mat4Graphics &mat)
 	Vec3Graphics zaxis = Vec3Graphics(mat.values[2], mat.values[6], mat.values[10]);
 	Vec3Graphics waxis = Vec3Graphics(mat.values[3], mat.values[7], mat.values[11]);
 
-	for (auto p : planes)
+	/*for (auto p : planes)
 	{
 		if (p)
 		{
@@ -16,16 +16,21 @@ void Frustum::FromMatrix(const Mat4Graphics &mat)
 		}	
 	}
 	planes.clear();
-	Plane* p;
+	Plane* p;*/
+	m_CollisionShape = new btBoxShape(btVector3(mat.values[15] + mat.values[12], mat.values[15] + mat.values[13], mat.values[15] + mat.values[14]));
+	m_MotionState = new btDefaultMotionState(btTransform(btQuaternion(0, 0, 0, 1), btVector3(0, 0, 0)));
+	m_ConstructionInfo = new btRigidBody::btRigidBodyConstructionInfo(0, m_MotionState, m_CollisionShape, btVector3(0, 0, 0));
+	fBox = new btRigidBody(*m_ConstructionInfo);
+	callback.context = this;
 
 	//RIGHT
-	p = new Plane;
+	/*p = new Plane;
 	p->m_CollisionShape = new btStaticPlaneShape((btVector3(waxis.x, waxis.y, waxis.z) - btVector3(xaxis.x, xaxis.y, xaxis.z)).normalize(), (mat.values[15] - mat.values[12]));
 	p->m_MotionState = new btDefaultMotionState(btTransform(btQuaternion(0, 0, 0, 1), btVector3(0, 0, 0)));
 	p->m_ConstructionInfo = new btRigidBody::btRigidBodyConstructionInfo(0, p->m_MotionState, p->m_CollisionShape, btVector3(0, 0, 0));
 	p->m_RigidBody = new btRigidBody(*p->m_ConstructionInfo);
 	planes.push_back(p);
-
+	
 	//LEFT
 	p = new Plane;
 	p->m_CollisionShape = new btStaticPlaneShape((btVector3(waxis.x, waxis.y, waxis.z) + btVector3(xaxis.x, xaxis.y, xaxis.z)).normalize(), (mat.values[15] + mat.values[12]));
@@ -64,17 +69,20 @@ void Frustum::FromMatrix(const Mat4Graphics &mat)
 	p->m_MotionState = new btDefaultMotionState(btTransform(btQuaternion(0, 0, 0, 1), btVector3(0, 0, 0)));
 	p->m_ConstructionInfo = new btRigidBody::btRigidBodyConstructionInfo(0, p->m_MotionState, p->m_CollisionShape, btVector3(0, 0, 0));
 	p->m_RigidBody = new btRigidBody(*p->m_ConstructionInfo);
-	planes.push_back(p);
+	planes.push_back(p);*/
 }
 
 
 bool Frustum::InsideFrustum(GameObject* n)	
 {		
+	inFrustum = false;
 	if (!n->Physics())
 			return true;
-	for (auto& p : planes)
+//	for (auto& p : planes)
 	{
-		PhysicsEngineInstance::Instance()->contactPairTest(n->Physics(), p->m_RigidBody, callback);
+		//PhysicsEngineInstance::Instance()->contactPairTest(n->Physics(), p->m_RigidBody, callback);
+		PhysicsEngineInstance::Instance()->contactPairTest(n->Physics(), fBox, callback);
+		if (inFrustum) { return true; }
 	}
-	return true;
+	return false;
 }
