@@ -229,3 +229,7 @@ $RECYCLE.BIN/
 
 # Windows shortcuts
 *.lnk
+
+# Exclude Dependencies and Assets folder
+!**/[Dd]ependencies/**
+!**/[Aa]ssets/**
