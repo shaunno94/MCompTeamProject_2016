@@ -6,8 +6,7 @@
 ##Scrum Meetings:
 
 **Mon** 12:00 | **Tue** 14:00 | **Wed** 12:00 | **Thu** 12:00 | **Fri** 14:00
-> At the lab
-> !!!Monday is also the meeting with Gary!!!
+> At the lab (!!!Monday is also the meeting with Gary!!!)
 
 ##Recommended Extentions
 
