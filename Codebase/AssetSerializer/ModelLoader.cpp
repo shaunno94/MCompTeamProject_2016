@@ -1,7 +1,7 @@
 #include "ModelLoader.h"
 #include "Helpers/File.h"
 #include <unordered_map>
-#include <sstream>
+#include "Rendering/constants.h"
 
 Mesh* ModelLoader::LoadOBJ(const std::string& filePath, bool bufferData)
 {
@@ -472,159 +472,100 @@ Mesh* ModelLoader::CreateMesh(ObjMeshData* obj, std::unordered_map<std::string, 
 	return mesh;
 }
 
-#define MGL_LOAD_FAST_EXPERIMENTAL 0
 #define MGL_FILE_CURRENTVERSION 0.01f
 
 template<typename T>
-inline void ReadFromMGL(std::ifstream& in, T& val)
+inline void WriteToMGL(std::ofstream& out, const T& val)
 {
-	in.read((char*)&val, sizeof(T));
+	out.write((char*)&val, sizeof(T));
 }
 
-void ReadStringFromMGL(std::ifstream& in, std::string& val)
+void WriteMeshToMGL(std::ofstream& out, Mesh* const mesh)
 {
-	while (true)
-	{
+	size_t numVertices = mesh->GetNumVertices();
+	WriteToMGL(out, numVertices);
 
-	}
-}
-
-Mesh* ReadMeshFromMGL(std::ifstream& in)
-{
-	size_t numVertices;
-	ReadFromMGL(in, numVertices);
-	Vec3Graphics* vertices = new Vec3Graphics[numVertices];
+	Vec3Graphics* vertices = mesh->GetVertices();
 	// Vertices
-#if MGL_LOAD_FAST_EXPERIMENTAL == 0
 	for (size_t i = 0; i < numVertices; ++i)
-		ReadFromMGL(in, vertices[i]);
-#else
-	in.read((char*)vertices, sizeof(Vec3Graphics) * numVertices);
-#endif
+		WriteToMGL(out, vertices[i]);
 
-	Vec2Graphics* texCoords = nullptr;
-	char hasTexCoords;
-	ReadFromMGL(in, hasTexCoords);
+	Vec2Graphics* texCoords = mesh->GetTextureCoords();
+	char hasTexCoords = texCoords != nullptr;
+	// Has TexCoords
+	WriteToMGL(out, hasTexCoords);
 	// TexCoords
 	if (hasTexCoords)
 	{
-		texCoords = new Vec2Graphics[numVertices];
-#if MGL_LOAD_FAST_EXPERIMENTAL == 0
 		for (size_t i = 0; i < numVertices; ++i)
-			ReadFromMGL(in, texCoords[i]);
-#else
-		in.read((char*)texCoords, sizeof(Vec2Graphics) * numVertices);
-#endif
+			WriteToMGL(out, texCoords[i]);
 	}
 
-	Vec3Graphics* normals = nullptr;
-	char hasNormals;
-	ReadFromMGL(in, hasNormals);
+	Vec3Graphics* normals = mesh->GetNormals();
+	char hasNormals = normals != nullptr;
+	// Has Normals
+	WriteToMGL(out, hasNormals);
 	// Normals
 	if (hasNormals)
 	{
-		normals = new Vec3Graphics[numVertices];
-#if MGL_LOAD_FAST_EXPERIMENTAL == 0
 		for (size_t i = 0; i < numVertices; ++i)
-			ReadFromMGL(in, normals[i]);
-#else
-		in.read((char*)normals, sizeof(Vec3Graphics) * numVertices);
-#endif
+			WriteToMGL(out, normals[i]);
 	}
 
-	Vec3Graphics* tangents = nullptr;
-	char hastangents;
-	ReadFromMGL(in, hastangents);
+	Vec3Graphics* tangents = mesh->GetTangents();
+	char hasTangents = tangents != nullptr;
+	// Has Tangents
+	WriteToMGL(out, hasTangents);
 	// Tangents
-	if (hastangents)
+	if (hasTangents)
 	{
-		tangents = new Vec3Graphics[numVertices];
-#if MGL_LOAD_FAST_EXPERIMENTAL == 0
 		for (size_t i = 0; i < numVertices; ++i)
-			ReadFromMGL(in, tangents[i]);
-#else
-		in.read((char*)tangents, sizeof(Vec3Graphics) * numVertices);
-#endif
+			WriteToMGL(out, tangents[i]);
 	}
 
-	size_t* indices = nullptr;
-	size_t numIndices;
-	ReadFromMGL(in, numIndices);
+	size_t numIndices = mesh->GetNumIndices();
+	// Has Indices
+	WriteToMGL(out, numIndices);
 	// Indices
 	if (numIndices)
 	{
-		indices = new size_t[numIndices];
-#if MGL_LOAD_FAST_EXPERIMENTAL == 0
+		size_t* indices = mesh->GetIndices();
 		for (size_t i = 0; i < numIndices; ++i)
-			ReadFromMGL(in, indices[i]);
-#else
-		in.read((char*)indices, sizeof(size_t) * numIndices);
-#endif
+			WriteToMGL(out, indices[i]);
 	}
-
-	Mesh* mesh = new Mesh(numVertices, vertices, texCoords, normals, tangents, numIndices, indices);
-	MeshMtlData mtlData;
-	memset(&mtlData, 0, sizeof(MeshMtlData));
 
 	//MTL data
-	std::stringstream sstream;
-	//read textures
 	for (size_t i = 0; i < ReservedMeshTextures.size; ++i)
 	{
-		char c;
-		in.get(c);
-		if (c)
+		Texture* tex = mesh->GetTexture(i);
+		if (tex)
 		{
-			while (c)
-			{
-				sstream << c;
-				in.get(c);
-			}
-			mtlData.textureMaps[i] = Texture::Get(MODEL_DIR + sstream.str());
-			sstream.str("");
-			sstream.clear();
+			static const size_t modelDirSize = std::string(MODEL_DIR).size();
+			std::string tempStr = tex->GetFilePath();
+			tempStr.erase(0, modelDirSize);
+			out.write(tempStr.c_str(), sizeof(char) * tex->GetFilePath().size());
 		}
+		else
+			WriteToMGL(out, '\0');
 	}
-
-#if MGL_LOAD_FAST_EXPERIMENTAL == 0
 	for (size_t i = 0; i < ReservedMeshColours.size; ++i)
-		ReadFromMGL(in, mtlData.colours[i]);
-#else
-	in.read((char*)mtlData.colours, sizeof(Vec3Graphics) * ReservedMeshColours.size);
-#endif
+	{
+		WriteToMGL(out, mesh->GetColour(i));
+	}
+	WriteToMGL(out, mesh->GetSpecExponent());
 
-	ReadFromMGL(in, mtlData.specExponent);
-
-	mesh->SetMtlData(mtlData);
-
-
-	size_t numChildren;
-	ReadFromMGL(in, numChildren);
-
-	for (size_t i = 0; i < numChildren; ++i)
-		mesh->AddChild(ReadMeshFromMGL(in));
-
-	// Clean
-	for (size_t i = 0; i < ReservedMeshTextures.size; ++i)
-		if (mtlData.textureMaps[i])
-			mtlData.textureMaps[i]->Clear();
-
-	return mesh;
+	//Children
+	WriteToMGL(out, mesh->GetChildren().size());
+	for (Mesh* child : mesh->GetChildren())
+		WriteMeshToMGL(out, child);
 }
 
-// Loads file and returns correct Mesh, buffered or unbuffered
-Mesh* ModelLoader::LoadMGL(const std::string& filePath, bool bufferData)
+void ModelLoader::SaveMeshToMGL(Mesh* mesh, std::string fileName)
 {
-	std::ifstream file(filePath, std::ios::in | std::ios::binary);
-	float version;
-	ReadFromMGL(file, version);
-	if (version != MGL_FILE_CURRENTVERSION)
-		throw "Not matching version";
-
-	Mesh* result = ReadMeshFromMGL(file);
-	if (bufferData)
-		result->BufferData();
-
-	file.close();
-	return result;
+	// open file
+	std::ofstream out(fileName, std::ios::binary);
+	WriteToMGL(out, MGL_FILE_CURRENTVERSION);
+	WriteMeshToMGL(out, mesh);
+	out.flush();
+	out.close();
 }

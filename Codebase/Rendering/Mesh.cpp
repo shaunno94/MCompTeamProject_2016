@@ -8,8 +8,6 @@
 
 Mesh::Mesh(void)
 {
-	glGenVertexArrays(1, &arrayObject);
-
 	for(int i = 0; i < MAX_BUFFER; ++i)
 		bufferObject[i] = 0;
 
@@ -27,6 +25,23 @@ Mesh::Mesh(void)
 	tangents	  = nullptr;
 	indices		  = nullptr;
 	colours		  = nullptr;
+}
+
+Mesh::Mesh(size_t numVertices, Vec3Graphics* vertices, Vec2Graphics* texCoords, Vec3Graphics* normals, Vec3Graphics* tangents, size_t numIndices, size_t* indices) :
+numVertices(numVertices), vertices(vertices), textureCoords(texCoords), normals(normals), tangents(tangents), numIndices(numIndices), indices(indices)
+{
+	glGenVertexArrays(1, &arrayObject);
+
+	for (int i = 0; i < MAX_BUFFER; ++i)
+		bufferObject[i] = 0;
+
+	m_Textures[ReservedMeshTextures.size] = {};
+	m_Colours[ReservedMeshColours.size] = {};
+	m_SpecExponent = 0.0f;
+	type = GL_TRIANGLES;
+
+	//Later tutorial stuff
+	colours = nullptr;
 }
 
 Mesh::~Mesh(void)
@@ -350,6 +365,9 @@ Mesh* Mesh::GenerateQuadTexCoordCol(Vec2Graphics scale, Vec2Graphics texCoord, V
 
 void	Mesh::BufferData()
 {
+	//moved here from constructor to not require OpenGL instance when using Mesh for format conversion
+	glGenVertexArrays(1, &arrayObject);
+
 	//GenerateNormals();
 	//GenerateTangents();
 

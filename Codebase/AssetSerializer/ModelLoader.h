@@ -1,10 +1,10 @@
 #pragma once
 
 #include <string>
-#include "Mesh.h"
 #include <vector>
 #include <sstream>
-#include "constants.h"
+#include "Rendering/Mesh.h"
+#include "Rendering/constants.h"
 
 struct ObjVertData
 {
@@ -42,15 +42,14 @@ struct ObjMeshData
 	unsigned int idCounter = 0;
 };
 
-
 class ModelLoader
 {
 public:
 	// Loads file and returns correct Mesh, buffered or unbuffered
 	static Mesh* LoadOBJ(const std::string& filePath, bool bufferData = true);
 
-	// Loads file and returns correct Mesh, buffered or unbuffered
-	static Mesh* LoadMGL(const std::string& filePath, bool bufferData = true);
+	// Saves a given mesh to .mgl format
+	static void SaveMeshToMGL(Mesh* mesh, std::string fileName);
 
 protected:
 	// Singleton protection
