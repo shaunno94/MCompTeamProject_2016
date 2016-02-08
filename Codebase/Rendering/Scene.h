@@ -3,6 +3,7 @@
 #include <vector>
 #include "Camera.h"
 #include "Helpers\collections.h"
+#include "Frustum.h"
 
 class Renderer;
 
@@ -32,7 +33,7 @@ private:
 	static bool CompareByCameraDistance(const GameObject* a, const GameObject* b) { return (a->m_CamDist < b->m_CamDist); }
 	static bool CompareByCameraDistanceInv(const GameObject* a, const GameObject* b) { return (a->m_CamDist > b->m_CamDist); }
 	//Updates game objects by calling OnUpdateObject and then sorts the render lists for opaque and transparent objects.
-	void UpdateNodeLists(float dt);
+	void UpdateNodeLists(float dt, Frustum& frustum);
 
 	std::vector<GameObject*> transparentObjects;
 	std::vector<GameObject*> opaqueObjects;

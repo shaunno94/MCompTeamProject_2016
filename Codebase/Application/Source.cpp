@@ -53,14 +53,15 @@ int main() {
 	myScene->addGameObject(floor);
 	
 	cube->SetRenderComponent(new RenderComponent(material, ModelLoader::LoadOBJ(MODEL_DIR"Tardis/TARDIS.obj", true)));
-	cube->AddChildObject(test);
+	cube->InitPhysics(0);
+	//cube->AddChildObject(test);
 	myScene->addGameObject(cube);
 
 	renderer.SetCurrentScene(myScene);
 
 	while (Window::GetWindow().UpdateWindow() && !Window::GetKeyboard()->KeyDown(KEYBOARD_ESCAPE))
 	{
-		PhysicsEngineInstance::Instance()->stepSimulation(TIME_STEP, SUB_STEPS);
+		PhysicsEngineInstance::Instance()->stepSimulation(TIME_STEP, SUB_STEPS, TIME_STEP);
 		renderer.RenderScene(Window::GetWindow().GetTimer()->Get(1000.0f));
 	}
 	

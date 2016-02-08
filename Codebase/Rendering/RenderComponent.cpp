@@ -16,6 +16,10 @@ RenderComponent::~RenderComponent()
 //TODO: !!! Save available Mesh Texture locations on the Render Component !!!
 void RenderComponent::Draw()
 {
+	//Object is outside of view frustum
+	if (disabled)
+		return;
+
 	m_Material->Setup();
 	Renderer::UpdateUniform(m_Material->GetShader()->GetModelMatrixUniformLocation(), m_GameObject->GetWorldTransform());
 
@@ -25,7 +29,7 @@ void RenderComponent::Draw()
 	//reset reserved mesh colour uniforms
 	for (size_t i = 0; i < ReservedMeshColours.size; ++i)
 		Renderer::UpdateUniform(m_Material->GetShader()->GetReservedMeshColourUniformLocation(i), m_Mesh->GetColour(i));
-
+	
 	m_Mesh->Draw();
 }
 

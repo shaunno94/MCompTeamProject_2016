@@ -20,6 +20,7 @@ public:
 protected:
 
 	Scene* currentScene;
+	Frustum frameFrustrum;
 	//--Contained in Scene--//
 	Mesh*	triangle;
 	Camera*	camera;

@@ -64,6 +64,7 @@ void GameObject::InitPhysics(double mass, const Vec3Physics& inertia, const Quat
 		m_ConstructionInfo = new btRigidBody::btRigidBodyConstructionInfo(mass, m_MotionState, m_ColShape, btVector3(0, 0, 0));
 		m_RigidPhysicsObject = new btRigidBody(*m_ConstructionInfo);
 		//Add the body to the physics environment - with group ID 0 and mask 0 this should prevent particles colliding with everything.
+		m_RigidPhysicsObject->setCollisionFlags(btCollisionObject::CF_NO_CONTACT_RESPONSE);
 		PhysicsEngineInstance::Instance()->addRigidBody(m_RigidPhysicsObject, 0, 0);
 		break;
 	}
