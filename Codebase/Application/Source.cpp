@@ -3,6 +3,7 @@
 #include "Rendering\Renderer.h"
 #include "PhysicsEngine\PhysicsEngineInstance.h"
 #include "Rendering/ModelLoader.h"
+#include "Rendering/LightMaterial.h"
 
 const float TIME_STEP = 1.0f / 60.0f;
 const unsigned int SUB_STEPS = 10;
@@ -37,8 +38,15 @@ int main() {
 	//Game objects added to scene are delete by the scene so don't delete twice.
 	GameObject* test = new GameObject("test");
 	GameObject* floor = new GameObject("floor");
+	GameObject* light = new GameObject("l");
 
 	Shader* simpleShader = new Shader(SHADER_DIR"basicVertex.glsl", SHADER_DIR"colourFragment.glsl");
+	LightMaterial* lightMaterial = new LightMaterial(simpleShader);
+	lightMaterial->Set("lightColour", Vec4Graphics::ONES);
+	lightMaterial->Set("lightRadius", 9001);
+
+	light->SetRenderComponent(new RenderComponent(lightMaterial, Mesh::GenerateTriangle()));
+
 	if (!simpleShader->IsOperational())
 		return -1;
 	Material* material = new Material(simpleShader);

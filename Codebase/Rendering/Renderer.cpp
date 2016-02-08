@@ -79,7 +79,8 @@ void Renderer::initFBO()
 	glEnable(GL_BLEND);
 }
 
-void Renderer::GenerateScreenTexture(GLuint & into, bool depth) {
+void Renderer::GenerateScreenTexture(GLuint& into, bool depth)
+{
 	glGenTextures(1, &into);
 	glBindTexture(GL_TEXTURE_2D, into);
 
@@ -89,10 +90,10 @@ void Renderer::GenerateScreenTexture(GLuint & into, bool depth) {
 	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
 
 	glTexImage2D(GL_TEXTURE_2D, 0,
-		depth ? GL_DEPTH_COMPONENT24 : GL_RGBA8,
-		width, height, 0,
-		depth ? GL_DEPTH_COMPONENT : GL_RGBA,
-		GL_UNSIGNED_BYTE, NULL);
+	             depth ? GL_DEPTH_COMPONENT24 : GL_RGBA8,
+	             width, height, 0,
+	             depth ? GL_DEPTH_COMPONENT : GL_RGBA,
+	             GL_UNSIGNED_BYTE, NULL);
 
 	glBindTexture(GL_TEXTURE_2D, 0);
 }
@@ -181,7 +182,8 @@ void Renderer::FillBuffers()
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 }
 
-void Renderer::DrawPointLights() {
+void Renderer::DrawPointLights()
+{
 	SetCurrentShader(pointlightShader);
 
 	glBindFramebuffer(GL_FRAMEBUFFER, pointLightFBO);
@@ -198,37 +200,36 @@ void Renderer::DrawPointLights() {
 
 	glActiveTexture(GL_TEXTURE4);
 	glBindTexture(GL_TEXTURE_2D, bufferNormalTex);
-	glUniform3fv(glGetUniformLocation(currentShader->GetProgram(), "cameraPos"), 1, (float *)& camera->GetPosition());
+	glUniform3fv(glGetUniformLocation(currentShader->GetProgram(), "cameraPos"), 1, (float*)& camera->GetPosition());
 
 	glUniform2f(glGetUniformLocation(currentShader->GetProgram(), "pixelSize"), 1.0f / width, 1.0f / height);
 
 	Vector3 translate = Vector3((RAW_HEIGHT * HEIGHTMAP_X / 2.0f), 500,
-		(RAW_HEIGHT * HEIGHTMAP_Z / 2.0f));
+	                            (RAW_HEIGHT * HEIGHTMAP_Z / 2.0f));
 
 	Matrix4 pushMatrix = Matrix4::Translation(translate);
 	Matrix4 popMatrix = Matrix4::Translation(-translate);
 
-	GameObject* light;
-	for (unsigned int i = 0; i < currentScene->getNumLightObjects(); ++i){
-		light = currentScene->getLightObject(i);
-		
-		glUniform3fv(glGetUniformLocation(currentShader->GetProgram(), "lightPos"), 1, (float*)&l.GetPosition());
-		glUniform4fv(glGetUniformLocation(currentShader->GetProgram(), "lightColour"), 1, (float*)&l.GetColour());
-		glUniform1f(glGetUniformLocation(currentShader->GetProgram(), "lightRadius"), l.GetRadius());
-		currentScene->getLightObject(i)->OnRenderObject();
+	for (unsigned int i = 0; i < currentScene->getNumLightObjects(); ++i)
+	{
+		GameObject* light = currentScene->getLightObject(i);
+		Renderer::UpdateUniform(glGetUniformLocation(light->GetRenderComponent()->m_Material->GetShader()->GetProgram(), "lightPos"), light->GetWorldTransform().GetTranslation());
+		currentScene->getLightObject(i)->OnRenderObject(); //<-- split OnRender() into SetupRender() and Render()
 	}
 
-	for (int x = 0; x < LIGHTNUM; ++x) {
-		for (int z = 0; z < LIGHTNUM; ++z) {
-			Light & l = pointLights[(x * LIGHTNUM) + z];
+	for (int x = 0; x < LIGHTNUM; ++x)
+	{
+		for (int z = 0; z < LIGHTNUM; ++z)
+		{
+			Light& l = pointLights[(x * LIGHTNUM) + z];
 			float radius = l.GetRadius();
 
 			modelMatrix =
-				pushMatrix *
-				Matrix4::Rotation(rotation, Vector3(0, 1, 0)) *
-				popMatrix *
-				Matrix4::Translation(l.GetPosition()) *
-				Matrix4::Scale(Vector3(radius, radius, radius));
+			  pushMatrix *
+			  Matrix4::Rotation(rotation, Vector3(0, 1, 0)) *
+			  popMatrix *
+			  Matrix4::Translation(l.GetPosition()) *
+			  Matrix4::Scale(Vector3(radius, radius, radius));
 
 			l.SetPosition(modelMatrix.GetPositionVector());
 
@@ -237,10 +238,12 @@ void Renderer::DrawPointLights() {
 			UpdateShaderMatrices();
 
 			float dist = (l.GetPosition() - camera->GetPosition()).Length();
-			if (dist < radius) {// camera is inside the light volume !
+			if (dist < radius)  // camera is inside the light volume !
+			{
 				glCullFace(GL_FRONT);
 			}
-			else {
+			else
+			{
 				glCullFace(GL_BACK);
 			}
 			sphere->Draw();

@@ -80,6 +80,7 @@
     <ClInclude Include="constants.h" />
     <ClInclude Include="ExtendedMaterial.h" />
     <ClInclude Include="GameObject.h" />
+    <ClInclude Include="LightMaterial.h" />
     <ClInclude Include="Material.h" />
     <ClInclude Include="Mesh.h" />
     <ClInclude Include="ModelLoader.h" />
@@ -95,6 +96,7 @@
     <ClCompile Include="Camera.cpp" />
     <ClCompile Include="ExtendedMaterial.cpp" />
     <ClCompile Include="GameObject.cpp" />
+    <ClCompile Include="LightMaterial.cpp" />
     <ClCompile Include="Material.cpp" />
     <ClCompile Include="Mesh.cpp" />
     <ClCompile Include="ModelLoader.cpp" />
