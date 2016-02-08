@@ -31,3 +31,18 @@ Select Edit.FormatDocumentAStyle
 Select field "Press shortcut keys:"
 Press some button combination like Alt+F
 Assign
+
+##Work TODO
+* Input system (keyboard and mouse / gamepad)
+* GUI
+	* Buttons
+	* TrueType fonts
+* Audio
+* Advanced rendering
+	* Shadow casting
+	* Defered rendering
+* Particles
+* AI
+* Networking
+	* (state sync system?)
+* Threading Physics (turning on SSE?)
