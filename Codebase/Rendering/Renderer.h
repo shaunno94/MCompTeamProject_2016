@@ -18,7 +18,6 @@ public:
 	void UpdateScene(float msec);
 
 protected:
-
 	Scene* currentScene;
 	//--Contained in Scene--//
 	Mesh*	triangle;
@@ -26,4 +25,20 @@ protected:
 
 	static Renderer* s_renderer;
 	//----------------------//
+
+	void FillBuffers(); //G- Buffer Fill Render Pass
+	void DrawPointLights(); // Lighting Render Pass
+	void CombineBuffers(); // Combination Render Pass
+	void initFBO();
+	void GenerateScreenTexture(GLuint & into, bool depth = true);
+
+
+	GLuint bufferFBO; // FBO for G- Buffer pass
+	GLuint bufferColourTex; // Albedo goes here
+	GLuint bufferNormalTex; // Normals go here
+	GLuint bufferDepthTex; // Depth goes here
+
+	GLuint pointLightFBO; // FBO for lighting pass
+	GLuint lightEmissiveTex; // Store emissive lighting
+	GLuint lightSpecularTex; // Store specular lighting
 };
