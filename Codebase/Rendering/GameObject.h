@@ -28,7 +28,10 @@ _-_-_-_-_-_-_-""  ""
 #include "PhysicsEngine\PhysicsEngineInstance.h"
 #include "RenderComponent.h"
 #include <vector>
+
 class Renderer;
+class Scene;
+
 enum CollisionShape
 {
 	SPHERE, CUBOID, CYLINDER, CONE, PLANE
@@ -41,8 +44,9 @@ enum PhysicsType
 
 class GameObject
 {
-	//Allows renderer to call OnUpdateObject and OnRenderObject functions
+	//Allows these classes to call OnUpdateObject / OnRenderObject functions
 	friend class Renderer;
+	friend class Scene;
 
 public:
 	GameObject(const std::string& name = "");
@@ -93,7 +97,7 @@ public:
 		m_RenderComponent = comp;
 		m_RenderComponent->SetParent(this);
 	}
-	RenderComponent* GetRenderComponent()
+	RenderComponent* GetRenderComponent() const
 	{
 		return m_RenderComponent;
 	}
@@ -101,8 +105,7 @@ public:
 protected:
 	virtual void OnRenderObject();			//Handles OpenGL calls to Render the object
 	virtual void OnUpdateObject(float dt);	//Override to handle things like AI etc on update loop
-	void UpdateTransform();	//Updates local transform matrix with positional data from bullet physics
-
+	void UpdateTransform();	//Updates local transform matrix with positional & rotational data from bullet physics
 
 	std::string					m_Name;
 	GameObject*					m_Parent;
@@ -117,4 +120,6 @@ protected:
 
 	float						m_BoundingRadius;	//For Frustum Culling
 	Mat4Graphics				m_ModelMatrix;
+
+	float m_CamDist; //For ordering of rendering lists.
 };

@@ -22,14 +22,38 @@ Scene::~Scene()
 	opaqueObjects.clear();
 }
 
-void Scene::addGameObject(GameObject* obj, bool transparent)
+//Recursively add objects to node lists for rendering - check for transparency
+void Scene::addGameObject(GameObject* obj)
 {
-	if (transparent)
+	for (auto child : obj->GetChildren())
 	{
-		transparentObjects.push_back(obj);
+		addGameObject(child);
 	}
-	else
+	obj->m_RenderComponent->m_Material->hasTranslucency ? transparentObjects.push_back(obj) : opaqueObjects.push_back(obj);
+}
+
+void Scene::UpdateNodeLists(float dt)
+{
+	Vec3Graphics pos, dir;
+	Vec3Graphics camPos = cam->GetPosition();
+
+	//For opaque and translucent objects update and compute (sqr) distance between object and camera.
+	for (unsigned int i = 0; i < transparentObjects.size(); ++i)
 	{
-		opaqueObjects.push_back(obj);
+		transparentObjects[i]->OnUpdateObject(dt);
+		pos = transparentObjects[i]->GetWorldTransform().GetTranslation();
+		dir = pos - camPos;
+		transparentObjects[i]->m_CamDist = dir.Dot(dir);
 	}
+	for (unsigned int i = 0; i < opaqueObjects.size(); ++i)
+	{
+		opaqueObjects[i]->OnUpdateObject(dt);
+		pos = opaqueObjects[i]->GetWorldTransform().GetTranslation();
+		dir = pos - camPos;
+		opaqueObjects[i]->m_CamDist = dir.Dot(dir);
+	}
+
+	//Sort lists using insertion sort - O(N) best case when list is almost ordered which should be the case most of the time.
+	InsertionSort(transparentObjects.begin(), transparentObjects.end(), Scene::CompareByCameraDistanceInv);
+	InsertionSort(opaqueObjects.begin(), opaqueObjects.end(), Scene::CompareByCameraDistance);
 }

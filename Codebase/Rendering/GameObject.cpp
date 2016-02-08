@@ -9,6 +9,7 @@ GameObject::GameObject(const std::string& name)
 	m_ColShape = nullptr;
 	m_RenderComponent = nullptr;
 	m_BoundingRadius = 1.0f;
+	m_CamDist = 0.0f;
 
 	m_ModelMatrix.ToIdentity();
 }
@@ -97,23 +98,14 @@ void GameObject::AddChildObject(GameObject* child)
 	child->m_Parent = this;
 }
 
-//TODO:: Parent-child relationship needs to be undone for sorted drawing!!
 void GameObject::OnRenderObject()				
 {
-	for (auto child : m_Children)
-	{
-		child->OnRenderObject();
-	}
 	if (m_RenderComponent)
 		m_RenderComponent->Draw();
 }
 
 void GameObject::OnUpdateObject(float dt)
 {
-	for (auto child : m_Children)
-	{
-		child->OnUpdateObject(dt);
-	}
 	UpdateTransform();
 }
 
@@ -141,7 +133,7 @@ void GameObject::UpdateTransform()
 	r = QuatGraphics(rot.x(), rot.y(), rot.z(), rot.w());
 	
 	//Update model matrix 
-	m_ModelMatrix = m_ModelMatrix * r.ToMatrix4() * Mat4Graphics::Translation(p);
+	m_ModelMatrix = r.ToMatrix4() * Mat4Graphics::Translation(p);
 
 	if (m_Parent)
 		m_ModelMatrix = m_Parent->m_ModelMatrix * m_ModelMatrix;
