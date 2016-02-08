@@ -1,6 +1,8 @@
 #pragma once
 #include "Trigger.h"
 
+class GameObject;
+
 class DistanceTrigger :
 	public Trigger
 {
@@ -8,14 +10,13 @@ public:
 	DistanceTrigger();
 	~DistanceTrigger();
 
-	virtual void setupTrigger(GameObject& objA, GameObject& objB, float distanceTriggered, bool lessThanDistance = true);
+	virtual void setupTrigger(GameObject& parent, GameObject& objB, float triggerDistance, bool triggerWhenLessThan = true);
 
 	virtual bool HasTriggered();
 
 protected:
-	GameObject* objectA;
-	GameObject* objectB;
-	float distance;
-	bool lessThan;
+	GameObject* m_objectB;
+	float m_triggerDistance;
+	bool m_triggerWhenLessThan;
 };
 

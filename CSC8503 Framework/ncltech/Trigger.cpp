@@ -1,4 +1,5 @@
 #include "Trigger.h"
+#include "GameObject.h"
 
 
 Trigger::Trigger()

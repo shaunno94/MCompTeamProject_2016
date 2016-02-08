@@ -93,9 +93,6 @@
     <ClCompile Include="OctreeSpacePartition.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="TrackerGameObject.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="CollisionListener.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -108,11 +105,17 @@
     <ClCompile Include="State.cpp">
       <Filter>Source Files\AI</Filter>
     </ClCompile>
+    <ClCompile Include="DistanceTrigger.cpp">
+      <Filter>Source Files\AI\Triggers</Filter>
+    </ClCompile>
     <ClCompile Include="Trigger.cpp">
       <Filter>Source Files\AI</Filter>
     </ClCompile>
-    <ClCompile Include="DistanceTrigger.cpp">
-      <Filter>Source Files\AI\Triggers</Filter>
+    <ClCompile Include="ChaseState.cpp">
+      <Filter>Source Files\AI\States</Filter>
+    </ClCompile>
+    <ClCompile Include="RunAwayState.cpp">
+      <Filter>Source Files\AI\States</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -170,9 +173,6 @@
     <ClInclude Include="DistanceConstraint.h">
       <Filter>Header Files\Physics\Constraints</Filter>
     </ClInclude>
-    <ClInclude Include="TrackerGameObject.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="CollisionListener.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -185,11 +185,17 @@
     <ClInclude Include="State.h">
       <Filter>Header Files\AI</Filter>
     </ClInclude>
+    <ClInclude Include="DistanceTrigger.h">
+      <Filter>Header Files\AI\Triggers</Filter>
+    </ClInclude>
     <ClInclude Include="Trigger.h">
       <Filter>Header Files\AI</Filter>
     </ClInclude>
-    <ClInclude Include="DistanceTrigger.h">
-      <Filter>Header Files\AI\Triggers</Filter>
+    <ClInclude Include="ChaseState.h">
+      <Filter>Header Files\AI\States</Filter>
+    </ClInclude>
+    <ClInclude Include="RunAwayState.h">
+      <Filter>Header Files\AI\States</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

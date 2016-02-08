@@ -22,6 +22,7 @@ public:
 	}
 
 protected:
+
 	typedef std::map<std::string, State*> stateMapping;
 	stateMapping* m_stateMap;
 	State* activeState;

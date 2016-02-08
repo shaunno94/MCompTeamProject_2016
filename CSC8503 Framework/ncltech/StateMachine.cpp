@@ -9,13 +9,18 @@ StateMachine::StateMachine()
 
 StateMachine::~StateMachine()
 {
+
 	for (stateMapping::iterator it = m_stateMap->begin();
-	     it != m_stateMap->end();
-	     it++)
+		it != m_stateMap->end();
+		it++)
 	{
 		delete it->second;
-		m_stateMap->erase(it);
 	}
+
+	m_stateMap->clear();
+	delete m_stateMap;
+	m_stateMap = nullptr;
+	activeState = nullptr;
 }
 
 void StateMachine::Update(float dt)
@@ -30,7 +35,7 @@ void StateMachine::Update(float dt)
 /// <param name="state"> Actual State object</param>
 void StateMachine::AddState(std::string stateName, State* state)
 {
-	if ((*m_stateMap)[stateName] != nullptr)
+	if (m_stateMap->find(stateName) == m_stateMap->end())
 		(*m_stateMap)[stateName] = state;
 }
 
@@ -41,8 +46,9 @@ void StateMachine::AddState(std::string stateName, State* state)
 /// <returns> State matching </returns>
 bool StateMachine::ChangeState(std::string stateName)
 {
-	if ((*m_stateMap)[stateName] != nullptr) {
+	if (m_stateMap->find(stateName) != m_stateMap->end()) {
 		activeState = (*m_stateMap)[stateName];
+		activeState->Start();
 		return true;
 	}
 	return false;

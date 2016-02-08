@@ -1,27 +1,36 @@
 #pragma once
 #include <vector>
+#include <utility>
+#include <map>
 #include "Trigger.h"
+
+class StateMachine;
 
 class State
 {
 public:
-	State();
+	State(StateMachine& stateMachine, GameObject& parent);
 	~State();
 
+	virtual void Start() = 0;
 	virtual void Update(float dt);
 
-	void AddChildState(State* childState);
-	void AddTrigger(Trigger* trigger, unsigned int destState);
+	void AddChildState(std::string stateName, State* childState);
+	void AddTrigger(Trigger* trigger, std::string destState);
 	
 protected:
 
 	bool CheckTriggers();
 
-	typedef std::pair<Trigger*, unsigned int> triggerPair;
+	typedef std::pair<Trigger*, std::string> triggerPair;
+	typedef std::map<std::string, State*> stateMapping;
 
-	std::vector<State*> m_childStates;
-	int m_activeChildState; // = 0 if no children
+	stateMapping* m_childStates;
+	std::string	m_activeChildState;
 
 	std::vector<triggerPair*> m_triggers;
+
+	GameObject* m_parent;
+	StateMachine* m_stateMachine;
 };
 
