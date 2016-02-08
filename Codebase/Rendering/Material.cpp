@@ -20,7 +20,7 @@ void Material::Setup()
 
 	//TODO: Does Renderer need to store current shader?
 	Renderer::GetInstance()->SetCurrentShader(shader);
-	unsigned int textureUnit = MaxMeshTextureMapSlots;
+	GLint textureUnit = ReservedMeshTextures.size;
 	for(auto it = m_uniformTextures.begin(); it != m_uniformTextures.end(); ++it)
 	{
 		it->second->Load(textureUnit);

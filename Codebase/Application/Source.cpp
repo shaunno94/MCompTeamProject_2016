@@ -2,6 +2,7 @@
 #include "Rendering\Window.h"
 #include "Rendering\Renderer.h"
 #include "PhysicsEngine\PhysicsEngineInstance.h"
+#include "Rendering/ModelLoader.h"
 
 const float TIME_STEP = 1.0f / 60.0f;
 const unsigned int SUB_STEPS = 10;
@@ -45,8 +46,11 @@ int main() {
 	floor->SetRenderComponent(new RenderComponent(material, Mesh::GenerateQuad()));
 	test->SetRenderComponent(new RenderComponent(material, Mesh::GenerateIcosphere(1)));
 	test->InitPhysics();
-	myScene->addGameObject(test);
+	//myScene->addGameObject(test);
 	//myScene->addGameObject(floor);
+	GameObject* cube = new GameObject();
+	cube->SetRenderComponent(new RenderComponent(material, ModelLoader::LoadOBJ(MODEL_DIR"Common/cube.obj", true)));
+	myScene->addGameObject(cube);
 
 	renderer.SetCurrentScene(myScene);
 

@@ -21,6 +21,5 @@ public:
 
 protected:
 	GameObject* m_GameObject;
-	int m_ModelMatrixLocattion;
 };
 

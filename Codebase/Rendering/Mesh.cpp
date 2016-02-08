@@ -4,6 +4,8 @@
 #include <iostream>
 #include <cmath>
 
+#include "ModelLoader.h"
+
 Mesh::Mesh(void)
 {
 	glGenVertexArrays(1, &arrayObject);
@@ -11,21 +13,20 @@ Mesh::Mesh(void)
 	for(int i = 0; i < MAX_BUFFER; ++i)
 		bufferObject[i] = 0;
 
-	texture		 = 0;
+	m_Textures[ReservedMeshTextures.size] = {};
+	m_Colours[ReservedMeshColours.size] = {};
+	m_SpecExponent = 0.0f;
 	numVertices  = 0;
 	type		 = GL_TRIANGLES;
 
 	//Later tutorial stuff
 	numIndices    = 0;
-	bumpTexture	  = 0;
-	vertices	  = NULL;
-	textureCoords = NULL;
-	normals		  = NULL;
-	tangents	  = NULL;
-	indices		  = NULL;
-	colours		  = NULL;
-
-	transformCoords = true;
+	vertices	  = nullptr;
+	textureCoords = nullptr;
+	normals		  = nullptr;
+	tangents	  = nullptr;
+	indices		  = nullptr;
+	colours		  = nullptr;
 }
 
 Mesh::~Mesh(void)
@@ -33,25 +34,28 @@ Mesh::~Mesh(void)
 	glDeleteVertexArrays(1, &arrayObject);			//Delete our VAO
 	glDeleteBuffers(MAX_BUFFER, bufferObject);		//Delete our VBOs
 
-	glDeleteTextures(1,&texture);					//We'll be nice and delete our texture when we're done with it
-	glDeleteTextures(1,&bumpTexture);				//We'll be nice and delete our texture when we're done with it
+	for (size_t i = 0; i < ReservedMeshTextures.size; ++i)
+	{
+		if (m_Textures[i])
+			m_Textures[i]->Clear();
+	}
 
 	//Later tutorial stuff
-	delete[]vertices;
-	delete[]indices;
-	delete[]textureCoords;
-	delete[]tangents;
-	delete[]normals;
-	delete[]colours;
+	delete[] vertices;
+	delete[] indices;
+	delete[] textureCoords;
+	delete[] tangents;
+	delete[] normals;
+	delete[] colours;
 }
 
 void Mesh::Draw()
 {
-	glActiveTexture(GL_TEXTURE0);
-	glBindTexture(GL_TEXTURE_2D, texture);
-
-	glActiveTexture(GL_TEXTURE1);
-	glBindTexture(GL_TEXTURE_2D, bumpTexture);
+	for (size_t i = 0; i < ReservedMeshTextures.size; ++i)
+	{
+		if (m_Textures[i])
+			m_Textures[i]->Load(i);
+	}
 
 	glBindVertexArray(arrayObject);
 	if(bufferObject[INDEX_BUFFER])
@@ -352,7 +356,7 @@ void	Mesh::BufferData()
 	glGenBuffers(1, &bufferObject[VERTEX_BUFFER]);
 	glBindBuffer(GL_ARRAY_BUFFER, bufferObject[VERTEX_BUFFER]);
 	glBufferData(GL_ARRAY_BUFFER, numVertices*sizeof(Vec3Graphics), vertices, GL_STATIC_DRAW);
-	glVertexAttribPointer(VERTEX_BUFFER, 3, GL_FLOAT, GL_FALSE, 0, 0);
+	glVertexAttribPointer(VERTEX_BUFFER, 3, GL_FLOAT, GL_FALSE, sizeof(Vec3Graphics), 0);
 	glEnableVertexAttribArray(VERTEX_BUFFER);
 
 	//Buffer texture data
@@ -361,7 +365,7 @@ void	Mesh::BufferData()
 		glGenBuffers(1, &bufferObject[TEXTURE_BUFFER]);
 		glBindBuffer(GL_ARRAY_BUFFER, bufferObject[TEXTURE_BUFFER]);
 		glBufferData(GL_ARRAY_BUFFER, numVertices*sizeof(Vec2Graphics), textureCoords, GL_STATIC_DRAW);
-		glVertexAttribPointer(TEXTURE_BUFFER, 2, GL_FLOAT, GL_FALSE, 0, 0);
+		glVertexAttribPointer(TEXTURE_BUFFER, 2, GL_FLOAT, GL_FALSE, sizeof(Vec2Graphics), 0);
 		glEnableVertexAttribArray(TEXTURE_BUFFER);
 	}
 
@@ -371,7 +375,7 @@ void	Mesh::BufferData()
 		glGenBuffers(1, &bufferObject[COLOUR_BUFFER]);
 		glBindBuffer(GL_ARRAY_BUFFER, bufferObject[COLOUR_BUFFER]);
 		glBufferData(GL_ARRAY_BUFFER, numVertices*sizeof(Vec4Graphics), colours, GL_STATIC_DRAW);
-		glVertexAttribPointer(COLOUR_BUFFER, 4, GL_FLOAT, GL_FALSE, 0, 0);
+		glVertexAttribPointer(COLOUR_BUFFER, 4, GL_FLOAT, GL_FALSE, sizeof(Vec4Graphics), 0);
 		glEnableVertexAttribArray(COLOUR_BUFFER);
 	}
 
@@ -381,7 +385,7 @@ void	Mesh::BufferData()
 		glGenBuffers(1, &bufferObject[NORMAL_BUFFER]);
 		glBindBuffer(GL_ARRAY_BUFFER, bufferObject[NORMAL_BUFFER]);
 		glBufferData(GL_ARRAY_BUFFER, numVertices*sizeof(Vec3Graphics), normals, GL_STATIC_DRAW);
-		glVertexAttribPointer(NORMAL_BUFFER, 3, GL_FLOAT, GL_FALSE, 0, 0);
+		glVertexAttribPointer(NORMAL_BUFFER, 3, GL_FLOAT, GL_FALSE, sizeof(Vec3Graphics), 0);
 		glEnableVertexAttribArray(NORMAL_BUFFER);
 	}
 
@@ -391,7 +395,7 @@ void	Mesh::BufferData()
 		glGenBuffers(1, &bufferObject[TANGENT_BUFFER]);
 		glBindBuffer(GL_ARRAY_BUFFER, bufferObject[TANGENT_BUFFER]);
 		glBufferData(GL_ARRAY_BUFFER, numVertices*sizeof(Vec3Graphics), tangents, GL_STATIC_DRAW);
-		glVertexAttribPointer(TANGENT_BUFFER, 3, GL_FLOAT, GL_FALSE, 0, 0);
+		glVertexAttribPointer(TANGENT_BUFFER, 3, GL_FLOAT, GL_FALSE, sizeof(Vec3Graphics), 0);
 		glEnableVertexAttribArray(TANGENT_BUFFER);
 	}
 
@@ -402,6 +406,9 @@ void	Mesh::BufferData()
 		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, bufferObject[INDEX_BUFFER]);
 		glBufferData(GL_ELEMENT_ARRAY_BUFFER, numIndices*sizeof(GLuint), indices, GL_STATIC_DRAW);
 	}
+
+	for (auto child : m_Children)
+		child->BufferData();
 
 	glBindVertexArray(0);
 }
@@ -628,4 +635,22 @@ void Mesh::DrawDebugTangents(float length)
 	//for(unsigned int i = 0; i < children.size(); ++i) {
 	//	children.at(i)->DrawDebugTangents();
 	//}
+}
+
+
+void	Mesh::SetMtlData(const MeshMtlData& data)
+{
+	for (size_t i = 0; i < ReservedMeshTextures.size; ++i)
+	{
+		if (m_Textures[i])
+			m_Textures[i]->Clear();
+		m_Textures[i] = data.textureMaps[i];
+		if (m_Textures[i])
+			m_Textures[i]->ReserveCopy();
+	}
+	for (size_t i = 0; i < ReservedMeshColours.size; ++i)
+	{
+		m_Colours[i] = data.colours[i];
+	}
+	m_SpecExponent = data.specExponent;
 }

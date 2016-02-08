@@ -1,5 +1,7 @@
 #pragma once
 
+#include <string>
+
 #define SHADER_VERTEX   0
 #define SHADER_FRAGMENT 1
 #define SHADER_GEOMETRY 2
@@ -8,18 +10,68 @@
 #define SHADER_MAX_STAGE_COUNT 5
 
 #define SHADER_DIR	"../Assets/Shaders/"
-#define MESH_DIR	"../Assets/Meshes/"
+#define MODEL_DIR	"../Assets/Models/"
 #define TEXTURE_DIR  "../Assets/Textures/"
-#define SOUNDS_DIR	"../Assets/Sounds/"
+#define AUDIO_DIR	"../Assets/AUDIO/"
 
 
-enum ResurvedMeshTextureSlots {
-	MeshDiffuseMapSlot = 0,
-	MeshSpecularColourMapSlot = 1,
-	MeshSpecularHighlightMapSlot = 2,
-	MeshAlphaMapSlot,
-	MeshBumpMapSlot,
-	MaxMeshTextureMapSlots
+struct ShaderUniformInfo
+{
+	unsigned int index;
+	char* name;
 };
+
+static size_t reservedMeshTextureCounter = 0;
+
+static const struct ReservedMeshTexturesStruct
+{
+	const union
+	{
+		const struct
+		{
+			ShaderUniformInfo DIFFUSE;
+			ShaderUniformInfo SPECULAR_COLOUR;
+			ShaderUniformInfo SPECULAR_HIGHLIGHT;
+			ShaderUniformInfo ALPHA;
+			ShaderUniformInfo BUMP;
+		};
+		ShaderUniformInfo values[5];
+	};
+	static const size_t size = 5;
+
+} ReservedMeshTextures =
+{
+	reservedMeshTextureCounter++, "diffuseTexture",
+	reservedMeshTextureCounter++, "specularColourTexure",
+	reservedMeshTextureCounter++, "specularHighlightTexure",
+	reservedMeshTextureCounter++, "alphaTexure",
+	reservedMeshTextureCounter++, "bumpMap"
+};
+
+
+static size_t reservedMeshColourCounter = 0;
+
+static const struct ReservedMeshColoursStruct
+{
+	const union
+	{
+		const struct
+		{
+			ShaderUniformInfo AMBIENT;
+			ShaderUniformInfo DIFFUSE;
+			ShaderUniformInfo SPECULAR;
+		};
+		ShaderUniformInfo values[3];
+	};
+	static const size_t size = 3;
+
+} ReservedMeshColours =
+{
+	reservedMeshColourCounter++, "ambientColour",
+	reservedMeshColourCounter++, "diffuseColour",
+	reservedMeshColourCounter++, "specularColour"
+};
+
+
 
 #define MAX_BOUND_TEXTURE_COUNT 32;

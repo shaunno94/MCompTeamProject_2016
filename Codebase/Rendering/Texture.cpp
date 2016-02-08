@@ -32,9 +32,8 @@ Texture* Texture::Get(const std::string& filePath, bool preload)
 	std::unordered_map<std::string, std::vector<Texture*>>::iterator match = s_textureRecords.find(filePath);
 	if (match != s_textureRecords.end())
 	{
-		Texture* tex = match->second.back();
-		++(tex->m_referenceCount);
-		return tex;
+		newTexture = match->second.back();
+		newTexture->ReserveCopy();
 	}
 	else
 	{
@@ -45,23 +44,25 @@ Texture* Texture::Get(const std::string& filePath, bool preload)
 }
 
 //needs testing!
-void Texture::Clear(Texture* tex)
+void Texture::Clear()
 {
 	//if this was the last reference for the texture
-	if (!--(tex->m_referenceCount))
+	if (!--(m_referenceCount))
 	{
-		std::unordered_map<std::string, std::vector<Texture*>>::iterator match = s_textureRecords.find(tex->filePath);
+		std::unordered_map<std::string, std::vector<Texture*>>::iterator match = s_textureRecords.find(filePath);
 		if (match != s_textureRecords.end())
 		{
 			std::vector<Texture*>& textures = match->second;
-			Texture** foundTex = &textures[tex->textureCopyIndex];
+			Texture** foundTex = &textures[textureCopyIndex];
 			//double check if referenced texture is correct
-			if (tex == *foundTex)
+			if (this == *foundTex)
 			{
-				delete tex;
+				size_t tempCopyIndex = textureCopyIndex;
+				std::string tempFilePath = filePath;
+				delete this;
 				*foundTex = nullptr;
 				//if this was the latest texture copy in the collection , then shrink the collection
-				if (textures.size() - 1 == tex->textureCopyIndex)
+				if (textures.size() - 1 == tempCopyIndex)
 				{
 					auto rend = textures.rend();
 					for (auto rit = textures.rbegin(); rit != rend;)
@@ -73,12 +74,13 @@ void Texture::Clear(Texture* tex)
 							break;
 					}
 					if (textures.size() == 0)
-						s_textureRecords.erase(tex->filePath);
+						s_textureRecords.erase(tempFilePath);
 				}
 			}
 		}
 	}
 }
+
 
 void Texture::ClearAll()
 {
