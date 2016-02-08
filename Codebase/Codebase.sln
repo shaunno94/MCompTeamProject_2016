@@ -39,8 +39,6 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "LinearMath", "BulletPhysics
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "PhysicsEngine", "PhysicsEngine\PhysicsEngine.vcxproj", "{2CC601E3-E95D-4C55-B786-474F898780F5}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "AssetTest", "AssetTest\AssetTest.vcxproj", "{154F70A0-FEDF-459D-A4E7-B5E6C497A1C5}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Win32 = Debug|Win32
@@ -115,12 +113,6 @@ Global
 		{E9A76716-EF48-2D48-B6AE-09A54F748CAE}.Release|Win32.Build.0 = Release|Win32
 		{E9A76716-EF48-2D48-B6AE-09A54F748CAE}.Release|x64.ActiveCfg = Release|x64
 		{E9A76716-EF48-2D48-B6AE-09A54F748CAE}.Release|x64.Build.0 = Release|x64
-		{154F70A0-FEDF-459D-A4E7-B5E6C497A1C5}.Debug|Win32.ActiveCfg = Debug|Win32
-		{154F70A0-FEDF-459D-A4E7-B5E6C497A1C5}.Debug|Win32.Build.0 = Debug|Win32
-		{154F70A0-FEDF-459D-A4E7-B5E6C497A1C5}.Debug|x64.ActiveCfg = Debug|Win32
-		{154F70A0-FEDF-459D-A4E7-B5E6C497A1C5}.Release|Win32.ActiveCfg = Release|Win32
-		{154F70A0-FEDF-459D-A4E7-B5E6C497A1C5}.Release|Win32.Build.0 = Release|Win32
-		{154F70A0-FEDF-459D-A4E7-B5E6C497A1C5}.Release|x64.ActiveCfg = Release|Win32
 		{2CC601E3-E95D-4C55-B786-474F898780F5}.Debug|Win32.ActiveCfg = Debug|Win32
 		{2CC601E3-E95D-4C55-B786-474F898780F5}.Debug|Win32.Build.0 = Debug|Win32
 		{2CC601E3-E95D-4C55-B786-474F898780F5}.Debug|x64.ActiveCfg = Debug|Win32

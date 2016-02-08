@@ -64,12 +64,12 @@ void Texture::Clear()
 				//if this was the latest texture copy in the collection , then shrink the collection
 				if (textures.size() - 1 == tempCopyIndex)
 				{
-					auto rend = textures.rend();
-					for (auto rit = textures.rbegin(); rit != rend;)
+					auto it = textures.end();
+					while (it != textures.begin())
 					{
-						//loop over and erase records from the back until not empty
-						if (*rit == nullptr)
-							textures.erase((++rit).base());
+						it--;
+						if (*it == nullptr)
+							it = textures.erase(it);
 						else
 							break;
 					}

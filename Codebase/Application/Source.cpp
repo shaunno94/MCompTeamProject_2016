@@ -49,7 +49,7 @@ int main() {
 	//myScene->addGameObject(test);
 	//myScene->addGameObject(floor);
 	GameObject* cube = new GameObject();
-	cube->SetRenderComponent(new RenderComponent(material, ModelLoader::LoadOBJ(MODEL_DIR"Common/cube.obj", true)));
+	cube->SetRenderComponent(new RenderComponent(material, ModelLoader::LoadOBJ(MODEL_DIR"Tardis/TARDIS.obj", true)));
 	myScene->addGameObject(cube);
 
 	renderer.SetCurrentScene(myScene);

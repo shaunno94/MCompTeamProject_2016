@@ -65,6 +65,9 @@ void Mesh::Draw()
 		glDrawArrays(type, 0, numVertices);	//Draw the triangle!
 	}
 	glBindVertexArray(0);
+
+	for (auto child : m_Children)
+		child->Draw();
 }
 
 Mesh* Mesh::GenerateTriangle()

@@ -13,7 +13,6 @@ Mesh* ModelLoader::LoadOBJ(const std::string& filePath, bool bufferData)
 	if (!stream)   // no file
 		throw std::invalid_argument("ModelLoader::HandleObjMtlLib could not find file.");
 
-	std::vector<ObjMeshData*> meshObjs;
 	std::unordered_map<std::string, MeshMtlData*> mtlMap;
 
 	ObjMeshData* obj = new ObjMeshData();
@@ -23,6 +22,7 @@ Mesh* ModelLoader::LoadOBJ(const std::string& filePath, bool bufferData)
 	obj->inputTexCoords.push_back(Vec2Graphics(0, 0));
 
 	std::string token;
+	Mesh* finalMesh = nullptr;
 
 	// parse file from line start and build vertex data
 	while (!stream.eof())
@@ -82,12 +82,15 @@ Mesh* ModelLoader::LoadOBJ(const std::string& filePath, bool bufferData)
 		{
 			if (obj->finalIndices.size() > 0)
 			{
-				meshObjs.push_back(obj);
-				obj = new ObjMeshData();
-				// init data with *blanks* for defaults
-				obj->inputVertices.push_back(Vec3Graphics(0, 0, 0));
-				obj->inputNormals.push_back(Vec3Graphics(0, 0, 0));
-				obj->inputTexCoords.push_back(Vec2Graphics(0, 0));
+				if (!finalMesh)
+					finalMesh = CreateMesh(obj, mtlMap);
+				else
+					finalMesh->AddChild(CreateMesh(obj, mtlMap));
+
+				obj->idCounter = 0;
+				obj->finalIndices.clear();
+				obj->objVertexList.clear();
+				obj->mtlReference = "";
 			}
 			//create object
 			break;
@@ -108,19 +111,14 @@ Mesh* ModelLoader::LoadOBJ(const std::string& filePath, bool bufferData)
 		}
 	}
 
-	meshObjs.push_back(obj);
-
-	// create the mesh
-	Mesh* mesh = CreateMesh(meshObjs[0], mtlMap);
-
-	for (size_t i = 1; i < meshObjs.size(); ++i)
-	{
-		mesh->AddChild(CreateMesh(meshObjs[i], mtlMap));
-	}
+	//getting final data
+	if (!finalMesh)
+		finalMesh = CreateMesh(obj, mtlMap);
+	else
+		finalMesh->AddChild(CreateMesh(obj, mtlMap));
 
 	//clean
-	for (auto tempObj : meshObjs)
-		delete tempObj;
+	delete obj;
 
 	for (auto& tempMtl : mtlMap)
 	{
@@ -131,9 +129,9 @@ Mesh* ModelLoader::LoadOBJ(const std::string& filePath, bool bufferData)
 	}
 
 	if (bufferData)
-		mesh->BufferData();
+		finalMesh->BufferData();
 
-	return mesh;
+	return finalMesh;
 }
 
 void ModelLoader::HandleObjMtlLib(const std::string& filepath, std::unordered_map<std::string, MeshMtlData*>& mtlMap)
@@ -143,7 +141,7 @@ void ModelLoader::HandleObjMtlLib(const std::string& filepath, std::unordered_ma
 
 	if (!file)   // no file
 		return;
-		//throw std::invalid_argument("ModelLoader::HandleObjMtlLib could not find file.");
+	//throw std::invalid_argument("ModelLoader::HandleObjMtlLib could not find file.");
 
 	MeshMtlData* lastMtlData = nullptr;
 	std::string token;
@@ -281,7 +279,8 @@ bool ModelLoader::HandleOBJFace(std::string line, ObjMeshData* obj)
 	{
 		skipNorm = true;
 	}
-	if (slashCounter == 0) {
+	if (slashCounter == 0)
+	{
 		skipTex = true;
 		skipNorm = true;
 	}
@@ -305,7 +304,8 @@ bool ModelLoader::HandleOBJFace(std::string line, ObjMeshData* obj)
 	if (numIndices != shouldBe)
 		return false;
 
-	if (skipTex && skipNorm) {
+	if (skipTex && skipNorm)
+	{
 		unsigned vertices = isPolygon ? 4 : 3;
 		std::vector<unsigned int> ids;
 
@@ -465,7 +465,7 @@ Mesh* ModelLoader::CreateMesh(ObjMeshData* obj, std::unordered_map<std::string, 
 	mesh->indices = new unsigned int[numIndices];
 	for (size_t i = 0; i < numIndices; ++i)
 	{
-		mesh->indices[i] = obj->finalIndices[i];
+		mesh->indices[i] = obj->finalIndices[i] - 1;
 	}
 
 	//TODO: Add Mtl data!!!
