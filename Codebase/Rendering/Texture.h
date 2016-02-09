@@ -25,6 +25,10 @@ public:
 		if (!textureId) LoadFromFile();
 		return textureId;
 	}
+	inline const std::string& GetFilePath()
+	{
+		return filePath;
+	}
 
 	static inline int GetMemoryUsage()
 	{

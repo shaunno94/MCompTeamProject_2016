@@ -38,7 +38,8 @@ int main() {
 	GameObject* test = new GameObject("test");
 	GameObject* floor = new GameObject("floor");
 
-	Shader* simpleShader = new Shader(SHADER_DIR"basicVertex.glsl", SHADER_DIR"colourFragment.glsl");
+	//Shader* simpleShader = new Shader(SHADER_DIR"textureVertex.glsl", SHADER_DIR"textureCoordFragment.glsl");
+	Shader* simpleShader = new Shader(SHADER_DIR"textureVertex.glsl", SHADER_DIR"textureFragment.glsl");
 	if (!simpleShader->IsOperational())
 		return -1;
 	Material* material = new Material(simpleShader);
@@ -48,9 +49,9 @@ int main() {
 	test->InitPhysics();
 	//myScene->addGameObject(test);
 	//myScene->addGameObject(floor);
-	GameObject* cube = new GameObject();
-	cube->SetRenderComponent(new RenderComponent(material, ModelLoader::LoadOBJ(MODEL_DIR"Tardis/TARDIS.obj", true)));
-	myScene->addGameObject(cube);
+	GameObject* tardis = new GameObject();
+	tardis->SetRenderComponent(new RenderComponent(material, ModelLoader::LoadMGL(MODEL_DIR"Tardis/TARDIS.mgl", true)));
+	myScene->addGameObject(tardis);
 
 	renderer.SetCurrentScene(myScene);
 
