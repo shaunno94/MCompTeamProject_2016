@@ -40,7 +40,7 @@ int main() {
 	GameObject* floor = new GameObject("floor");
 	GameObject* light = new GameObject("l");
 
-	Shader* simpleShader = new Shader(SHADER_DIR"basicVertex.glsl", SHADER_DIR"colourFragment.glsl");
+	Shader* simpleShader = new Shader(SHADER_DIR"basicVertex.glsl", SHADER_DIR"textureFragment.glsl");
 	LightMaterial* lightMaterial = new LightMaterial(simpleShader);
 	lightMaterial->Set("lightColour", Vec4Graphics::ONES);
 	lightMaterial->Set("lightRadius", 9001);
@@ -56,9 +56,9 @@ int main() {
 	test->InitPhysics();
 	//myScene->addGameObject(test);
 	//myScene->addGameObject(floor);
-	GameObject* cube = new GameObject();
-	cube->SetRenderComponent(new RenderComponent(material, ModelLoader::LoadOBJ(MODEL_DIR"Tardis/TARDIS.obj", true)));
-	myScene->addGameObject(cube);
+	GameObject* tardis = new GameObject();
+	tardis->SetRenderComponent(new RenderComponent(material, ModelLoader::LoadMGL(MODEL_DIR"Tardis/TARDIS.mgl", true)));
+	myScene->addGameObject(tardis);
 
 	renderer.SetCurrentScene(myScene);
 

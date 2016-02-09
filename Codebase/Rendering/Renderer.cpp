@@ -20,6 +20,13 @@ Renderer::Renderer(Window& parent) : OGLRenderer(parent)
 	//projMatrix = Mat4Graphics::Orthographic(-1, 1, 1, -1, -1, 1);
 	glClearColor(0.2f, 0.2f, 0.2f, 1.0f);
 
+	glEnable(GL_DEPTH_TEST);
+	glEnable(GL_DEPTH_CLAMP);
+	glEnable(GL_CULL_FACE);
+	glEnable(GL_BLEND);
+	glDepthFunc(GL_LEQUAL);
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
 	initFBO();
 
 	currentScene = nullptr;
@@ -120,7 +127,7 @@ void Renderer::UpdateScene(float msec)
 void Renderer::RenderScene(float msec)
 {
 	UpdateScene(msec);
-	glClear(GL_COLOR_BUFFER_BIT);
+	glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
 
 	//glUseProgram(currentShader->GetProgram());
 
@@ -150,7 +157,7 @@ void Renderer::RenderScene(float msec)
 		  nullptr;
 
 		//combination
-	}
+		}
 	else
 	{
 		triangle->Draw();
