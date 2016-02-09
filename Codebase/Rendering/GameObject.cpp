@@ -97,6 +97,7 @@ void GameObject::AddChildObject(GameObject* child)
 	child->m_Parent = this;
 }
 
+
 //TODO:: Parent-child relationship needs to be undone for sorted drawing!!
 void GameObject::OnRenderObject()				
 {

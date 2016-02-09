@@ -57,7 +57,7 @@ public:
 	Material(Shader* shader, bool hasTranslucency = false);
 	virtual ~Material();
 
-	inline const Shader* GetShader() const
+	inline Shader* GetShader() const
 	{
 		return shader;
 	}

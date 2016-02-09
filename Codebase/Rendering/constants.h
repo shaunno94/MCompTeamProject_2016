@@ -48,6 +48,25 @@ static const struct ReservedMeshTexturesStruct
 	reservedMeshTextureCounter++, "bumpMap"
 };
 
+//TODO - remove?? no
+static const struct ReservedOtherTexturesStruct
+{
+	const union
+	{
+		const struct
+		{
+			ShaderUniformInfo DEPTH;
+			ShaderUniformInfo NORMALS;
+		};
+		ShaderUniformInfo values[2];
+	};
+	static const size_t size = 2;
+
+} ReservedOtherTextures =
+{
+	reservedMeshTextureCounter++, "depthTex",
+	reservedMeshTextureCounter++, "normalTex"
+};
 
 static size_t reservedMeshColourCounter = 0;
 

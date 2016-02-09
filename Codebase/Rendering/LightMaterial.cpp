@@ -5,6 +5,10 @@
 
 LightMaterial::LightMaterial(Shader* shader, bool hasTranslucency) : Material(shader, hasTranslucency)
 {
+	Set(ReservedOtherTextures.DEPTH.name, (int)ReservedOtherTextures.DEPTH.index);
+	Set(ReservedOtherTextures.NORMALS.name, (int)ReservedOtherTextures.NORMALS.index);
+	//TODO-Set("pixelSize",)??
+
 }
 
 
@@ -17,6 +21,7 @@ void LightMaterial::Setup()
 	Material::Setup();
 	UpdateUniformValue(m_uniformVec4s);
 	UpdateUniformValue(m_uniformFloats);
+	UpdateUniformValue(m_uniformInts);
 }
 
 
@@ -37,4 +42,9 @@ void LightMaterial::Set(int uniformLocation, const Vec4Graphics& vec4)
 void LightMaterial::Set(int uniformLocation, float f)
 {
 	setUniformValue(m_uniformFloats, uniformLocation, f);
+}
+
+void LightMaterial::Set(int uniformLocation, int i)
+{
+	setUniformValue(m_uniformInts, uniformLocation, i);
 }

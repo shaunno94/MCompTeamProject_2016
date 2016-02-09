@@ -13,7 +13,7 @@ Renderer::Renderer(Window& parent) : OGLRenderer(parent)
 
 	if (!currentShader->IsOperational())
 	{
-		return;
+	return;
 	}*/
 
 	projMatrix = Mat4Graphics::Perspective(1.0f, 15000.0f, (float)width / (float)height, 45.0f);
@@ -38,6 +38,15 @@ Renderer::Renderer(Window& parent) : OGLRenderer(parent)
 Renderer::~Renderer(void)
 {
 	delete triangle;
+	delete quad;
+	glDeleteTextures(1, &bufferColourTex);
+	glDeleteTextures(1, &bufferNormalTex);
+	glDeleteTextures(1, &bufferDepthTex);
+	glDeleteTextures(1, &lightEmissiveTex);
+	glDeleteTextures(1, &lightSpecularTex);
+
+	glDeleteFramebuffers(1, &bufferFBO);
+	glDeleteFramebuffers(1, &pointLightFBO);
 }
 
 void Renderer::initFBO()
@@ -75,7 +84,7 @@ void Renderer::initFBO()
 	glDrawBuffers(2, buffers);
 
 	if (glCheckFramebufferStatus(GL_FRAMEBUFFER) !=
-	    GL_FRAMEBUFFER_COMPLETE)
+		GL_FRAMEBUFFER_COMPLETE)
 	{
 		return;
 	}
@@ -84,6 +93,8 @@ void Renderer::initFBO()
 	glEnable(GL_DEPTH_TEST);
 	glEnable(GL_CULL_FACE);
 	glEnable(GL_BLEND);
+
+	quad = new RenderComponent(new Material(new Shader(SHADER_DIR"combinevert.glsl", SHADER_DIR"combinefrag.glsl")), Mesh::GenerateQuad());
 }
 
 void Renderer::GenerateScreenTexture(GLuint& into, bool depth)
@@ -97,10 +108,10 @@ void Renderer::GenerateScreenTexture(GLuint& into, bool depth)
 	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
 
 	glTexImage2D(GL_TEXTURE_2D, 0,
-	             depth ? GL_DEPTH_COMPONENT24 : GL_RGBA8,
-	             width, height, 0,
-	             depth ? GL_DEPTH_COMPONENT : GL_RGBA,
-	             GL_UNSIGNED_BYTE, NULL);
+		depth ? GL_DEPTH_COMPONENT24 : GL_RGBA8,
+		width, height, 0,
+		depth ? GL_DEPTH_COMPONENT : GL_RGBA,
+		GL_UNSIGNED_BYTE, NULL);
 
 	glBindTexture(GL_TEXTURE_2D, 0);
 }
@@ -154,13 +165,13 @@ void Renderer::RenderScene(float msec)
 			currentScene->getTransparentObject(i)->OnRenderObject();
 
 		this->currentShader = // more suff
-		  nullptr;
+			nullptr;
 
 		//combination
-		}
+	}
 	else
 	{
-		triangle->Draw();
+		//triangle->Draw();
 	}
 	glUseProgram(0);
 
@@ -172,9 +183,7 @@ void Renderer::FillBuffers()
 	glBindFramebuffer(GL_FRAMEBUFFER, bufferFBO);
 	glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
 
-	SetCurrentShader(sceneShader);
-	glUniform1i(glGetUniformLocation(currentShader->GetProgram(), "diffuseTex"), 0);
-	glUniform1i(glGetUniformLocation(currentShader->GetProgram(), "bumpTex"), 1);
+	//SetCurrentShader(sceneShader);
 
 
 	projMatrix = Mat4Graphics::Perspective(1.0f, 15000.0f, (float)width / (float)height, 45.0f);
@@ -191,7 +200,7 @@ void Renderer::FillBuffers()
 
 void Renderer::DrawPointLights()
 {
-	SetCurrentShader(pointlightShader);
+	//SetCurrentShader(pointlightShader);
 
 	glBindFramebuffer(GL_FRAMEBUFFER, pointLightFBO);
 
@@ -202,7 +211,7 @@ void Renderer::DrawPointLights()
 
 	glUniform1i(glGetUniformLocation(currentShader->GetProgram(), "depthTex"), 3);
 	glUniform1i(glGetUniformLocation(currentShader->GetProgram(), "normTex"), 4);
-	glActiveTexture(GL_TEXTURE3);
+	glActiveTexture(GL_TEXTURE0 + ReservedOtherTextures.DEPTH.index);
 	glBindTexture(GL_TEXTURE_2D, bufferDepthTex);
 
 	glActiveTexture(GL_TEXTURE4);
@@ -211,56 +220,55 @@ void Renderer::DrawPointLights()
 
 	glUniform2f(glGetUniformLocation(currentShader->GetProgram(), "pixelSize"), 1.0f / width, 1.0f / height);
 
-	Vector3 translate = Vector3((RAW_HEIGHT * HEIGHTMAP_X / 2.0f), 500,
-	                            (RAW_HEIGHT * HEIGHTMAP_Z / 2.0f));
-
-	Matrix4 pushMatrix = Matrix4::Translation(translate);
-	Matrix4 popMatrix = Matrix4::Translation(-translate);
-
 	for (unsigned int i = 0; i < currentScene->getNumLightObjects(); ++i)
 	{
 		GameObject* light = currentScene->getLightObject(i);
 		Renderer::UpdateUniform(glGetUniformLocation(light->GetRenderComponent()->m_Material->GetShader()->GetProgram(), "lightPos"), light->GetWorldTransform().GetTranslation());
-		currentScene->getLightObject(i)->OnRenderObject(); //<-- split OnRender() into SetupRender() and Render()
-	}
+		Renderer::UpdateUniform(glGetUniformLocation(light->GetRenderComponent()->m_Material->GetShader()->GetProgram(), "lightRagius"), light->GetBoundingRadius());
+		Renderer::UpdateUniform(glGetUniformLocation(light->GetRenderComponent()->m_Material->GetShader()->GetProgram(), "lightColour"), Vec4Graphics(0,0,0,0));
 
-	for (int x = 0; x < LIGHTNUM; ++x)
-	{
-		for (int z = 0; z < LIGHTNUM; ++z)
+		
+
+		UpdateShaderMatrices();
+
+		float dist = (light->GetWorldTransform().GetTranslation() - camera->GetPosition()).Length();
+		if (dist < light->GetBoundingRadius())  // camera is inside the light volume !
 		{
-			Light& l = pointLights[(x * LIGHTNUM) + z];
-			float radius = l.GetRadius();
-
-			modelMatrix =
-			  pushMatrix *
-			  Matrix4::Rotation(rotation, Vector3(0, 1, 0)) *
-			  popMatrix *
-			  Matrix4::Translation(l.GetPosition()) *
-			  Matrix4::Scale(Vector3(radius, radius, radius));
-
-			l.SetPosition(modelMatrix.GetPositionVector());
-
-			SetShaderLight(l);
-
-			UpdateShaderMatrices();
-
-			float dist = (l.GetPosition() - camera->GetPosition()).Length();
-			if (dist < radius)  // camera is inside the light volume !
-			{
-				glCullFace(GL_FRONT);
-			}
-			else
-			{
-				glCullFace(GL_BACK);
-			}
-			sphere->Draw();
+			glCullFace(GL_FRONT);
 		}
+		else
+		{
+			glCullFace(GL_BACK);
+		}
+		currentScene->getLightObject(i)->OnRenderObject();
 	}
+
 	glCullFace(GL_BACK);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
 	glClearColor(0.2f, 0.2f, 0.2f, 1);
 
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
+	glUseProgram(0);
+}
+
+void Renderer::CombineBuffers() {
+	//SetCurrentShader(combineShader);
+
+	projMatrix = Mat4Graphics::Orthographic(-1, 1, 1, -1, -1, 1);
+	UpdateShaderMatrices();
+
+	glUniform1i(glGetUniformLocation(currentShader->GetProgram(), "diffuseTex"), 8);
+	glUniform1i(glGetUniformLocation(currentShader->GetProgram(), "emissiveTex"), 9);
+	glUniform1i(glGetUniformLocation(currentShader->GetProgram(), "specularTex"), 10);
+	glActiveTexture(GL_TEXTURE8);
+	glBindTexture(GL_TEXTURE_2D, bufferColourTex);
+
+	glActiveTexture(GL_TEXTURE9);
+	glBindTexture(GL_TEXTURE_2D, lightEmissiveTex);
+
+	glActiveTexture(GL_TEXTURE10);
+	glBindTexture(GL_TEXTURE_2D, lightSpecularTex);
+	quad->Draw();
 	glUseProgram(0);
 }

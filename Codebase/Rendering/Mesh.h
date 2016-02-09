@@ -24,6 +24,8 @@ _-_-_-_-_-_-_-""  ""
 #include "constants.h"
 #include "Texture.h"
 
+class Material;
+
 //A handy enumerator, to determine which member of the bufferObject array
 //holds which data
 enum MeshBuffer
@@ -52,7 +54,7 @@ public:
 	Mesh(size_t numVertices, Vec3Graphics* vertices, Vec2Graphics* texCoords, Vec3Graphics* normals, Vec3Graphics* tangents, size_t numIndices, size_t* indices);
 	virtual ~Mesh(void);
 
-	void Draw();
+	void Draw(Material* material);
 
 	inline void AddChild(Mesh* m)
 	{

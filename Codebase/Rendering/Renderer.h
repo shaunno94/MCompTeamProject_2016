@@ -41,4 +41,6 @@ protected:
 	GLuint pointLightFBO; // FBO for lighting pass
 	GLuint lightEmissiveTex; // Store emissive lighting
 	GLuint lightSpecularTex; // Store specular lighting
+
+	RenderComponent* quad;
 };

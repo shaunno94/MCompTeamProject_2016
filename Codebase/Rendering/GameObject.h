@@ -99,6 +99,7 @@ public:
 	}
 
 protected:
+	virtual void RenderSetup();				//prepares shader uniforms for render
 	virtual void OnRenderObject();			//Handles OpenGL calls to Render the object
 	virtual void OnUpdateObject(float dt);	//Override to handle things like AI etc on update loop
 	void UpdateTransform();	//Updates local transform matrix with positional data from bullet physics

@@ -5,6 +5,8 @@
 #include <cmath>
 
 #include "ModelLoader.h"
+#include "Material.h"
+#include "Renderer.h"
 
 Mesh::Mesh(void)
 {
@@ -68,13 +70,22 @@ Mesh::~Mesh(void)
 	delete[] m_Normals;
 }
 
-void Mesh::Draw()
+
+void Mesh::Draw(Material* material)
 {
+	//reservwed textures
 	for (size_t i = 0; i < ReservedMeshTextures.size; ++i)
 	{
 		if (m_Textures[i])
 			m_Textures[i]->Load(i);
 	}
+	//reserved colours
+	for (size_t i = 0; i < ReservedMeshColours.size; ++i)
+		Renderer::UpdateUniform(material->GetShader()->GetReservedMeshColourUniformLocation(i), GetColour(i));
+	//reserved float
+	Renderer::UpdateUniform(glGetUniformLocation(material->GetShader()->GetProgram(), "specExponent"), GetSpecExponent());
+
+	material->Setup();
 
 	glBindVertexArray(arrayObject);
 	if(bufferObject[INDEX_BUFFER])
@@ -86,7 +97,7 @@ void Mesh::Draw()
 	glBindVertexArray(0);
 
 	for (auto child : m_Children)
-		child->Draw();
+		child->Draw(material);
 }
 
 Mesh* Mesh::GenerateTriangle()
