@@ -42,7 +42,7 @@ public:
 				m_pInstance = new btDiscreteDynamicsWorld(dispatcher, bf, solver, collisionConfiguration);
 
 				filter = new ParticleFilterCallback();
-				m_pInstance->getPairCache()->setOverlapFilterCallback(filter);
+				//m_pInstance->getPairCache()->setOverlapFilterCallback(filter);
 			}
 		}
 		return m_pInstance;

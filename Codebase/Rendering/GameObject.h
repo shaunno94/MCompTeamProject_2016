@@ -34,10 +34,10 @@ class Scene;
 
 enum CollisionShape
 {
-	SPHERE, CUBOID, CYLINDER, CONE, PLANE
+	SPHERE, CUBOID, CYLINDER, CONE, CAPSULE
 };
 
-enum PhysicsType
+enum BodyType
 {
 	PARTICLE, SOFT, RIGID
 };
@@ -71,17 +71,36 @@ public:
 
 	void SetWorldTransform(const Mat4Graphics& transform)
 	{
-		m_ModelMatrix = transform;
+		m_WorldTransform = transform;
 	}
 
 	const Mat4Graphics&  GetWorldTransform() const
 	{
-		return m_ModelMatrix;
+		return m_WorldTransform;
 	}
 
-	//Initialise physics body: mass (a mass of 0 will result in a static object), inertia, orientation, position
-	void InitPhysics(double mass = 1.0, const Vec3Physics& inertia = Vec3Physics(0, 0, 0), const QuatPhysics& orientation = QuatPhysics(0, 0, 0, 1),
-	                 const Vec3Physics& position = Vec3Physics(0, 0, 0), PhysicsType type = RIGID);
+	//Use only for scaling the object, if you want to translate / rotate then use the Physics functions.
+	void SetLocalScale(const Vec3Graphics& scale)
+	{
+		m_LocalTransform = Matrix4Simple::Scale(scale);
+	}
+
+	const Mat4Graphics&  GetLocalTransform() const
+	{
+		return m_LocalTransform;
+	}
+	
+	//Initialise physics body: mass (a mass of 0 will result in a static object), position, orientation, inertia, type (Rigid, Particle, Soft) 
+	bool InitPhysics(double mass, const Vec3Physics& position, const QuatPhysics& orientation, const Vec3Physics& inertia = Vec3Physics(0, 0, 0), BodyType type = RIGID);
+	
+	//Sphere collision shape.
+	bool CreateCollisionShape(double radius); 
+	//Cuboid or Cylinder collsion shapes.
+	bool CreateCollisionShape(const Vec3Physics& half_extents, CollisionShape shape); 
+	//Cone or Capsule collision shapes.
+	bool CreateCollisionShape(double radius, double height, CollisionShape shape); 
+	//Static Plane collision shape.
+	bool CreateCollisionShape(double distance, const Vec3Physics& normal, bool normalised); 
 
 	void SetBoundingRadius(float radius)
 	{
@@ -118,8 +137,9 @@ protected:
 
 	RenderComponent*			m_RenderComponent;
 
-	float						m_BoundingRadius;	//For Frustum Culling
-	Mat4Graphics				m_ModelMatrix;
+	float						m_BoundingRadius;	//Unused
+	Mat4Graphics				m_WorldTransform;
+	Mat4Graphics				m_LocalTransform;
 
 	float m_CamDist; //For ordering of rendering lists.
 };
