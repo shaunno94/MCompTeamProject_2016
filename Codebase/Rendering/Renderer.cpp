@@ -43,6 +43,9 @@ void Renderer::UpdateScene(float msec)
 	{
 		currentScene->getCamera()->UpdateCamera(msec);
 		viewMatrix = currentScene->getCamera()->BuildViewMatrix();
+		//Updates all objects in the scene, sorts lists for rendering
+		frameFrustrum.FromMatrix(projMatrix * viewMatrix);
+		currentScene->UpdateNodeLists(msec, frameFrustrum);
 	}
 	else
 	{
@@ -69,13 +72,11 @@ void Renderer::RenderScene(float msec)
 		//Draw opaques
 		for (unsigned int i = 0; i < currentScene->getNumOpaqueObjects(); ++i)
 		{
-			currentScene->getOpaqueObject(i)->OnUpdateObject(msec);
 			currentScene->getOpaqueObject(i)->OnRenderObject();
 		}
 		//Draw transparent
 		for (unsigned int i = 0; i < currentScene->getNumTransparentObjects(); ++i)
 		{
-			currentScene->getTransparentObject(i)->OnUpdateObject(msec);
 			currentScene->getTransparentObject(i)->OnRenderObject();
 		}
 	}

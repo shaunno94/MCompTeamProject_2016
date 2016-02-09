@@ -9,6 +9,7 @@ GameObject::GameObject(const std::string& name)
 	m_ColShape = nullptr;
 	m_RenderComponent = nullptr;
 	m_BoundingRadius = 1.0f;
+	m_CamDist = 0.0f;
 
 	m_ModelMatrix.ToIdentity();
 }
@@ -44,12 +45,12 @@ void GameObject::InitPhysics(double mass, const Vec3Physics& inertia, const Quat
 	{	
 	case RIGID:	
 		//Create a collision shape - a sphere for now...
-		m_ColShape = new btSphereShape(1.0);
+		m_ColShape = new btSphereShape(15.0);
 		m_ColShape->calculateLocalInertia(mass, btVector3(inertia.x, inertia.y, inertia.z));
 
 		//Rigid body object (http://www.bulletphysics.org/mediawiki-1.5.8/index.php/Rigid_Bodies)
 		m_ConstructionInfo = new btRigidBody::btRigidBodyConstructionInfo(mass, m_MotionState, m_ColShape, btVector3(0, 0, 0));
-		m_RigidPhysicsObject = new btRigidBody(*m_ConstructionInfo);
+		m_RigidPhysicsObject = new btRigidBody(*m_ConstructionInfo); 
 		//Add the body to the physics environment.
 		PhysicsEngineInstance::Instance()->addRigidBody(m_RigidPhysicsObject);
 		break;
@@ -63,6 +64,7 @@ void GameObject::InitPhysics(double mass, const Vec3Physics& inertia, const Quat
 		m_ConstructionInfo = new btRigidBody::btRigidBodyConstructionInfo(mass, m_MotionState, m_ColShape, btVector3(0, 0, 0));
 		m_RigidPhysicsObject = new btRigidBody(*m_ConstructionInfo);
 		//Add the body to the physics environment - with group ID 0 and mask 0 this should prevent particles colliding with everything.
+		m_RigidPhysicsObject->setCollisionFlags(btCollisionObject::CF_NO_CONTACT_RESPONSE);
 		PhysicsEngineInstance::Instance()->addRigidBody(m_RigidPhysicsObject, 0, 0);
 		break;
 	}
@@ -97,23 +99,14 @@ void GameObject::AddChildObject(GameObject* child)
 	child->m_Parent = this;
 }
 
-//TODO:: Parent-child relationship needs to be undone for sorted drawing!!
 void GameObject::OnRenderObject()				
 {
-	for (auto child : m_Children)
-	{
-		child->OnRenderObject();
-	}
 	if (m_RenderComponent)
 		m_RenderComponent->Draw();
 }
 
 void GameObject::OnUpdateObject(float dt)
 {
-	for (auto child : m_Children)
-	{
-		child->OnUpdateObject(dt);
-	}
 	UpdateTransform();
 }
 
@@ -141,7 +134,7 @@ void GameObject::UpdateTransform()
 	r = QuatGraphics(rot.x(), rot.y(), rot.z(), rot.w());
 	
 	//Update model matrix 
-	m_ModelMatrix = m_ModelMatrix * r.ToMatrix4() * Mat4Graphics::Translation(p);
+	m_ModelMatrix = r.ToMatrix4() * Mat4Graphics::Translation(p);
 
 	if (m_Parent)
 		m_ModelMatrix = m_Parent->m_ModelMatrix * m_ModelMatrix;

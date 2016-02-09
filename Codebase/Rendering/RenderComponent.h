@@ -19,6 +19,8 @@ public:
 
 	void SetParent(GameObject* go);
 
+	bool disabled = false;
+
 protected:
 	GameObject* m_GameObject;
 };
