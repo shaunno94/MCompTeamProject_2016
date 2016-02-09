@@ -132,7 +132,6 @@ GLuint	Shader::GenerateShader(string from, GLenum type)
 void	Shader::SetDefaultAttributes()
 {
 	glBindAttribLocation(program, VERTEX_BUFFER,  "position");
-	glBindAttribLocation(program, COLOUR_BUFFER,  "colour");
 	glBindAttribLocation(program, NORMAL_BUFFER,  "normal");
 	glBindAttribLocation(program, TANGENT_BUFFER, "tangent");
 	glBindAttribLocation(program, TEXTURE_BUFFER, "texCoord");

@@ -41,10 +41,10 @@ static const struct ReservedMeshTexturesStruct
 
 } ReservedMeshTextures =
 {
-	reservedMeshTextureCounter++, "diffuseTexture",
-	reservedMeshTextureCounter++, "specularColourTexure",
-	reservedMeshTextureCounter++, "specularHighlightTexure",
-	reservedMeshTextureCounter++, "alphaTexure",
+	reservedMeshTextureCounter++, "diffuseTex",
+	reservedMeshTextureCounter++, "specularColourTex",
+	reservedMeshTextureCounter++, "specularHighlightTex",
+	reservedMeshTextureCounter++, "alphaTex",
 	reservedMeshTextureCounter++, "bumpMap"
 };
 

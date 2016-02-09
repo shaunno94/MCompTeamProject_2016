@@ -16,4 +16,7 @@ static const char PATH_SEPARATOR = PATH_SEPARATOR_STR[0];
 std::string GetContainingFolder(const std::string& fpath);
 
 std::string AppendPath(const std::string& path, const std::string& fpath);
+
+std::string GetFileExt(const std::string& fpath);
+std::string RemoveFileExt(const std::string& fpath);
 }
