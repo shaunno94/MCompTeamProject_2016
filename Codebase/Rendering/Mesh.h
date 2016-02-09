@@ -29,7 +29,6 @@ _-_-_-_-_-_-_-""  ""
 enum MeshBuffer
 {
 	VERTEX_BUFFER	,
-	COLOUR_BUFFER	,
 	TEXTURE_BUFFER	,
 	NORMAL_BUFFER	,
 	TANGENT_BUFFER	,
@@ -161,8 +160,6 @@ protected:
 
 	//Pointer to vertex position attribute data (badly named...?)
 	Vec3Graphics*		m_Vertices;
-	//Pointer to vertex colour attribute data
-	Vec4Graphics*		colours;
 	//Pointer to vertex texture coordinate attribute data
 	Vec2Graphics*		m_TextureCoords;
 	//Pointer to vertex normals attribute data

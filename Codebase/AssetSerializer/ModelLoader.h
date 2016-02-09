@@ -58,13 +58,6 @@ protected:
 
 	/****** Methods ******/
 
-	// Gets a istringstream of a full file
-	static std::stringstream* LoadFileToSS(const std::string& fileName);
-	// Loads binary file and returns a vector of required type
-	template < typename T >
-	static std::vector<T>* LoadFileToVec(const std::string& fileName);
-
-
 	static void HandleObjMtlLib(const std::string& filepath, std::unordered_map<std::string, MeshMtlData*>& mtlMap);
 	static bool HandleOBJFace(std::string line, ObjMeshData* obj);
 	static size_t AddOBJVertToList(ObjMeshData* obj, ObjVertData& vert);

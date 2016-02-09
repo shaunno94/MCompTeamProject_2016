@@ -458,12 +458,6 @@ Mesh* ModelLoader::CreateMesh(ObjMeshData* obj, std::unordered_map<std::string, 
 		mesh->m_TextureCoords[i] = obj->inputTexCoords[obj->objVertexList[i].texture];
 	}
 
-	mesh->colours = new Vec4Graphics[numVertices];
-	for (size_t i = 0; i < numVertices; ++i)
-	{
-		mesh->colours[i] = Vec4Graphics::ONES;
-	}
-
 	size_t numIndices = obj->finalIndices.size();
 	mesh->m_NumIndices = numIndices;
 	mesh->m_Indices = new unsigned int[numIndices];

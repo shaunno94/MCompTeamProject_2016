@@ -24,7 +24,6 @@ Mesh::Mesh(void)
 	m_Normals		  = nullptr;
 	m_Tangents	  = nullptr;
 	m_Indices		  = nullptr;
-	colours		  = nullptr;
 }
 
 Mesh::Mesh(size_t numVertices, Vec3Graphics* vertices, Vec2Graphics* texCoords, Vec3Graphics* normals, Vec3Graphics* tangents, size_t numIndices, size_t* indices)
@@ -48,7 +47,6 @@ Mesh::Mesh(size_t numVertices, Vec3Graphics* vertices, Vec2Graphics* texCoords, 
 	m_Normals = normals;
 	m_Tangents = tangents;
 	m_Indices = indices;
-	colours = nullptr;
 }
 
 Mesh::~Mesh(void)
@@ -68,7 +66,6 @@ Mesh::~Mesh(void)
 	delete[] m_TextureCoords;
 	delete[] m_Tangents;
 	delete[] m_Normals;
-	delete[] colours;
 }
 
 void Mesh::Draw()
@@ -106,11 +103,6 @@ Mesh* Mesh::GenerateTriangle()
 	m->m_TextureCoords[0] = Vec2Graphics(0.5f,	0.0f);
 	m->m_TextureCoords[1] = Vec2Graphics(1.0f,	1.0f);
 	m->m_TextureCoords[2] = Vec2Graphics(0.0f,	1.0f);
-
-	m->colours = new Vec4Graphics[m->m_NumVertices];
-	m->colours[0] = Vec4Graphics(1.0f, 0.0f, 0.0f,1.0f);
-	m->colours[1] = Vec4Graphics(0.0f, 1.0f, 0.0f,1.0f);
-	m->colours[2] = Vec4Graphics(0.0f, 0.0f, 1.0f,1.0f);
 
 	m->GenerateNormals();
 	m->GenerateTangents();
@@ -273,7 +265,6 @@ Mesh* Mesh::GenerateQuad()
 
 	m->m_Vertices			= new Vec3Graphics[m->m_NumVertices];
 	m->m_TextureCoords	= new Vec2Graphics[m->m_NumVertices];
-	m->colours			= new Vec4Graphics[m->m_NumVertices];
 	m->m_Normals			= new Vec3Graphics[m->m_NumVertices];
 	m->m_Tangents			= new Vec3Graphics[m->m_NumVertices];
 
@@ -289,7 +280,6 @@ Mesh* Mesh::GenerateQuad()
 
 	for(int i = 0; i < 4; ++i)
 	{
-		m->colours[i] = Vec4Graphics(1.0f, 1.0f,1.0f,1.0f);
 		m->m_Normals[i] = Vec3Graphics(0.0f, 0.0f,-1.0f);
 		m->m_Tangents[i] = Vec3Graphics(1.0f, 0.0f,0.0f);
 	}
@@ -309,7 +299,6 @@ Mesh* Mesh::GenerateQuadAlt()
 
 	m->m_Vertices			= new Vec3Graphics[m->m_NumVertices];
 	m->m_TextureCoords	= new Vec2Graphics[m->m_NumVertices];
-	m->colours			= new Vec4Graphics[m->m_NumVertices];
 	m->m_Normals			= new Vec3Graphics[m->m_NumVertices];
 	m->m_Tangents			= new Vec3Graphics[m->m_NumVertices];
 
@@ -325,7 +314,6 @@ Mesh* Mesh::GenerateQuadAlt()
 
 	for(int i = 0; i < 4; ++i)
 	{
-		m->colours[i] = Vec4Graphics(1.0f, 1.0f,1.0f,1.0f);
 		m->m_Normals[i] = Vec3Graphics(0.0f, 0.0f,-1.0f);
 		m->m_Tangents[i] = Vec3Graphics(1.0f, 0.0f,0.0f);
 	}
@@ -344,7 +332,6 @@ Mesh* Mesh::GenerateQuadTexCoordCol(Vec2Graphics scale, Vec2Graphics texCoord, V
 
 	m->m_Vertices			= new Vec3Graphics[m->m_NumVertices];
 	m->m_TextureCoords	= new Vec2Graphics[m->m_NumVertices];
-	m->colours			= new Vec4Graphics[m->m_NumVertices];
 	m->m_Normals			= new Vec3Graphics[m->m_NumVertices];
 	m->m_Tangents			= new Vec3Graphics[m->m_NumVertices];
 
@@ -360,7 +347,6 @@ Mesh* Mesh::GenerateQuadTexCoordCol(Vec2Graphics scale, Vec2Graphics texCoord, V
 
 	for(int i = 0; i < 4; ++i)
 	{
-		m->colours[i] = colour;
 		m->m_Normals[i] = Vec3Graphics(0.0f, 0.0f, 1.0f);
 		m->m_Tangents[i] = Vec3Graphics(1.0f, 0.0f,0.0f);
 	}
@@ -395,16 +381,6 @@ void	Mesh::BufferData()
 		glBufferData(GL_ARRAY_BUFFER, m_NumVertices*sizeof(Vec2Graphics), m_TextureCoords, GL_STATIC_DRAW);
 		glVertexAttribPointer(TEXTURE_BUFFER, 2, GL_FLOAT, GL_FALSE, sizeof(Vec2Graphics), 0);
 		glEnableVertexAttribArray(TEXTURE_BUFFER);
-	}
-
-	//buffer colour data
-	if(colours)
-	{
-		glGenBuffers(1, &bufferObject[COLOUR_BUFFER]);
-		glBindBuffer(GL_ARRAY_BUFFER, bufferObject[COLOUR_BUFFER]);
-		glBufferData(GL_ARRAY_BUFFER, m_NumVertices*sizeof(Vec4Graphics), colours, GL_STATIC_DRAW);
-		glVertexAttribPointer(COLOUR_BUFFER, 4, GL_FLOAT, GL_FALSE, sizeof(Vec4Graphics), 0);
-		glEnableVertexAttribArray(COLOUR_BUFFER);
 	}
 
 	//Buffer normal data
@@ -582,9 +558,7 @@ void Mesh::DrawDebugNormals(float length)
 
 		glGenBuffers(1, &cbuffer);
 		glBindBuffer(GL_ARRAY_BUFFER, cbuffer);
-		glBufferData(GL_ARRAY_BUFFER, m_NumVertices*sizeof(Vec3Graphics)*2, tempC, GL_STREAM_DRAW);
-		glVertexAttribPointer(COLOUR_BUFFER, 3, GL_FLOAT, GL_FALSE, 0, 0);
-		glEnableVertexAttribArray(COLOUR_BUFFER);
+		glBufferData(GL_ARRAY_BUFFER, m_NumVertices*sizeof(Vec3Graphics) * 2, tempC, GL_STREAM_DRAW);
 
 		glPointSize(4.0f);
 		glLineWidth(2.0f);
@@ -640,8 +614,6 @@ void Mesh::DrawDebugTangents(float length)
 		glGenBuffers(1, &cbuffer);
 		glBindBuffer(GL_ARRAY_BUFFER, cbuffer);
 		glBufferData(GL_ARRAY_BUFFER, m_NumVertices*sizeof(Vec3Graphics)*2, tempC, GL_STREAM_DRAW);
-		glVertexAttribPointer(COLOUR_BUFFER, 3, GL_FLOAT, GL_FALSE, 0, 0);
-		glEnableVertexAttribArray(COLOUR_BUFFER);
 
 		glPointSize(4.0f);
 		glLineWidth(2.0f);
