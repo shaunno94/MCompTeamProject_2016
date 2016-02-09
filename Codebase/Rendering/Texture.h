@@ -1,6 +1,6 @@
 #pragma once
 
-#include "GL/glew.h"
+#include "Dependencies/glew-1.13.0/include/GL/glew.h"
 #include "Dependencies/SOIL2/SOIL2.h"
 #pragma comment(lib, "SOIL2/soil2.lib")
 

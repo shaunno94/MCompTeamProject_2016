@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 2013
-VisualStudioVersion = 12.0.40629.0
+VisualStudioVersion = 12.0.21005.1
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Application", "Application\Application.vcxproj", "{28A90E4B-CBFC-404E-9934-2146F19A8C64}"
 EndProject
@@ -38,6 +38,8 @@ EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "LinearMath", "BulletPhysics\build3\vs2010\LinearMath.vcxproj", "{E9A76716-EF48-2D48-B6AE-09A54F748CAE}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "PhysicsEngine", "PhysicsEngine\PhysicsEngine.vcxproj", "{2CC601E3-E95D-4C55-B786-474F898780F5}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "AI", "AI\AI.vcxproj", "{EA8B500E-59FA-4A79-8398-08F85F821CC7}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -119,6 +121,12 @@ Global
 		{2CC601E3-E95D-4C55-B786-474F898780F5}.Release|Win32.ActiveCfg = Release|Win32
 		{2CC601E3-E95D-4C55-B786-474F898780F5}.Release|Win32.Build.0 = Release|Win32
 		{2CC601E3-E95D-4C55-B786-474F898780F5}.Release|x64.ActiveCfg = Release|Win32
+		{EA8B500E-59FA-4A79-8398-08F85F821CC7}.Debug|Win32.ActiveCfg = Debug|Win32
+		{EA8B500E-59FA-4A79-8398-08F85F821CC7}.Debug|Win32.Build.0 = Debug|Win32
+		{EA8B500E-59FA-4A79-8398-08F85F821CC7}.Debug|x64.ActiveCfg = Debug|Win32
+		{EA8B500E-59FA-4A79-8398-08F85F821CC7}.Release|Win32.ActiveCfg = Release|Win32
+		{EA8B500E-59FA-4A79-8398-08F85F821CC7}.Release|Win32.Build.0 = Release|Win32
+		{EA8B500E-59FA-4A79-8398-08F85F821CC7}.Release|x64.ActiveCfg = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
