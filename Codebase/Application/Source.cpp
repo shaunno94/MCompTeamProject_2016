@@ -50,7 +50,7 @@ int main() {
 	//myScene->addGameObject(test);
 	//myScene->addGameObject(floor);
 	GameObject* tardis = new GameObject();
-	tardis->SetRenderComponent(new RenderComponent(material, ModelLoader::LoadMGL(MODEL_DIR"Tardis/TARDIS.mgl", true)));
+	tardis->SetRenderComponent(new RenderComponent(material, ModelLoader::LoadMGL(MODEL_DIR"Raptor/Raptor.mgl", true)));
 	myScene->addGameObject(tardis);
 
 	renderer.SetCurrentScene(myScene);
