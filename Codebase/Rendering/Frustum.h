@@ -14,37 +14,20 @@ public:
 	bool InsideFrustum(GameObject* n);
 
 private:
-	struct ContactFrustumCallback : public btCollisionWorld::ContactResultCallback
-	{
-		btScalar addSingleResult(btManifoldPoint& cp, const btCollisionObjectWrapper* colObj0Wrap, int partId0, int index0, 
-		const btCollisionObjectWrapper* colObj1Wrap, int partId1, int index1)
-		{
-			// your callback code here
-			context->inFrustum = true;
-			return 0;
-		}
-		Frustum* context;
-	};
 	struct Plane
 	{
-		~Plane()
-		{ 
-			delete m_CollisionShape; 
-			delete m_MotionState;
-			delete m_RigidBody;
-			delete m_ConstructionInfo;
+		Plane(float dist, Vec3Graphics n)
+		{
+			distance = dist;
+			normal = n;
 		}
-		btDefaultMotionState*		m_MotionState;
-		btCollisionShape*			m_CollisionShape;
-		btRigidBody::btRigidBodyConstructionInfo* m_ConstructionInfo;
-		btRigidBody* m_RigidBody;
-	};
-	ContactFrustumCallback callback;
-	vector<Plane*> planes;
-	btRigidBody* fBox;
-	btDefaultMotionState*		m_MotionState;
-	btCollisionShape*			m_CollisionShape;
-	btRigidBody::btRigidBodyConstructionInfo* m_ConstructionInfo;
+		float distance;
+		Vec3Graphics normal;
 
-	bool inFrustum;
+		bool Plane::PointInPlane(const Vec3Physics& position) const 
+		{
+			return !(position.Dot(normal) + distance < -0.001f);
+		}
+	};
+	vector<Plane> planes;
 };

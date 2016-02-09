@@ -7,82 +7,61 @@ void Frustum::FromMatrix(const Mat4Graphics &mat)
 	Vec3Graphics zaxis = Vec3Graphics(mat.values[2], mat.values[6], mat.values[10]);
 	Vec3Graphics waxis = Vec3Graphics(mat.values[3], mat.values[7], mat.values[11]);
 
-	/*for (auto p : planes)
-	{
-		if (p)
-		{
-			delete p;
-			p = nullptr;
-		}	
-	}
 	planes.clear();
-	Plane* p;*/
-	m_CollisionShape = new btBoxShape(btVector3(mat.values[15] + mat.values[12], mat.values[15] + mat.values[13], mat.values[15] + mat.values[14]));
-	m_MotionState = new btDefaultMotionState(btTransform(btQuaternion(0, 0, 0, 1), btVector3(0, 0, 0)));
-	m_ConstructionInfo = new btRigidBody::btRigidBodyConstructionInfo(0, m_MotionState, m_CollisionShape, btVector3(0, 0, 0));
-	fBox = new btRigidBody(*m_ConstructionInfo);
-	callback.context = this;
-
+	//Create frustum planes - plane constant (D), plane normal
 	//RIGHT
-	/*p = new Plane;
-	p->m_CollisionShape = new btStaticPlaneShape((btVector3(waxis.x, waxis.y, waxis.z) - btVector3(xaxis.x, xaxis.y, xaxis.z)).normalize(), (mat.values[15] - mat.values[12]));
-	p->m_MotionState = new btDefaultMotionState(btTransform(btQuaternion(0, 0, 0, 1), btVector3(0, 0, 0)));
-	p->m_ConstructionInfo = new btRigidBody::btRigidBodyConstructionInfo(0, p->m_MotionState, p->m_CollisionShape, btVector3(0, 0, 0));
-	p->m_RigidBody = new btRigidBody(*p->m_ConstructionInfo);
-	planes.push_back(p);
+	planes.push_back(Plane((mat.values[15] - mat.values[12]), (waxis - xaxis).Normalize()));
 	
 	//LEFT
-	p = new Plane;
-	p->m_CollisionShape = new btStaticPlaneShape((btVector3(waxis.x, waxis.y, waxis.z) + btVector3(xaxis.x, xaxis.y, xaxis.z)).normalize(), (mat.values[15] + mat.values[12]));
-	p->m_MotionState = new btDefaultMotionState(btTransform(btQuaternion(0, 0, 0, 1), btVector3(0, 0, 0)));
-	p->m_ConstructionInfo = new btRigidBody::btRigidBodyConstructionInfo(0, p->m_MotionState, p->m_CollisionShape, btVector3(0, 0, 0));
-	p->m_RigidBody = new btRigidBody(*p->m_ConstructionInfo);
-	planes.push_back(p);
+	planes.push_back(Plane((mat.values[15] + mat.values[12]), (waxis + xaxis).Normalize()));
 
 	//BOTTOM
-	p = new Plane;
-	p->m_CollisionShape = new btStaticPlaneShape((btVector3(waxis.x, waxis.y, waxis.z) + btVector3(yaxis.x, yaxis.y, yaxis.z)).normalize(), (mat.values[15] + mat.values[13]));
-	p->m_MotionState = new btDefaultMotionState(btTransform(btQuaternion(0, 0, 0, 1), btVector3(0, 0, 0)));
-	p->m_ConstructionInfo = new btRigidBody::btRigidBodyConstructionInfo(0, p->m_MotionState, p->m_CollisionShape, btVector3(0, 0, 0));
-	p->m_RigidBody = new btRigidBody(*p->m_ConstructionInfo);
-	planes.push_back(p);
+	planes.push_back(Plane((mat.values[15] + mat.values[13]), (waxis + yaxis).Normalize()));
 
 	//TOP
-	p = new Plane;
-	p->m_CollisionShape = new btStaticPlaneShape((btVector3(waxis.x, waxis.y, waxis.z) - btVector3(yaxis.x, yaxis.y, yaxis.z)).normalize(), (mat.values[15] - mat.values[13]));
-	p->m_MotionState = new btDefaultMotionState(btTransform(btQuaternion(0, 0, 0, 1), btVector3(0, 0, 0)));
-	p->m_ConstructionInfo = new btRigidBody::btRigidBodyConstructionInfo(0, p->m_MotionState, p->m_CollisionShape, btVector3(0, 0, 0));
-	p->m_RigidBody = new btRigidBody(*p->m_ConstructionInfo);
-	planes.push_back(p);
+	planes.push_back(Plane((mat.values[15] - mat.values[13]), (waxis - yaxis).Normalize()));
 
 	//FAR
-	p = new Plane;
-	p->m_CollisionShape = new btStaticPlaneShape((btVector3(waxis.x, waxis.y, waxis.z) - btVector3(zaxis.x, zaxis.y, zaxis.z)).normalize(), (mat.values[15] - mat.values[14]));
-	p->m_MotionState = new btDefaultMotionState(btTransform(btQuaternion(0, 0, 0, 1), btVector3(0, 0, 0)));
-	p->m_ConstructionInfo = new btRigidBody::btRigidBodyConstructionInfo(0, p->m_MotionState, p->m_CollisionShape, btVector3(0, 0, 0));
-	p->m_RigidBody = new btRigidBody(*p->m_ConstructionInfo);
-	planes.push_back(p);
+	planes.push_back(Plane((mat.values[15] - mat.values[14]), (waxis - zaxis).Normalize()));
 
 	//NEAR
-	p = new Plane;
-	p->m_CollisionShape = new btStaticPlaneShape((btVector3(waxis.x, waxis.y, waxis.z) + btVector3(zaxis.x, zaxis.y, zaxis.z)).normalize(), (mat.values[15] + mat.values[14]));
-	p->m_MotionState = new btDefaultMotionState(btTransform(btQuaternion(0, 0, 0, 1), btVector3(0, 0, 0)));
-	p->m_ConstructionInfo = new btRigidBody::btRigidBodyConstructionInfo(0, p->m_MotionState, p->m_CollisionShape, btVector3(0, 0, 0));
-	p->m_RigidBody = new btRigidBody(*p->m_ConstructionInfo);
-	planes.push_back(p);*/
+	planes.push_back(Plane((mat.values[15] + mat.values[14]), (waxis + zaxis).Normalize()));
 }
 
 
 bool Frustum::InsideFrustum(GameObject* n)	
 {		
-	inFrustum = false;
 	if (!n->Physics())
 			return true;
-//	for (auto& p : planes)
+
+	btVector3 min, max, size, position;
+	//Get axis aligned bounding box
+	n->Physics()->getAabb(min, max);
+	position = n->Physics()->getWorldTransform().getOrigin();
+	size = (max - position).absolute();
+
+	//Iterate through frustum planes and perform a point in plane check for each point in the AABB.
+	for (auto& p : planes)	
 	{
-		//PhysicsEngineInstance::Instance()->contactPairTest(n->Physics(), p->m_RigidBody, callback);
-		PhysicsEngineInstance::Instance()->contactPairTest(n->Physics(), fBox, callback);
-		if (inFrustum) { return true; }
+		if (p.PointInPlane(Vec3Physics(position.x() - size.x(), position.y() + size.y(), position.z() + size.z()))) continue;
+
+		if (p.PointInPlane(Vec3Physics(position.x() + size.x(), position.y() + size.y(), position.z() + size.z()))) continue;
+
+		if (p.PointInPlane(Vec3Physics(position.x() - size.x(), position.y() - size.y(), position.z() + size.z()))) continue;
+
+		if (p.PointInPlane(Vec3Physics(position.x() + size.x(), position.y() - size.y(), position.z() + size.z()))) continue;
+
+		if (p.PointInPlane(Vec3Physics(position.x() - size.x(), position.y() + size.y(), position.z() - size.z()))) continue;
+
+		if (p.PointInPlane(Vec3Physics(position.x() + size.x(), position.y() + size.y(), position.z() - size.z()))) continue;
+
+		if (p.PointInPlane(Vec3Physics(position.x() - size.x(), position.y() - size.y(), position.z() - size.z()))) continue;
+
+		if (p.PointInPlane(Vec3Physics(position.x() + size.x(), position.y() - size.y(), position.z() - size.z()))) continue;
+
+		//Object is outside frustum.
+		return false;
 	}
-	return false;
+	//Object is inside frustum.
+	return true;
 }

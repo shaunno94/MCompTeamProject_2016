@@ -45,12 +45,12 @@ void GameObject::InitPhysics(double mass, const Vec3Physics& inertia, const Quat
 	{	
 	case RIGID:	
 		//Create a collision shape - a sphere for now...
-		m_ColShape = new btSphereShape(1.0);
+		m_ColShape = new btSphereShape(15.0);
 		m_ColShape->calculateLocalInertia(mass, btVector3(inertia.x, inertia.y, inertia.z));
 
 		//Rigid body object (http://www.bulletphysics.org/mediawiki-1.5.8/index.php/Rigid_Bodies)
 		m_ConstructionInfo = new btRigidBody::btRigidBodyConstructionInfo(mass, m_MotionState, m_ColShape, btVector3(0, 0, 0));
-		m_RigidPhysicsObject = new btRigidBody(*m_ConstructionInfo);
+		m_RigidPhysicsObject = new btRigidBody(*m_ConstructionInfo); 
 		//Add the body to the physics environment.
 		PhysicsEngineInstance::Instance()->addRigidBody(m_RigidPhysicsObject);
 		break;
