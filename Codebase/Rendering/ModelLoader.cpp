@@ -113,10 +113,13 @@ Mesh* ModelLoader::LoadOBJ(const std::string& filePath, bool bufferData)
 	}
 
 	//getting final data
-	if (!finalMesh)
-		finalMesh = CreateMesh(obj, mtlMap);
-	else
-		finalMesh->AddChild(CreateMesh(obj, mtlMap));
+	if (obj->finalIndices.size() > 0)
+	{
+		if (!finalMesh)
+			finalMesh = CreateMesh(obj, mtlMap);
+		else
+			finalMesh->AddChild(CreateMesh(obj, mtlMap));
+	}
 
 	//clean
 	delete obj;

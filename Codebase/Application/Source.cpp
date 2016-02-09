@@ -38,10 +38,12 @@ int main() {
 	GameObject* test = new GameObject("test");
 	GameObject* floor = new GameObject("floor");
 
-	Shader* simpleShader = new Shader(SHADER_DIR"basicVertex.glsl", SHADER_DIR"colourFragment.glsl");
+	//Shader* simpleShader = new Shader(SHADER_DIR"textureVertex.glsl", SHADER_DIR"textureCoordFragment.glsl");
+	Shader* simpleShader = new Shader(SHADER_DIR"textureVertex.glsl", SHADER_DIR"textureFragment.glsl");
 	if (!simpleShader->IsOperational())
 		return -1;
 	Material* material = new Material(simpleShader);
+	material->Set("diffuseTexture", Texture::Get(MODEL_DIR"Raptor/raptor.jpg"));
 
 	floor->SetRenderComponent(new RenderComponent(material, Mesh::GenerateQuad()));
 	test->SetRenderComponent(new RenderComponent(material, Mesh::GenerateIcosphere(1)));
@@ -49,7 +51,7 @@ int main() {
 	//myScene->addGameObject(test);
 	//myScene->addGameObject(floor);
 	GameObject* cube = new GameObject();
-	cube->SetRenderComponent(new RenderComponent(material, ModelLoader::LoadOBJ(MODEL_DIR"Tardis/TARDIS.obj", true)));
+	cube->SetRenderComponent(new RenderComponent(material, ModelLoader::LoadOBJ(MODEL_DIR"Raptor/Raptor.obj", true)));
 	myScene->addGameObject(cube);
 
 	renderer.SetCurrentScene(myScene);
