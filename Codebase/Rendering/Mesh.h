@@ -89,31 +89,31 @@ public:
 	}
 	inline size_t GetNumVertices()
 	{
-		return numVertices;
+		return m_NumVertices;
 	}
 	inline size_t GetNumIndices()
 	{
-		return numIndices;
+		return m_NumIndices;
 	}
 	inline Vec3Graphics* GetVertices()
 	{
-		return vertices;
+		return m_Vertices;
 	}
 	inline Vec3Graphics* GetNormals()
 	{
-		return normals;
+		return m_Normals;
 	}
 	inline Vec3Graphics* GetTangents()
 	{
-		return tangents;
+		return m_Tangents;
 	}
 	inline Vec2Graphics* GetTextureCoords()
 	{
-		return textureCoords;
+		return m_TextureCoords;
 	}
 	inline size_t* GetIndices()
 	{
-		return indices;
+		return m_Indices;
 	}
 
 	//Extra stuff!!!! Aren't I nice?
@@ -143,7 +143,7 @@ protected:
 	//VBOs for this mesh
 	GLuint	bufferObject[MAX_BUFFER];
 	//Number of vertices for this mesh
-	GLuint	numVertices;
+	GLuint	m_NumVertices;
 	//Primitive type for this mesh (GL_TRIANGLES...etc)
 	GLuint	type;
 
@@ -152,7 +152,7 @@ protected:
 	float m_SpecExponent;
 
 	//Number of indices for this mesh
-	GLuint			numIndices;
+	GLuint			m_NumIndices;
 
 	//You might wonder why we keep pointers to vertex data once
 	//it's sent off to graphics memory. For basic meshes, there's no
@@ -160,16 +160,16 @@ protected:
 	//we need access to the vertex data for skinning per frame...
 
 	//Pointer to vertex position attribute data (badly named...?)
-	Vec3Graphics*		vertices;
+	Vec3Graphics*		m_Vertices;
 	//Pointer to vertex colour attribute data
 	Vec4Graphics*		colours;
 	//Pointer to vertex texture coordinate attribute data
-	Vec2Graphics*		textureCoords;
+	Vec2Graphics*		m_TextureCoords;
 	//Pointer to vertex normals attribute data
-	Vec3Graphics*		normals;
+	Vec3Graphics*		m_Normals;
 	//Pointer to vertex tangents attribute data
-	Vec3Graphics*		tangents;
+	Vec3Graphics*		m_Tangents;
 	//Pointer to vertex indices attribute data
-	size_t*	indices;
+	size_t*	m_Indices;
 };
 

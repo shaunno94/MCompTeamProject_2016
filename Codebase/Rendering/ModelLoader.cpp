@@ -442,10 +442,10 @@ Mesh* ModelLoader::CreateMesh(ObjMeshData* obj, std::unordered_map<std::string, 
 	size_t numVertices = obj->objVertexList.size();
 
 	Mesh* mesh = new Mesh();
-	mesh->numVertices = numVertices;
-	mesh->vertices = new Vec3Graphics[numVertices];
-	mesh->normals = new Vec3Graphics[numVertices];
-	mesh->textureCoords = new Vec2Graphics[numVertices];
+	mesh->m_NumVertices = numVertices;
+	mesh->m_Vertices = new Vec3Graphics[numVertices];
+	mesh->m_Normals = new Vec3Graphics[numVertices];
+	mesh->m_TextureCoords = new Vec2Graphics[numVertices];
 
 	auto match = mtls.find(obj->mtlReference);
 	if (match != mtls.end())
@@ -453,9 +453,9 @@ Mesh* ModelLoader::CreateMesh(ObjMeshData* obj, std::unordered_map<std::string, 
 
 	for (size_t i = 0; i < numVertices; ++i)
 	{
-		mesh->vertices[i] = obj->inputVertices[obj->objVertexList[i].vertex];
-		mesh->normals[i] = obj->inputNormals[obj->objVertexList[i].normals];
-		mesh->textureCoords[i] = obj->inputTexCoords[obj->objVertexList[i].texture];
+		mesh->m_Vertices[i] = obj->inputVertices[obj->objVertexList[i].vertex];
+		mesh->m_Normals[i] = obj->inputNormals[obj->objVertexList[i].normals];
+		mesh->m_TextureCoords[i] = obj->inputTexCoords[obj->objVertexList[i].texture];
 	}
 
 	mesh->colours = new Vec4Graphics[numVertices];
@@ -465,17 +465,17 @@ Mesh* ModelLoader::CreateMesh(ObjMeshData* obj, std::unordered_map<std::string, 
 	}
 
 	size_t numIndices = obj->finalIndices.size();
-	mesh->numIndices = numIndices;
-	mesh->indices = new unsigned int[numIndices];
+	mesh->m_NumIndices = numIndices;
+	mesh->m_Indices = new unsigned int[numIndices];
 	for (size_t i = 0; i < numIndices; ++i)
 	{
-		mesh->indices[i] = obj->finalIndices[i] - 1;
+		mesh->m_Indices[i] = obj->finalIndices[i] - 1;
 	}
 
 	return mesh;
 }
 
-#define MGL_LOAD_FAST_EXPERIMENTAL 0
+#define MGL_LOAD_FAST_EXPERIMENTAL 1
 #define MGL_FILE_CURRENTVERSION 0.01f
 
 template<typename T>

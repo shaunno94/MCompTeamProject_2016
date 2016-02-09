@@ -1,6 +1,6 @@
 #version 150 core
 
-uniform sampler2D diffuseTexture;
+uniform sampler2D diffuseTex;
 
 in Vertex	{
 	vec2 texCoord;
@@ -9,5 +9,5 @@ in Vertex	{
 out vec4 outFragColor;
 
 void main(void)	{
-	outFragColor = texture(diffuseTexture, IN.texCoord);
+	outFragColor = texture(diffuseTex, IN.texCoord);
 }

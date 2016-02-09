@@ -113,10 +113,13 @@ Mesh* ModelLoader::LoadOBJ(const std::string& filePath, bool bufferData)
 	}
 
 	//getting final data
-	if (!finalMesh)
-		finalMesh = CreateMesh(obj, mtlMap);
-	else
-		finalMesh->AddChild(CreateMesh(obj, mtlMap));
+	if (obj->finalIndices.size() > 0)
+	{
+		if (!finalMesh)
+			finalMesh = CreateMesh(obj, mtlMap);
+		else
+			finalMesh->AddChild(CreateMesh(obj, mtlMap));
+	}
 
 	//clean
 	delete obj;
@@ -439,10 +442,10 @@ Mesh* ModelLoader::CreateMesh(ObjMeshData* obj, std::unordered_map<std::string, 
 	size_t numVertices = obj->objVertexList.size();
 
 	Mesh* mesh = new Mesh();
-	mesh->numVertices = numVertices;
-	mesh->vertices = new Vec3Graphics[numVertices];
-	mesh->normals = new Vec3Graphics[numVertices];
-	mesh->textureCoords = new Vec2Graphics[numVertices];
+	mesh->m_NumVertices = numVertices;
+	mesh->m_Vertices = new Vec3Graphics[numVertices];
+	mesh->m_Normals = new Vec3Graphics[numVertices];
+	mesh->m_TextureCoords = new Vec2Graphics[numVertices];
 
 	auto match = mtls.find(obj->mtlReference);
 	if (match != mtls.end())
@@ -450,9 +453,9 @@ Mesh* ModelLoader::CreateMesh(ObjMeshData* obj, std::unordered_map<std::string, 
 
 	for (size_t i = 0; i < numVertices; ++i)
 	{
-		mesh->vertices[i] = obj->inputVertices[obj->objVertexList[i].vertex];
-		mesh->normals[i] = obj->inputNormals[obj->objVertexList[i].normals];
-		mesh->textureCoords[i] = obj->inputTexCoords[obj->objVertexList[i].texture];
+		mesh->m_Vertices[i] = obj->inputVertices[obj->objVertexList[i].vertex];
+		mesh->m_Normals[i] = obj->inputNormals[obj->objVertexList[i].normals];
+		mesh->m_TextureCoords[i] = obj->inputTexCoords[obj->objVertexList[i].texture];
 	}
 
 	mesh->colours = new Vec4Graphics[numVertices];
@@ -462,11 +465,11 @@ Mesh* ModelLoader::CreateMesh(ObjMeshData* obj, std::unordered_map<std::string, 
 	}
 
 	size_t numIndices = obj->finalIndices.size();
-	mesh->numIndices = numIndices;
-	mesh->indices = new unsigned int[numIndices];
+	mesh->m_NumIndices = numIndices;
+	mesh->m_Indices = new unsigned int[numIndices];
 	for (size_t i = 0; i < numIndices; ++i)
 	{
-		mesh->indices[i] = obj->finalIndices[i] - 1;
+		mesh->m_Indices[i] = obj->finalIndices[i] - 1;
 	}
 
 	return mesh;
@@ -543,7 +546,7 @@ void WriteMeshToMGL(std::ofstream& out, Mesh* const mesh)
 			static const size_t modelDirSize = std::string(MODEL_DIR).size();
 			std::string tempStr = tex->GetFilePath();
 			tempStr.erase(0, modelDirSize);
-			out.write(tempStr.c_str(), sizeof(char) * tex->GetFilePath().size());
+			out.write(tempStr.c_str(), sizeof(char) * (tempStr.size() + 1));
 		}
 		else
 			WriteToMGL(out, '\0');
