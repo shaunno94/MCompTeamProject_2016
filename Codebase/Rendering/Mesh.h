@@ -29,7 +29,6 @@ _-_-_-_-_-_-_-""  ""
 enum MeshBuffer
 {
 	VERTEX_BUFFER	,
-	COLOUR_BUFFER	,
 	TEXTURE_BUFFER	,
 	NORMAL_BUFFER	,
 	TANGENT_BUFFER	,
@@ -37,7 +36,12 @@ enum MeshBuffer
 	MAX_BUFFER
 };
 
-class MeshMtlData;
+struct MeshMtlData
+{
+	Texture* textureMaps[ReservedMeshTextures.size];
+	Vec3Graphics colours[ReservedMeshColours.size];
+	float specExponent;
+};
 
 class Mesh
 {
@@ -45,13 +49,18 @@ public:
 	friend class ModelLoader;
 
 	Mesh(void);
+	Mesh(size_t numVertices, Vec3Graphics* vertices, Vec2Graphics* texCoords, Vec3Graphics* normals, Vec3Graphics* tangents, size_t numIndices, size_t* indices);
 	virtual ~Mesh(void);
 
 	void Draw();
 
-	void AddChild(Mesh* m)
+	inline void AddChild(Mesh* m)
 	{
 		m_Children.push_back(m);
+	}
+	inline const std::vector<Mesh*>& GetChildren()
+	{
+		return m_Children;
 	}
 
 	//Generates a single triangle, with RGB colours
@@ -69,10 +78,41 @@ public:
 	{
 		return m_Textures[index];
 	}
-
 	inline const Vec3Graphics& GetColour(size_t index) const
 	{
 		return m_Colours[index];
+	}
+	inline float GetSpecExponent() const
+	{
+		return m_SpecExponent;
+	}
+	inline size_t GetNumVertices()
+	{
+		return m_NumVertices;
+	}
+	inline size_t GetNumIndices()
+	{
+		return m_NumIndices;
+	}
+	inline Vec3Graphics* GetVertices()
+	{
+		return m_Vertices;
+	}
+	inline Vec3Graphics* GetNormals()
+	{
+		return m_Normals;
+	}
+	inline Vec3Graphics* GetTangents()
+	{
+		return m_Tangents;
+	}
+	inline Vec2Graphics* GetTextureCoords()
+	{
+		return m_TextureCoords;
+	}
+	inline size_t* GetIndices()
+	{
+		return m_Indices;
 	}
 
 	//Extra stuff!!!! Aren't I nice?
@@ -85,13 +125,15 @@ public:
 	//Generates tangents for all facets. Assumes geometry type is GL_TRIANGLES...
 	void	GenerateTangents();
 
+	void	SetMtlData(const MeshMtlData& data);
+
 protected:
 	//Buffers all VBO data into graphics memory. Required before drawing!
 	void	BufferData();
-	void	SetMtlData(const MeshMtlData& data);
 
 	//Helper function for GenerateTangents
 	Vec3Graphics GenerateTangent(const Vec3Graphics& a,const Vec3Graphics& b,const Vec3Graphics& c,const Vec2Graphics& ta,const Vec2Graphics& tb,const Vec2Graphics& tc);
+
 
 	std::vector<Mesh*> m_Children;
 
@@ -100,7 +142,7 @@ protected:
 	//VBOs for this mesh
 	GLuint	bufferObject[MAX_BUFFER];
 	//Number of vertices for this mesh
-	GLuint	numVertices;
+	GLuint	m_NumVertices;
 	//Primitive type for this mesh (GL_TRIANGLES...etc)
 	GLuint	type;
 
@@ -108,10 +150,8 @@ protected:
 	Vec3Graphics m_Colours[ReservedMeshColours.size];
 	float m_SpecExponent;
 
-	//Stuff introduced later on in the tutorials!!
-
 	//Number of indices for this mesh
-	GLuint			numIndices;
+	GLuint			m_NumIndices;
 
 	//You might wonder why we keep pointers to vertex data once
 	//it's sent off to graphics memory. For basic meshes, there's no
@@ -119,16 +159,14 @@ protected:
 	//we need access to the vertex data for skinning per frame...
 
 	//Pointer to vertex position attribute data (badly named...?)
-	Vec3Graphics*		vertices;
-	//Pointer to vertex colour attribute data
-	Vec4Graphics*		colours;
+	Vec3Graphics*		m_Vertices;
 	//Pointer to vertex texture coordinate attribute data
-	Vec2Graphics*		textureCoords;
+	Vec2Graphics*		m_TextureCoords;
 	//Pointer to vertex normals attribute data
-	Vec3Graphics*		normals;
+	Vec3Graphics*		m_Normals;
 	//Pointer to vertex tangents attribute data
-	Vec3Graphics*		tangents;
+	Vec3Graphics*		m_Tangents;
 	//Pointer to vertex indices attribute data
-	unsigned int*	indices;
+	size_t*	m_Indices;
 };
 

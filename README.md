@@ -6,7 +6,7 @@
 ##Scrum Meetings:
 
 **Mon** 12:00 | **Tue** 14:00 | **Wed** 12:00 | **Thu** 12:00 | **Fri** 14:00
-> At the lab
+> At the lab (!!!Monday is also the meeting with Gary!!!)
 
 ##Recommended Extentions
 
@@ -30,3 +30,18 @@ Select Edit.FormatDocumentAStyle
 Select field "Press shortcut keys:"
 Press some button combination like Alt+F
 Assign
+
+##Work TODO
+* Input system (keyboard and mouse / gamepad)
+* GUI
+	* Buttons
+	* TrueType fonts
+* Audio
+* Advanced rendering
+	* Shadow casting
+	* Defered rendering
+* Particles
+* AI
+* Networking
+	* (state sync system?)
+* Threading Physics (turning on SSE?)

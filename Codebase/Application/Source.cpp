@@ -37,31 +37,27 @@ int main() {
 	//Game objects added to scene are delete by the scene so don't delete twice.
 	GameObject* test = new GameObject("test");
 	GameObject* floor = new GameObject("floor");
-	GameObject* cube = new GameObject();
 
-	Shader* simpleShader = new Shader(SHADER_DIR"basicVertex.glsl", SHADER_DIR"colourFragment.glsl");
+	//Shader* simpleShader = new Shader(SHADER_DIR"textureVertex.glsl", SHADER_DIR"textureCoordFragment.glsl");
+	Shader* simpleShader = new Shader(SHADER_DIR"textureVertex.glsl", SHADER_DIR"textureFragment.glsl");
 	if (!simpleShader->IsOperational())
 		return -1;
 	Material* material = new Material(simpleShader);
 
 	floor->SetRenderComponent(new RenderComponent(material, Mesh::GenerateQuad()));
-	floor->InitPhysics(0, Vec3Physics(0, 0, 0), QuatPhysics(1, 0, 0, 1), Vec3Physics(10, 0, 0));
-	
 	test->SetRenderComponent(new RenderComponent(material, Mesh::GenerateIcosphere(1)));
 	test->InitPhysics();
 	//myScene->addGameObject(test);
-	myScene->addGameObject(floor);
-	
-	cube->SetRenderComponent(new RenderComponent(material, ModelLoader::LoadOBJ(MODEL_DIR"Tardis/TARDIS.obj", true)));
-	cube->InitPhysics(0);
-	//cube->AddChildObject(test);
-	myScene->addGameObject(cube);
+	//myScene->addGameObject(floor);
+	GameObject* tardis = new GameObject();
+	tardis->SetRenderComponent(new RenderComponent(material, ModelLoader::LoadMGL(MODEL_DIR"Tardis/TARDIS.mgl", true)));
+	myScene->addGameObject(tardis);
 
 	renderer.SetCurrentScene(myScene);
 
 	while (Window::GetWindow().UpdateWindow() && !Window::GetKeyboard()->KeyDown(KEYBOARD_ESCAPE))
 	{
-		PhysicsEngineInstance::Instance()->stepSimulation(TIME_STEP, SUB_STEPS, TIME_STEP);
+		PhysicsEngineInstance::Instance()->stepSimulation(TIME_STEP, SUB_STEPS);
 		renderer.RenderScene(Window::GetWindow().GetTimer()->Get(1000.0f));
 	}
 	
