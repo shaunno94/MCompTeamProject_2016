@@ -22,6 +22,7 @@ public:
 	Camera* getCamera(){ return cam; }
 
 	void addGameObject(GameObject* obj, bool transparent = false);
+	void addLightObject(GameObject* obj);
 
 	unsigned char renderFlags; //triggers for  graphical effects such as post processing and any other info required by the renderer
 

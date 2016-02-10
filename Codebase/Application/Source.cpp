@@ -40,12 +40,12 @@ int main() {
 	GameObject* floor = new GameObject("floor");
 	GameObject* light = new GameObject("l");
 
-	Shader* simpleShader = new Shader(SHADER_DIR"basicVertex.glsl", SHADER_DIR"textureFragment.glsl");
+	Shader* simpleShader = new Shader(SHADER_DIR"bumpVertex.glsl", SHADER_DIR"bufferFragment.glsl");
+	Shader* pointlightShader = new Shader(SHADER_DIR"pointlightvertex.glsl", SHADER_DIR"pointlightfragment.glsl");
 	LightMaterial* lightMaterial = new LightMaterial(simpleShader);
-	lightMaterial->Set("lightColour", Vec4Graphics::ONES);
-	lightMaterial->Set("lightRadius", 9001);
 
-	light->SetRenderComponent(new RenderComponent(lightMaterial, Mesh::GenerateTriangle()));
+
+	light->SetRenderComponent(new RenderComponent(lightMaterial, Mesh::GenerateIcosphere(1)));
 
 	if (!simpleShader->IsOperational())
 		return -1;
@@ -59,6 +59,7 @@ int main() {
 	GameObject* tardis = new GameObject();
 	tardis->SetRenderComponent(new RenderComponent(material, ModelLoader::LoadMGL(MODEL_DIR"Tardis/TARDIS.mgl", true)));
 	myScene->addGameObject(tardis);
+	myScene->addLightObject(light);
 
 	renderer.SetCurrentScene(myScene);
 

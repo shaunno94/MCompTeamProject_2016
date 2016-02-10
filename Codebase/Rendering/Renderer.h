@@ -20,7 +20,6 @@ public:
 protected:
 	Scene* currentScene;
 	//--Contained in Scene--//
-	Mesh*	triangle;
 	Camera*	camera;
 
 	static Renderer* s_renderer;
@@ -30,8 +29,9 @@ protected:
 	void DrawPointLights(); // Lighting Render Pass
 	void CombineBuffers(); // Combination Render Pass
 	void initFBO();
-	void GenerateScreenTexture(GLuint & into, bool depth = true);
+	void GenerateScreenTexture(GLuint & into, bool depth = false);
 
+	void updateGlobalUniforms(Material* material);
 
 	GLuint bufferFBO; // FBO for G- Buffer pass
 	GLuint bufferColourTex; // Albedo goes here
@@ -42,5 +42,7 @@ protected:
 	GLuint lightEmissiveTex; // Store emissive lighting
 	GLuint lightSpecularTex; // Store specular lighting
 
-	RenderComponent* quad;
+	GameObject* quad;
+
+	bool m_UpdateGlobalUniforms;
 };

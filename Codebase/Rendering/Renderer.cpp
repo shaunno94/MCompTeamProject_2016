@@ -1,10 +1,11 @@
 #include "Renderer.h"
+#include "LightMaterial.h"
 
 Renderer* Renderer::s_renderer;
 
 Renderer::Renderer(Window& parent) : OGLRenderer(parent)
 {
-	triangle = Mesh::GenerateTriangle();
+	m_UpdateGlobalUniforms = true;
 	camera = new Camera(0.0f, 0.0f, Vec3Graphics(0, 0, 0));
 
 	currentShader = nullptr;
@@ -37,7 +38,6 @@ Renderer::Renderer(Window& parent) : OGLRenderer(parent)
 
 Renderer::~Renderer(void)
 {
-	delete triangle;
 	delete quad;
 	glDeleteTextures(1, &bufferColourTex);
 	glDeleteTextures(1, &bufferNormalTex);
@@ -64,7 +64,7 @@ void Renderer::initFBO()
 	GenerateScreenTexture(bufferNormalTex);
 	GenerateScreenTexture(lightEmissiveTex);
 	GenerateScreenTexture(lightSpecularTex);
-
+	 
 	// And now attach them to our FBOs
 	glBindFramebuffer(GL_FRAMEBUFFER, bufferFBO);
 	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, bufferColourTex, 0);
@@ -74,7 +74,7 @@ void Renderer::initFBO()
 
 	if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
 	{
-		return;
+		throw "!GL_FRAMEBUFFER_COMPLETE";
 	}
 
 	//Second Pass
@@ -83,10 +83,9 @@ void Renderer::initFBO()
 	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT1, GL_TEXTURE_2D, lightSpecularTex, 0);
 	glDrawBuffers(2, buffers);
 
-	if (glCheckFramebufferStatus(GL_FRAMEBUFFER) !=
-		GL_FRAMEBUFFER_COMPLETE)
+	if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
 	{
-		return;
+		throw "!GL_FRAMEBUFFER_COMPLETE";
 	}
 
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
@@ -94,7 +93,10 @@ void Renderer::initFBO()
 	glEnable(GL_CULL_FACE);
 	glEnable(GL_BLEND);
 
-	quad = new RenderComponent(new Material(new Shader(SHADER_DIR"combinevert.glsl", SHADER_DIR"combinefrag.glsl")), Mesh::GenerateQuad());
+	quad = new GameObject();
+	quad->SetRenderComponent(new RenderComponent(new LightMaterial(new Shader(SHADER_DIR"combinevert.glsl", SHADER_DIR"combinefrag.glsl")), Mesh::GenerateQuad()));
+	((LightMaterial*)quad->GetRenderComponent()->m_Material)->Set(ReservedOtherTextures.EMISSIVE.name, (int)ReservedOtherTextures.EMISSIVE.index);
+	((LightMaterial*)quad->GetRenderComponent()->m_Material)->Set(ReservedOtherTextures.SPECULAR.name, (int)ReservedOtherTextures.SPECULAR.index);
 }
 
 void Renderer::GenerateScreenTexture(GLuint& into, bool depth)
@@ -116,22 +118,44 @@ void Renderer::GenerateScreenTexture(GLuint& into, bool depth)
 	glBindTexture(GL_TEXTURE_2D, 0);
 }
 
+void Renderer::updateGlobalUniforms(Material* material)
+{
+	auto lightMat = dynamic_cast<LightMaterial*>(material);
+	if (lightMat)
+	{
+		lightMat->Set("camPos", camera->GetPosition());
+		lightMat->Set("pixelSize", Vec2Graphics(1.0f / width, 1.0f / height));
+	}
+}
+
 void Renderer::UpdateScene(float msec)
 {
 	if (currentScene)
 	{
 		currentScene->getCamera()->UpdateCamera(msec);
 		viewMatrix = currentScene->getCamera()->BuildViewMatrix();
+
+		//TODO: This will not work. As each object could have its own shader, the update needs to be called for each game object.
+		//TODO: When we add UBOs this approach will be valid again, so no need to spend a lot of time fixing this issue.
+		UpdateShaderMatrices();
 	}
-	else
+
+	if (m_UpdateGlobalUniforms)
 	{
-		camera->UpdateCamera(msec);
-		viewMatrix = camera->BuildViewMatrix();
-		//viewMatrix.ToIdentity();
+		for (unsigned int i = 0; i < currentScene->getNumOpaqueObjects(); ++i)
+		{
+			auto rc = currentScene->getOpaqueObject(i)->GetRenderComponent();
+
+			updateGlobalUniforms(rc->m_Material);
+		}
+		for (unsigned int i = 0; i < currentScene->getNumTransparentObjects(); ++i)
+		{
+			auto rc = currentScene->getTransparentObject(i)->GetRenderComponent();
+
+			updateGlobalUniforms(rc->m_Material);
+		}
+		//m_UpdateGlobalUniforms = false;
 	}
-	//TODO: This will not work. As each object could have its own shader, the update needs to be called for each game object.
-	//TODO: When we add UBOs this approach will be valid again, so no need to spend a lot of time fixing this issue.
-	UpdateShaderMatrices();
 }
 
 //TODO:: Might need to be seperate from UpdateScene call if you want to update the scene once and draw several times (like for the cube shadow maps)
@@ -151,28 +175,12 @@ void Renderer::RenderScene(float msec)
 		for (unsigned int i = 0; i < currentScene->getNumTransparentObjects(); ++i)
 			currentScene->getTransparentObject(i)->OnUpdateObject(msec);
 
-
-		//do stuff
-
+		//Draw
 		FillBuffers(); //First Pass
 		DrawPointLights(); //Second Pass
 		CombineBuffers(); //Final Pass
-
-		//Draw
-		for (unsigned int i = 0; i < currentScene->getNumOpaqueObjects(); ++i)
-			currentScene->getOpaqueObject(i)->OnRenderObject();
-		for (unsigned int i = 0; i < currentScene->getNumTransparentObjects(); ++i)
-			currentScene->getTransparentObject(i)->OnRenderObject();
-
-		this->currentShader = // more suff
-			nullptr;
-
-		//combination
 	}
-	else
-	{
-		//triangle->Draw();
-	}
+
 	glUseProgram(0);
 
 	SwapBuffers();
@@ -209,26 +217,19 @@ void Renderer::DrawPointLights()
 
 	glBlendFunc(GL_ONE, GL_ONE);
 
-	glUniform1i(glGetUniformLocation(currentShader->GetProgram(), "depthTex"), 3);
-	glUniform1i(glGetUniformLocation(currentShader->GetProgram(), "normTex"), 4);
 	glActiveTexture(GL_TEXTURE0 + ReservedOtherTextures.DEPTH.index);
 	glBindTexture(GL_TEXTURE_2D, bufferDepthTex);
 
-	glActiveTexture(GL_TEXTURE4);
+	glActiveTexture(GL_TEXTURE0 + ReservedOtherTextures.NORMALS.index);
 	glBindTexture(GL_TEXTURE_2D, bufferNormalTex);
-	glUniform3fv(glGetUniformLocation(currentShader->GetProgram(), "cameraPos"), 1, (float*)& camera->GetPosition());
-
-	glUniform2f(glGetUniformLocation(currentShader->GetProgram(), "pixelSize"), 1.0f / width, 1.0f / height);
 
 	for (unsigned int i = 0; i < currentScene->getNumLightObjects(); ++i)
 	{
 		GameObject* light = currentScene->getLightObject(i);
-		Renderer::UpdateUniform(glGetUniformLocation(light->GetRenderComponent()->m_Material->GetShader()->GetProgram(), "lightPos"), light->GetWorldTransform().GetTranslation());
-		Renderer::UpdateUniform(glGetUniformLocation(light->GetRenderComponent()->m_Material->GetShader()->GetProgram(), "lightRagius"), light->GetBoundingRadius());
-		Renderer::UpdateUniform(glGetUniformLocation(light->GetRenderComponent()->m_Material->GetShader()->GetProgram(), "lightColour"), Vec4Graphics(0,0,0,0));
-
+		((LightMaterial*)light->GetRenderComponent()->m_Material)->Set("lightPos", light->GetWorldTransform().GetTranslation());
+		((LightMaterial*)light->GetRenderComponent()->m_Material)->Set("lightRadius", light->GetBoundingRadius());
+		((LightMaterial*)light->GetRenderComponent()->m_Material)->Set("lightColour", Vec4Graphics(0, 0, 0, 0));
 		
-
 		UpdateShaderMatrices();
 
 		float dist = (light->GetWorldTransform().GetTranslation() - camera->GetPosition()).Length();
@@ -240,7 +241,7 @@ void Renderer::DrawPointLights()
 		{
 			glCullFace(GL_BACK);
 		}
-		currentScene->getLightObject(i)->OnRenderObject();
+		light->OnRenderObject();
 	}
 
 	glCullFace(GL_BACK);
@@ -258,17 +259,15 @@ void Renderer::CombineBuffers() {
 	projMatrix = Mat4Graphics::Orthographic(-1, 1, 1, -1, -1, 1);
 	UpdateShaderMatrices();
 
-	glUniform1i(glGetUniformLocation(currentShader->GetProgram(), "diffuseTex"), 8);
-	glUniform1i(glGetUniformLocation(currentShader->GetProgram(), "emissiveTex"), 9);
-	glUniform1i(glGetUniformLocation(currentShader->GetProgram(), "specularTex"), 10);
-	glActiveTexture(GL_TEXTURE8);
+	glActiveTexture(GL_TEXTURE0 + ReservedMeshTextures.DIFFUSE.index);
 	glBindTexture(GL_TEXTURE_2D, bufferColourTex);
 
-	glActiveTexture(GL_TEXTURE9);
+	glActiveTexture(GL_TEXTURE0 + ReservedOtherTextures.EMISSIVE.index);
 	glBindTexture(GL_TEXTURE_2D, lightEmissiveTex);
 
-	glActiveTexture(GL_TEXTURE10);
+	glActiveTexture(GL_TEXTURE0 + ReservedOtherTextures.SPECULAR.index);
 	glBindTexture(GL_TEXTURE_2D, lightSpecularTex);
-	quad->Draw();
+	quad->m_RenderComponent->Draw();
+
 	glUseProgram(0);
 }

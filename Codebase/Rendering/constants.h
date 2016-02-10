@@ -57,6 +57,8 @@ static const struct ReservedOtherTexturesStruct
 		{
 			ShaderUniformInfo DEPTH;
 			ShaderUniformInfo NORMALS;
+			ShaderUniformInfo EMISSIVE;
+			ShaderUniformInfo SPECULAR;
 		};
 		ShaderUniformInfo values[2];
 	};
@@ -65,7 +67,9 @@ static const struct ReservedOtherTexturesStruct
 } ReservedOtherTextures =
 {
 	reservedMeshTextureCounter++, "depthTex",
-	reservedMeshTextureCounter++, "normalTex"
+	reservedMeshTextureCounter++, "normalTex",
+	reservedMeshTextureCounter++, "emissiveTex",
+	reservedMeshTextureCounter++, "specularTex"
 };
 
 static size_t reservedMeshColourCounter = 0;

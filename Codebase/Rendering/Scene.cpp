@@ -33,3 +33,10 @@ void Scene::addGameObject(GameObject* obj, bool transparent)
 		opaqueObjects.push_back(obj);
 	}
 }
+
+void Scene::addLightObject(GameObject* obj)
+{
+
+		lightObjects.push_back(obj);
+	
+}

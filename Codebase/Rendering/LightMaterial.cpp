@@ -7,7 +7,6 @@ LightMaterial::LightMaterial(Shader* shader, bool hasTranslucency) : Material(sh
 {
 	Set(ReservedOtherTextures.DEPTH.name, (int)ReservedOtherTextures.DEPTH.index);
 	Set(ReservedOtherTextures.NORMALS.name, (int)ReservedOtherTextures.NORMALS.index);
-	//TODO-Set("pixelSize",)??
 
 }
 
@@ -30,15 +29,41 @@ int LightMaterial::Set(const std::string& uniformName, const Vec4Graphics& vec4)
 	return setUniformValue(m_uniformVec4s, shader, uniformName, vec4);
 }
 
+int LightMaterial::Set(const std::string& uniformName, const Vec3Graphics& vec3)
+{
+	return setUniformValue(m_uniformVec3s, shader, uniformName, vec3);
+}
+
+int LightMaterial::Set(const std::string& uniformName, const Vec2Graphics& vec2)
+{
+	return setUniformValue(m_uniformVec2s, shader, uniformName, vec2);
+}
+
 int LightMaterial::Set(const std::string& uniformName, float f)
 {
 	return setUniformValue(m_uniformFloats, shader, uniformName, f);
+}
+
+int LightMaterial::Set(const std::string& uniformName, int i)
+{
+	return setUniformValue(m_uniformInts, shader, uniformName, i);
 }
 
 void LightMaterial::Set(int uniformLocation, const Vec4Graphics& vec4)
 {
 	setUniformValue(m_uniformVec4s, uniformLocation, vec4);
 }
+
+void LightMaterial::Set(int uniformLocation, const Vec3Graphics& vec3)
+{
+	setUniformValue(m_uniformVec3s, uniformLocation, vec3);
+}
+
+void LightMaterial::Set(int uniformLocation, const Vec2Graphics& vec2)
+{
+	setUniformValue(m_uniformVec2s, uniformLocation, vec2);
+}
+
 void LightMaterial::Set(int uniformLocation, float f)
 {
 	setUniformValue(m_uniformFloats, uniformLocation, f);
