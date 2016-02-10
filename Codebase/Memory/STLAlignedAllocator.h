@@ -4,13 +4,14 @@
 #include <memory>
 
 
-/// <summary>
-///
+template<typename T, unsigned _Alignment>
+///	@ingroup Memory
+///  <summary>
+///	Stateless aligned allocator to use with STL collections like std::vector.
 /// </summary>
 /// <example>
 /// std::vector<int, STLAlignedAllocator<int, 16>> vec;
 /// </example>
-template<typename T, unsigned _Alignment>
 class STLAlignedAllocator
 {
 public:
@@ -33,7 +34,8 @@ public:
 	typedef std::false_type propagate_on_container_swap;
 
 	template<typename _Other>
-	struct rebind {
+	struct rebind
+	{
 		// convert this type to allocator<_Other>
 		typedef STLAlignedAllocator<_Other, _Alignment> other;
 	};

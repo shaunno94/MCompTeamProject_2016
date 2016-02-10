@@ -1,5 +1,10 @@
 #pragma once
 
+/** @ingroup Helpers
+*  @{
+*/
+
+
 #define PI_DEF 3.14159265358979323846264338327950288419716939937510582097494459230781640628620899
 #define RAD_DEF 57.295779513082320876798154814105
 
@@ -69,3 +74,5 @@ static inline float DegToRad(float deg)	{ return deg * PI * 0.00555555556f; };
 /// <param name="deg">Angle in degrees.</param>
 /// <returns>Angle in radians.</returns>
 static inline double DegToRad(double deg) { return deg * PI * 0.0055555555555555556; };
+
+/** @} */

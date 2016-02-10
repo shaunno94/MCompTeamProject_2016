@@ -3,6 +3,7 @@
 #include <random>
 #include <cstdint>
 
+/// @ingroup Helpers
 /// <summary>
 /// Random number generator for 32bit numbers.
 /// </summary>
@@ -138,6 +139,7 @@ public:
 	static RNG32 Rand;
 };
 
+/// @ingroup Helpers
 /// <summary>
 /// Random number generator for 64bit numbers.
 /// </summary>

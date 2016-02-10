@@ -7,13 +7,15 @@
 const float TIME_STEP = 1.0f / 60.0f;
 const unsigned int SUB_STEPS = 10;
 
-int main() {
+int main()
+{
 	//-------------------
 	//--- MAIN ENGINE ---
 	//-------------------
 
 	//Initialise the Window
-	if (!Window::Initialise("Game Technologies - Framework Example", 1280, 800, false)) {
+	if (!Window::Initialise("Game Technologies - Framework Example", 1280, 800, false))
+	{
 		Window::Destroy();
 		return -1;
 	}
@@ -25,10 +27,11 @@ int main() {
 	NCLDebug::LoadShaders();*/
 
 	Renderer renderer(Window::GetWindow());
-	if (!renderer.HasInitialised()) {
+	if (!renderer.HasInitialised())
+	{
 		return -1;
 	}
-	
+
 	//Initialise Bullet physics engine.
 	PhysicsEngineInstance::Instance()->setGravity(btVector3(0, -9.81, 0));
 
@@ -60,7 +63,7 @@ int main() {
 		PhysicsEngineInstance::Instance()->stepSimulation(TIME_STEP, SUB_STEPS);
 		renderer.RenderScene(Window::GetWindow().GetTimer()->Get(1000.0f));
 	}
-	
+
 	//Cleanup
 	PhysicsEngineInstance::Release();
 	Window::Destroy();
