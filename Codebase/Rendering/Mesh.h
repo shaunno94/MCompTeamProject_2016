@@ -2,17 +2,17 @@
 Class:Mesh
 Implements:
 Author:Rich Davison	<richard.davison4@newcastle.ac.uk>
-Description:Wrapper around OpenGL primitives, geometry and related 
+Description:Wrapper around OpenGL primitives, geometry and related
 OGL functions.
 
 There's a couple of extra functions in here that you didn't get in the tutorial
-series, to draw debug normals and tangents. 
+series, to draw debug normals and tangents.
 
 
--_-_-_-_-_-_-_,------,   
+-_-_-_-_-_-_-_,------,
 _-_-_-_-_-_-_-|   /\_/\   NYANYANYAN
 -_-_-_-_-_-_-~|__( ^ .^) /
-_-_-_-_-_-_-_-""  ""   
+_-_-_-_-_-_-_-""  ""
 
 *//////////////////////////////////////////////////////////////////////////////
 
@@ -21,36 +21,60 @@ _-_-_-_-_-_-_-""  ""
 #include "OGLRenderer.h"
 #include <vector>
 #include "Math/nclglMath.h"
+#include "constants.h"
+#include "Texture.h"
 
-//A handy enumerator, to determine which member of the bufferObject array
-//holds which data
-enum MeshBuffer {
+/// @ingroup Rendering
+/// <summary>
+/// Enumerator, to determine which member of the bufferObject array holds which data
+/// </summary>
+enum MeshBuffer
+{
 	VERTEX_BUFFER	,
-	COLOUR_BUFFER	, 
 	TEXTURE_BUFFER	,
-	NORMAL_BUFFER	, 
+	NORMAL_BUFFER	,
 	TANGENT_BUFFER	,
 	INDEX_BUFFER	,
 	MAX_BUFFER
 };
 
+/// @ingroup Rendering
+/// <summary>
+/// 
+/// </summary>
+struct MeshMtlData
+{
+	Texture* textureMaps[ReservedMeshTextures.size];
+	Vec3Graphics colours[ReservedMeshColours.size];
+	float specExponent;
+};
 
-
-
-
-
-class Mesh	{
+/// @ingroup Rendering
+/// <summary>
+/// 
+/// </summary>
+class Mesh
+{
 public:
-	friend class MD5Mesh;
+	friend class ModelLoader;
+
 	Mesh(void);
+	Mesh(size_t numVertices, Vec3Graphics* vertices, Vec2Graphics* texCoords, Vec3Graphics* normals, Vec3Graphics* tangents, size_t numIndices, size_t* indices);
 	virtual ~Mesh(void);
 
 	void Draw();
 
+	inline void AddChild(Mesh* m)
+	{
+		m_Children.push_back(m);
+	}
+	inline const std::vector<Mesh*>& GetChildren()
+	{
+		return m_Children;
+	}
+
 	//Generates a single triangle, with RGB colours
 	static Mesh*	GenerateTriangle();
-	
-
 	//Generates a single white quad, going from -1 to 1 on the x and z axis.
 	static Mesh*	GenerateQuad();
 	static Mesh*	GenerateQuadAlt();
@@ -59,23 +83,51 @@ public:
 
 	static Mesh*	GenerateIcosphere(unsigned int tessalationLevel);
 
-	//Sets the Mesh's diffuse map. Takes an OpenGL texture 'name'
-	void	SetTexture(GLuint tex)	{texture = tex;}
 	//Gets the Mesh's diffuse map. Returns an OpenGL texture 'name'
-	GLuint  GetTexture()			{return texture;}
-
-	void	SetColour(Vec4Graphics* colour) {colours = colour;} //NX 24/10/2012
-
-	//Sets the Mesh's bump map. Takes an OpenGL texture 'name'
-	void	SetBumpMap(GLuint tex)	{bumpTexture = tex;}
-	//Gets the Mesh's bump map. Returns an OpenGL texture 'name'
-	GLuint  GetBumpMap()			{return bumpTexture;}
+	inline Texture*  GetTexture(size_t index) const
+	{
+		return m_Textures[index];
+	}
+	inline const Vec3Graphics& GetColour(size_t index) const
+	{
+		return m_Colours[index];
+	}
+	inline float GetSpecExponent() const
+	{
+		return m_SpecExponent;
+	}
+	inline size_t GetNumVertices()
+	{
+		return m_NumVertices;
+	}
+	inline size_t GetNumIndices()
+	{
+		return m_NumIndices;
+	}
+	inline Vec3Graphics* GetVertices()
+	{
+		return m_Vertices;
+	}
+	inline Vec3Graphics* GetNormals()
+	{
+		return m_Normals;
+	}
+	inline Vec3Graphics* GetTangents()
+	{
+		return m_Tangents;
+	}
+	inline Vec2Graphics* GetTextureCoords()
+	{
+		return m_TextureCoords;
+	}
+	inline size_t* GetIndices()
+	{
+		return m_Indices;
+	}
 
 	//Extra stuff!!!! Aren't I nice?
 	void	DrawDebugNormals(float length = 5.0f);
 	void	DrawDebugTangents(float length = 5.0f);
-
-	bool	TransformsTexCoords() { return transformCoords;}
 
 	//Generates normals for all facets. Assumes geometry type is GL_TRIANGLES...
 	void	GenerateNormals();
@@ -83,31 +135,33 @@ public:
 	//Generates tangents for all facets. Assumes geometry type is GL_TRIANGLES...
 	void	GenerateTangents();
 
+	void	SetMtlData(const MeshMtlData& data);
+
 protected:
 	//Buffers all VBO data into graphics memory. Required before drawing!
 	void	BufferData();
 
 	//Helper function for GenerateTangents
-	Vec3Graphics GenerateTangent(const Vec3Graphics &a,const Vec3Graphics &b,const Vec3Graphics &c,const Vec2Graphics &ta,const Vec2Graphics &tb,const Vec2Graphics &tc);
+	Vec3Graphics GenerateTangent(const Vec3Graphics& a,const Vec3Graphics& b,const Vec3Graphics& c,const Vec2Graphics& ta,const Vec2Graphics& tb,const Vec2Graphics& tc);
+
+
+	std::vector<Mesh*> m_Children;
 
 	//VAO for this mesh
 	GLuint	arrayObject;
 	//VBOs for this mesh
 	GLuint	bufferObject[MAX_BUFFER];
 	//Number of vertices for this mesh
-	GLuint	numVertices;
+	GLuint	m_NumVertices;
 	//Primitive type for this mesh (GL_TRIANGLES...etc)
 	GLuint	type;
-	//OpenGL texture name for the diffuse map
-	GLuint	texture;
 
-	//Stuff introduced later on in the tutorials!!
+	Texture* m_Textures[ReservedMeshTextures.size];
+	Vec3Graphics m_Colours[ReservedMeshColours.size];
+	float m_SpecExponent;
 
 	//Number of indices for this mesh
-	GLuint			numIndices;
-
-	//OpenGL texture name for the bump map
-	GLuint			bumpTexture;
+	GLuint			m_NumIndices;
 
 	//You might wonder why we keep pointers to vertex data once
 	//it's sent off to graphics memory. For basic meshes, there's no
@@ -115,19 +169,14 @@ protected:
 	//we need access to the vertex data for skinning per frame...
 
 	//Pointer to vertex position attribute data (badly named...?)
-	Vec3Graphics*		vertices;
-	//Pointer to vertex colour attribute data
-	Vec4Graphics*		colours;
+	Vec3Graphics*		m_Vertices;
 	//Pointer to vertex texture coordinate attribute data
-	Vec2Graphics*		textureCoords;
+	Vec2Graphics*		m_TextureCoords;
 	//Pointer to vertex normals attribute data
-	Vec3Graphics*		normals;
+	Vec3Graphics*		m_Normals;
 	//Pointer to vertex tangents attribute data
-	Vec3Graphics*		tangents;
+	Vec3Graphics*		m_Tangents;
 	//Pointer to vertex indices attribute data
-	unsigned int*	indices;
-
-
-	bool			transformCoords;
+	size_t*	m_Indices;
 };
 

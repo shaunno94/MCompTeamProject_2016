@@ -1,5 +1,9 @@
 #pragma once
 
+/** @ingroup Memory
+*  @{
+*/
+
 template<unsigned _PaddingSize>
 struct AlignmentWrapperBase {
 	char padding[_PaddingSize];
@@ -20,3 +24,5 @@ public:
     T value;
 };
 
+
+/** @} */

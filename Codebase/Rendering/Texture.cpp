@@ -32,9 +32,8 @@ Texture* Texture::Get(const std::string& filePath, bool preload)
 	std::unordered_map<std::string, std::vector<Texture*>>::iterator match = s_textureRecords.find(filePath);
 	if (match != s_textureRecords.end())
 	{
-		Texture* tex = match->second.back();
-		++(tex->m_referenceCount);
-		return tex;
+		newTexture = match->second.back();
+		newTexture->ReserveCopy();
 	}
 	else
 	{
@@ -45,40 +44,43 @@ Texture* Texture::Get(const std::string& filePath, bool preload)
 }
 
 //needs testing!
-void Texture::Clear(Texture* tex)
+void Texture::Clear()
 {
 	//if this was the last reference for the texture
-	if (!--(tex->m_referenceCount))
+	if (!--(m_referenceCount))
 	{
-		std::unordered_map<std::string, std::vector<Texture*>>::iterator match = s_textureRecords.find(tex->filePath);
+		std::unordered_map<std::string, std::vector<Texture*>>::iterator match = s_textureRecords.find(filePath);
 		if (match != s_textureRecords.end())
 		{
 			std::vector<Texture*>& textures = match->second;
-			Texture** foundTex = &textures[tex->textureCopyIndex];
+			Texture** foundTex = &textures[textureCopyIndex];
 			//double check if referenced texture is correct
-			if (tex == *foundTex)
+			if (this == *foundTex)
 			{
-				delete tex;
+				size_t tempCopyIndex = textureCopyIndex;
+				std::string tempFilePath = filePath;
+				delete this;
 				*foundTex = nullptr;
 				//if this was the latest texture copy in the collection , then shrink the collection
-				if (textures.size() - 1 == tex->textureCopyIndex)
+				if (textures.size() - 1 == tempCopyIndex)
 				{
-					auto rend = textures.rend();
-					for (auto rit = textures.rbegin(); rit != rend;)
+					auto it = textures.end();
+					while (it != textures.begin())
 					{
-						//loop over and erase records from the back until not empty
-						if (*rit == nullptr)
-							textures.erase((++rit).base());
+						it--;
+						if (*it == nullptr)
+							it = textures.erase(it);
 						else
 							break;
 					}
 					if (textures.size() == 0)
-						s_textureRecords.erase(tex->filePath);
+						s_textureRecords.erase(tempFilePath);
 				}
 			}
 		}
 	}
 }
+
 
 void Texture::ClearAll()
 {
@@ -150,7 +152,9 @@ Texture::~Texture()
 {
 	if(textureId)
 	{
+#ifdef _DEBUG
 		MeasureMemoryUsageSubstract(textureId);
+#endif
 		glDeleteTextures(1, &textureId);
 		textureId = 0;
 	}
@@ -161,7 +165,9 @@ void Texture::LoadFromFile()
 {
 	if (textureId)
 	{
+#ifdef _DEBUG
 		MeasureMemoryUsageSubstract(textureId);
+#endif
 		glDeleteTextures(1, &textureId);
 		textureId = 0;
 	}
@@ -174,8 +180,12 @@ void Texture::LoadFromFile()
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
-	if(textureId)
+	if (textureId)
+	{
+#ifdef _DEBUG
 		MeasureMemoryUsageAdd(textureId);
+#endif
+	}
 	else
 	{
 		std::stringstream message;

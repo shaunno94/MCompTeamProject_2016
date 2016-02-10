@@ -9,7 +9,10 @@
 #include <iostream>
 #include <string>
 
-
+/// @ingroup Helpers
+/// <summary>
+/// Class for measuring logged time points.
+/// </summary>
 class MeasuringTimer : public Timer
 {
 private:
@@ -33,16 +36,16 @@ private:
 	};
 
 	/// <summary>
-	/// Heaped array of <see cref="Performance::Timer::record"/>, representing all possible time measurements.
+	/// Heaped array of <see cref="MeasuringTimer::record"/>, representing all possible time measurements.
 	/// </summary>
 	/// <remarks>
-	/// The size of this heaped array is twice the size given to the <see cref="Performance::Timer::Timer(unsigned int)"/> constructor,
+	/// The size of this heaped array is twice the size given to the <see cref="MeasuringTimer::Timer(unsigned int)"/> constructor,
 	/// for logging start and end timestamps and producing a given number of measurable periods.
 	/// </remarks>
 	record* m_logs;
 
 	/// <summary>
-	/// Index of the end of currently used space in <see cref="Performance::Timer::m_logs"/>.
+	/// Index of the end of currently used space in <see cref="MeasuringTimer::m_logs"/>.
 	/// </summary>
 	unsigned int m_endIndex;
 
@@ -69,7 +72,7 @@ public:
 	/// <returns>Index representation of where the record is placed internally.</returns>
 	inline void LogStart(const char* msg = "")
 	{
-		assert(("Performance::Time::logStart overran the max size", m_endIndex < maxSize));
+		assert(("MeasuringTimer::logStart overran the max size", m_endIndex < maxSize));
 		m_logs[m_endIndex].isStart = true;
 		m_logs[m_endIndex].text.assign(msg);
 		m_logs[m_endIndex++].timestamp = Timer::Now();
@@ -81,7 +84,7 @@ public:
 	/// <param name="msg">Message to associate with the end of a time period.</param>
 	inline void LogEnd(const char* msg = "")
 	{
-		assert(("Performance::Time::logEnd overran the max size", m_endIndex < maxSize));
+		assert(("MeasuringTimer::logEnd overran the max size", m_endIndex < maxSize));
 		m_logs[m_endIndex].timestamp = Timer::Now();
 		m_logs[m_endIndex].isStart = false;
 		m_logs[m_endIndex++].text.assign(msg);
@@ -107,24 +110,24 @@ public:
 	}
 
 	/// <summary>
-	/// Returns the <see cref="Performance::Timer::record"/>, identified internally by the given index.
+	/// Returns the <see cref="MeasuringTimer::record"/>, identified internally by the given index.
 	/// </summary>
 	/// <param name="index">Index representation of where the record is placed internally.</param>
-	/// <returns>Reference to a <see cref="Performance::Timer::record"/>.</returns>
+	/// <returns>Reference to a <see cref="MeasuringTimer::record"/>.</returns>
 	inline const record& Peek(unsigned int index) const
 	{
-		assert(("Performance::Time::peek went out of bounds", index < m_endIndex));
+		assert(("MeasuringTimer::peek went out of bounds", index < m_endIndex));
 		return m_logs[index];
 	}
 
 	/// <summary>
-	/// Returns the <see cref="Performance::Timer::record"/>, identified internally by the given index.
+	/// Returns the <see cref="MeasuringTimer::record"/>, identified internally by the given index.
 	/// </summary>
 	/// <param name="index">Index representation of where the record is placed internally.</param>
-	/// <returns>reference to a <see cref="Performance::Timer::record"/>.</returns>
+	/// <returns>reference to a <see cref="MeasuringTimer::record"/>.</returns>
 	inline record& Get(unsigned int index)
 	{
-		assert(("Performance::Time::get went out of bounds", index < m_endIndex));
+		assert(("MeasuringTimer::get went out of bounds", index < m_endIndex));
 		return m_logs[index];
 	}
 

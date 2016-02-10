@@ -5,13 +5,14 @@
 #include "FixedSizeAllocatorManager.h"
 
 
+template<typename T, unsigned _Alignment>
+/// @ingroup Memory
 /// <summary>
-/// 
+/// Stateful allocator wrapper for <see cref="FixedSizeAllocatorManager"/> to use with STL collections like std::vector.
 /// </summary>
 /// <example>
-/// std::vector<int, STLAllocator<int, 16>> vec;
+/// std::vector<int, STLManagedAllocator<int, 16>> vec;
 /// </example>
-template<typename T, unsigned _Alignment>
 class STLManagedAllocator
 {
 private:
