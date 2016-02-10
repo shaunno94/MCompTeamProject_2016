@@ -78,6 +78,7 @@
   <ItemGroup>
     <ClInclude Include="Camera.h" />
     <ClInclude Include="constants.h" />
+    <ClInclude Include="DebugDraw.h" />
     <ClInclude Include="ExtendedMaterial.h" />
     <ClInclude Include="Frustum.h" />
     <ClInclude Include="GameObject.h" />
@@ -94,6 +95,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Camera.cpp" />
+    <ClCompile Include="DebugDraw.cpp" />
     <ClCompile Include="ExtendedMaterial.cpp" />
     <ClCompile Include="Frustum.cpp" />
     <ClCompile Include="GameObject.cpp" />

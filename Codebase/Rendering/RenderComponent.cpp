@@ -16,7 +16,6 @@ RenderComponent::~RenderComponent()
 //TODO: !!! Save available Mesh Texture locations on the Render Component !!!
 void RenderComponent::Draw()
 {
-
 	m_Material->Setup();
 	Renderer::UpdateUniform(m_Material->GetShader()->GetModelMatrixUniformLocation(), m_GameObject->GetWorldTransform());
 
