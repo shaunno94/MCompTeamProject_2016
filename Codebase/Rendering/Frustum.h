@@ -1,6 +1,10 @@
 #pragma once
 #include "GameObject.h"
 
+/// @ingroup Rendering
+/// <summary>
+/// 
+/// </summary>
 class Frustum	
 {
 public:

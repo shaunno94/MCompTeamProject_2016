@@ -32,16 +32,28 @@ _-_-_-_-_-_-_-""  ""
 class Renderer;
 class Scene;
 
+/// @ingroup Rendering
+/// <summary>
+/// 
+/// </summary>
 enum CollisionShape
 {
 	SPHERE, CUBOID, CYLINDER, CONE, CAPSULE
 };
 
+/// @ingroup Rendering
+/// <summary>
+/// 
+/// </summary>
 enum BodyType
 {
 	PARTICLE, SOFT, RIGID
 };
 
+/// @ingroup Rendering
+/// <summary>
+/// 
+/// </summary>
 class GameObject
 {
 	//Allows these classes to call OnUpdateObject / OnRenderObject functions

@@ -2,11 +2,13 @@
 
 #include <string>
 #include "Mesh.h"
-#include <vector>
-#include <sstream>
 #include "constants.h"
 
-class ModelLoader
+/// @ingroup Rendering
+/// <summary>
+/// Holds functionality for loading a mesh from the hard-drive.
+/// </summary>
+static class ModelLoader
 {
 public:
 	// Loads file and returns correct Mesh, buffered or unbuffered

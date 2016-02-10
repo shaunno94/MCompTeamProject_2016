@@ -1,5 +1,10 @@
 #pragma once
 
+/** @defgroup Rendering Rendering
+*  Rendering related functionality.
+*  @{
+*/
+
 #define SHADER_VERTEX   0
 #define SHADER_FRAGMENT 1
 #define SHADER_GEOMETRY 2
@@ -135,3 +140,5 @@ ReservedMeshColours =
 	reservedMeshColourCounter++, "diffuseColour",
 	reservedMeshColourCounter++, "specularColour"
 };
+
+/** @} */

@@ -16,6 +16,10 @@ _-_-_-_-_-_-_-""  ""
 #include "Window.h"
 #include "Math/nclglMath.h"
 
+/// @ingroup Rendering
+/// <summary>
+/// 
+/// </summary>
 class Camera	{
 public:
 	Camera(void){

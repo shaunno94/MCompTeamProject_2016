@@ -28,6 +28,11 @@ _-_-_-_-_-_-_-""  ""
 #define SHADER_MAX_STAGE_COUNT 5
 
 using namespace std;
+
+/// @ingroup Rendering
+/// <summary>
+/// 
+/// </summary>
 class Shader
 {
 public:

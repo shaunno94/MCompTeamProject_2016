@@ -14,7 +14,7 @@
 /// <remarks>
 /// This class uses Mersenne Twister number generator engine that produces deterministic results.
 /// The same seed can be used for several instances to produce identical number sequences and
-/// <see cref="RNG32::discard"/> can be used to synch up instances that have generated different amount of numbers.
+/// <see cref="RNG32::Discard"/> can be used to synch up instances that have generated different amount of numbers.
 /// </remarks>
 ///
 /// <example>
@@ -150,7 +150,7 @@ public:
 /// <remarks>
 /// This class uses Mersenne Twister number generator engine that produces deterministic results.
 /// The same seed can be used for several instances to produce identical number sequences and
-/// <see cref="RNG64::discard"/> can be used to synch up instances that have generated different amount of numbers.
+/// <see cref="RNG64::Discard"/> can be used to synch up instances that have generated different amount of numbers.
 /// </remarks>
 ///
 /// <example>
