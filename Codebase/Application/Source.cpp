@@ -35,10 +35,10 @@ int main()
 	//Initialise Bullet physics engine.
 	PhysicsEngineInstance::Instance()->setGravity(btVector3(0, -9.81, 0));
 
-	//Test Scenario - one 'icosphere' which will be affected by bullet physics
+	//Test Scenario - Tardis (cuboid collision shape), floor (cuboid collision shape), ball (sphere collison shape)
 	Scene* myScene = new Scene();
 	//Game objects added to scene are delete by the scene so don't delete twice.
-	GameObject* test = new GameObject("test");
+	GameObject* ball = new GameObject("ball");
 	GameObject* floor = new GameObject("floor");
 
 	//Shader* simpleShader = new Shader(SHADER_DIR"textureVertex.glsl", SHADER_DIR"textureCoordFragment.glsl");
@@ -47,14 +47,22 @@ int main()
 		return -1;
 	Material* material = new Material(simpleShader);
 
-	floor->SetRenderComponent(new RenderComponent(material, Mesh::GenerateQuad()));
-	test->SetRenderComponent(new RenderComponent(material, Mesh::GenerateIcosphere(1)));
-	test->InitPhysics();
-	//myScene->addGameObject(test);
-	//myScene->addGameObject(floor);
+	/*floor->SetRenderComponent(new RenderComponent(material, Mesh::GenerateQuad()));
+	floor->CreateCollisionShape(0, Vec3Physics(0, 1, 0), true);
+	floor->InitPhysics(0, Vec3Physics(0, -1, 0), QuatPhysics(1, 0, 0, 1));
+	floor->SetLocalScale(Vec3Graphics(20.0f, 20.0f, 1.0f));
+	myScene->addGameObject(floor);*/
+
 	GameObject* tardis = new GameObject();
 	tardis->SetRenderComponent(new RenderComponent(material, ModelLoader::LoadMGL(MODEL_DIR"Tardis/TARDIS.mgl", true)));
+	tardis->CreateCollisionShape(Vec3Physics(5.0f, 1.0f, 5.0f), CUBOID);
+	tardis->InitPhysics(0, Vec3Physics(0, 0, 0), QuatPhysics(0, 0, 0, 1));
 	myScene->addGameObject(tardis);
+
+	ball->SetRenderComponent(new RenderComponent(material, ModelLoader::LoadMGL(MODEL_DIR"Common/sphere.mgl", true)));
+	ball->CreateCollisionShape(4.0);
+	ball->InitPhysics(1.0, Vec3Physics(0, 14, 0), QuatPhysics(0, 0, 0, 1), Vec3Physics(1, 1, 1));
+	myScene->addGameObject(ball);
 
 	renderer.SetCurrentScene(myScene);
 

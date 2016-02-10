@@ -28,21 +28,25 @@ _-_-_-_-_-_-_-""  ""
 #include "PhysicsEngine\PhysicsEngineInstance.h"
 #include "RenderComponent.h"
 #include <vector>
+
 class Renderer;
+class Scene;
+
 enum CollisionShape
 {
-	SPHERE, CUBOID, CYLINDER, CONE, PLANE
+	SPHERE, CUBOID, CYLINDER, CONE, CAPSULE
 };
 
-enum PhysicsType
+enum BodyType
 {
 	PARTICLE, SOFT, RIGID
 };
 
 class GameObject
 {
-	//Allows renderer to call OnUpdateObject and OnRenderObject functions
+	//Allows these classes to call OnUpdateObject / OnRenderObject functions
 	friend class Renderer;
+	friend class Scene;
 
 public:
 	GameObject(const std::string& name = "");
@@ -65,22 +69,38 @@ public:
 	GameObject*	FindGameObject(const std::string& name);
 	void AddChildObject(GameObject* child);
 
-	void SetLocalTransform(const Mat4Graphics& transform)
+	void SetWorldTransform(const Mat4Graphics& transform)
 	{
-		m_LocalTransform = transform;
+		m_WorldTransform = transform;
 	}
-	const Mat4Graphics&  GetLocalTransform() const
-	{
-		return m_LocalTransform;
-	}
+
 	const Mat4Graphics&  GetWorldTransform() const
 	{
 		return m_WorldTransform;
 	}
 
-	//Initialise physics body: mass (a mass of 0 will result in a static object), inertia, orientation, position
-	void InitPhysics(double mass = 1.0, const Vec3Physics& inertia = Vec3Physics(0, 0, 0), const QuatPhysics& orientation = QuatPhysics(0, 0, 0, 1),
-	                 const Vec3Physics& position = Vec3Physics(0, 0, 0), PhysicsType type = RIGID);
+	//Use only for scaling the object, if you want to translate / rotate then use the Physics functions.
+	void SetLocalScale(const Vec3Graphics& scale)
+	{
+		m_LocalTransform = Matrix4Simple::Scale(scale);
+	}
+
+	const Mat4Graphics&  GetLocalTransform() const
+	{
+		return m_LocalTransform;
+	}
+	
+	//Initialise physics body: mass (a mass of 0 will result in a static object), position, orientation, inertia, type (Rigid, Particle, Soft) 
+	bool InitPhysics(double mass, const Vec3Physics& position, const QuatPhysics& orientation, const Vec3Physics& inertia = Vec3Physics(0, 0, 0), BodyType type = RIGID);
+	
+	//Sphere collision shape.
+	bool CreateCollisionShape(double radius); 
+	//Cuboid or Cylinder collsion shapes.
+	bool CreateCollisionShape(const Vec3Physics& half_extents, CollisionShape shape); 
+	//Cone or Capsule collision shapes.
+	bool CreateCollisionShape(double radius, double height, CollisionShape shape); 
+	//Static Plane collision shape.
+	bool CreateCollisionShape(double distance, const Vec3Physics& normal, bool normalised); 
 
 	void SetBoundingRadius(float radius)
 	{
@@ -96,7 +116,7 @@ public:
 		m_RenderComponent = comp;
 		m_RenderComponent->SetParent(this);
 	}
-	RenderComponent* GetRenderComponent()
+	RenderComponent* GetRenderComponent() const
 	{
 		return m_RenderComponent;
 	}
@@ -104,8 +124,7 @@ public:
 protected:
 	virtual void OnRenderObject();			//Handles OpenGL calls to Render the object
 	virtual void OnUpdateObject(float dt);	//Override to handle things like AI etc on update loop
-	void UpdateTransform(bool isChild = false);	//Updates local transform matrix with positional data from bullet physics
-
+	void UpdateTransform();	//Updates local transform matrix with positional & rotational data from bullet physics
 
 	std::string					m_Name;
 	GameObject*					m_Parent;
@@ -118,7 +137,9 @@ protected:
 
 	RenderComponent*			m_RenderComponent;
 
-	float						m_BoundingRadius;	//For Frustum Culling
-	Mat4Graphics				m_LocalTransform;
+	float						m_BoundingRadius;	//Unused
 	Mat4Graphics				m_WorldTransform;
+	Mat4Graphics				m_LocalTransform;
+
+	float m_CamDist; //For ordering of rendering lists.
 };
