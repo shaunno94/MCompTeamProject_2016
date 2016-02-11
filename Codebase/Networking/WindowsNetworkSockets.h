@@ -23,7 +23,7 @@
 
 #define HIGHVERSION 2
 #define LOWVERSION 2
-#define HOST "127.0.0.1"
+#define HOST NULL//"10.66.67.178"//"127.0.0.1"
 #define PORT "4376"
 #define FAMILY AF_UNSPEC
 #define TYPE SOCK_STREAM
@@ -35,12 +35,50 @@
 
 #pragma comment(lib, "ws2_32.lib")
 
-WSAData wsaData;
-addrinfo* addr;
 
+struct hostData
+{
+	char hostname[80];
+	//use inet_ntoa(ip[i]) to get ip string
+	//max 3 addresses
+	in_addr ip[3];
+	size_t ipCount;
+};
+int getHostData(hostData& data)
+{
+	data.ipCount = 0;
+
+	if (gethostname(data.hostname, sizeof(data.hostname)) == SOCKET_ERROR)
+	{
+		data.hostname[0] = '\0';
+		printf(
+			"Error getting local hostname: "LINE_SEPARATOR_DEF
+			"%d: %s"LINE_SEPARATOR_DEF,
+			WSAGetLastError(),
+			gai_strerror(WSAGetLastError())
+			);
+		return 1;
+	}
+
+	hostent* phe = gethostbyname(data.hostname);
+	if (phe == 0)
+	{
+		printf("Bad host lookup."LINE_SEPARATOR_DEF);
+		return 1;
+	}
+
+	for (int i = 0; phe->h_addr_list[i] != 0; ++i)
+	{
+		++data.ipCount;
+		memcpy(&data.ip, phe->h_addr_list[i], sizeof(struct in_addr));
+	}
+
+	return 0;
+}
 
 int init()
 {
+	WSAData wsaData;
 	int error = WSAStartup(MAKEWORD(HIGHVERSION, LOWVERSION), &wsaData);
 	if (error)
 	{
@@ -68,8 +106,9 @@ int init()
 	}
 }
 
-int addressing()
+int addressing(addrinfo*& addrOut)
 {
+	char ipstr[INET6_ADDRSTRLEN];
 	int result;
 	addrinfo hints;
 	addrinfo* temp;
@@ -80,7 +119,7 @@ int addressing()
 	hints.ai_flags = FLAGS;
 	hints.ai_protocol = PROTOCOL;
 
-	result = getaddrinfo(HOST, PORT, &hints, &addr);
+	result = getaddrinfo(HOST, PORT, &hints, &addrOut);
 
 	if (result != 0)
 	{
@@ -96,7 +135,7 @@ int addressing()
 	printf("Addressing information:"LINE_SEPARATOR_DEF);
 
 	int i = 0;
-	for (temp = addr; temp != nullptr; temp = temp->ai_next)
+	for (temp = addrOut; temp != nullptr; temp = temp->ai_next)
 	{
 		printf("Entity %d:"LINE_SEPARATOR_DEF, ++i);
 		switch (temp->ai_family)
@@ -137,7 +176,43 @@ int addressing()
 			printf("\t Socket type: (UNHANDELED)"LINE_SEPARATOR_DEF);
 			break;
 		}
+
+		void* addr;
+		char* ipver;
+
+		// get the pointer to the address itself,
+		// different fields in IPv4 and IPv6:
+		if (temp->ai_family == AF_INET)   // IPv4
+		{
+			struct sockaddr_in* ipv4 = (struct sockaddr_in*)temp->ai_addr;
+			addr = &(ipv4->sin_addr);
+			ipver = "IPv4";
+		}
+		else   // IPv6
+		{
+			struct sockaddr_in6* ipv6 = (struct sockaddr_in6*)temp->ai_addr;
+			addr = &(ipv6->sin6_addr);
+			ipver = "IPv6";
+		}
+
+		// convert the IP to a string and print it:
+		inet_ntop(temp->ai_family, addr, ipstr, sizeof(ipstr));
+		printf("\t %s: %s"LINE_SEPARATOR_DEF, ipver, ipstr);
+
 	}
 	return 0;
 }
 
+int getMaxMsgSize(SOCKET& socket)
+{
+	int optVal = 0;
+	int optLen = sizeof(optVal);
+	getsockopt(
+	  socket,
+	  SOL_SOCKET,
+	  SO_MAX_MSG_SIZE,
+	  (char*)&optVal,
+	  &optLen
+	);
+	return optVal;
+}

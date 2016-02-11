@@ -3,6 +3,7 @@
 
 int main()
 {
+	addrinfo* addr;
 	SOCKET s = NULL;
 
 	if (init())
@@ -11,7 +12,7 @@ int main()
 		exit(1);
 	}
 
-	if (addressing())
+	if (addressing(addr))
 	{
 		printf("Unable to initialize addressing information."LINE_SEPARATOR_DEF);
 		exit(1);
@@ -82,4 +83,3 @@ int main()
 
 	while (true);
 }
-
