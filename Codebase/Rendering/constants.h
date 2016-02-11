@@ -45,7 +45,7 @@ static const struct ReservedMeshTexturesStruct
 	reservedMeshTextureCounter++, "specularColourTex",
 	reservedMeshTextureCounter++, "specularHighlightTex",
 	reservedMeshTextureCounter++, "alphaTex",
-	reservedMeshTextureCounter++, "bumpMap"
+	reservedMeshTextureCounter++, "bumpTex"
 };
 
 //TODO - remove?? no
@@ -67,7 +67,7 @@ static const struct ReservedOtherTexturesStruct
 } ReservedOtherTextures =
 {
 	reservedMeshTextureCounter++, "depthTex",
-	reservedMeshTextureCounter++, "normalTex",
+	reservedMeshTextureCounter++, "normTex",
 	reservedMeshTextureCounter++, "emissiveTex",
 	reservedMeshTextureCounter++, "specularTex"
 };

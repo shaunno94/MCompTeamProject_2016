@@ -18,5 +18,8 @@ void main ( void ) {
 	gl_FragColor.xyz += diffuse * light ; // lambert
 	gl_FragColor.xyz += specular ; // Specular
 	gl_FragColor.a = 1.0;
+	
 	//gl_FragColor.xyz = diffuse ;
+	//gl_FragColor.xyz = light ;
+	//gl_FragColor.xyz += specular;
 }

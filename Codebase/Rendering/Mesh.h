@@ -128,6 +128,7 @@ public:
 	void	GenerateTangents();
 
 	void	SetMtlData(const MeshMtlData& data);
+	void	SetTexture(Texture* tex, size_t index);
 
 protected:
 	//Buffers all VBO data into graphics memory. Required before drawing!

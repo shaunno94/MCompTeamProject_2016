@@ -7,9 +7,11 @@ uniform mat4 textureMatrix;
 
 in  vec3 position;
 in  vec2 texCoord;
+in vec3 normal ; //added
 
 out Vertex {
 	vec2 texCoord;
+	vec3 normal ; //added
 } OUT;
 
 void main(void)	{
@@ -17,4 +19,5 @@ void main(void)	{
 
 	gl_Position	  = mvp * vec4(position, 1.0);
 	OUT.texCoord  = texCoord;
+	OUT.normal = normal; //added
 }

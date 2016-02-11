@@ -19,6 +19,8 @@ void LightMaterial::Setup()
 {
 	Material::Setup();
 	UpdateUniformValue(m_uniformVec4s);
+	UpdateUniformValue(m_uniformVec3s);
+	UpdateUniformValue(m_uniformVec2s);
 	UpdateUniformValue(m_uniformFloats);
 	UpdateUniformValue(m_uniformInts);
 }

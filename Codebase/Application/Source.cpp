@@ -8,13 +8,15 @@
 const float TIME_STEP = 1.0f / 60.0f;
 const unsigned int SUB_STEPS = 10;
 
-int main() {
+int main()
+{
 	//-------------------
 	//--- MAIN ENGINE ---
 	//-------------------
 
 	//Initialise the Window
-	if (!Window::Initialise("Game Technologies - Framework Example", 1280, 800, false)) {
+	if (!Window::Initialise("Game Technologies - Framework Example", 1280, 800, false))
+	{
 		Window::Destroy();
 		return -1;
 	}
@@ -26,10 +28,11 @@ int main() {
 	NCLDebug::LoadShaders();*/
 
 	Renderer renderer(Window::GetWindow());
-	if (!renderer.HasInitialised()) {
+	if (!renderer.HasInitialised())
+	{
 		return -1;
 	}
-	
+
 	//Initialise Bullet physics engine.
 	PhysicsEngineInstance::Instance()->setGravity(btVector3(0, -9.81, 0));
 
@@ -40,25 +43,37 @@ int main() {
 	GameObject* floor = new GameObject("floor");
 	GameObject* light = new GameObject("l");
 
-	Shader* simpleShader = new Shader(SHADER_DIR"bumpVertex.glsl", SHADER_DIR"bufferFragment.glsl");
+	Shader* simpleShader = new Shader(SHADER_DIR"textureVertex.glsl", SHADER_DIR"textureFragment.glsl");
 	Shader* pointlightShader = new Shader(SHADER_DIR"pointlightvertex.glsl", SHADER_DIR"pointlightfragment.glsl");
-	LightMaterial* lightMaterial = new LightMaterial(simpleShader);
 
-
-	light->SetRenderComponent(new RenderComponent(lightMaterial, Mesh::GenerateIcosphere(1)));
+	if (!pointlightShader->IsOperational())
+		return -1;
 
 	if (!simpleShader->IsOperational())
 		return -1;
-	Material* material = new Material(simpleShader);
 
+	LightMaterial* lightMaterial = new LightMaterial(pointlightShader);
+	light->SetRenderComponent(new RenderComponent(lightMaterial, ModelLoader::LoadMGL(MODEL_DIR"Common/ico.mgl", true)));
+	light->SetWorldTransform(Mat4Graphics::Translation(Vec3Graphics(0, 2, 2)) *Mat4Graphics::Scale(Vec3Graphics(20,20,20)));
+	light->SetBoundingRadius(20);
+
+
+	Material* material = new Material(simpleShader);
 	floor->SetRenderComponent(new RenderComponent(material, Mesh::GenerateQuad()));
-	test->SetRenderComponent(new RenderComponent(material, Mesh::GenerateIcosphere(1)));
-	test->InitPhysics();
-	//myScene->addGameObject(test);
-	//myScene->addGameObject(floor);
+	test->SetRenderComponent(new RenderComponent(material, ModelLoader::LoadMGL(MODEL_DIR"Common/ico.mgl", true)));
+	//test->InitPhysics();
+	floor->SetWorldTransform(Mat4Graphics::Translation(Vec3Graphics(0, -2, 0)) *Mat4Graphics::Rotation(90, Vec3Graphics(1, 0, 0)) * Mat4Graphics::Scale(Vec3Graphics(450, 450, 1)));
+	auto tex = Texture::Get(TEXTURE_DIR"brick.tga");
+	//floor->GetRenderComponent()->m_Material->Set("diffuseTex", tex);
+	floor->GetRenderComponent()->m_Mesh->SetTexture(tex, ReservedMeshTextures.DIFFUSE.index);
+	tex->Clear();
+
 	GameObject* tardis = new GameObject();
 	tardis->SetRenderComponent(new RenderComponent(material, ModelLoader::LoadMGL(MODEL_DIR"Tardis/TARDIS.mgl", true)));
+
+	myScene->addGameObject(test);
 	myScene->addGameObject(tardis);
+	myScene->addGameObject(floor);
 	myScene->addLightObject(light);
 
 	renderer.SetCurrentScene(myScene);
@@ -68,7 +83,7 @@ int main() {
 		PhysicsEngineInstance::Instance()->stepSimulation(TIME_STEP, SUB_STEPS);
 		renderer.RenderScene(Window::GetWindow().GetTimer()->Get(1000.0f));
 	}
-	
+
 	//Cleanup
 	PhysicsEngineInstance::Release();
 	Window::Destroy();

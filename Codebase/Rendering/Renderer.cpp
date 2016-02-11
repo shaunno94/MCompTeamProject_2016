@@ -123,8 +123,10 @@ void Renderer::updateGlobalUniforms(Material* material)
 	auto lightMat = dynamic_cast<LightMaterial*>(material);
 	if (lightMat)
 	{
-		lightMat->Set("camPos", camera->GetPosition());
+		Vec3Graphics camPos = currentScene->getCamera()->GetPosition();
+		auto test = lightMat->Set("cameraPos", camPos);
 		lightMat->Set("pixelSize", Vec2Graphics(1.0f / width, 1.0f / height));
+		int i = 0;
 	}
 }
 
@@ -142,15 +144,15 @@ void Renderer::UpdateScene(float msec)
 
 	if (m_UpdateGlobalUniforms)
 	{
-		for (unsigned int i = 0; i < currentScene->getNumOpaqueObjects(); ++i)
+		/*for (unsigned int i = 0; i < currentScene->getNumOpaqueObjects(); ++i)
 		{
 			auto rc = currentScene->getOpaqueObject(i)->GetRenderComponent();
 
 			updateGlobalUniforms(rc->m_Material);
-		}
-		for (unsigned int i = 0; i < currentScene->getNumTransparentObjects(); ++i)
+		}*/
+		for (unsigned int i = 0; i < currentScene->getNumLightObjects(); ++i)
 		{
-			auto rc = currentScene->getTransparentObject(i)->GetRenderComponent();
+			auto rc = currentScene->getLightObject(i)->GetRenderComponent();
 
 			updateGlobalUniforms(rc->m_Material);
 		}
@@ -227,12 +229,12 @@ void Renderer::DrawPointLights()
 	{
 		GameObject* light = currentScene->getLightObject(i);
 		((LightMaterial*)light->GetRenderComponent()->m_Material)->Set("lightPos", light->GetWorldTransform().GetTranslation());
-		((LightMaterial*)light->GetRenderComponent()->m_Material)->Set("lightRadius", light->GetBoundingRadius());
-		((LightMaterial*)light->GetRenderComponent()->m_Material)->Set("lightColour", Vec4Graphics(0, 0, 0, 0));
+		((LightMaterial*)light->GetRenderComponent()->m_Material)->Set("lightRadius",  light->GetBoundingRadius());
+		((LightMaterial*)light->GetRenderComponent()->m_Material)->Set("lightColour", Vec4Graphics(1,1,1,1));
 		
 		UpdateShaderMatrices();
 
-		float dist = (light->GetWorldTransform().GetTranslation() - camera->GetPosition()).Length();
+		float dist = (light->GetWorldTransform().GetTranslation() - currentScene->getCamera()->GetPosition()).Length();
 		if (dist < light->GetBoundingRadius())  // camera is inside the light volume !
 		{
 			glCullFace(GL_FRONT);

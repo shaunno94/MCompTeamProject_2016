@@ -18,6 +18,9 @@ Mesh::Mesh(void)
 	m_SpecExponent = 0.0f;
 	type		 = GL_TRIANGLES;
 
+	m_Colours[ReservedMeshColours.AMBIENT.index] = Vec3Graphics(0.2f, 0.2f, 0.2);
+	m_Colours[ReservedMeshColours.DIFFUSE.index] = Vec3Graphics::ONES;
+	m_Colours[ReservedMeshColours.SPECULAR.index] = Vec3Graphics::ONES;
 
 	m_NumVertices = 0;
 	m_NumIndices    = 0;
@@ -41,6 +44,9 @@ Mesh::Mesh(size_t numVertices, Vec3Graphics* vertices, Vec2Graphics* texCoords, 
 	m_NumVertices = 0;
 	type = GL_TRIANGLES;
 
+	m_Colours[ReservedMeshColours.AMBIENT.index] = Vec3Graphics(0.2f, 0.2f, 0.2);
+	m_Colours[ReservedMeshColours.DIFFUSE.index] = Vec3Graphics::ONES;
+	m_Colours[ReservedMeshColours.SPECULAR.index] = Vec3Graphics::ONES;
 
 	m_NumVertices = numVertices;
 	m_NumIndices = numIndices;
@@ -73,7 +79,7 @@ Mesh::~Mesh(void)
 
 void Mesh::Draw(Material* material)
 {
-	//reservwed textures
+	//reserved textures
 	for (size_t i = 0; i < ReservedMeshTextures.size; ++i)
 	{
 		if (m_Textures[i])
@@ -648,6 +654,14 @@ void Mesh::DrawDebugTangents(float length)
 	//}
 }
 
+void	Mesh::SetTexture(Texture* tex, size_t index)
+{
+	if (m_Textures[index])
+		m_Textures[index]->Clear();
+	m_Textures[index] = tex;
+	if (m_Textures[index])
+		m_Textures[index]->ReserveCopy();
+}
 
 void	Mesh::SetMtlData(const MeshMtlData& data)
 {

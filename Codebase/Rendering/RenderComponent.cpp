@@ -19,7 +19,6 @@ void RenderComponent::Draw()
 	Renderer::GetInstance()->SetCurrentShader(m_Material->GetShader());
 
 	//model matrix
-	m_Material->Setup();
 	Renderer::UpdateUniform(m_Material->GetShader()->GetModelMatrixUniformLocation(), m_GameObject->GetWorldTransform());
 
 	//reset reserved mesh texture uniforms to use the right texture unit
