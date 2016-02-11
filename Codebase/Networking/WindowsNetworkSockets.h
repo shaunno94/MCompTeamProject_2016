@@ -10,6 +10,11 @@
 //http://forums.codeguru.com/showthread.php?353311-c-c-Client-Server-gt-Peer-to-Peer
 //https://msdn.microsoft.com/en-gb/library/windows/desktop/ms737593%28v=vs.85%29.aspx
 //http://cs.ecs.baylor.edu/~donahoo/practical/CSockets2/textcode.html
+//http://www.madwizard.org/programming/tutorials/netcpp/4
+
+//http://www.dreamincode.net/forums/topic/137293-networking-tutorial/
+//http://beej.us/guide/bgnet/
+
 
 #include <stdio.h>
 #include <winsock2.h>
