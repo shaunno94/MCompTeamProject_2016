@@ -105,6 +105,8 @@ bool ParticleSystem::Update(float delta)
 	}
 
 	BuildVertexBuffer();
+
+	return true;
 	
 }
 
