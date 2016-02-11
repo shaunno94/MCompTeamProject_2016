@@ -1,12 +1,12 @@
 #include "ParticleSystem.h"
 
-ParticleSystem::ParticleSystem()
+ParticleSystem::ParticleSystem(const std::string& texturePath)
 	:m_Camera(NULL)
 	, m_Texture(0)
 	, m_Force(0,-9.81f,0)
 	, m_NumAlive(0)
 {
-
+	LoadTexture(texturePath);
 }
 
 ParticleSystem::~ParticleSystem()
@@ -18,14 +18,14 @@ ParticleSystem::~ParticleSystem()
 	}
 }
 
-bool ParticleSystem::LoadTexture(const std::string& fileName)
+bool ParticleSystem::LoadTexture(const std::string& texturePath)
 {
 	if (m_Texture != 0)
 	{
 		glDeleteTextures(1, &m_Texture);
 	}
 
-	m_Texture = SOIL_load_OGL_texture(fileName.c_str(), SOIL_LOAD_AUTO, SOIL_CREATE_NEW_ID, SOIL_FLAG_MIPMAPS);
+	m_Texture = SOIL_load_OGL_texture(texturePath.c_str(), SOIL_LOAD_AUTO, SOIL_CREATE_NEW_ID, SOIL_FLAG_MIPMAPS);
 
 	return (m_Texture != 0);
 }
@@ -34,6 +34,10 @@ void ParticleSystem::EmitParticle(Particle& particle)
 {
 	if (m_ParticleEmitter)
 		m_ParticleEmitter->EmitParticle(particle);
+	else
+	{
+		//some form of default ways to emit particles
+	}
 }
 
 void ParticleSystem::EmitParticles()
@@ -104,7 +108,35 @@ bool ParticleSystem::Update(float delta)
 	
 }
 
+//Needs to be updated, uses old rendering method
 void ParticleSystem::Render()
 {
+	glPushAttrib(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
 
+	glDepthMask(GL_FALSE);            
+	glEnable(GL_BLEND);                 
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);   
+	glEnable(GL_TEXTURE_2D);        
+
+	glPushMatrix();
+
+	glBindTexture(GL_TEXTURE_2D, m_Texture);
+
+	glEnableClientState(GL_VERTEX_ARRAY);
+	glEnableClientState(GL_TEXTURE_COORD_ARRAY);
+	glEnableClientState(GL_COLOR_ARRAY);
+
+	glVertexPointer(3, GL_FLOAT, sizeof(Vertex), &(m_VertexBuffer[0].m_Pos));
+	glTexCoordPointer(2, GL_FLOAT, sizeof(Vertex), &(m_VertexBuffer[0].m_Tex));
+	glColorPointer(4, GL_FLOAT, sizeof(Vertex), &(m_VertexBuffer[0].m_Colour));
+
+	glDrawArrays(GL_QUADS, 0, m_VertexBuffer.size());
+
+	glDisableClientState(GL_VERTEX_ARRAY);
+	glDisableClientState(GL_TEXTURE_COORD_ARRAY);
+	glDisableClientState(GL_COLOR_ARRAY);
+
+	glBindTexture(GL_TEXTURE_2D, 0);
+
+	glPopAttrib();
 }

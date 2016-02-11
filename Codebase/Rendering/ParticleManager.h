@@ -4,18 +4,24 @@
 class ParticleManager
 {
 public:
-	ParticleManager() {};
-	~ParticleManager() {};
+	static bool Initialise();
+	static void Destroy();
+	static ParticleManager& GetManager(){ return *particleManager; };
 
 	void AddSystem(ParticleSystem* system);
 	void RemoveSystem(ParticleSystem* system);
-	void Update(float delta);
-	void Render();
+	void Render(float delta);
 	void Shutdown();
 
-	bool DoesExist();
+	bool HasInitialised();
 
 protected:
+	void Update(float delta);
+
+	static ParticleManager* particleManager;
+	bool init;
 private:
+	ParticleManager();
+	~ParticleManager(void);
 	std::vector<ParticleSystem*> m_Systems;
 };

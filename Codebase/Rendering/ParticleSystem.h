@@ -5,13 +5,13 @@
 #include "Particle.h"
 #include "ParticleEmitter.h"
 
-enum SystemType {BILLBOARD, TRAIL, BEAM};
+enum SystemType {BILLBOARD, TRAIL};
 
 class ParticleSystem
 {
 public:
 
-	ParticleSystem();
+	ParticleSystem(const std::string& texturePath = NULL);
 	~ParticleSystem();
 
 	struct Vertex
