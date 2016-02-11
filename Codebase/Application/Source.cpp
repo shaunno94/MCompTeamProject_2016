@@ -35,11 +35,14 @@ int main()
 	//Initialise Bullet physics engine.
 	PhysicsEngineInstance::Instance()->setGravity(btVector3(0, -9.81, 0));
 
+	
+
 	//Test Scenario - Tardis (cuboid collision shape), floor (cuboid collision shape), ball (sphere collison shape)
 	Scene* myScene = new Scene();
 	//Game objects added to scene are delete by the scene so don't delete twice.
 	GameObject* ball = new GameObject("ball");
 	GameObject* floor = new GameObject("floor");
+
 
 	//Shader* simpleShader = new Shader(SHADER_DIR"textureVertex.glsl", SHADER_DIR"textureCoordFragment.glsl");
 	Shader* simpleShader = new Shader(SHADER_DIR"textureVertex.glsl", SHADER_DIR"textureFragment.glsl");
