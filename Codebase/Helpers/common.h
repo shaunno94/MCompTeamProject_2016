@@ -28,17 +28,18 @@ static const std::string EMPTY_STR = "";
 /// </summary>
 static const char* const EMPTY_CHAR_ARRAY = EMPTY_STR.c_str();
 
+#ifdef _WIN32
+#define LINE_SEPARATOR_DEF "\r\n"
+#elif __APPLE__
+#define LINE_SEPARATOR_DEF "\r"
+#else
+#define LINE_SEPARATOR_DEF "\n"
+#endif
+
 /// <summary>
 /// Platform specific line separation string.
 /// </summary>
-static const std::string LINE_SEPARATOR_STR =
-#ifdef _WIN32
-  "\r\n";
-#elif __APPLE__
-  "\r";
-#else
-  "\n";
-#endif
+static const std::string LINE_SEPARATOR_STR = LINE_SEPARATOR_DEF;
 
 /// <summary>
 /// Platform specific line separation character array.
