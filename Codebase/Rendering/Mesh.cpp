@@ -8,25 +8,45 @@
 
 Mesh::Mesh(void)
 {
-	glGenVertexArrays(1, &arrayObject);
-
 	for(int i = 0; i < MAX_BUFFER; ++i)
 		bufferObject[i] = 0;
 
 	m_Textures[ReservedMeshTextures.size] = {};
 	m_Colours[ReservedMeshColours.size] = {};
 	m_SpecExponent = 0.0f;
-	numVertices  = 0;
 	type		 = GL_TRIANGLES;
 
-	//Later tutorial stuff
-	numIndices    = 0;
-	vertices	  = nullptr;
-	textureCoords = nullptr;
-	normals		  = nullptr;
-	tangents	  = nullptr;
-	indices		  = nullptr;
-	colours		  = nullptr;
+
+	m_NumVertices = 0;
+	m_NumIndices    = 0;
+	m_Vertices	  = nullptr;
+	m_TextureCoords = nullptr;
+	m_Normals		  = nullptr;
+	m_Tangents	  = nullptr;
+	m_Indices		  = nullptr;
+}
+
+Mesh::Mesh(size_t numVertices, Vec3Graphics* vertices, Vec2Graphics* texCoords, Vec3Graphics* normals, Vec3Graphics* tangents, size_t numIndices, size_t* indices)
+{
+	for (int i = 0; i < MAX_BUFFER; ++i)
+		bufferObject[i] = 0;
+
+	m_Textures[ReservedMeshTextures.size] = {};
+	m_Colours[ReservedMeshColours.size] = {};
+	m_SpecExponent = 0.0f;
+	type = GL_TRIANGLES;
+
+	m_NumVertices = 0;
+	type = GL_TRIANGLES;
+
+
+	m_NumVertices = numVertices;
+	m_NumIndices = numIndices;
+	m_Vertices = vertices;
+	m_TextureCoords = texCoords;
+	m_Normals = normals;
+	m_Tangents = tangents;
+	m_Indices = indices;
 }
 
 Mesh::~Mesh(void)
@@ -41,12 +61,11 @@ Mesh::~Mesh(void)
 	}
 
 	//Later tutorial stuff
-	delete[] vertices;
-	delete[] indices;
-	delete[] textureCoords;
-	delete[] tangents;
-	delete[] normals;
-	delete[] colours;
+	delete[] m_Vertices;
+	delete[] m_Indices;
+	delete[] m_TextureCoords;
+	delete[] m_Tangents;
+	delete[] m_Normals;
 }
 
 void Mesh::Draw()
@@ -59,10 +78,10 @@ void Mesh::Draw()
 
 	glBindVertexArray(arrayObject);
 	if(bufferObject[INDEX_BUFFER])
-		glDrawElements(type, numIndices, GL_UNSIGNED_INT, 0);
+		glDrawElements(type, m_NumIndices, GL_UNSIGNED_INT, 0);
 	else
 	{
-		glDrawArrays(type, 0, numVertices);	//Draw the triangle!
+		glDrawArrays(type, 0, m_NumVertices);	//Draw the triangle!
 	}
 	glBindVertexArray(0);
 
@@ -73,22 +92,17 @@ void Mesh::Draw()
 Mesh* Mesh::GenerateTriangle()
 {
 	Mesh* m = new Mesh();
-	m->numVertices = 3;
+	m->m_NumVertices = 3;
 
-	m->vertices = new Vec3Graphics[m->numVertices];
-	m->vertices[0] = Vec3Graphics(0.0f,	0.5f,	0.0f);
-	m->vertices[1] = Vec3Graphics(0.5f,  -0.5f,	0.0f);
-	m->vertices[2] = Vec3Graphics(-0.5f, -0.5f,	0.0f);
+	m->m_Vertices = new Vec3Graphics[m->m_NumVertices];
+	m->m_Vertices[0] = Vec3Graphics(0.0f,	0.5f,	0.0f);
+	m->m_Vertices[1] = Vec3Graphics(0.5f,  -0.5f,	0.0f);
+	m->m_Vertices[2] = Vec3Graphics(-0.5f, -0.5f,	0.0f);
 
-	m->textureCoords = new Vec2Graphics[m->numVertices];
-	m->textureCoords[0] = Vec2Graphics(0.5f,	0.0f);
-	m->textureCoords[1] = Vec2Graphics(1.0f,	1.0f);
-	m->textureCoords[2] = Vec2Graphics(0.0f,	1.0f);
-
-	m->colours = new Vec4Graphics[m->numVertices];
-	m->colours[0] = Vec4Graphics(1.0f, 0.0f, 0.0f,1.0f);
-	m->colours[1] = Vec4Graphics(0.0f, 1.0f, 0.0f,1.0f);
-	m->colours[2] = Vec4Graphics(0.0f, 0.0f, 1.0f,1.0f);
+	m->m_TextureCoords = new Vec2Graphics[m->m_NumVertices];
+	m->m_TextureCoords[0] = Vec2Graphics(0.5f,	0.0f);
+	m->m_TextureCoords[1] = Vec2Graphics(1.0f,	1.0f);
+	m->m_TextureCoords[2] = Vec2Graphics(0.0f,	1.0f);
 
 	m->GenerateNormals();
 	m->GenerateTangents();
@@ -218,20 +232,20 @@ Mesh* Mesh::GenerateIcosphere(unsigned int tessalationLevel)
 	}
 
 	Mesh* m = new Mesh();
-	m->numVertices = vertices.size();
-	m->vertices = new Vec3Graphics[m->numVertices];
-	for(unsigned int i = 0; i < m->numVertices; ++i)
+	m->m_NumVertices = vertices.size();
+	m->m_Vertices = new Vec3Graphics[m->m_NumVertices];
+	for(unsigned int i = 0; i < m->m_NumVertices; ++i)
 	{
-		m->vertices[i] = vertices[i];
+		m->m_Vertices[i] = vertices[i];
 	}
-	m->numIndices = indices.size();
-	m->indices = new unsigned int[m->numIndices];
+	m->m_NumIndices = indices.size();
+	m->m_Indices = new unsigned int[m->m_NumIndices];
 	unsigned int counter = 0;
 	for(auto face : *faces)
 	{
-		m->indices[counter++] = face.v1;
-		m->indices[counter++] = face.v2;
-		m->indices[counter++] = face.v3;
+		m->m_Indices[counter++] = face.v1;
+		m->m_Indices[counter++] = face.v2;
+		m->m_Indices[counter++] = face.v3;
 	}
 
 	m->GenerateNormals();
@@ -246,30 +260,28 @@ Mesh* Mesh::GenerateQuad()
 {
 	Mesh* m = new Mesh();
 
-	m->numVertices = 4;
+	m->m_NumVertices = 4;
 	m->type = GL_TRIANGLE_STRIP;
 
-	m->vertices			= new Vec3Graphics[m->numVertices];
-	m->textureCoords	= new Vec2Graphics[m->numVertices];
-	m->colours			= new Vec4Graphics[m->numVertices];
-	m->normals			= new Vec3Graphics[m->numVertices];
-	m->tangents			= new Vec3Graphics[m->numVertices];
+	m->m_Vertices			= new Vec3Graphics[m->m_NumVertices];
+	m->m_TextureCoords	= new Vec2Graphics[m->m_NumVertices];
+	m->m_Normals			= new Vec3Graphics[m->m_NumVertices];
+	m->m_Tangents			= new Vec3Graphics[m->m_NumVertices];
 
-	m->vertices[0] = 	Vec3Graphics(-1.0f, -1.0f, 0.0f);
-	m->vertices[1] = 	Vec3Graphics(-1.0f,	1.0f, 0.0f);
-	m->vertices[2] = 	Vec3Graphics(1.0f, -1.0f, 0.0f);
-	m->vertices[3] = 	Vec3Graphics(1.0f,  1.0f, 0.0f);
+	m->m_Vertices[0] = 	Vec3Graphics(-1.0f, -1.0f, 0.0f);
+	m->m_Vertices[1] = 	Vec3Graphics(-1.0f,	1.0f, 0.0f);
+	m->m_Vertices[2] = 	Vec3Graphics(1.0f, -1.0f, 0.0f);
+	m->m_Vertices[3] = 	Vec3Graphics(1.0f,  1.0f, 0.0f);
 
-	m->textureCoords[0] = Vec2Graphics(0.0f,	1.0f);
-	m->textureCoords[1] = Vec2Graphics(0.0f,	0.0f);
-	m->textureCoords[2] = Vec2Graphics(1.0f,	1.0f);
-	m->textureCoords[3] = Vec2Graphics(1.0f,	0.0f);
+	m->m_TextureCoords[0] = Vec2Graphics(0.0f,	1.0f);
+	m->m_TextureCoords[1] = Vec2Graphics(0.0f,	0.0f);
+	m->m_TextureCoords[2] = Vec2Graphics(1.0f,	1.0f);
+	m->m_TextureCoords[3] = Vec2Graphics(1.0f,	0.0f);
 
 	for(int i = 0; i < 4; ++i)
 	{
-		m->colours[i] = Vec4Graphics(1.0f, 1.0f,1.0f,1.0f);
-		m->normals[i] = Vec3Graphics(0.0f, 0.0f,-1.0f);
-		m->tangents[i] = Vec3Graphics(1.0f, 0.0f,0.0f);
+		m->m_Normals[i] = Vec3Graphics(0.0f, 0.0f,-1.0f);
+		m->m_Tangents[i] = Vec3Graphics(1.0f, 0.0f,0.0f);
 	}
 
 	m->BufferData();
@@ -282,30 +294,28 @@ Mesh* Mesh::GenerateQuadAlt()
 {
 	Mesh* m = new Mesh();
 
-	m->numVertices = 4;
+	m->m_NumVertices = 4;
 	m->type = GL_TRIANGLE_STRIP;
 
-	m->vertices			= new Vec3Graphics[m->numVertices];
-	m->textureCoords	= new Vec2Graphics[m->numVertices];
-	m->colours			= new Vec4Graphics[m->numVertices];
-	m->normals			= new Vec3Graphics[m->numVertices];
-	m->tangents			= new Vec3Graphics[m->numVertices];
+	m->m_Vertices			= new Vec3Graphics[m->m_NumVertices];
+	m->m_TextureCoords	= new Vec2Graphics[m->m_NumVertices];
+	m->m_Normals			= new Vec3Graphics[m->m_NumVertices];
+	m->m_Tangents			= new Vec3Graphics[m->m_NumVertices];
 
-	m->vertices[0] = 	Vec3Graphics(0.0f, 0.0f, 0.0f);
-	m->vertices[1] = 	Vec3Graphics(0.0f, 1.0f, 0.0f);
-	m->vertices[2] = 	Vec3Graphics(1.0f, 0.0f, 0.0f);
-	m->vertices[3] = 	Vec3Graphics(1.0f,  1.0f, 0.0f);
+	m->m_Vertices[0] = 	Vec3Graphics(0.0f, 0.0f, 0.0f);
+	m->m_Vertices[1] = 	Vec3Graphics(0.0f, 1.0f, 0.0f);
+	m->m_Vertices[2] = 	Vec3Graphics(1.0f, 0.0f, 0.0f);
+	m->m_Vertices[3] = 	Vec3Graphics(1.0f,  1.0f, 0.0f);
 
-	m->textureCoords[0] = Vec2Graphics(0.0f,	0.0f);
-	m->textureCoords[1] = Vec2Graphics(0.0f,	1.0f);
-	m->textureCoords[2] = Vec2Graphics(1.0f,	0.0f);
-	m->textureCoords[3] = Vec2Graphics(1.0f,	1.0f);
+	m->m_TextureCoords[0] = Vec2Graphics(0.0f,	0.0f);
+	m->m_TextureCoords[1] = Vec2Graphics(0.0f,	1.0f);
+	m->m_TextureCoords[2] = Vec2Graphics(1.0f,	0.0f);
+	m->m_TextureCoords[3] = Vec2Graphics(1.0f,	1.0f);
 
 	for(int i = 0; i < 4; ++i)
 	{
-		m->colours[i] = Vec4Graphics(1.0f, 1.0f,1.0f,1.0f);
-		m->normals[i] = Vec3Graphics(0.0f, 0.0f,-1.0f);
-		m->tangents[i] = Vec3Graphics(1.0f, 0.0f,0.0f);
+		m->m_Normals[i] = Vec3Graphics(0.0f, 0.0f,-1.0f);
+		m->m_Tangents[i] = Vec3Graphics(1.0f, 0.0f,0.0f);
 	}
 
 	m->BufferData();
@@ -317,30 +327,28 @@ Mesh* Mesh::GenerateQuadTexCoordCol(Vec2Graphics scale, Vec2Graphics texCoord, V
 {
 	Mesh* m = new Mesh();
 
-	m->numVertices = 4;
+	m->m_NumVertices = 4;
 	m->type = GL_TRIANGLE_STRIP;
 
-	m->vertices			= new Vec3Graphics[m->numVertices];
-	m->textureCoords	= new Vec2Graphics[m->numVertices];
-	m->colours			= new Vec4Graphics[m->numVertices];
-	m->normals			= new Vec3Graphics[m->numVertices];
-	m->tangents			= new Vec3Graphics[m->numVertices];
+	m->m_Vertices			= new Vec3Graphics[m->m_NumVertices];
+	m->m_TextureCoords	= new Vec2Graphics[m->m_NumVertices];
+	m->m_Normals			= new Vec3Graphics[m->m_NumVertices];
+	m->m_Tangents			= new Vec3Graphics[m->m_NumVertices];
 
-	m->vertices[0] = 	Vec3Graphics(0.0f, 0.0f, 0.0f);
-	m->vertices[2] = 	Vec3Graphics(0.0f, scale.y, 0.0f);
-	m->vertices[1] = 	Vec3Graphics(scale.x, 0.0f, 0.0f);
-	m->vertices[3] = 	Vec3Graphics(scale.x,  scale.y, 0.0f);
+	m->m_Vertices[0] = 	Vec3Graphics(0.0f, 0.0f, 0.0f);
+	m->m_Vertices[2] = 	Vec3Graphics(0.0f, scale.y, 0.0f);
+	m->m_Vertices[1] = 	Vec3Graphics(scale.x, 0.0f, 0.0f);
+	m->m_Vertices[3] = 	Vec3Graphics(scale.x,  scale.y, 0.0f);
 
-	m->textureCoords[0] = Vec2Graphics(texCoord.x,	texCoord.x);
-	m->textureCoords[2] = Vec2Graphics(texCoord.x,	texCoord.y);
-	m->textureCoords[1] = Vec2Graphics(texCoord.y,	texCoord.x);
-	m->textureCoords[3] = Vec2Graphics(texCoord.y,	texCoord.y);
+	m->m_TextureCoords[0] = Vec2Graphics(texCoord.x,	texCoord.x);
+	m->m_TextureCoords[2] = Vec2Graphics(texCoord.x,	texCoord.y);
+	m->m_TextureCoords[1] = Vec2Graphics(texCoord.y,	texCoord.x);
+	m->m_TextureCoords[3] = Vec2Graphics(texCoord.y,	texCoord.y);
 
 	for(int i = 0; i < 4; ++i)
 	{
-		m->colours[i] = colour;
-		m->normals[i] = Vec3Graphics(0.0f, 0.0f, 1.0f);
-		m->tangents[i] = Vec3Graphics(1.0f, 0.0f,0.0f);
+		m->m_Normals[i] = Vec3Graphics(0.0f, 0.0f, 1.0f);
+		m->m_Tangents[i] = Vec3Graphics(1.0f, 0.0f,0.0f);
 	}
 
 	m->BufferData();
@@ -350,6 +358,9 @@ Mesh* Mesh::GenerateQuadTexCoordCol(Vec2Graphics scale, Vec2Graphics texCoord, V
 
 void	Mesh::BufferData()
 {
+	//moved here from constructor to not require OpenGL instance when using Mesh for format conversion
+	glGenVertexArrays(1, &arrayObject);
+
 	//GenerateNormals();
 	//GenerateTangents();
 
@@ -358,56 +369,46 @@ void	Mesh::BufferData()
 	//Buffer vertex data
 	glGenBuffers(1, &bufferObject[VERTEX_BUFFER]);
 	glBindBuffer(GL_ARRAY_BUFFER, bufferObject[VERTEX_BUFFER]);
-	glBufferData(GL_ARRAY_BUFFER, numVertices*sizeof(Vec3Graphics), vertices, GL_STATIC_DRAW);
+	glBufferData(GL_ARRAY_BUFFER, m_NumVertices*sizeof(Vec3Graphics), m_Vertices, GL_STATIC_DRAW);
 	glVertexAttribPointer(VERTEX_BUFFER, 3, GL_FLOAT, GL_FALSE, sizeof(Vec3Graphics), 0);
 	glEnableVertexAttribArray(VERTEX_BUFFER);
 
 	//Buffer texture data
-	if(textureCoords)
+	if(m_TextureCoords)
 	{
 		glGenBuffers(1, &bufferObject[TEXTURE_BUFFER]);
 		glBindBuffer(GL_ARRAY_BUFFER, bufferObject[TEXTURE_BUFFER]);
-		glBufferData(GL_ARRAY_BUFFER, numVertices*sizeof(Vec2Graphics), textureCoords, GL_STATIC_DRAW);
+		glBufferData(GL_ARRAY_BUFFER, m_NumVertices*sizeof(Vec2Graphics), m_TextureCoords, GL_STATIC_DRAW);
 		glVertexAttribPointer(TEXTURE_BUFFER, 2, GL_FLOAT, GL_FALSE, sizeof(Vec2Graphics), 0);
 		glEnableVertexAttribArray(TEXTURE_BUFFER);
 	}
 
-	//buffer colour data
-	if(colours)
-	{
-		glGenBuffers(1, &bufferObject[COLOUR_BUFFER]);
-		glBindBuffer(GL_ARRAY_BUFFER, bufferObject[COLOUR_BUFFER]);
-		glBufferData(GL_ARRAY_BUFFER, numVertices*sizeof(Vec4Graphics), colours, GL_STATIC_DRAW);
-		glVertexAttribPointer(COLOUR_BUFFER, 4, GL_FLOAT, GL_FALSE, sizeof(Vec4Graphics), 0);
-		glEnableVertexAttribArray(COLOUR_BUFFER);
-	}
-
 	//Buffer normal data
-	if(normals)
+	if(m_Normals)
 	{
 		glGenBuffers(1, &bufferObject[NORMAL_BUFFER]);
 		glBindBuffer(GL_ARRAY_BUFFER, bufferObject[NORMAL_BUFFER]);
-		glBufferData(GL_ARRAY_BUFFER, numVertices*sizeof(Vec3Graphics), normals, GL_STATIC_DRAW);
+		glBufferData(GL_ARRAY_BUFFER, m_NumVertices*sizeof(Vec3Graphics), m_Normals, GL_STATIC_DRAW);
 		glVertexAttribPointer(NORMAL_BUFFER, 3, GL_FLOAT, GL_FALSE, sizeof(Vec3Graphics), 0);
 		glEnableVertexAttribArray(NORMAL_BUFFER);
 	}
 
 	//Buffer tangent data
-	if(tangents)
+	if(m_Tangents)
 	{
 		glGenBuffers(1, &bufferObject[TANGENT_BUFFER]);
 		glBindBuffer(GL_ARRAY_BUFFER, bufferObject[TANGENT_BUFFER]);
-		glBufferData(GL_ARRAY_BUFFER, numVertices*sizeof(Vec3Graphics), tangents, GL_STATIC_DRAW);
+		glBufferData(GL_ARRAY_BUFFER, m_NumVertices*sizeof(Vec3Graphics), m_Tangents, GL_STATIC_DRAW);
 		glVertexAttribPointer(TANGENT_BUFFER, 3, GL_FLOAT, GL_FALSE, sizeof(Vec3Graphics), 0);
 		glEnableVertexAttribArray(TANGENT_BUFFER);
 	}
 
 	//buffer index data
-	if(indices)
+	if(m_Indices)
 	{
 		glGenBuffers(1, &bufferObject[INDEX_BUFFER]);
 		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, bufferObject[INDEX_BUFFER]);
-		glBufferData(GL_ELEMENT_ARRAY_BUFFER, numIndices*sizeof(GLuint), indices, GL_STATIC_DRAW);
+		glBufferData(GL_ELEMENT_ARRAY_BUFFER, m_NumIndices*sizeof(GLuint), m_Indices, GL_STATIC_DRAW);
 	}
 
 	for (auto child : m_Children)
@@ -422,27 +423,27 @@ Stuff for later tutorials...
 
 void	Mesh::GenerateNormals()
 {
-	if(!normals)
-		normals = new Vec3Graphics[numVertices];
-	for(GLuint i = 0; i < numVertices; ++i)
-		normals[i] = Vec3Graphics();
+	if(!m_Normals)
+		m_Normals = new Vec3Graphics[m_NumVertices];
+	for(GLuint i = 0; i < m_NumVertices; ++i)
+		m_Normals[i] = Vec3Graphics();
 
-	if(indices)
+	if(m_Indices)
 	{
 		GLuint i = 0;
 
 		int test = 0;
-		for(i = 0; i < numIndices; i+=3)
+		for(i = 0; i < m_NumIndices; i+=3)
 		{
-			int a = indices[i];
-			int b = indices[i+1];
-			int c = indices[i+2];
+			int a = m_Indices[i];
+			int b = m_Indices[i+1];
+			int c = m_Indices[i+2];
 
-			Vec3Graphics normal = (vertices[b]-vertices[a]).Cross(vertices[c]-vertices[a]);
+			Vec3Graphics normal = (m_Vertices[b]-m_Vertices[a]).Cross(m_Vertices[c]-m_Vertices[a]);
 
-			normals[a] += normal;
-			normals[b] += normal;
-			normals[c] += normal;
+			m_Normals[a] += normal;
+			m_Normals[b] += normal;
+			m_Normals[c] += normal;
 
 			test+=3;
 		}
@@ -451,64 +452,64 @@ void	Mesh::GenerateNormals()
 	else
 	{
 		//It's just a list of triangles, so generate face normals
-		for(GLuint i = 0; i < numVertices; i+=3)
+		for(GLuint i = 0; i < m_NumVertices; i+=3)
 		{
-			Vec3Graphics& a = vertices[i];
-			Vec3Graphics& b = vertices[i+1];
-			Vec3Graphics& c = vertices[i+2];
+			Vec3Graphics& a = m_Vertices[i];
+			Vec3Graphics& b = m_Vertices[i+1];
+			Vec3Graphics& c = m_Vertices[i+2];
 
 			Vec3Graphics normal = (b-a).Cross(c-a);
 
-			normals[i]	 = normal;
-			normals[i+1] = normal;
-			normals[i+2] = normal;
+			m_Normals[i]	 = normal;
+			m_Normals[i+1] = normal;
+			m_Normals[i+2] = normal;
 		}
 	}
 
-	for(GLuint i = 0; i < numVertices; ++i)
-		normals[i].Normalize();
+	for(GLuint i = 0; i < m_NumVertices; ++i)
+		m_Normals[i].Normalize();
 }
 
 void Mesh::GenerateTangents()
 {
 	//Extra! stops rare occurrence of this function being called
 	//on a mesh without tex coords, which would break quite badly!
-	if(!textureCoords)
+	if(!m_TextureCoords)
 		return;
 
-	if(!tangents)
-		tangents = new Vec3Graphics[numVertices];
-	for(GLuint i = 0; i < numVertices; ++i)
-		tangents[i] = Vec3Graphics();
+	if(!m_Tangents)
+		m_Tangents = new Vec3Graphics[m_NumVertices];
+	for(GLuint i = 0; i < m_NumVertices; ++i)
+		m_Tangents[i] = Vec3Graphics();
 
-	if(indices)
+	if(m_Indices)
 	{
-		for(GLuint i = 0; i < numIndices; i+=3)
+		for(GLuint i = 0; i < m_NumIndices; i+=3)
 		{
-			int a = indices[i];
-			int b = indices[i+1];
-			int c = indices[i+2];
+			int a = m_Indices[i];
+			int b = m_Indices[i+1];
+			int c = m_Indices[i+2];
 
-			Vec3Graphics tangent = GenerateTangent(vertices[a],vertices[b],vertices[c],textureCoords[a],textureCoords[b],textureCoords[c]);
+			Vec3Graphics tangent = GenerateTangent(m_Vertices[a],m_Vertices[b],m_Vertices[c],m_TextureCoords[a],m_TextureCoords[b],m_TextureCoords[c]);
 
-			tangents[a] += tangent;
-			tangents[b] += tangent;
-			tangents[c] += tangent;
+			m_Tangents[a] += tangent;
+			m_Tangents[b] += tangent;
+			m_Tangents[c] += tangent;
 		}
 	}
 	else
 	{
-		for(GLuint i = 0; i < numVertices; i+=3)
+		for(GLuint i = 0; i < m_NumVertices; i+=3)
 		{
-			Vec3Graphics tangent = GenerateTangent(vertices[i],vertices[i+1],vertices[i+2],textureCoords[i],textureCoords[i+1],textureCoords[i+2]);
+			Vec3Graphics tangent = GenerateTangent(m_Vertices[i],m_Vertices[i+1],m_Vertices[i+2],m_TextureCoords[i],m_TextureCoords[i+1],m_TextureCoords[i+2]);
 
-			tangents[i]   += tangent;
-			tangents[i+1] += tangent;
-			tangents[i+2] += tangent;
+			m_Tangents[i]   += tangent;
+			m_Tangents[i+1] += tangent;
+			m_Tangents[i+2] += tangent;
 		}
 	}
-	for(GLuint i = 0; i < numVertices; ++i)
-		tangents[i].Normalize();
+	for(GLuint i = 0; i < m_NumVertices; ++i)
+		m_Tangents[i].Normalize();
 }
 
 Vec3Graphics Mesh::GenerateTangent(const Vec3Graphics& a,const Vec3Graphics& b,const Vec3Graphics& c,const Vec2Graphics& ta,const Vec2Graphics& tb,const Vec2Graphics& tc)
@@ -528,7 +529,7 @@ Vec3Graphics Mesh::GenerateTangent(const Vec3Graphics& a,const Vec3Graphics& b,c
 
 void Mesh::DrawDebugNormals(float length)
 {
-	if(numVertices > 0)
+	if(m_NumVertices > 0)
 	{
 		GLuint array;
 		GLuint buffer;
@@ -537,34 +538,32 @@ void Mesh::DrawDebugNormals(float length)
 		glGenVertexArrays(1, &array);
 		glBindVertexArray(array);
 
-		Vec3Graphics* tempV = new Vec3Graphics[numVertices*2];
-		Vec3Graphics* tempC = new Vec3Graphics[numVertices*2];
+		Vec3Graphics* tempV = new Vec3Graphics[m_NumVertices*2];
+		Vec3Graphics* tempC = new Vec3Graphics[m_NumVertices*2];
 
-		for(GLuint i = 0; i < numVertices; ++i)
+		for(GLuint i = 0; i < m_NumVertices; ++i)
 		{
 			tempC[(i*2)]  = Vec3Graphics(1,0,0);
 			tempC[(i*2)+1] = Vec3Graphics(1,1,1);
 
-			tempV[(i*2)]   = vertices[i];
-			tempV[(i*2)+1] = vertices[i] + (normals[i] * length);
+			tempV[(i*2)]   = m_Vertices[i];
+			tempV[(i*2)+1] = m_Vertices[i] + (m_Normals[i] * length);
 		}
 
 		glGenBuffers(1, &buffer);
 		glBindBuffer(GL_ARRAY_BUFFER, buffer);
-		glBufferData(GL_ARRAY_BUFFER, numVertices*sizeof(Vec3Graphics)*2, tempV, GL_STREAM_DRAW);
+		glBufferData(GL_ARRAY_BUFFER, m_NumVertices*sizeof(Vec3Graphics)*2, tempV, GL_STREAM_DRAW);
 		glVertexAttribPointer(VERTEX_BUFFER, 3, GL_FLOAT, GL_FALSE, 0, 0);
 		glEnableVertexAttribArray(VERTEX_BUFFER);
 
 		glGenBuffers(1, &cbuffer);
 		glBindBuffer(GL_ARRAY_BUFFER, cbuffer);
-		glBufferData(GL_ARRAY_BUFFER, numVertices*sizeof(Vec3Graphics)*2, tempC, GL_STREAM_DRAW);
-		glVertexAttribPointer(COLOUR_BUFFER, 3, GL_FLOAT, GL_FALSE, 0, 0);
-		glEnableVertexAttribArray(COLOUR_BUFFER);
+		glBufferData(GL_ARRAY_BUFFER, m_NumVertices*sizeof(Vec3Graphics) * 2, tempC, GL_STREAM_DRAW);
 
 		glPointSize(4.0f);
 		glLineWidth(2.0f);
-		glDrawArrays(GL_POINTS,  0, numVertices*2);	// draw ordered list of vertices
-		glDrawArrays(GL_LINES,  0, numVertices*2);	// draw ordered list of vertices
+		glDrawArrays(GL_POINTS,  0, m_NumVertices*2);	// draw ordered list of vertices
+		glDrawArrays(GL_LINES,  0, m_NumVertices*2);	// draw ordered list of vertices
 		glLineWidth(1.0f);
 		glPointSize(1.0f);
 
@@ -585,7 +584,7 @@ void Mesh::DrawDebugNormals(float length)
 
 void Mesh::DrawDebugTangents(float length)
 {
-	if(numVertices > 0)
+	if(m_NumVertices > 0)
 	{
 		GLuint array;
 		GLuint buffer;
@@ -594,34 +593,32 @@ void Mesh::DrawDebugTangents(float length)
 		glGenVertexArrays(1, &array);
 		glBindVertexArray(array);
 
-		Vec3Graphics* tempV = new Vec3Graphics[numVertices*2];
-		Vec3Graphics* tempC = new Vec3Graphics[numVertices*2];
+		Vec3Graphics* tempV = new Vec3Graphics[m_NumVertices*2];
+		Vec3Graphics* tempC = new Vec3Graphics[m_NumVertices*2];
 
-		for(GLuint i = 0; i < numVertices; ++i)
+		for(GLuint i = 0; i < m_NumVertices; ++i)
 		{
 			tempC[(i*2)]  = Vec3Graphics(1,1,1);
 			tempC[(i*2)+1] = Vec3Graphics(0,1,0);
 
-			tempV[(i*2)]   = vertices[i];
-			tempV[(i*2)+1] = vertices[i] + (tangents[i] * length);
+			tempV[(i*2)]   = m_Vertices[i];
+			tempV[(i*2)+1] = m_Vertices[i] + (m_Tangents[i] * length);
 		}
 
 		glGenBuffers(1, &buffer);
 		glBindBuffer(GL_ARRAY_BUFFER, buffer);
-		glBufferData(GL_ARRAY_BUFFER, numVertices*sizeof(Vec3Graphics)*2, tempV, GL_STREAM_DRAW);
+		glBufferData(GL_ARRAY_BUFFER, m_NumVertices*sizeof(Vec3Graphics)*2, tempV, GL_STREAM_DRAW);
 		glVertexAttribPointer(VERTEX_BUFFER, 3, GL_FLOAT, GL_FALSE, 0, 0);
 		glEnableVertexAttribArray(VERTEX_BUFFER);
 
 		glGenBuffers(1, &cbuffer);
 		glBindBuffer(GL_ARRAY_BUFFER, cbuffer);
-		glBufferData(GL_ARRAY_BUFFER, numVertices*sizeof(Vec3Graphics)*2, tempC, GL_STREAM_DRAW);
-		glVertexAttribPointer(COLOUR_BUFFER, 3, GL_FLOAT, GL_FALSE, 0, 0);
-		glEnableVertexAttribArray(COLOUR_BUFFER);
+		glBufferData(GL_ARRAY_BUFFER, m_NumVertices*sizeof(Vec3Graphics)*2, tempC, GL_STREAM_DRAW);
 
 		glPointSize(4.0f);
 		glLineWidth(2.0f);
-		glDrawArrays(GL_POINTS,  0, numVertices*2);	// draw ordered list of vertices
-		glDrawArrays(GL_LINES,  0, numVertices*2);	// draw ordered list of vertices
+		glDrawArrays(GL_POINTS,  0, m_NumVertices*2);	// draw ordered list of vertices
+		glDrawArrays(GL_LINES,  0, m_NumVertices*2);	// draw ordered list of vertices
 		glLineWidth(1.0f);
 		glPointSize(1.0f);
 

@@ -3,6 +3,7 @@
 #include <mutex>
 
 template <class T>
+/// @ingroup Helpers
 class TSingleton
 {
 public:

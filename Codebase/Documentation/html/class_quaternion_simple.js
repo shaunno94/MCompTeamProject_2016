@@ -1,0 +1,27 @@
+var class_quaternion_simple =
+[
+    [ "QuaternionSimple", "class_quaternion_simple.html#ae28e0a6c76dbd9cd0bbd2b85dd449081", null ],
+    [ "QuaternionSimple", "class_quaternion_simple.html#a26de416349b715514762fa14a046d7b6", null ],
+    [ "AxisAngleToQuaterion", "class_quaternion_simple.html#ab42595946f7be01d422186c4d0fe59c6", null ],
+    [ "Conjugate", "class_quaternion_simple.html#abfed655d9174c7392a26d289cc780dd7", null ],
+    [ "Dot", "class_quaternion_simple.html#a8ca66a95633d1e93b3cc7311a25a223f", null ],
+    [ "EulerAnglesToQuaternion", "class_quaternion_simple.html#aa493576ab2d0ed0abdfbe855c7622d75", null ],
+    [ "FromMatrix", "class_quaternion_simple.html#a1b745141071a5f9377d665e9b47bd5ed", null ],
+    [ "GenerateW", "class_quaternion_simple.html#ab0cfda6bd67a743eabffba8ae2c74765", null ],
+    [ "Interpolate", "class_quaternion_simple.html#ae4b3a97e3b6a9889ed80cb035c1587ba", null ],
+    [ "Normal", "class_quaternion_simple.html#a7ed27862b7186c13b512d6bb8cd27603", null ],
+    [ "Normalize", "class_quaternion_simple.html#afaa2d1c8489b301637a1e135adcb3b5d", null ],
+    [ "operator*", "class_quaternion_simple.html#a153bc5e4f1c0408d366e0dcf77b67646", null ],
+    [ "operator*", "class_quaternion_simple.html#a8659455ac08913696a6b2f51cd99875c", null ],
+    [ "operator+", "class_quaternion_simple.html#a3da1751f62a325d341c2fbfbb9c31dc3", null ],
+    [ "RotatePointByQuaternion", "class_quaternion_simple.html#af5bf001e3638a99cedbbd19069e581fb", null ],
+    [ "ToMatrix3", "class_quaternion_simple.html#af2e47107e5d5d3e89f961810edc1e291", null ],
+    [ "ToMatrix4", "class_quaternion_simple.html#a82fc68ff403be8c1d515880a99876c72", null ],
+    [ "operator<<", "class_quaternion_simple.html#a4d21e6bccab2fd9a1e2f9765ec7183ec", null ],
+    [ "EMPTY", "class_quaternion_simple.html#ae40ef92548b5878d905ac62c01c82222", null ],
+    [ "IDENTITY", "class_quaternion_simple.html#a99db51997eca4617544bb62512b0e734", null ],
+    [ "w", "class_quaternion_simple.html#afb02a6386c3ab0bba573f9b90cccdedb", null ],
+    [ "x", "class_quaternion_simple.html#a778bc3e29c72fd1a50eeef68d6d1053f", null ],
+    [ "y", "class_quaternion_simple.html#ae8b5df36e2049efe553fbe47f67b5599", null ],
+    [ "z", "class_quaternion_simple.html#a9d6b7f41b382190e2312f0050ba0722b", null ]
+];

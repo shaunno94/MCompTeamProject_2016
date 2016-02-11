@@ -9,7 +9,10 @@
 #include <iostream>
 #include <string>
 
-
+/// @ingroup Helpers
+/// <summary>
+/// Class for measuring logged time points.
+/// </summary>
 class MeasuringTimer : public Timer
 {
 private:

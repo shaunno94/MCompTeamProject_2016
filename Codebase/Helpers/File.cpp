@@ -1,5 +1,5 @@
 #include "File.h"
-
+#include <algorithm>
 
 namespace File
 {
@@ -56,6 +56,55 @@ std::string AppendPath(const std::string& path, const std::string& fpath)
 				return finalPath;
 			}
 		}
+	}
+	return fpath;
+}
+
+
+std::string GetFileExt(const std::string& fpath)
+{
+	size_t lastDotIndex = fpath.find_last_of(".");
+	if (lastDotIndex == std::string::npos)
+		return "";
+
+	size_t lastSeparatorIndex = fpath.find_last_of("/");
+	size_t tempSeparatorIndex = fpath.find_last_of("\\");
+	lastSeparatorIndex = lastSeparatorIndex != std::string::npos ?
+	                     (
+	                       tempSeparatorIndex != std::string::npos ?
+	                       std::max(lastSeparatorIndex, tempSeparatorIndex) :
+	                       lastSeparatorIndex
+	                     ) :
+	                     tempSeparatorIndex;
+
+	//there is no directory navigation or the last dot is within the last directory
+	if (lastSeparatorIndex == std::string::npos || lastSeparatorIndex < lastDotIndex)
+	{
+		fpath.substr(lastDotIndex);
+	}
+	return "";
+}
+
+std::string RemoveFileExt(const std::string& fpath)
+{
+	size_t lastDotIndex = fpath.find_last_of(".");
+	if (lastDotIndex == std::string::npos)
+		return fpath;
+
+	size_t lastSeparatorIndex = fpath.find_last_of("/");
+	size_t tempSeparatorIndex = fpath.find_last_of("\\");
+	lastSeparatorIndex = lastSeparatorIndex != std::string::npos ?
+	                     (
+	                       tempSeparatorIndex != std::string::npos ?
+	                       std::max(lastSeparatorIndex, tempSeparatorIndex) :
+	                       lastSeparatorIndex
+	                     ) :
+	                     tempSeparatorIndex;
+
+	//there is no directory navigation or the last dot is within the last directory
+	if (lastSeparatorIndex == std::string::npos || lastSeparatorIndex < lastDotIndex)
+	{
+		return fpath.substr(0, lastDotIndex);
 	}
 	return fpath;
 }

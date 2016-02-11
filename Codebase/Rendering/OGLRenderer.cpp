@@ -491,11 +491,6 @@ void DebugDrawData::Draw()
 	glVertexAttribPointer(VERTEX_BUFFER, 3, GL_FLOAT, GL_FALSE, 0, 0);
 	glEnableVertexAttribArray(VERTEX_BUFFER);
 
-	glBindBuffer(GL_ARRAY_BUFFER, buffers[COLOUR_BUFFER]);
-	glBufferData(GL_ARRAY_BUFFER, colours.size()*sizeof(Vec3Graphics), &colours[0], GL_DYNAMIC_DRAW);
-	glVertexAttribPointer(COLOUR_BUFFER, 3, GL_FLOAT, GL_FALSE, 0, 0);
-	glEnableVertexAttribArray(COLOUR_BUFFER);
-
 	glDrawArrays(GL_LINES, 0, lines.size());
 
 	glBindVertexArray(0);

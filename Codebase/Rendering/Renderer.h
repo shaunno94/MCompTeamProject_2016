@@ -5,21 +5,33 @@
 #include "Scene.h"
 #include "constants.h"
 
-class Renderer : public OGLRenderer	{
+/// @ingroup Rendering
+/// <summary>
+/// Non-platform specific functionality for rendering a <see cref="Scene"/>.
+/// </summary>
+class Renderer : public OGLRenderer
+{
 public:
 
-	static Renderer* GetInstance() { return s_renderer; }
+	static Renderer* GetInstance()
+	{
+		return s_renderer;
+	}
 
-	Renderer(Window &parent);
+	Renderer(Window& parent);
 	virtual ~Renderer(void);
 
 	void RenderScene(float msec);
-	void SetCurrentScene(Scene* s) { currentScene = s; }
+	void SetCurrentScene(Scene* s)
+	{
+		currentScene = s;
+	}
 	void UpdateScene(float msec);
 
 protected:
 
 	Scene* currentScene;
+	Frustum frameFrustrum;
 	//--Contained in Scene--//
 	Mesh*	triangle;
 	Camera*	camera;
