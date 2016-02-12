@@ -63,7 +63,9 @@ void Renderer::RenderScene(float msec)
 	glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
 
 	//glUseProgram(currentShader->GetProgram());
-
+	#if DEBUG_DRAW
+		PhysicsEngineInstance::Instance()->debugDrawWorld();
+	#endif
 	//Draws all objects attatched to the current scene.
 	if (currentScene)
 	{
@@ -83,8 +85,5 @@ void Renderer::RenderScene(float msec)
 		triangle->Draw();
 	}
 	glUseProgram(0);
-	#if DEBUG_DRAW
-		PhysicsEngineInstance::Instance()->debugDrawWorld();
-	#endif
 	SwapBuffers();
 }
