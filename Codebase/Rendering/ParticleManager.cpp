@@ -31,7 +31,7 @@ void ParticleManager::RemoveSystem(ParticleSystem* system)
 	for (unsigned int i = 0; i < m_Systems.size(); ++i)
 	{
 		if (m_Systems[i] == system)
-			m_Systems.erase[i];
+			m_Systems.erase(m_Systems.begin());
 	}
 }
 
