@@ -21,7 +21,7 @@ class PhysicsEngineInstance
 	
 public:
 	//Provide global access to the only instance of this class
-	static btDiscreteDynamicsWorld* Instance()
+	static btSoftRigidDynamicsWorld* Instance()
 	{
 		if (!m_pInstance)	//This if statement prevents the costly Lock-step being required each time the instance is requested
 		{
@@ -37,9 +37,11 @@ public:
 
 				//Constraint solver - impulse
 				solver = new btSequentialImpulseConstraintSolver;
+				//Soft body solver
+				softSolver = new btDefaultSoftBodySolver();
 
 				//Physics world object
-				m_pInstance = new btDiscreteDynamicsWorld(dispatcher, bf, solver, collisionConfiguration);
+				m_pInstance = new btSoftRigidDynamicsWorld(dispatcher, bf, solver, collisionConfiguration, softSolver);
 
 				filter = new ParticleFilterCallback();
 				//m_pInstance->getPairCache()->setOverlapFilterCallback(filter);
@@ -60,6 +62,7 @@ public:
 			delete collisionConfiguration;
 			delete dispatcher;
 			delete solver;
+			delete softSolver;
 			delete filter;
 			bf = nullptr;
 			collisionConfiguration = nullptr;
@@ -81,13 +84,14 @@ private:
 	//Prevent the class from being copied either by '=' operator or by copy constructor
 	PhysicsEngineInstance(PhysicsEngineInstance const&)				{}
 	PhysicsEngineInstance& operator=(PhysicsEngineInstance const&)	{}
-
+	
 	//Keep a static instance pointer to refer to as required by the rest of the program
 	static std::mutex m_mConstructed;
-	static btDiscreteDynamicsWorld* m_pInstance;
+	static btSoftRigidDynamicsWorld* m_pInstance;
 	static btBroadphaseInterface* bf;
 	static btDefaultCollisionConfiguration* collisionConfiguration;
 	static btCollisionDispatcher* dispatcher;
 	static btSequentialImpulseConstraintSolver* solver;
+	static btSoftBodySolver* softSolver;
 	static ParticleFilterCallback* filter;
 };

@@ -53,17 +53,17 @@ int main() {
 	floor->SetRenderComponent(new RenderComponent(material, Mesh::GenerateQuad()));
 	floor->CreateCollisionShape(0, Vec3Physics(0, 1, 0), true);
 	floor->InitPhysics(0, Vec3Physics(0, -1, 0), QuatPhysics(0, 0, 0, 1));
-	floor->SetLocalScale(Vec3Graphics(20.0f, 20.0f, 1.0f));
+	//floor->SetLocalTransform();
 	myScene->addGameObject(floor);
 
 	GameObject* tardis = new GameObject();
 	tardis->SetRenderComponent(new RenderComponent(material, ModelLoader::LoadMGL(MODEL_DIR"Tardis/TARDIS.mgl", true)));
-	tardis->CreateCollisionShape(Vec3Physics(5.0f, 1.0f, 5.0f), CUBOID);
+	tardis->CreateCollisionShape(Vec3Physics(1.5f, 4.0f, 1.5f), CUBOID);
 	tardis->InitPhysics(1, Vec3Physics(0, 15, 0), QuatPhysics(0, 0, 0, 1));
 	myScene->addGameObject(tardis);
 
 	ball->SetRenderComponent(new RenderComponent(material, ModelLoader::LoadMGL(MODEL_DIR"Common/sphere.mgl", true)));
-	ball->CreateCollisionShape(4.0);
+	ball->CreateCollisionShape(1.0);
 	ball->InitPhysics(1.0, Vec3Physics(0, 14, 0), QuatPhysics(0, 0, 0, 1), Vec3Physics(1, 1, 1));
 	myScene->addGameObject(ball);
 

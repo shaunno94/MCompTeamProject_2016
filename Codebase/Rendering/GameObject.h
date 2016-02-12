@@ -91,10 +91,10 @@ public:
 		return m_WorldTransform;
 	}
 
-	//Use only for scaling the object, if you want to translate / rotate then use the Physics functions.
-	void SetLocalScale(const Vec3Graphics& scale)
+	//Set local transform for object.
+	void SetLocalTransform(const Mat4Graphics& transform)
 	{
-		m_LocalTransform = Matrix4Simple::Scale(scale);
+		m_LocalTransform = transform;
 	}
 
 	const Mat4Graphics&  GetLocalTransform() const
