@@ -31,13 +31,19 @@ void Frustum::FromMatrix(const Mat4Graphics &mat)
 
 bool Frustum::InsideFrustum(GameObject* n)	
 {		
-	if (!n->Physics())
+	if (!n->GetPhysicsComponent())
 			return true;
-
+	
 	btVector3 min, max, size, position;
+	TYPE t = n->GetPhysicsComponent()->GetType();
+	
 	//Get axis aligned bounding box
-	n->Physics()->getAabb(min, max);
-	position = n->Physics()->getWorldTransform().getOrigin();
+	if (t == RIGID)
+		static_cast<RigidPhysicsObject*>(n->GetPhysicsComponent())->GetPhysicsBody()->getAabb(min, max);
+	else
+		static_cast<SoftPhysicsObject*>(n->GetPhysicsComponent())->GetPhysicsBody()->getAabb(min, max);
+		
+	position = n->GetPhysicsComponent()->GetPhysicsBody()->getWorldTransform().getOrigin();
 	size = (max - position).absolute();
 
 	//Iterate through frustum planes and perform a point in plane check for each point in the AABB.

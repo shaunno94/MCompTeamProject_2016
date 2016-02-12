@@ -6,7 +6,7 @@
 #include "Rendering\DebugDraw.h"
 
 const float TIME_STEP = 1.0f / 120.0f;
-const unsigned int SUB_STEPS = 10;
+const unsigned int SUB_STEPS = 2;
 
 int main() {
 	//-------------------
@@ -38,33 +38,44 @@ int main() {
 		DebugDraw::Context(&renderer);
 	#endif
 
-	//Test Scenario - Tardis (cuboid collision shape), floor (cuboid collision shape), ball (sphere collison shape)
+	//Test Scenario - Tardis (cuboid collision shape), floor (plane collision shape), ball (sphere collison shape)
 	Scene* myScene = new Scene();
 	//Game objects added to scene are delete by the scene so don't delete twice.
 	GameObject* ball = new GameObject("ball");
 	GameObject* floor = new GameObject("floor");
+	GameObject* tardis = new GameObject("tar");
+	
+	//Physics objects hold collision shape and collision object(body), 
+	//call CreateCollisionShape before CreatePhysicsBody or the object will not be created correctly.
+	//Physics objects will be deleted by the game object.
+	RigidPhysicsObject* ballPhysics = new RigidPhysicsObject();
+	ballPhysics->CreateCollisionShape(1.0);
+	ballPhysics->CreatePhysicsBody(1.0, Vec3Physics(10, 20, 0), QuatPhysics(0, 0, 0, 1), Vec3Physics(1, 1, 1));
 
-	//Shader* simpleShader = new Shader(SHADER_DIR"textureVertex.glsl", SHADER_DIR"textureCoordFragment.glsl");
+	RigidPhysicsObject* floorPhysics = new RigidPhysicsObject();
+	floorPhysics->CreateCollisionShape(0, Vec3Physics(0, 1, 0), true);
+	floorPhysics->CreatePhysicsBody(0, Vec3Physics(0, -1, 0), QuatPhysics(0, 0, 0, 1));
+
+	RigidPhysicsObject* tardisPhysics = new RigidPhysicsObject();
+	tardisPhysics->CreateCollisionShape(Vec3Physics(1.5f, 2.0f, 1.5f), CUBOID);
+	tardisPhysics->CreatePhysicsBody(0, Vec3Physics(0, 0, 0), QuatPhysics(0, 0, 0, 1));
+
 	Shader* simpleShader = new Shader(SHADER_DIR"textureVertex.glsl", SHADER_DIR"textureFragment.glsl");
 	if (!simpleShader->IsOperational())
 		return -1;
 	Material* material = new Material(simpleShader);
 
 	floor->SetRenderComponent(new RenderComponent(material, Mesh::GenerateQuad()));
-	floor->CreateCollisionShape(0, Vec3Physics(0, 1, 0), true);
-	floor->InitPhysics(0, Vec3Physics(0, -1, 0), QuatPhysics(0, 0, 0, 1));
-	//floor->SetLocalTransform();
+	floor->SetPhysicsComponent(floorPhysics);
+	floor->SetLocalTransform(Mat4Graphics::Scale(Vec3Graphics(40, 0, 40)) * Mat4Graphics::Rotation(90.0f, Vec3Graphics(1, 0, 0)));
 	myScene->addGameObject(floor);
 
-	GameObject* tardis = new GameObject();
 	tardis->SetRenderComponent(new RenderComponent(material, ModelLoader::LoadMGL(MODEL_DIR"Tardis/TARDIS.mgl", true)));
-	tardis->CreateCollisionShape(Vec3Physics(1.5f, 4.0f, 1.5f), CUBOID);
-	tardis->InitPhysics(1, Vec3Physics(0, 15, 0), QuatPhysics(0, 0, 0, 1));
+	tardis->SetPhysicsComponent(tardisPhysics);
 	myScene->addGameObject(tardis);
 
 	ball->SetRenderComponent(new RenderComponent(material, ModelLoader::LoadMGL(MODEL_DIR"Common/sphere.mgl", true)));
-	ball->CreateCollisionShape(1.0);
-	ball->InitPhysics(1.0, Vec3Physics(0, 14, 0), QuatPhysics(0, 0, 0, 1), Vec3Physics(1, 1, 1));
+	ball->SetPhysicsComponent(ballPhysics);
 	myScene->addGameObject(ball);
 
 	renderer.SetCurrentScene(myScene);

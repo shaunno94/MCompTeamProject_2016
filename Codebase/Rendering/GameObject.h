@@ -25,30 +25,14 @@ _-_-_-_-_-_-_-""  ""
 *//////////////////////////////////////////////////////////////////////////////
 #pragma once
 #include <Math\nclglMath.h>
-#include "PhysicsEngine\PhysicsEngineInstance.h"
+#include "PhysicsObject.h"
+#include "RigidPhysicsObject.h"
+#include "SoftPhysicsObject.h"
 #include "RenderComponent.h"
 #include <vector>
 
 class Renderer;
 class Scene;
-
-/// @ingroup Rendering
-/// <summary>
-/// 
-/// </summary>
-enum CollisionShape
-{
-	SPHERE, CUBOID, CYLINDER, CONE, CAPSULE
-};
-
-/// @ingroup Rendering
-/// <summary>
-/// 
-/// </summary>
-enum BodyType
-{
-	PARTICLE, SOFT, RIGID
-};
 
 /// @ingroup Rendering
 /// <summary>
@@ -63,11 +47,6 @@ class GameObject
 public:
 	GameObject(const std::string& name = "");
 	~GameObject();
-
-	btRigidBody* Physics()
-	{
-		return m_RigidPhysicsObject;
-	}
 
 	const std::string& GetName()
 	{
@@ -101,18 +80,6 @@ public:
 	{
 		return m_LocalTransform;
 	}
-	
-	//Initialise physics body: mass (a mass of 0 will result in a static object), position, orientation, inertia, type (Rigid, Particle, Soft) 
-	bool InitPhysics(double mass, const Vec3Physics& position, const QuatPhysics& orientation, const Vec3Physics& inertia = Vec3Physics(0, 0, 0), BodyType type = RIGID);
-	
-	//Sphere collision shape.
-	bool CreateCollisionShape(double radius); 
-	//Cuboid or Cylinder collsion shapes.
-	bool CreateCollisionShape(const Vec3Physics& half_extents, CollisionShape shape); 
-	//Cone or Capsule collision shapes.
-	bool CreateCollisionShape(double radius, double height, CollisionShape shape); 
-	//Static Plane collision shape.
-	bool CreateCollisionShape(double distance, const Vec3Physics& normal, bool normalised); 
 
 	void SetBoundingRadius(float radius)
 	{
@@ -133,6 +100,16 @@ public:
 		return m_RenderComponent;
 	}
 
+	void SetPhysicsComponent(PhysicsObject* comp)
+	{
+		m_PhysicsObj = comp;
+	}
+
+	PhysicsObject* GetPhysicsComponent() const
+	{
+		return m_PhysicsObj;
+	}
+
 protected:
 	virtual void OnRenderObject();			//Handles OpenGL calls to Render the object
 	virtual void OnUpdateObject(float dt);	//Override to handle things like AI etc on update loop
@@ -142,12 +119,8 @@ protected:
 	GameObject*					m_Parent;
 	std::vector<GameObject*>	m_Children;
 
-	btRigidBody*				m_RigidPhysicsObject;
-	btDefaultMotionState*		m_MotionState;
-	btCollisionShape*			m_ColShape;
-	btRigidBody::btRigidBodyConstructionInfo* m_ConstructionInfo;
-
 	RenderComponent*			m_RenderComponent;
+	PhysicsObject*				m_PhysicsObj;
 
 	float						m_BoundingRadius;	//Unused
 	Mat4Graphics				m_WorldTransform;
