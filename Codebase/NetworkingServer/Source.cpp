@@ -31,6 +31,15 @@ int main()
 		exit(1);
 	}
 
+	for (size_t i = 0; i < myHostData.ipCount; ++i)
+	{
+		printf(
+		  "IP: %s"LINE_SEPARATOR_DEF,
+		  inet_ntoa(myHostData.ip[i])
+		);
+	}
+
+
 	if (addressing(addr))
 	{
 		printf("Unable to initialize addressing information."LINE_SEPARATOR_DEF);
