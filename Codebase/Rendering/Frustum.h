@@ -20,10 +20,20 @@ public:
 private:
 	struct Plane
 	{
-		Plane(float dist, Vec3Graphics n)
+		Plane(float dist, Vec3Graphics n, bool normalise)
 		{
-			distance = dist;
-			normal = n;
+			if (normalise)
+			{
+				float len = n.Length();
+				normal = n / len;
+				distance = dist / len;
+			}
+			else
+			{
+				distance = dist;
+				normal = n;
+			}
+
 		}
 		float distance;
 		Vec3Graphics normal;

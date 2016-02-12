@@ -10,22 +10,22 @@ void Frustum::FromMatrix(const Mat4Graphics &mat)
 	planes.clear();
 	//Create frustum planes - plane constant (D), plane normal
 	//RIGHT
-	planes.push_back(Plane((mat.values[15] - mat.values[12]), (waxis - xaxis).Normalize()));
+	planes.push_back(Plane((mat.values[15] - mat.values[12]), (waxis - xaxis), true));
 	
 	//LEFT
-	planes.push_back(Plane((mat.values[15] + mat.values[12]), (waxis + xaxis).Normalize()));
+	planes.push_back(Plane((mat.values[15] + mat.values[12]), (waxis + xaxis), true));
 
 	//BOTTOM
-	planes.push_back(Plane((mat.values[15] + mat.values[13]), (waxis + yaxis).Normalize()));
+	planes.push_back(Plane((mat.values[15] + mat.values[13]), (waxis + yaxis), true));
 
 	//TOP
-	planes.push_back(Plane((mat.values[15] - mat.values[13]), (waxis - yaxis).Normalize()));
+	planes.push_back(Plane((mat.values[15] - mat.values[13]), (waxis - yaxis), true));
 
 	//FAR
-	planes.push_back(Plane((mat.values[15] - mat.values[14]), (waxis - zaxis).Normalize()));
+	planes.push_back(Plane((mat.values[15] - mat.values[14]), (waxis - zaxis), true));
 
 	//NEAR
-	planes.push_back(Plane((mat.values[15] + mat.values[14]), (waxis + zaxis).Normalize()));
+	planes.push_back(Plane((mat.values[15] + mat.values[14]), (waxis + zaxis), true));
 }
 
 
