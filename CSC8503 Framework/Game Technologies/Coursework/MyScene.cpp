@@ -12,6 +12,7 @@
 #include <ncltech\NCLDebug.h>
 #include "ncltech\OctreeSpacePartition.h"
 #include "ncltech\PositioningState.h"
+#include "GoalkeeperGameObject.h"
 #include "ScoreHistory.h"
 #include "ncltech/PyramidCollisionShape.h"
 #include "TestCases.h"
@@ -159,6 +160,9 @@ void MyScene::UpdateScene(float sec)
 
 	if (keyboard->KeyTriggered(KEYBOARD_M))
 		m_RenderMode = (m_RenderMode + 1) % RenderModeMax;
+
+	if (m_Goalkeeper && keyboard->KeyTriggered(KEYBOARD_K))
+		m_Goalkeeper->Physics()->IsEnabled(!m_Goalkeeper->Physics()->IsEnabled());
 
 	if (keyboard->KeyTriggered(KEYBOARD_H))
 		m_DisplayHighScores = !m_DisplayHighScores;
