@@ -1,7 +1,12 @@
 #pragma once
 
+/** @ingroup Helpers
+*  @{
+*/
+
 #include <vector>
 #include <algorithm>
+
 
 template<typename T>
 /// <summary>
@@ -91,3 +96,6 @@ void InsertionSort(FwdIt start, FwdIt end)
 {
 	InsertionSort(start, end, std::less<typename std::iterator_traits<FwdIt>::value_type>());
 }
+
+
+/** @} */

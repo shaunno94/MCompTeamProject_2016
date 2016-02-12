@@ -84,6 +84,7 @@ std::string GetFileExt(const std::string& fpath)
 	}
 	return "";
 }
+
 std::string RemoveFileExt(const std::string& fpath)
 {
 	size_t lastDotIndex = fpath.find_last_of(".");
@@ -93,12 +94,12 @@ std::string RemoveFileExt(const std::string& fpath)
 	size_t lastSeparatorIndex = fpath.find_last_of("/");
 	size_t tempSeparatorIndex = fpath.find_last_of("\\");
 	lastSeparatorIndex = lastSeparatorIndex != std::string::npos ?
-		(
-		tempSeparatorIndex != std::string::npos ?
-		std::max(lastSeparatorIndex, tempSeparatorIndex) :
-		lastSeparatorIndex
-		) :
-		tempSeparatorIndex;
+	                     (
+	                       tempSeparatorIndex != std::string::npos ?
+	                       std::max(lastSeparatorIndex, tempSeparatorIndex) :
+	                       lastSeparatorIndex
+	                     ) :
+	                     tempSeparatorIndex;
 
 	//there is no directory navigation or the last dot is within the last directory
 	if (lastSeparatorIndex == std::string::npos || lastSeparatorIndex < lastDotIndex)

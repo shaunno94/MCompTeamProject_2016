@@ -7,6 +7,10 @@
 
 class Renderer;
 
+/// @ingroup Rendering
+/// <summary>
+/// 
+/// </summary>
 class Scene
 {
 	friend class Renderer;

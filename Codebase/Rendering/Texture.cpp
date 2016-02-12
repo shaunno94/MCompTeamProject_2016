@@ -152,7 +152,9 @@ Texture::~Texture()
 {
 	if(textureId)
 	{
+#ifdef _DEBUG
 		MeasureMemoryUsageSubstract(textureId);
+#endif
 		glDeleteTextures(1, &textureId);
 		textureId = 0;
 	}
@@ -163,7 +165,9 @@ void Texture::LoadFromFile()
 {
 	if (textureId)
 	{
+#ifdef _DEBUG
 		MeasureMemoryUsageSubstract(textureId);
+#endif
 		glDeleteTextures(1, &textureId);
 		textureId = 0;
 	}
@@ -176,8 +180,12 @@ void Texture::LoadFromFile()
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
-	if(textureId)
+	if (textureId)
+	{
+#ifdef _DEBUG
 		MeasureMemoryUsageAdd(textureId);
+#endif
+	}
 	else
 	{
 		std::stringstream message;

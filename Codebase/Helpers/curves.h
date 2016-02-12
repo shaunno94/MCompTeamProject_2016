@@ -1,9 +1,12 @@
 #pragma once
 
+/** @ingroup Helpers
+*  @{
+*/
+
 ////http://www.cplusplus.com/forum/beginner/63025/
 ////http://people.sc.fsu.edu/~jburkardt/cpp_src/hermite_cubic/hermite_cubic.html
 ////https://mrl.nyu.edu/~perlin/courses/spring2008/splines1.html
-
 static float bezierCurve(float start, float control, float end, float progress)
 {
 	return ((1 - progress) * (1 - progress) * start) +
@@ -69,3 +72,5 @@ static float hermiteCurveDerivativeUsingTangents(float start, float tangent1, fl
 	       end * (-2.0f * threeProgressPow2 + (6 * progress));
 }
 
+
+/** @} */

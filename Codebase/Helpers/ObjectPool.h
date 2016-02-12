@@ -4,8 +4,9 @@
 #include <limits>
 #include <cassert>
 
-//If I need a more complex pool (with custom allocator), should check http://www.codeproject.com/Articles/746630/O-Object-Pool-in-Cplusplus
 template<typename T>
+/// @ingroup Helpers
+///If I need a more complex pool (with custom allocator), should check http://www.codeproject.com/Articles/746630/O-Object-Pool-in-Cplusplus
 class ObjectPool
 {
 private:

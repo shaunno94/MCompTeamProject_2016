@@ -1,9 +1,14 @@
 #pragma once
 
+/** @ingroup Helpers
+*  @{
+*/
+
 #include <string>
 
 namespace File
 {
+
 static const std::string PATH_SEPARATOR_STR =
 #ifdef _WIN32
   "\\";
@@ -18,5 +23,9 @@ std::string GetContainingFolder(const std::string& fpath);
 std::string AppendPath(const std::string& path, const std::string& fpath);
 
 std::string GetFileExt(const std::string& fpath);
+
 std::string RemoveFileExt(const std::string& fpath);
+
 }
+
+/** @} */

@@ -1,11 +1,15 @@
 #pragma once
 
+/** @ingroup Helpers
+*  @{
+*/
+
 #include <cstdint>
 
 //TODO: add hardware supported commands (https://en.wikipedia.org/wiki/Find_first_set)
 
 //DeBruijn
-inline int lowestBitPosition(uint32_t x)
+int lowestBitPosition(uint32_t x)
 {
 	static const int LowestBitPositionDeBruijnLookup32[32] =
 	{
@@ -17,7 +21,7 @@ inline int lowestBitPosition(uint32_t x)
 
 //DeBruijn
 //returns 0 when x is 0
-inline int lowestBitPosition(uint64_t x)
+int lowestBitPosition(uint64_t x)
 {
 	static const int LowestBitPositionDeBruijnLookup64[64] =
 	{
@@ -56,3 +60,5 @@ int popcount(uint64_t x)
 	x = (x + (x >> 4)) & m4_64;        //put count of each 8 bits into those 8 bits
 	return (x * h01_64) >> 56; //returns left 8 bits of x + (x<<8) + (x<<16) + (x<<24) + ...
 }
+
+/** @} */
