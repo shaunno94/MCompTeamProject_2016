@@ -18,5 +18,13 @@
     <ClInclude Include="WindowsNetworkSockets.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Net.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="Net.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>

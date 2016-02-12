@@ -23,7 +23,7 @@
 
 #define HIGHVERSION 2
 #define LOWVERSION 2
-#define HOST "192.168.1.19"//"10.66.67.178"//"127.0.0.1"
+#define HOST "10.66.67.178"//"192.168.1.19"//"127.0.0.1"
 #define PORT "4376"
 #define FAMILY AF_UNSPEC
 #define TYPE SOCK_STREAM
@@ -33,7 +33,15 @@
 #define BACKLOG 10
 #define BUFFSIZE 100
 
+#include "Math/nclglMath.h"
+
 #pragma comment(lib, "ws2_32.lib")
+
+
+struct networkMessageBlock
+{
+
+};
 
 
 struct hostData

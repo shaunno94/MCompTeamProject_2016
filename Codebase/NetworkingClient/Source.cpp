@@ -52,8 +52,11 @@ int main()
 	//finished with addrinfo struct now
 	freeaddrinfo(addr);
 
-	char buff[BUFFSIZE];
-	int bytesReceived = recv(s, buff, BUFFSIZE - 1, 0);
+	//char buff[BUFFSIZE];
+	//could use MSG_WAITALLflag
+	//int bytesReceived = recv(s, buff, BUFFSIZE - 1, 0);
+	size_t messageSize;
+	int bytesReceived = recv(s, (char*)&messageSize, sizeof(size_t), 0);
 	if (bytesReceived == -1)
 	{
 		printf("Error receiving"LINE_SEPARATOR_DEF);
@@ -66,7 +69,20 @@ int main()
 	}
 	else
 	{
-		buff[bytesReceived] = '\0';
+		char* buff = new char[messageSize];
+		size_t written = 0;
+		while ((bytesReceived = recv(s, buff + written, messageSize - written, 0)) > 0)
+		{
+			written += bytesReceived;
+			printf("read %d bytes"LINE_SEPARATOR_DEF, written);
+			if (written >= messageSize)
+			{
+				printf("done reading"LINE_SEPARATOR_DEF);
+				break;
+			}
+		}
+		//bytesReceived = recv(s, buff, messageSize, 0);
+		buff[messageSize] = '\0';
 		printf(
 		  "Message received. Received %d bytes."LINE_SEPARATOR_DEF
 		  "Message is: %s"LINE_SEPARATOR_DEF,
