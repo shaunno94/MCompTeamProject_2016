@@ -11,6 +11,7 @@
 
 class Material
 {
+	friend class DebugDraw;
 protected:
 	template<typename T>
 	static void setUniformValue(std::vector<std::pair<int, T>>& container, int uniformLocation, const T& value)

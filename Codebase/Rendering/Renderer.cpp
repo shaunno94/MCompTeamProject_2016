@@ -7,11 +7,9 @@ Renderer::Renderer(Window& parent) : OGLRenderer(parent)
 	triangle = Mesh::GenerateTriangle();
 	camera = new Camera(0.0f, 0.0f, Vec3Graphics(0, 0, 0));
 
-	currentShader = nullptr;
-	//TODO: change SHADERDIR to SHADER_DIR
-	/*currentShader = new Shader(SHADER_DIR"basicVertex.glsl", SHADER_DIR"colourFragment.glsl");
+	currentShader = new Shader(SHADER_DIR"basicVertex.glsl", SHADER_DIR"colourFragment.glsl");
 
-	if (!currentShader->IsOperational())
+	/*if (!currentShader->IsOperational())
 	{
 		return;
 	}*/
@@ -65,7 +63,9 @@ void Renderer::RenderScene(float msec)
 	glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
 
 	//glUseProgram(currentShader->GetProgram());
-
+	#if DEBUG_DRAW
+		PhysicsEngineInstance::Instance()->debugDrawWorld();
+	#endif
 	//Draws all objects attatched to the current scene.
 	if (currentScene)
 	{
@@ -85,6 +85,5 @@ void Renderer::RenderScene(float msec)
 		triangle->Draw();
 	}
 	glUseProgram(0);
-
 	SwapBuffers();
 }

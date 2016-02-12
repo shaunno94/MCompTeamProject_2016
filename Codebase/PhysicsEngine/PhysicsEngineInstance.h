@@ -18,7 +18,7 @@ struct ParticleFilterCallback : public btOverlapFilterCallback
 
 class PhysicsEngineInstance
 {
-
+	
 public:
 	//Provide global access to the only instance of this class
 	static btDiscreteDynamicsWorld* Instance()
