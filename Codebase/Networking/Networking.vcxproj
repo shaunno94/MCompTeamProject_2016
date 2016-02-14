@@ -70,9 +70,6 @@
     <ClInclude Include="WindowsNetworkSockets.h" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\enet\enet.vcxproj">
-      <Project>{9dd92bac-8f53-4d07-a6e9-005eda09ebac}</Project>
-    </ProjectReference>
     <ProjectReference Include="..\Math\Math.vcxproj">
       <Project>{bbdee9f7-c011-44dc-a8f4-86cc2b87adc7}</Project>
     </ProjectReference>
