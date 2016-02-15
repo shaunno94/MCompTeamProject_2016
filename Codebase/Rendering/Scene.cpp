@@ -59,7 +59,7 @@ void Scene::UpdateNodeLists(float dt, Frustum& frustum)
 		opaqueObjects[i]->OnUpdateObject(dt);
 
 		if (!frustum.InsideFrustum(opaqueObjects[i])) 
-	{
+		{
 			opaqueObjects[i]->m_RenderComponent->disabled = true;
 			continue;
 		}
@@ -77,7 +77,5 @@ void Scene::UpdateNodeLists(float dt, Frustum& frustum)
 
 void Scene::addLightObject(GameObject* obj)
 {
-
-		lightObjects.push_back(obj);
-	
+	lightObjects.push_back(obj);
 }
