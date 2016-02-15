@@ -84,20 +84,25 @@ int main() {
 
 	Material* material = new Material(simpleShader);
 
-	floor->SetRenderComponent(new RenderComponent(material, Mesh::GenerateQuad()));
+	Mesh* floorMesh = Mesh::GenerateQuad(Vec2Graphics(80.0f, 40.0f));
+	Texture* floorTexture = Texture::Get(TEXTURE_DIR"checkerboard.tga", true);
+	floorTexture->SetTextureParams(TextureFlags::REPEATING | TextureFlags::TRILINEAR_FILTERING);
+	floorMesh->SetTexture(floorTexture, ReservedMeshTextures.DIFFUSE.index);
+
+	floor->SetRenderComponent(new RenderComponent(material, floorMesh));
 	floor->SetPhysicsComponent(floorPhysics);
-	floor->SetLocalTransform(Mat4Graphics::Scale(Vec3Graphics(40, 40, 40)) * Mat4Graphics::Rotation(90.0f, Vec3Graphics(1, 0, 0)));
+	floor->SetLocalTransform(Mat4Graphics::Scale(Vec3Graphics(80, 40, 40)) * Mat4Graphics::Rotation(90.0f, Vec3Graphics(1, 0, 0)));
 	myScene->addGameObject(floor);
 
 	tardis->SetRenderComponent(new RenderComponent(material, ModelLoader::LoadMGL(MODEL_DIR"Tardis/TARDIS.mgl", true)));
 	tardis->SetPhysicsComponent(tardisPhysics);
-	//myScene->addGameObject(tardis);
+	myScene->addGameObject(tardis);
 	myScene->addLightObject(light1);
 	myScene->addLightObject(light2);
 
 	ball->SetRenderComponent(new RenderComponent(material, ModelLoader::LoadMGL(MODEL_DIR"Common/sphere.mgl", true)));
 	ball->SetPhysicsComponent(ballPhysics);
-	//myScene->addGameObject(ball);
+	myScene->addGameObject(ball);
 
 	renderer.SetCurrentScene(myScene);
 
