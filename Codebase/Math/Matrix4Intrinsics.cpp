@@ -143,7 +143,7 @@ Vector3Intrinsics Matrix4Intrinsics::GetEulerAngles(const Matrix4Intrinsics& mat
 		angle_z = atan2(tr_y, tr_x) * RAD;
 	}
 
-	return Vector3Intrinsics(Clamp(angle_x, 0.0f, 360.0f), Clamp(angle_y, 0.0f, 360.0f), Clamp(angle_z, 0.0f, 360.0f));
+	return Vector3Intrinsics(ClampValues(angle_x, 0.0f, 360.0f), ClampValues(angle_y, 0.0f, 360.0f), ClampValues(angle_z, 0.0f, 360.0f));
 }
 
 Matrix4Intrinsics Matrix4Intrinsics::Perspective(float znear, float zfar, float aspect, float fov)

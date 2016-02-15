@@ -11,6 +11,7 @@
 
 class Material
 {
+	friend class DebugDraw;
 protected:
 	template<typename T>
 	static void setUniformValue(std::vector<std::pair<int, T>>& container, int uniformLocation, const T& value)
@@ -57,7 +58,7 @@ public:
 	Material(Shader* shader, bool hasTranslucency = false);
 	virtual ~Material();
 
-	inline const Shader* GetShader() const
+	inline Shader* GetShader() const
 	{
 		return shader;
 	}

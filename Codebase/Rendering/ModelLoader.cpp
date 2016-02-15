@@ -1,5 +1,6 @@
 #include "ModelLoader.h"
 #include "Helpers/File.h"
+#include <sstream>
 
 
 #define MGL_LOAD_FAST_EXPERIMENTAL 1

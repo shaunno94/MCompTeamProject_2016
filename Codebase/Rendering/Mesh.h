@@ -24,8 +24,14 @@ _-_-_-_-_-_-_-""  ""
 #include "constants.h"
 #include "Texture.h"
 
+class Material;
+
 //A handy enumerator, to determine which member of the bufferObject array
 //holds which data
+/// @ingroup Rendering
+/// <summary>
+/// Enumerator, to determine which member of the bufferObject array holds which data
+/// </summary>
 enum MeshBuffer
 {
 	VERTEX_BUFFER	,
@@ -36,6 +42,10 @@ enum MeshBuffer
 	MAX_BUFFER
 };
 
+/// @ingroup Rendering
+/// <summary>
+/// 
+/// </summary>
 struct MeshMtlData
 {
 	Texture* textureMaps[ReservedMeshTextures.size];
@@ -43,6 +53,10 @@ struct MeshMtlData
 	float specExponent;
 };
 
+/// @ingroup Rendering
+/// <summary>
+/// 
+/// </summary>
 class Mesh
 {
 public:
@@ -52,7 +66,7 @@ public:
 	Mesh(size_t numVertices, Vec3Graphics* vertices, Vec2Graphics* texCoords, Vec3Graphics* normals, Vec3Graphics* tangents, size_t numIndices, size_t* indices);
 	virtual ~Mesh(void);
 
-	void Draw();
+	void Draw(Material* material);
 
 	inline void AddChild(Mesh* m)
 	{
@@ -126,6 +140,7 @@ public:
 	void	GenerateTangents();
 
 	void	SetMtlData(const MeshMtlData& data);
+	void	SetTexture(Texture* tex, size_t index);
 
 protected:
 	//Buffers all VBO data into graphics memory. Required before drawing!

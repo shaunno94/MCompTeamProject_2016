@@ -5,6 +5,8 @@
 #include <cmath>
 
 #include "ModelLoader.h"
+#include "Material.h"
+#include "Renderer.h"
 
 Mesh::Mesh(void)
 {
@@ -16,6 +18,9 @@ Mesh::Mesh(void)
 	m_SpecExponent = 0.0f;
 	type		 = GL_TRIANGLES;
 
+	m_Colours[ReservedMeshColours.AMBIENT.index] = Vec3Graphics(0.2f, 0.2f, 0.2);
+	m_Colours[ReservedMeshColours.DIFFUSE.index] = Vec3Graphics::ONES;
+	m_Colours[ReservedMeshColours.SPECULAR.index] = Vec3Graphics::ONES;
 
 	m_NumVertices = 0;
 	m_NumIndices    = 0;
@@ -39,6 +44,9 @@ Mesh::Mesh(size_t numVertices, Vec3Graphics* vertices, Vec2Graphics* texCoords, 
 	m_NumVertices = 0;
 	type = GL_TRIANGLES;
 
+	m_Colours[ReservedMeshColours.AMBIENT.index] = Vec3Graphics(0.2f, 0.2f, 0.2);
+	m_Colours[ReservedMeshColours.DIFFUSE.index] = Vec3Graphics::ONES;
+	m_Colours[ReservedMeshColours.SPECULAR.index] = Vec3Graphics::ONES;
 
 	m_NumVertices = numVertices;
 	m_NumIndices = numIndices;
@@ -68,13 +76,22 @@ Mesh::~Mesh(void)
 	delete[] m_Normals;
 }
 
-void Mesh::Draw()
+
+void Mesh::Draw(Material* material)
 {
+	//reserved textures
 	for (size_t i = 0; i < ReservedMeshTextures.size; ++i)
 	{
 		if (m_Textures[i])
 			m_Textures[i]->Load(i);
 	}
+	//reserved colours
+	for (size_t i = 0; i < ReservedMeshColours.size; ++i)
+		Renderer::UpdateUniform(material->GetShader()->GetReservedMeshColourUniformLocation(i), GetColour(i));
+	//reserved float
+	Renderer::UpdateUniform(glGetUniformLocation(material->GetShader()->GetProgram(), "specExponent"), GetSpecExponent());
+
+	material->Setup();
 
 	glBindVertexArray(arrayObject);
 	if(bufferObject[INDEX_BUFFER])
@@ -86,7 +103,7 @@ void Mesh::Draw()
 	glBindVertexArray(0);
 
 	for (auto child : m_Children)
-		child->Draw();
+		child->Draw(material);
 }
 
 Mesh* Mesh::GenerateTriangle()
@@ -280,7 +297,7 @@ Mesh* Mesh::GenerateQuad()
 
 	for(int i = 0; i < 4; ++i)
 	{
-		m->m_Normals[i] = Vec3Graphics(0.0f, 0.0f,-1.0f);
+		m->m_Normals[i] = Vec3Graphics(0.0f, 0.0f, -1.0f);
 		m->m_Tangents[i] = Vec3Graphics(1.0f, 0.0f,0.0f);
 	}
 
@@ -637,6 +654,14 @@ void Mesh::DrawDebugTangents(float length)
 	//}
 }
 
+void	Mesh::SetTexture(Texture* tex, size_t index)
+{
+	if (m_Textures[index])
+		m_Textures[index]->Clear();
+	m_Textures[index] = tex;
+	if (m_Textures[index])
+		m_Textures[index]->ReserveCopy();
+}
 
 void	Mesh::SetMtlData(const MeshMtlData& data)
 {

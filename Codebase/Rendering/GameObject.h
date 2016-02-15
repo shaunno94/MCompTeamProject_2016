@@ -25,23 +25,19 @@ _-_-_-_-_-_-_-""  ""
 *//////////////////////////////////////////////////////////////////////////////
 #pragma once
 #include <Math\nclglMath.h>
-#include "PhysicsEngine\PhysicsEngineInstance.h"
+#include "PhysicsObject.h"
+#include "RigidPhysicsObject.h"
+#include "SoftPhysicsObject.h"
 #include "RenderComponent.h"
 #include <vector>
 
 class Renderer;
 class Scene;
 
-enum CollisionShape
-{
-	SPHERE, CUBOID, CYLINDER, CONE, PLANE
-};
-
-enum PhysicsType
-{
-	PARTICLE, SOFT, RIGID
-};
-
+/// @ingroup Rendering
+/// <summary>
+/// 
+/// </summary>
 class GameObject
 {
 	//Allows these classes to call OnUpdateObject / OnRenderObject functions
@@ -51,11 +47,6 @@ class GameObject
 public:
 	GameObject(const std::string& name = "");
 	~GameObject();
-
-	btRigidBody* Physics()
-	{
-		return m_RigidPhysicsObject;
-	}
 
 	const std::string& GetName()
 	{
@@ -71,17 +62,24 @@ public:
 
 	void SetWorldTransform(const Mat4Graphics& transform)
 	{
-		m_ModelMatrix = transform;
+		m_WorldTransform = transform;
 	}
 
 	const Mat4Graphics&  GetWorldTransform() const
 	{
-		return m_ModelMatrix;
+		return m_WorldTransform;
 	}
 
-	//Initialise physics body: mass (a mass of 0 will result in a static object), inertia, orientation, position
-	void InitPhysics(double mass = 1.0, const Vec3Physics& inertia = Vec3Physics(0, 0, 0), const QuatPhysics& orientation = QuatPhysics(0, 0, 0, 1),
-	                 const Vec3Physics& position = Vec3Physics(0, 0, 0), PhysicsType type = RIGID);
+	//Set local transform for object.
+	void SetLocalTransform(const Mat4Graphics& transform)
+	{
+		m_LocalTransform = transform;
+	}
+
+	const Mat4Graphics&  GetLocalTransform() const
+	{
+		return m_LocalTransform;
+	}
 
 	void SetBoundingRadius(float radius)
 	{
@@ -102,6 +100,16 @@ public:
 		return m_RenderComponent;
 	}
 
+	void SetPhysicsComponent(PhysicsObject* comp)
+	{
+		m_PhysicsObj = comp;
+	}
+
+	PhysicsObject* GetPhysicsComponent() const
+	{
+		return m_PhysicsObj;
+	}
+
 protected:
 	virtual void OnRenderObject();			//Handles OpenGL calls to Render the object
 	virtual void OnUpdateObject(float dt);	//Override to handle things like AI etc on update loop
@@ -111,15 +119,12 @@ protected:
 	GameObject*					m_Parent;
 	std::vector<GameObject*>	m_Children;
 
-	btRigidBody*				m_RigidPhysicsObject;
-	btDefaultMotionState*		m_MotionState;
-	btCollisionShape*			m_ColShape;
-	btRigidBody::btRigidBodyConstructionInfo* m_ConstructionInfo;
-
 	RenderComponent*			m_RenderComponent;
+	PhysicsObject*				m_PhysicsObj;
 
-	float						m_BoundingRadius;	//For Frustum Culling
-	Mat4Graphics				m_ModelMatrix;
+	float						m_BoundingRadius;	//Unused
+	Mat4Graphics				m_WorldTransform;
+	Mat4Graphics				m_LocalTransform;
 
 	float m_CamDist; //For ordering of rendering lists.
 };

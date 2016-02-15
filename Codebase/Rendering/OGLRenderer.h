@@ -44,6 +44,10 @@
 
 //#define OPENGL_DEBUGGING
 
+/// @ingroup Rendering
+/// <summary>
+///
+/// </summary>
 static const float biasValues[16] =
 {
 	0.5, 0.0, 0.0, 0.0,
@@ -51,14 +55,26 @@ static const float biasValues[16] =
 	0.0, 0.0, 0.5, 0.0,
 	0.5, 0.5, 0.5, 1.0
 };
+/// @ingroup Rendering
+/// <summary>
+///
+/// </summary>
 static const Mat4Graphics biasMatrix(biasValues);
 
+/// @ingroup Rendering
+/// <summary>
+///
+/// </summary>
 enum DebugDrawMode
 {
 	DEBUGDRAW_ORTHO,
 	DEBUGDRAW_PERSPECTIVE
 };
 
+/// @ingroup Rendering
+/// <summary>
+///
+/// </summary>
 struct DebugDrawData
 {
 	std::vector<Vec3Graphics> lines;
@@ -95,6 +111,10 @@ struct DebugDrawData
 
 class Shader;
 
+/// @ingroup Rendering
+/// <summary>
+/// OpenGL specific functionality for the Renderer.
+/// </summary>
 class OGLRenderer
 {
 public:
