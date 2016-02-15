@@ -60,9 +60,8 @@ int main()
 
 	Material* material = new Material(simpleShader);
 	floor->SetRenderComponent(new RenderComponent(material, Mesh::GenerateQuad()));
-	test->SetRenderComponent(new RenderComponent(material, ModelLoader::LoadMGL(MODEL_DIR"Common/ico.mgl", true)));
-	//test->InitPhysics();
 	floor->SetWorldTransform(Mat4Graphics::Translation(Vec3Graphics(0, -2, 0)) *Mat4Graphics::Rotation(90, Vec3Graphics(1, 0, 0)) * Mat4Graphics::Scale(Vec3Graphics(450, 450, 1)));
+	
 	auto tex = Texture::Get(TEXTURE_DIR"brick.tga");
 	//floor->GetRenderComponent()->m_Material->Set("diffuseTex", tex);
 	floor->GetRenderComponent()->m_Mesh->SetTexture(tex, ReservedMeshTextures.DIFFUSE.index);
