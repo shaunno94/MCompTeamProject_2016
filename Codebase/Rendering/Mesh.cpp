@@ -297,7 +297,7 @@ Mesh* Mesh::GenerateQuad()
 
 	for(int i = 0; i < 4; ++i)
 	{
-		m->m_Normals[i] = Vec3Graphics(0.0f, 0.0f,-1.0f);
+		m->m_Normals[i] = Vec3Graphics(0.0f, 0.0f, -1.0f);
 		m->m_Tangents[i] = Vec3Graphics(1.0f, 0.0f,0.0f);
 	}
 

@@ -25,9 +25,10 @@ void RenderComponent::Draw()
 	for (GLint i = 0; i < ReservedMeshTextures.size; ++i)
 		Renderer::UpdateUniform(m_Material->GetShader()->GetReservedMeshTextureUniformLocation(i), i);
 	//Object is outside of view frustum
-	if (disabled)
-		return;
-	m_Mesh->Draw();
+	//TODO - check
+	/*if (disabled)
+		return;*/
+	m_Mesh->Draw(m_Material);
 }
 
 void RenderComponent::SetParent(GameObject* go)

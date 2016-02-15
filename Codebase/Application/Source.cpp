@@ -34,17 +34,18 @@ int main() {
 	//Initialise Bullet physics engine.
 	PhysicsEngineInstance::Instance()->setGravity(btVector3(0, -9.81, 0));
 
-	#if DEBUG_DRAW
-		PhysicsEngineInstance::Instance()->setDebugDrawer(DebugDraw::Instance());
-		DebugDraw::Context(&renderer);
-	#endif
+#if DEBUG_DRAW
+	PhysicsEngineInstance::Instance()->setDebugDrawer(DebugDraw::Instance());
+	DebugDraw::Context(&renderer);
+#endif
 
 	//Test Scenario - Tardis (cuboid collision shape), floor (plane collision shape), ball (sphere collison shape)
 	Scene* myScene = new Scene();
 	//Game objects added to scene are delete by the scene so don't delete twice.
 	GameObject* ball = new GameObject("ball");
 	GameObject* floor = new GameObject("floor");
-	GameObject* light = new GameObject("l");
+	GameObject* light1 = new GameObject("l");
+	GameObject* light2 = new GameObject("l");
 	GameObject* tardis = new GameObject("tar");
 
 	//Physics objects hold collision shape and collision object(body), 
@@ -72,26 +73,31 @@ int main() {
 		return -1;
 
 	LightMaterial* lightMaterial = new LightMaterial(pointlightShader);
-	light->SetRenderComponent(new RenderComponent(lightMaterial, ModelLoader::LoadMGL(MODEL_DIR"Common/ico.mgl", true)));
-	light->SetWorldTransform(Mat4Graphics::Translation(Vec3Graphics(0, 2, 2)) *Mat4Graphics::Scale(Vec3Graphics(20,20,20)));
-	light->SetBoundingRadius(20);
+	light1->SetRenderComponent(new RenderComponent(lightMaterial, ModelLoader::LoadMGL(MODEL_DIR"Common/ico.mgl", true)));
+	light1->SetWorldTransform(Mat4Graphics::Translation(Vec3Graphics(0, 2, 2)) *Mat4Graphics::Scale(Vec3Graphics(20, 20, 20)));
+	light1->SetBoundingRadius(20);
+
+	light2->SetRenderComponent(new RenderComponent(lightMaterial, ModelLoader::LoadMGL(MODEL_DIR"Common/ico.mgl", true)));
+	light2->SetWorldTransform(Mat4Graphics::Translation(Vec3Graphics(0, 40, 0)) *Mat4Graphics::Scale(Vec3Graphics(400, 400, 400)));
+	light2->SetBoundingRadius(400);
 
 
 	Material* material = new Material(simpleShader);
 
 	floor->SetRenderComponent(new RenderComponent(material, Mesh::GenerateQuad()));
 	floor->SetPhysicsComponent(floorPhysics);
-	floor->SetLocalTransform(Mat4Graphics::Scale(Vec3Graphics(40, 0, 40)) * Mat4Graphics::Rotation(90.0f, Vec3Graphics(1, 0, 0)));
+	floor->SetLocalTransform(Mat4Graphics::Scale(Vec3Graphics(40, 40, 40)) * Mat4Graphics::Rotation(90.0f, Vec3Graphics(1, 0, 0)));
 	myScene->addGameObject(floor);
 
 	tardis->SetRenderComponent(new RenderComponent(material, ModelLoader::LoadMGL(MODEL_DIR"Tardis/TARDIS.mgl", true)));
 	tardis->SetPhysicsComponent(tardisPhysics);
-	myScene->addGameObject(tardis);
-	myScene->addLightObject(light);
+	//myScene->addGameObject(tardis);
+	myScene->addLightObject(light1);
+	myScene->addLightObject(light2);
 
 	ball->SetRenderComponent(new RenderComponent(material, ModelLoader::LoadMGL(MODEL_DIR"Common/sphere.mgl", true)));
 	ball->SetPhysicsComponent(ballPhysics);
-	myScene->addGameObject(ball);
+	//myScene->addGameObject(ball);
 
 	renderer.SetCurrentScene(myScene);
 
