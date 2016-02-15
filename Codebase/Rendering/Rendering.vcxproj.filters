@@ -19,6 +19,18 @@
     <Filter Include="Source Files\Material">
       <UniqueIdentifier>{c4619c17-774a-45b0-8fe4-9dc4e51dfe21}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\Physics">
+      <UniqueIdentifier>{84b7b156-2880-489c-9632-2109ac951ffa}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Particle System">
+      <UniqueIdentifier>{459b51a4-cc1e-4648-81f0-8df1d54461ba}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Particle System">
+      <UniqueIdentifier>{b526225d-35e6-4759-94b6-2efc7a191608}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Physics">
+      <UniqueIdentifier>{1f25b0ac-b2f4-4e65-9305-151127f3e397}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Renderer.h">
@@ -69,6 +81,33 @@
     <ClInclude Include="Frustum.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="DebugDraw.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="PhysicsObject.h">
+      <Filter>Header Files\Physics</Filter>
+    </ClInclude>
+    <ClInclude Include="CubeEmitter.h">
+      <Filter>Header Files\Particle System</Filter>
+    </ClInclude>
+    <ClInclude Include="Particle.h">
+      <Filter>Header Files\Particle System</Filter>
+    </ClInclude>
+    <ClInclude Include="ParticleEmitter.h">
+      <Filter>Header Files\Particle System</Filter>
+    </ClInclude>
+    <ClInclude Include="ParticleManager.h">
+      <Filter>Header Files\Particle System</Filter>
+    </ClInclude>
+    <ClInclude Include="ParticleSystem.h">
+      <Filter>Header Files\Particle System</Filter>
+    </ClInclude>
+    <ClInclude Include="RigidPhysicsObject.h">
+      <Filter>Header Files\Physics</Filter>
+    </ClInclude>
+    <ClInclude Include="SoftPhysicsObject.h">
+      <Filter>Header Files\Physics</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Renderer.cpp">
@@ -115,6 +154,27 @@
     </ClCompile>
     <ClCompile Include="Frustum.cpp">
       <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="DebugDraw.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="CubeEmitter.cpp">
+      <Filter>Source Files\Particle System</Filter>
+    </ClCompile>
+    <ClCompile Include="ParticleSystem.cpp">
+      <Filter>Source Files\Particle System</Filter>
+    </ClCompile>
+    <ClCompile Include="ParticleManager.cpp">
+      <Filter>Source Files\Particle System</Filter>
+    </ClCompile>
+    <ClCompile Include="PhysicsObject.cpp">
+      <Filter>Source Files\Physics</Filter>
+    </ClCompile>
+    <ClCompile Include="RigidPhysicsObject.cpp">
+      <Filter>Source Files\Physics</Filter>
+    </ClCompile>
+    <ClCompile Include="SoftPhysicsObject.cpp">
+      <Filter>Source Files\Physics</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

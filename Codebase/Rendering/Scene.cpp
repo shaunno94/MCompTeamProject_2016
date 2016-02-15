@@ -29,7 +29,8 @@ void Scene::addGameObject(GameObject* obj)
 	{
 		addGameObject(child);
 	}
-	obj->m_RenderComponent->m_Material->hasTranslucency ? transparentObjects.push_back(obj) : opaqueObjects.push_back(obj);
+	if (obj->m_RenderComponent)
+		obj->m_RenderComponent->m_Material->hasTranslucency ? transparentObjects.push_back(obj) : opaqueObjects.push_back(obj);
 }
 
 void Scene::UpdateNodeLists(float dt, Frustum& frustum)

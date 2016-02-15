@@ -24,8 +24,10 @@ void RenderComponent::Draw()
 	//reset reserved mesh texture uniforms to use the right texture unit
 	for (GLint i = 0; i < ReservedMeshTextures.size; ++i)
 		Renderer::UpdateUniform(m_Material->GetShader()->GetReservedMeshTextureUniformLocation(i), i);
-
-	m_Mesh->Draw(m_Material);
+	//Object is outside of view frustum
+	if (disabled)
+		return;
+	m_Mesh->Draw();
 }
 
 void RenderComponent::SetParent(GameObject* go)

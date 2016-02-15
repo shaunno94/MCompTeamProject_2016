@@ -4,6 +4,7 @@
 #include "Camera.h"
 #include "Scene.h"
 #include "constants.h"
+#define DEBUG_DRAW 1
 
 /// @ingroup Rendering
 /// <summary>

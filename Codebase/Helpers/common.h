@@ -54,7 +54,7 @@ template <typename T>
 /// <param name="min">Min value.</param>
 /// <param name="max">Max value.</param>
 /// <returns>Clamped value.</returns>
-T Clamp(T in, T min, T max)
+T ClampValues(T in, T min, T max)
 {
 	return std::min(std::max(in, min), max);
 }
