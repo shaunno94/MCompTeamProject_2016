@@ -28,6 +28,10 @@ class Material;
 
 //A handy enumerator, to determine which member of the bufferObject array
 //holds which data
+/// @ingroup Rendering
+/// <summary>
+/// Enumerator, to determine which member of the bufferObject array holds which data
+/// </summary>
 enum MeshBuffer
 {
 	VERTEX_BUFFER	,
@@ -38,6 +42,10 @@ enum MeshBuffer
 	MAX_BUFFER
 };
 
+/// @ingroup Rendering
+/// <summary>
+/// 
+/// </summary>
 struct MeshMtlData
 {
 	Texture* textureMaps[ReservedMeshTextures.size];
@@ -45,6 +53,10 @@ struct MeshMtlData
 	float specExponent;
 };
 
+/// @ingroup Rendering
+/// <summary>
+/// 
+/// </summary>
 class Mesh
 {
 public:

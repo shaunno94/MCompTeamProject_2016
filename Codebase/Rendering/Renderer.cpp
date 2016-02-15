@@ -14,7 +14,7 @@ Renderer::Renderer(Window& parent) : OGLRenderer(parent)
 
 	if (!currentShader->IsOperational())
 	{
-	return;
+		return;
 	}*/
 
 	projMatrix = Mat4Graphics::Perspective(1.0f, 15000.0f, (float)width / (float)height, 45.0f);
@@ -136,28 +136,25 @@ void Renderer::UpdateScene(float msec)
 	{
 		currentScene->getCamera()->UpdateCamera(msec);
 		viewMatrix = currentScene->getCamera()->BuildViewMatrix();
-
-		//TODO: This will not work. As each object could have its own shader, the update needs to be called for each game object.
-		//TODO: When we add UBOs this approach will be valid again, so no need to spend a lot of time fixing this issue.
-		UpdateShaderMatrices();
+		//Updates all objects in the scene, sorts lists for rendering
+		frameFrustrum.FromMatrix(projMatrix * viewMatrix);
+		currentScene->UpdateNodeLists(msec, frameFrustrum);
 	}
 
 	if (m_UpdateGlobalUniforms)
 	{
-		/*for (unsigned int i = 0; i < currentScene->getNumOpaqueObjects(); ++i)
-		{
-			auto rc = currentScene->getOpaqueObject(i)->GetRenderComponent();
-
-			updateGlobalUniforms(rc->m_Material);
-		}*/
+		
 		for (unsigned int i = 0; i < currentScene->getNumLightObjects(); ++i)
-		{
+	{
 			auto rc = currentScene->getLightObject(i)->GetRenderComponent();
 
 			updateGlobalUniforms(rc->m_Material);
 		}
 		//m_UpdateGlobalUniforms = false;
 	}
+	//TODO: This will not work. As each object could have its own shader, the update needs to be called for each game object.
+	//TODO: When we add UBOs this approach will be valid again, so no need to spend a lot of time fixing this issue.
+	UpdateShaderMatrices();
 }
 
 //TODO:: Might need to be seperate from UpdateScene call if you want to update the scene once and draw several times (like for the cube shadow maps)
@@ -189,7 +186,7 @@ void Renderer::RenderScene(float msec)
 }
 
 void Renderer::FillBuffers()
-{
+		{
 	glBindFramebuffer(GL_FRAMEBUFFER, bufferFBO);
 	glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
 
@@ -200,13 +197,13 @@ void Renderer::FillBuffers()
 	UpdateShaderMatrices();
 
 	for (unsigned int i = 0; i < currentScene->getNumOpaqueObjects(); ++i)
-		currentScene->getOpaqueObject(i)->OnRenderObject();
-	for (unsigned int i = 0; i < currentScene->getNumTransparentObjects(); ++i)
-		currentScene->getTransparentObject(i)->OnRenderObject();
+			currentScene->getOpaqueObject(i)->OnRenderObject();
+		for (unsigned int i = 0; i < currentScene->getNumTransparentObjects(); ++i)
+			currentScene->getTransparentObject(i)->OnRenderObject();
 
 	glUseProgram(0);
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
-}
+		}
 
 void Renderer::DrawPointLights()
 {
@@ -238,9 +235,9 @@ void Renderer::DrawPointLights()
 		if (dist < light->GetBoundingRadius())  // camera is inside the light volume !
 		{
 			glCullFace(GL_FRONT);
-		}
-		else
-		{
+	}
+	else
+	{
 			glCullFace(GL_BACK);
 		}
 		light->OnRenderObject();

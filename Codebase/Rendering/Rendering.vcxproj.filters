@@ -66,6 +66,9 @@
     <ClInclude Include="LightMaterial.h">
       <Filter>Header Files\Material</Filter>
     </ClInclude>
+    <ClInclude Include="Frustum.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Renderer.cpp">
@@ -109,6 +112,9 @@
     </ClCompile>
     <ClCompile Include="LightMaterial.cpp">
       <Filter>Source Files\Material</Filter>
+    </ClCompile>
+    <ClCompile Include="Frustum.cpp">
+      <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

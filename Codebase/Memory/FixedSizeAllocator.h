@@ -10,8 +10,9 @@
 
 #include <cstdint>
 
+/// @ingroup Memory
 /// <summary>
-/// A suballocator class for managing fixed size memory blocks
+/// A suballocator class for managing fixed size memory blocks.
 /// </summary>
 /// <remarks>
 /// The implementation is based on Ming-Lun "Allen" Chou's memory management post (http://allenchou.net/memory-management-series/)
