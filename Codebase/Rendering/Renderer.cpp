@@ -16,9 +16,8 @@ Renderer::Renderer(Window& parent) : OGLRenderer(parent)
 	{
 		return;
 	}*/
-
-	projMatrix = Mat4Graphics::Perspective(1.0f, 15000.0f, (float)width / (float)height, 45.0f);
-	//projMatrix = Mat4Graphics::Orthographic(-1, 1, 1, -1, -1, 1);
+	aspectRatio = float(width) / float(height);
+	projMatrix = Mat4Graphics::Perspective(1.0f, 15000.0f, aspectRatio, 45.0f);
 	glClearColor(0.2f, 0.2f, 0.2f, 1.0f);
 
 	glEnable(GL_DEPTH_TEST);
@@ -160,6 +159,7 @@ void Renderer::UpdateScene(float msec)
 //TODO:: Might need to be seperate from UpdateScene call if you want to update the scene once and draw several times (like for the cube shadow maps)
 void Renderer::RenderScene(float msec)
 {
+	projMatrix = Mat4Graphics::Perspective(1.0f, 15000.0f, aspectRatio, 45.0f);
 	UpdateScene(msec);
 	glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
 
@@ -170,12 +170,6 @@ void Renderer::RenderScene(float msec)
 	//Draws all objects attatched to the current scene.
 	if (currentScene)
 	{
-		//Update
-		for (unsigned int i = 0; i < currentScene->getNumOpaqueObjects(); ++i)
-			currentScene->getOpaqueObject(i)->OnUpdateObject(msec);
-		for (unsigned int i = 0; i < currentScene->getNumTransparentObjects(); ++i)
-			currentScene->getTransparentObject(i)->OnUpdateObject(msec);
-
 		//Draw
 		FillBuffers(); //First Pass
 		DrawPointLights(); //Second Pass
@@ -188,24 +182,22 @@ void Renderer::RenderScene(float msec)
 }
 
 void Renderer::FillBuffers()
-		{
+{
 	glBindFramebuffer(GL_FRAMEBUFFER, bufferFBO);
 	glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
 
 	//SetCurrentShader(sceneShader);
 
-
-	projMatrix = Mat4Graphics::Perspective(1.0f, 15000.0f, (float)width / (float)height, 45.0f);
 	UpdateShaderMatrices();
 
 	for (unsigned int i = 0; i < currentScene->getNumOpaqueObjects(); ++i)
 			currentScene->getOpaqueObject(i)->OnRenderObject();
-		for (unsigned int i = 0; i < currentScene->getNumTransparentObjects(); ++i)
+	for (unsigned int i = 0; i < currentScene->getNumTransparentObjects(); ++i)
 			currentScene->getTransparentObject(i)->OnRenderObject();
 
 	glUseProgram(0);
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
-		}
+}
 
 void Renderer::DrawPointLights()
 {
@@ -234,14 +226,12 @@ void Renderer::DrawPointLights()
 		UpdateShaderMatrices();
 
 		float dist = (light->GetWorldTransform().GetTranslation() - currentScene->getCamera()->GetPosition()).Length();
+		
 		if (dist < light->GetBoundingRadius())  // camera is inside the light volume !
-		{
 			glCullFace(GL_FRONT);
-	}
-	else
-	{
+		else
 			glCullFace(GL_BACK);
-		}
+
 		light->OnRenderObject();
 	}
 

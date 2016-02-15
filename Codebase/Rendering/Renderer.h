@@ -58,4 +58,5 @@ protected:
 	GameObject* quad;
 
 	bool m_UpdateGlobalUniforms;
+	float aspectRatio;
 };

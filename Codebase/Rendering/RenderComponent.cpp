@@ -16,6 +16,10 @@ RenderComponent::~RenderComponent()
 //TODO: !!! Save available Mesh Texture locations on the Render Component !!!
 void RenderComponent::Draw()
 {
+	//Object is outside of view frustum
+	if (disabled)
+		return;
+
 	Renderer::GetInstance()->SetCurrentShader(m_Material->GetShader());
 
 	//model matrix
@@ -24,10 +28,7 @@ void RenderComponent::Draw()
 	//reset reserved mesh texture uniforms to use the right texture unit
 	for (GLint i = 0; i < ReservedMeshTextures.size; ++i)
 		Renderer::UpdateUniform(m_Material->GetShader()->GetReservedMeshTextureUniformLocation(i), i);
-	//Object is outside of view frustum
-	//TODO - check
-	/*if (disabled)
-		return;*/
+
 	m_Mesh->Draw(m_Material);
 }
 
