@@ -45,3 +45,5 @@ Assign
 * Networking
 	* (state sync system?)
 * Threading Physics (turning on SSE?)
+* Texture Improvements
+	* Add Texture Repeating/Clamping/Mipmapping parameters
