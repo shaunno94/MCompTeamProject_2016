@@ -22,7 +22,6 @@ GameObject::~GameObject() {
 	}
 
 	if (m_StateMachine) {
-		delete m_StateMachine;
 		m_StateMachine = nullptr;
 	}
 }

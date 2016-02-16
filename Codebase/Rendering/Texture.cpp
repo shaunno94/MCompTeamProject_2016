@@ -97,6 +97,46 @@ void Texture::ClearAll()
 }
 
 
+void Texture::SetTextureParams(unsigned int flags)
+{
+	if (!textureId) LoadFromFile();
+
+	// Repeat/Clamp options
+	if ((flags & REPEATING) == REPEATING) {
+		glBindTexture(GL_TEXTURE_2D, textureId);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+		glBindTexture(GL_TEXTURE_2D, 0);
+	}
+	if ((flags & CLAMPING) == CLAMPING) {
+		glBindTexture(GL_TEXTURE_2D, textureId);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP);
+		glBindTexture(GL_TEXTURE_2D, 0);
+	}
+
+	// Filtering options
+	if ((flags & NEAREST_NEIGHBOUR_FILTERING) == NEAREST_NEIGHBOUR_FILTERING) {
+		glBindTexture(GL_TEXTURE_2D, textureId);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+		glBindTexture(GL_TEXTURE_2D, 0);
+	}
+	if ((flags & BILINEAR_FILTERING) == BILINEAR_FILTERING) {
+		glBindTexture(GL_TEXTURE_2D, textureId);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+		glBindTexture(GL_TEXTURE_2D, 0);
+	}
+	if ((flags & TRILINEAR_FILTERING) == TRILINEAR_FILTERING) {
+		glBindTexture(GL_TEXTURE_2D, textureId);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+		glBindTexture(GL_TEXTURE_2D, 0);
+	}
+
+}
+
 void Texture::MeasureMemoryUsageAdd(GLuint textureId)
 {
 	int width;
@@ -136,9 +176,6 @@ void Texture::MeasureMemoryUsageSubstract(GLuint textureId)
 
 	s_memoryUsage -= (width * height * ((r + g + b + a) / 8.0f));
 }
-
-
-
 
 Texture::Texture(const std::string& filepath, size_t index, bool preload) : filePath(filepath)
 {

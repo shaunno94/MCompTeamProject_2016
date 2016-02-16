@@ -42,10 +42,20 @@ subject to the following restrictions:
 ///Vehicle simulation, with wheel contact simulated by raycasts
 #include "BulletDynamics/Vehicle/btRaycastVehicle.h"
 
-
-
-
-
+///Soft body dynamics, solver etc
+#include "BulletSoftBody/btDefaultSoftBodySolver.h"
+#include "BulletSoftBody/btSoftBody.h"
+#include "BulletSoftBody/btSoftBodyConcaveCollisionAlgorithm.h"
+#include "BulletSoftBody/btSoftBodyData.h"
+#include "BulletSoftBody/btSoftBodyHelpers.h"
+#include "BulletSoftBody/btSoftBodyInternals.h"
+#include "BulletSoftBody/btSoftBodyRigidBodyCollisionConfiguration.h"
+#include "BulletSoftBody/btSoftBodySolvers.h"
+#include "BulletSoftBody/btSoftBodySolverVertexBuffer.h"
+#include "BulletSoftBody/btSoftRigidCollisionAlgorithm.h"
+#include "BulletSoftBody/btSoftRigidDynamicsWorld.h"
+#include "BulletSoftBody/btSoftSoftCollisionAlgorithm.h"
+#include "BulletSoftBody/btSparseSDF.h"
 
 #endif //BULLET_DYNAMICS_COMMON_H
 

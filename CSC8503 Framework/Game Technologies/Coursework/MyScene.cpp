@@ -11,10 +11,15 @@
 #include <ncltech\DistanceConstraint.h>
 #include <ncltech\NCLDebug.h>
 #include "ncltech\OctreeSpacePartition.h"
-#include "ncltech\PositioningState.h"
 #include "ScoreHistory.h"
 #include "ncltech/PyramidCollisionShape.h"
 #include "TestCases.h"
+
+// Includes for AI States and Triggers
+#include "ncltech/StateMachine.h"
+#include "ncltech/ChaseState.h"
+#include "ncltech/RunAwayState.h"
+#include "ncltech/DistanceTrigger.h"
 
 
 MyScene::MyScene(Window& window) : Scene(window)
@@ -43,6 +48,7 @@ MyScene::~MyScene()
 	delete m_OverlayShader;
 
 	glDeleteTextures(1, &m_ProjectileTex);
+	delete m_sphereStateMachine;
 }
 
 bool MyScene::InitialiseGL()
@@ -61,29 +67,73 @@ bool MyScene::InitialiseGL()
 	this->AddGameObject(ground);
 	m_Resources.push_back(ground);
 
-	TestCases::AddCuboidStack(this, Vec3Physics(-40.0f, 0.5f, -10.0f), 10);
-	TestCases::AddStackedPyramidTestcase(this, Vec3Physics(-40.0f, 0.0f, -5.0f), true);
-	TestCases::AddStackedPyramidTestcase(this, Vec3Physics(-35.0f, 0.0f, -7.0f), true);
-	TestCases::AddPlaneTestcase(this, Vec3Physics(-40.0f, 0.0f, -40.0f));
-
-	TestCases::AddWall(this, Vec3Physics(-40.0f, 0.0f, -20.0f), Vec3Physics(20.0f, 5.0f, 0.5f));
-	TestCases::AddWall(this, Vec3Physics(-40.0f, 0.0f, 10.0f), Vec3Physics(20.0f, 5.0f, 0.5f));
-	TestCases::AddWall(this, Vec3Physics(-40.0f, 0.0f, 40.0f), Vec3Physics(20.0f, 5.0f, 0.5f));
-	TestCases::AddSpheresCuboid(this, Vec3Physics(-20.0f, 4.0f, 10.0f), Vec3Physics(5.0f, 4.0f, 5.0f));
-	TestCases::AddWall(this, Vec3Physics(-20.0f, 0.0f, 25.0f), Vec3Physics(0.5f, 5.0f, 15.0f));
-
-	TestCases::AddSimpleStackedRestingTestcase(this, Vec3Physics(-55.0f, 0.0f, 55.0f));
-	TestCases::AddSimpleStackedRestingTestcase(this, Vec3Physics(-50.0f, 0.0f, 50.0f));
-	TestCases::AddSimpleSwingingTestcase(this, Vec3Physics(-45.0f, 0.0f, 45.0f));
-
 	TestCases::AddWall(this, Vec3Physics(-60.0f, 0.0f, 0.0f), Vec3Physics(0.5f, 15.0f, 60.0f));
 	TestCases::AddWall(this, Vec3Physics(60.0f, 0.0f, 0.0f), Vec3Physics(0.5f, 15.0f, 60.0f));
 	TestCases::AddWall(this, Vec3Physics(0.0f, 0.0f, 60.0f), Vec3Physics(60.0f, 15.0f, 0.5f));
 	TestCases::AddWall(this, Vec3Physics(0.0f, 0.0f, -60.0f), Vec3Physics(60.0f, 15.0f, 0.5f));
 
+	SimpleMeshObject* sphere = new SimpleMeshObject("Ball");
+	sphere->SetMesh(CommonMeshes::Sphere(), false);
+	sphere->SetLocalTransform(Mat4Physics::Scale(Vector3Simple(3, 3, 3))); //80m width, 1m height, 80m depth
+	sphere->SetColour(Vec4Graphics(0.8f, 0.8f, 0.8f, 1.0f));
+	sphere->SetBoundingRadius(3);
+	sphere->IsBoundingSphere(false);
+	sphere->SetBoundingHalfVolume(Vector3Simple(3, 3, 3));
+
+	sphere->Physics()->SetPosition(Vec3Physics(0.0f, 3.0f, 0.0f));
+	sphere->Physics()->SetCollisionShape(new SphereCollisionShape(3.0f));
+	sphere->Physics()->SetInverseMass(1.0f / (3.0f * 10.0f));
+	sphere->Physics()->SetInverseInertia(sphere->Physics()->GetCollisionShape()->BuildInverseInertia(sphere->Physics()->GetInverseMass()));
+
+	AddGameObject(sphere);
+	m_Resources.push_back(sphere);
+
+	SimpleMeshObject* aiSphere = new SimpleMeshObject("Ball");
+	aiSphere->SetMesh(CommonMeshes::Sphere(), false);
+	aiSphere->SetColour(Vec4Graphics(0.6f, 0.6f, 0.8f, 1.0f));
+	aiSphere->SetBoundingRadius(1);
+	aiSphere->IsBoundingSphere(false);
+	aiSphere->SetBoundingHalfVolume(Vector3Simple(1, 1, 1));
+
+	aiSphere->Physics()->SetPosition(Vec3Physics(20.0f, 1.0f, 0.0f));
+	aiSphere->Physics()->SetCollisionShape(new SphereCollisionShape(1.0f));
+	aiSphere->Physics()->SetInverseMass(1000.0f);
+	aiSphere->Physics()->SetInverseInertia(aiSphere->Physics()->GetCollisionShape()->BuildInverseInertia(aiSphere->Physics()->GetInverseMass()));
+
+	AddGameObject(aiSphere);
+	m_Resources.push_back(aiSphere);
+
 	m_Overlay = new SimpleMeshObject("Overlay", nullptr);
 	m_Overlay->SetMesh(Mesh::GenerateQuadTexCoordCol(Vec2Physics(1.f, 1.f), Vec2Physics(0.0f, 1.0f), Vec4Physics(1.0f, 1.0f, 1.0f, 1.0f)), true);
 	m_Resources.push_back(m_Overlay);
+
+
+	m_sphereStateMachine = new StateMachine();
+
+	ChaseState* chase = new ChaseState(*m_sphereStateMachine, *aiSphere, *sphere);
+	RunAwayState* run = new RunAwayState(*m_sphereStateMachine, *aiSphere, *sphere);
+
+
+	// Chase -> Run trigger 
+	//	Triggered when two objects are less than 5.0f apart
+	DistanceTrigger* chaseToRun = new DistanceTrigger();
+	chaseToRun->setupTrigger(*aiSphere, *sphere, 5.0f, true);
+	chase->AddTrigger(chaseToRun, "Run");
+
+	m_sphereStateMachine->AddState("Chase", chase);
+
+
+	// Run -> Chase trigger 
+	//	Triggered when two objects are greater than 25.0f apart
+	DistanceTrigger* runToChase = new DistanceTrigger();
+	runToChase->setupTrigger(*aiSphere, *sphere, 25.0f, false);
+	run->AddTrigger(runToChase, "Chase");
+
+	m_sphereStateMachine->AddState("Run", run);
+
+	m_sphereStateMachine->ChangeState("Chase");
+
+	aiSphere->SetStateMachine(m_sphereStateMachine);
 
 	return true;
 }
@@ -115,7 +165,7 @@ void MyScene::UpdateScene(float sec)
 
 	static unsigned int projectileCounter = 0;
 
-	if (keyboard->KeyTriggered(KEYBOARD_J)) {
+	if (keyboard->KeyTriggered(KEYBOARD_E)) {
 		Vec3Physics position = m_Camera->GetPosition();
 		Vec3Physics viewDirection = -Vec3Physics(viewMatrix.values[2], viewMatrix.values[6], viewMatrix.values[10]);
 		viewDirection.Normalize();
@@ -160,10 +210,13 @@ void MyScene::UpdateScene(float sec)
 	if (keyboard->KeyTriggered(KEYBOARD_M))
 		m_RenderMode = (m_RenderMode + 1) % RenderModeMax;
 
+	if (m_Goalkeeper && keyboard->KeyTriggered(KEYBOARD_K))
+		m_Goalkeeper->Physics()->IsEnabled(!m_Goalkeeper->Physics()->IsEnabled());
+
 	if (keyboard->KeyTriggered(KEYBOARD_H))
 		m_DisplayHighScores = !m_DisplayHighScores;
 
-	if (keyboard->KeyTriggered(KEYBOARD_X) || keyboard->KeyTriggered(KEYBOARD_ESCAPE)) {
+	if (keyboard->KeyTriggered(KEYBOARD_ESCAPE) || keyboard->KeyTriggered(KEYBOARD_ESCAPE)) {
 		m_EndState = QuitGameState;
 		keyboard->UpdateHolds();
 		PhysicsEngine::Instance()->SetPaused(true);

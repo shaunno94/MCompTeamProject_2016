@@ -9,17 +9,17 @@
 #include <fstream>
 #include <vector>
 
-#include "GL/glew.h"
-#include "GL/wglew.h"
+#include "Dependencies/glew-1.13.0/include/GL/glew.h"
+#include "Dependencies/glew-1.13.0/include/GL/wglew.h"
 #include "Math/nclglMath.h"
 #include "Window.h"
 //#include "light.h"
 
-#include "Shader.h"		//Students make this file...
-#include "Mesh.h"		//And this one...
-
 #pragma comment(lib, "opengl32.lib")
 #pragma comment(lib, "glew-1.13.0/lib/Release/Win32/glew32s.lib")
+
+#include "Shader.h"		//Students make this file...
+#include "Mesh.h"		//And this one...
 
 /*
 #pragma comment(lib, "opengl32.lib")

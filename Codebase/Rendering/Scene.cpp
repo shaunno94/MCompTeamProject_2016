@@ -29,7 +29,8 @@ void Scene::addGameObject(GameObject* obj)
 	{
 		addGameObject(child);
 	}
-	obj->m_RenderComponent->m_Material->hasTranslucency ? transparentObjects.push_back(obj) : opaqueObjects.push_back(obj);
+	if (obj->m_RenderComponent)
+		obj->m_RenderComponent->m_Material->hasTranslucency ? transparentObjects.push_back(obj) : opaqueObjects.push_back(obj);
 }
 
 void Scene::UpdateNodeLists(float dt, Frustum& frustum)
@@ -72,4 +73,9 @@ void Scene::UpdateNodeLists(float dt, Frustum& frustum)
 	//Sort lists using insertion sort - O(N) best case when list is almost ordered which should be the case most of the time.
 	InsertionSort(transparentObjects.begin(), transparentObjects.end(), Scene::CompareByCameraDistanceInv);
 	InsertionSort(opaqueObjects.begin(), opaqueObjects.end(), Scene::CompareByCameraDistance);
+}
+
+void Scene::addLightObject(GameObject* obj)
+{
+	lightObjects.push_back(obj);
 }

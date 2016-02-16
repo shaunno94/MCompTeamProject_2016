@@ -10,34 +10,40 @@ void Frustum::FromMatrix(const Mat4Graphics &mat)
 	planes.clear();
 	//Create frustum planes - plane constant (D), plane normal
 	//RIGHT
-	planes.push_back(Plane((mat.values[15] - mat.values[12]), (waxis - xaxis).Normalize()));
+	planes.push_back(Plane((mat.values[15] - mat.values[12]), (waxis - xaxis), true));
 	
 	//LEFT
-	planes.push_back(Plane((mat.values[15] + mat.values[12]), (waxis + xaxis).Normalize()));
+	planes.push_back(Plane((mat.values[15] + mat.values[12]), (waxis + xaxis), true));
 
 	//BOTTOM
-	planes.push_back(Plane((mat.values[15] + mat.values[13]), (waxis + yaxis).Normalize()));
+	planes.push_back(Plane((mat.values[15] + mat.values[13]), (waxis + yaxis), true));
 
 	//TOP
-	planes.push_back(Plane((mat.values[15] - mat.values[13]), (waxis - yaxis).Normalize()));
+	planes.push_back(Plane((mat.values[15] - mat.values[13]), (waxis - yaxis), true));
 
 	//FAR
-	planes.push_back(Plane((mat.values[15] - mat.values[14]), (waxis - zaxis).Normalize()));
+	planes.push_back(Plane((mat.values[15] - mat.values[14]), (waxis - zaxis), true));
 
 	//NEAR
-	planes.push_back(Plane((mat.values[15] + mat.values[14]), (waxis + zaxis).Normalize()));
+	planes.push_back(Plane((mat.values[15] + mat.values[14]), (waxis + zaxis), true));
 }
 
 
 bool Frustum::InsideFrustum(GameObject* n)	
 {		
-	if (!n->Physics())
+	if (!n->GetPhysicsComponent())
 			return true;
-
+	
 	btVector3 min, max, size, position;
+	TYPE t = n->GetPhysicsComponent()->GetType();
+	
 	//Get axis aligned bounding box
-	n->Physics()->getAabb(min, max);
-	position = n->Physics()->getWorldTransform().getOrigin();
+	if (t == RIGID)
+		static_cast<RigidPhysicsObject*>(n->GetPhysicsComponent())->GetPhysicsBody()->getAabb(min, max);
+	else
+		static_cast<SoftPhysicsObject*>(n->GetPhysicsComponent())->GetPhysicsBody()->getAabb(min, max);
+		
+	position = n->GetPhysicsComponent()->GetPhysicsBody()->getWorldTransform().getOrigin();
 	size = (max - position).absolute();
 
 	//Iterate through frustum planes and perform a point in plane check for each point in the AABB.
