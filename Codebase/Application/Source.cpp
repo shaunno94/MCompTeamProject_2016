@@ -91,13 +91,13 @@ int main() {
 
 	tardis->SetRenderComponent(new RenderComponent(material, ModelLoader::LoadMGL(MODEL_DIR"Tardis/TARDIS.mgl", true)));
 	tardis->SetPhysicsComponent(tardisPhysics);
-	//myScene->addGameObject(tardis);
+	myScene->addGameObject(tardis);
 	myScene->addLightObject(light1);
 	myScene->addLightObject(light2);
 
 	ball->SetRenderComponent(new RenderComponent(material, ModelLoader::LoadMGL(MODEL_DIR"Common/sphere.mgl", true)));
 	ball->SetPhysicsComponent(ballPhysics);
-	//myScene->addGameObject(ball);
+	myScene->addGameObject(ball);
 
 	renderer.SetCurrentScene(myScene);
 
