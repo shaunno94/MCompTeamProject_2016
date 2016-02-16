@@ -100,7 +100,7 @@ void GameObject::UpdateTransform()
 	r = QuatGraphics(rot.x(), rot.y(), rot.z(), rot.w());
 	
 	//Update model matrix 
-	m_WorldTransform = r.ToMatrix4() * Mat4Graphics::Translation(p) * m_LocalTransform;
+	m_WorldTransform = Mat4Graphics::Translation(p) * r.ToMatrix4() * m_LocalTransform;
 
 	if (m_Parent)
 		m_WorldTransform = m_Parent->m_WorldTransform * m_WorldTransform;

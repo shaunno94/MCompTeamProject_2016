@@ -164,9 +164,6 @@ void Renderer::RenderScene(float msec)
 	glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
 
 	//glUseProgram(currentShader->GetProgram());
-	#if DEBUG_DRAW
-		PhysicsEngineInstance::Instance()->debugDrawWorld();
-	#endif
 	//Draws all objects attatched to the current scene.
 	if (currentScene)
 	{
@@ -176,6 +173,10 @@ void Renderer::RenderScene(float msec)
 		CombineBuffers(); //Final Pass
 	}
 
+#if DEBUG_DRAW
+	PhysicsEngineInstance::Instance()->debugDrawWorld();
+#endif
+
 	glUseProgram(0);
 
 	SwapBuffers();
@@ -183,6 +184,7 @@ void Renderer::RenderScene(float msec)
 
 void Renderer::FillBuffers()
 {
+	glDisable(GL_CULL_FACE);
 	glBindFramebuffer(GL_FRAMEBUFFER, bufferFBO);
 	glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
 
@@ -197,6 +199,7 @@ void Renderer::FillBuffers()
 
 	glUseProgram(0);
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
+	glEnable(GL_CULL_FACE);
 }
 
 void Renderer::DrawPointLights()

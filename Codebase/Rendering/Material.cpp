@@ -20,14 +20,19 @@ void Material::Setup()
 	//TODO: Removed for Reseting Mesh child defaults (might be put back if that feature is not needed)
 	//if (s_LastMaterialInUse == this) return;
 
+
 	Renderer::GetInstance()->SetCurrentShader(shader);
 	Renderer::GetInstance()->UpdateShaderMatrices();
 	GLint textureUnit = ReservedMeshTextures.size + ReservedOtherTextures.size;
 	for(auto it = m_uniformTextures.begin(); it != m_uniformTextures.end(); ++it)
 	{
 		it->second->Load(textureUnit);
+
 		Renderer::UpdateUniform(it->first, textureUnit++);
+
 	}
+
+
 	//s_LastMaterialInUse = this;
 }
 
