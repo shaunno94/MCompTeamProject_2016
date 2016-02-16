@@ -1,6 +1,7 @@
 #include "Shader.h"
 
-Shader::Shader(std::string vFile, std::string fFile, std::string gFile, std::string tcsFile, std::string tesFile)	{
+Shader::Shader(std::string vFile, std::string fFile, std::string gFile, std::string tcsFile, std::string tesFile)
+{
 	program		= glCreateProgram();
 	objects[SHADER_VERTEX]		= GenerateShader(vFile	 , GL_VERTEX_SHADER);
 	objects[SHADER_FRAGMENT]	= GenerateShader(fFile, GL_FRAGMENT_SHADER);
@@ -11,17 +12,20 @@ Shader::Shader(std::string vFile, std::string fFile, std::string gFile, std::str
 	objects[SHADER_TCS]			= 0;
 	objects[SHADER_TES]			= 0;
 
-	if (!gFile.empty()) {
+	if (!gFile.empty())
+	{
 		objects[SHADER_GEOMETRY]	= GenerateShader(gFile, GL_GEOMETRY_SHADER);
 		operational = operational && objects[SHADER_GEOMETRY] > 0;
 		glAttachShader(program, objects[SHADER_GEOMETRY]);
 	}
-	if (!tcsFile.empty()) {
+	if (!tcsFile.empty())
+	{
 		objects[SHADER_TCS]		= GenerateShader(tcsFile, GL_TESS_CONTROL_SHADER);
 		operational = operational && objects[SHADER_TCS] > 0;
 		glAttachShader(program, objects[SHADER_TCS]);
 	}
-	if (!tesFile.empty()) {
+	if (!tesFile.empty())
+	{
 		objects[SHADER_TES]		= GenerateShader(tesFile, GL_TESS_EVALUATION_SHADER);
 		operational = operational && objects[SHADER_TES] > 0;
 		glAttachShader(program, objects[SHADER_TES]);
@@ -30,41 +34,58 @@ Shader::Shader(std::string vFile, std::string fFile, std::string gFile, std::str
 	glAttachShader(program, objects[SHADER_VERTEX]);
 	glAttachShader(program, objects[SHADER_FRAGMENT]);
 
-	if (operational) {
+	if (operational)
+	{
 		SetDefaultAttributes();
 		glLinkProgram(program);
 		glGetProgramiv(program, GL_LINK_STATUS, &operational);
-		if (operational != GL_TRUE) {
+		if (operational != GL_TRUE)
+		{
 			cout << "Linking failed!" << endl;
 			char error[512];
 			glGetInfoLogARB(program, sizeof(error), NULL, error);
 			cout << error;
 		}
-	} else
+		else
+		{
+			m_ModelMatrixLocation = glGetUniformLocation(GetProgram(), "modelMatrix");
+			for (size_t i = 0; i < ReservedMeshTextures.size; ++i)
+				m_ReservedMeshTextureLocations[i] = glGetUniformLocation(GetProgram(), ReservedMeshTextures.values[i].name);
+
+			for (size_t i = 0; i < ReservedMeshColours.size; ++i)
+				m_ReservedMeshColourLocations[i] = glGetUniformLocation(GetProgram(), ReservedMeshColours.values[i].name);
+		}
+	}
+	else
 		operational = GL_FALSE;
 }
 
-Shader::~Shader(void)	{
-	for (int i = 0; i < 3; ++i) {
+Shader::~Shader(void)
+{
+	for (int i = 0; i < 3; ++i)
+	{
 		glDetachShader(program, objects[i]);
 		glDeleteShader(objects[i]);
 	}
 	glDeleteProgram(program);
 }
 
-bool	Shader::LoadShaderFile(string from, string& into)	{
+bool	Shader::LoadShaderFile(string from, string& into)
+{
 	ifstream	file;
 	string		temp;
 
 	cout << "Loading shader text from " << from << endl << endl;
 
 	file.open(from.c_str());
-	if (!file.is_open()) {
+	if (!file.is_open())
+	{
 		cout << "File does not exist!" << endl;
 		return false;
 	}
 
-	while (!file.eof()) {
+	while (!file.eof())
+	{
 		getline(file, temp);
 		into += temp + "\n";
 	}
@@ -76,11 +97,13 @@ bool	Shader::LoadShaderFile(string from, string& into)	{
 	return true;
 }
 
-GLuint	Shader::GenerateShader(string from, GLenum type)	{
+GLuint	Shader::GenerateShader(string from, GLenum type)
+{
 	cout << "Compiling Shader..." << endl;
 
 	string load;
-	if (!LoadShaderFile(from, load)) {
+	if (!LoadShaderFile(from, load))
+	{
 		cout << "Compiling failed!" << endl;
 		return 0;
 	}
@@ -94,7 +117,8 @@ GLuint	Shader::GenerateShader(string from, GLenum type)	{
 	GLint status;
 	glGetShaderiv(shader, GL_COMPILE_STATUS, &status);
 
-	if (status == GL_FALSE)	{
+	if (status == GL_FALSE)
+	{
 		cout << "Compiling failed!" << endl;
 		char error[512];
 		glGetInfoLogARB(shader, sizeof(error), NULL, error);
@@ -105,9 +129,9 @@ GLuint	Shader::GenerateShader(string from, GLenum type)	{
 	return shader;
 }
 
-void	Shader::SetDefaultAttributes()	{
+void	Shader::SetDefaultAttributes()
+{
 	glBindAttribLocation(program, VERTEX_BUFFER,  "position");
-	glBindAttribLocation(program, COLOUR_BUFFER,  "colour");
 	glBindAttribLocation(program, NORMAL_BUFFER,  "normal");
 	glBindAttribLocation(program, TANGENT_BUFFER, "tangent");
 	glBindAttribLocation(program, TEXTURE_BUFFER, "texCoord");

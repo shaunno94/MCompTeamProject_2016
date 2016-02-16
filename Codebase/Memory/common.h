@@ -1,5 +1,9 @@
-#pragma once 
+#pragma once
 
+/** @defgroup Memory Memory
+*  Memory related grouping.
+*  @{
+*/
 
 #define MEM_ALIGNMENT 16
 
@@ -16,3 +20,6 @@
 #define MEM_ALIGN_NEW_DELETE \
 	MEM_ALIGN_NEW \
 	MEM_ALIGN_DELETE
+
+
+/** @} */

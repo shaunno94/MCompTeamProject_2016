@@ -12,5 +12,6 @@ static double GetQueryPerformancePeriod()
 	QueryPerformanceFrequency(&result);
 	return 1.0 / static_cast<double>(result.QuadPart);
 }
+
 const double Timer::PERIOD = GetQueryPerformancePeriod();
 #endif

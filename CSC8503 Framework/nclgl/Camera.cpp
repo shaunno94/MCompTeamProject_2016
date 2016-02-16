@@ -33,9 +33,9 @@ void Camera::UpdateCamera(float msec)	{
 	if (Window::GetKeyboard()->KeyDown(KEYBOARD_D))
 		position -= Mat4Graphics::Rotation(yaw, Vec3Graphics(0, 1, 0)) * Vec3Graphics(-1, 0, 0) * speed;
 
-	if (Window::GetKeyboard()->KeyDown(KEYBOARD_SHIFT))
-		position.y += speed;
 	if (Window::GetKeyboard()->KeyDown(KEYBOARD_SPACE))
+		position.y += speed;
+	if (Window::GetKeyboard()->KeyDown(KEYBOARD_SHIFT))
 		position.y -= speed;
 }
 

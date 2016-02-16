@@ -72,6 +72,7 @@
     <ClInclude Include="curves.h" />
     <ClInclude Include="degrees.h" />
     <ClInclude Include="DeltaTimer.h" />
+    <ClInclude Include="File.h" />
     <ClInclude Include="interpolation.h" />
     <ClInclude Include="MeasuringTimer.h" />
     <ClInclude Include="ObjectPool.h" />
@@ -86,8 +87,10 @@
     <ClInclude Include="stb_textedit.h" />
     <ClInclude Include="stb_truetype.h" />
     <ClInclude Include="Timer.h" />
+    <ClInclude Include="TSingleton.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="File.cpp" />
     <ClCompile Include="MeasuringTimer.cpp" />
     <ClCompile Include="RNG.cpp" />
     <ClCompile Include="Timer.cpp" />

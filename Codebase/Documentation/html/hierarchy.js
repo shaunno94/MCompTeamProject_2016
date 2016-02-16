@@ -1,0 +1,87 @@
+var hierarchy =
+[
+    [ "AlignmentWrapperBase< _PaddingSize >", "struct_alignment_wrapper_base.html", null ],
+    [ "AlignmentWrapperBase< 0 >", "struct_alignment_wrapper_base_3_010_01_4.html", null ],
+    [ "AlignmentWrapperBase<(_Alignment-(sizeof(T)%_Alignment))%_Alignment >", "struct_alignment_wrapper_base.html", [
+      [ "AlignmentWrapper< T, _Alignment >", "class_alignment_wrapper.html", null ]
+    ] ],
+    [ "FixedSizeAllocator::BlockHeader", "struct_fixed_size_allocator_1_1_block_header.html", null ],
+    [ "btOverlapFilterCallback", null, [
+      [ "ParticleFilterCallback", "struct_particle_filter_callback.html", null ]
+    ] ],
+    [ "Camera", "class_camera.html", null ],
+    [ "DebugDrawData", "struct_debug_draw_data.html", null ],
+    [ "FixedSizeAllocator", "class_fixed_size_allocator.html", null ],
+    [ "FixedSizeAllocatorManager", "class_fixed_size_allocator_manager.html", null ],
+    [ "GameObject", "class_game_object.html", null ],
+    [ "InputDevice", "class_input_device.html", [
+      [ "Keyboard", "class_keyboard.html", null ],
+      [ "Mouse", "class_mouse.html", null ]
+    ] ],
+    [ "Material", "class_material.html", [
+      [ "ExtendedMaterial", "class_extended_material.html", null ]
+    ] ],
+    [ "Matrix3Intrinsics", "class_matrix3_intrinsics.html", null ],
+    [ "Matrix3Simple", "class_matrix3_simple.html", null ],
+    [ "Matrix4Intrinsics", "class_matrix4_intrinsics.html", null ],
+    [ "Matrix4Simple", "class_matrix4_simple.html", null ],
+    [ "Mesh", "class_mesh.html", null ],
+    [ "MeshMtlData", "struct_mesh_mtl_data.html", null ],
+    [ "ModelLoader", "class_model_loader.html", null ],
+    [ "ObjectPool< T >", "class_object_pool.html", null ],
+    [ "ObjMeshData", "struct_obj_mesh_data.html", null ],
+    [ "ObjVertData", "struct_obj_vert_data.html", null ],
+    [ "OGLRenderer", "class_o_g_l_renderer.html", [
+      [ "Renderer", "class_renderer.html", null ]
+    ] ],
+    [ "FixedSizeAllocator::PageHeader", "struct_fixed_size_allocator_1_1_page_header.html", null ],
+    [ "PhysicsEngineInstance", "class_physics_engine_instance.html", null ],
+    [ "QuaternionIntrinsics", "class_quaternion_intrinsics.html", null ],
+    [ "QuaternionSimple", "class_quaternion_simple.html", null ],
+    [ "STLAlignedAllocator< T, _Alignment >::rebind< _Other >", "struct_s_t_l_aligned_allocator_1_1rebind.html", null ],
+    [ "STLManagedAllocator< T, _Alignment >::rebind< _Other >", "struct_s_t_l_managed_allocator_1_1rebind.html", null ],
+    [ "MeasuringTimer::record", "struct_measuring_timer_1_1record.html", null ],
+    [ "RenderComponent", "class_render_component.html", null ],
+    [ "ReservedMeshColoursStruct", "struct_reserved_mesh_colours_struct.html", null ],
+    [ "ReservedMeshTexturesStruct", "struct_reserved_mesh_textures_struct.html", null ],
+    [ "RNG32", "class_r_n_g32.html", null ],
+    [ "RNG64", "class_r_n_g64.html", null ],
+    [ "Scene", "class_scene.html", null ],
+    [ "Shader", "class_shader.html", null ],
+    [ "ShaderUniformInfo", "struct_shader_uniform_info.html", null ],
+    [ "stb_easy_font_color", "structstb__easy__font__color.html", null ],
+    [ "stb_lex_location", "structstb__lex__location.html", null ],
+    [ "stb_lexer", "structstb__lexer.html", null ],
+    [ "STB_TexteditState", "struct_s_t_b___textedit_state.html", null ],
+    [ "stbi_io_callbacks", "structstbi__io__callbacks.html", null ],
+    [ "stbrp_context", "structstbrp__context.html", null ],
+    [ "stbrp_node", "structstbrp__node.html", null ],
+    [ "stbrp_rect", "structstbrp__rect.html", null ],
+    [ "StbTexteditRow", "struct_stb_textedit_row.html", null ],
+    [ "stbtt__bitmap", "structstbtt____bitmap.html", null ],
+    [ "stbtt_aligned_quad", "structstbtt__aligned__quad.html", null ],
+    [ "stbtt_bakedchar", "structstbtt__bakedchar.html", null ],
+    [ "stbtt_fontinfo", "structstbtt__fontinfo.html", null ],
+    [ "stbtt_pack_context", "structstbtt__pack__context.html", null ],
+    [ "stbtt_pack_range", "structstbtt__pack__range.html", null ],
+    [ "stbtt_packedchar", "structstbtt__packedchar.html", null ],
+    [ "stbtt_vertex", "structstbtt__vertex.html", null ],
+    [ "StbUndoRecord", "struct_stb_undo_record.html", null ],
+    [ "StbUndoState", "struct_stb_undo_state.html", null ],
+    [ "STLAlignedAllocator< T, _Alignment >", "class_s_t_l_aligned_allocator.html", null ],
+    [ "STLManagedAllocator< T, _Alignment >", "class_s_t_l_managed_allocator.html", null ],
+    [ "Texture", "class_texture.html", null ],
+    [ "Timer", "class_timer.html", [
+      [ "DeltaTimer< T >", "class_delta_timer.html", null ],
+      [ "DeltaTimer< float >", "class_delta_timer.html", null ],
+      [ "MeasuringTimer", "class_measuring_timer.html", null ]
+    ] ],
+    [ "TSingleton< T >", "class_t_singleton.html", null ],
+    [ "Vector2Simple", "class_vector2_simple.html", null ],
+    [ "Vector3_1Intrinsics", "class_vector3__1_intrinsics.html", null ],
+    [ "Vector3Intrinsics", "class_vector3_intrinsics.html", null ],
+    [ "Vector3Simple", "class_vector3_simple.html", null ],
+    [ "Vector4Intrinsics", "class_vector4_intrinsics.html", null ],
+    [ "Vector4Simple", "class_vector4_simple.html", null ],
+    [ "Window", "class_window.html", null ]
+];
