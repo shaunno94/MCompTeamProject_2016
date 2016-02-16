@@ -273,7 +273,7 @@ Mesh* Mesh::GenerateIcosphere(unsigned int tessalationLevel)
 }
 
 
-Mesh* Mesh::GenerateQuad()
+Mesh* Mesh::GenerateQuad(Vec2Graphics texCoords /* = Vec2Graphics(1.0f, 1.0f) */)
 {
 	Mesh* m = new Mesh();
 
@@ -290,10 +290,10 @@ Mesh* Mesh::GenerateQuad()
 	m->m_Vertices[2] = 	Vec3Graphics(1.0f, -1.0f, 0.0f);
 	m->m_Vertices[3] = 	Vec3Graphics(1.0f,  1.0f, 0.0f);
 
-	m->m_TextureCoords[0] = Vec2Graphics(0.0f,	1.0f);
+	m->m_TextureCoords[0] = Vec2Graphics(0.0f,	texCoords.y);
 	m->m_TextureCoords[1] = Vec2Graphics(0.0f,	0.0f);
-	m->m_TextureCoords[2] = Vec2Graphics(1.0f,	1.0f);
-	m->m_TextureCoords[3] = Vec2Graphics(1.0f,	0.0f);
+	m->m_TextureCoords[2] = Vec2Graphics(texCoords.x,	texCoords.y);
+	m->m_TextureCoords[3] = Vec2Graphics(texCoords.x,	0.0f);
 
 	for(int i = 0; i < 4; ++i)
 	{
@@ -364,7 +364,7 @@ Mesh* Mesh::GenerateQuadTexCoordCol(Vec2Graphics scale, Vec2Graphics texCoord, V
 
 	for(int i = 0; i < 4; ++i)
 	{
-		m->m_Normals[i] = Vec3Graphics(0.0f, 0.0f, 1.0f);
+		m->m_Normals[i] = Vec3Graphics(0.0f, 0.0f, -1.0f);
 		m->m_Tangents[i] = Vec3Graphics(1.0f, 0.0f,0.0f);
 	}
 

@@ -31,6 +31,9 @@ class MyScene : public Scene {
 	~MyScene();
 
 	bool InitialiseGL()	override;
+	
+	void initStateMachine();
+
 	void RenderScene() override;
 	void UpdateScene(float dt)  override;
 	void	Cleanup() override;
@@ -50,5 +53,7 @@ class MyScene : public Scene {
 	std::stringstream m_HighScoreNameStream;
 	void UpdateName();
 	void DisplayHighScores(float startX, float startY);
+
+	StateMachine* m_sphereStateMachine;
 
 };

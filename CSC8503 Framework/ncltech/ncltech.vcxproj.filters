@@ -31,17 +31,23 @@
     <Filter Include="Source Files\Physics\CollisionShapes">
       <UniqueIdentifier>{39bf44f8-0ca5-45ad-a15b-56a39b267895}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Header Files\States">
-      <UniqueIdentifier>{1424159c-926e-4c75-af90-545b84b227b6}</UniqueIdentifier>
+    <Filter Include="Header Files\AI">
+      <UniqueIdentifier>{89e75fcb-eb1d-40d6-bd06-a62af8ebb376}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source Files\States">
-      <UniqueIdentifier>{fbd812c7-2614-400d-9f73-617f9b69b70e}</UniqueIdentifier>
+    <Filter Include="Source Files\AI">
+      <UniqueIdentifier>{24722adf-336f-4891-8228-0de286d8b7c7}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Header Files\States\Transitions">
-      <UniqueIdentifier>{a6bea253-5c2a-4a69-8adc-4bc83e55fd6b}</UniqueIdentifier>
+    <Filter Include="Header Files\AI\States">
+      <UniqueIdentifier>{4e293d69-a16f-45fa-bbcb-263cbe038e32}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source Files\States\Transitions">
-      <UniqueIdentifier>{1a634834-1bf6-426f-8022-40af3857acba}</UniqueIdentifier>
+    <Filter Include="Source Files\AI\States">
+      <UniqueIdentifier>{18eff78a-be99-4ce1-9387-54beb05fe3cc}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\AI\Triggers">
+      <UniqueIdentifier>{548bafb5-2a34-4c86-8f42-d1bf2e01d283}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\AI\Triggers">
+      <UniqueIdentifier>{2aa8de82-273f-4f68-84cc-eb7c0d432867}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -87,44 +93,29 @@
     <ClCompile Include="OctreeSpacePartition.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="State.cpp">
-      <Filter>Source Files\States</Filter>
-    </ClCompile>
-    <ClCompile Include="StateTransition.cpp">
-      <Filter>Source Files\States\Transitions</Filter>
-    </ClCompile>
-    <ClCompile Include="CollisionTransition.cpp">
-      <Filter>Source Files\States\Transitions</Filter>
-    </ClCompile>
-    <ClCompile Include="StateMachine.cpp">
-      <Filter>Source Files\States</Filter>
-    </ClCompile>
-    <ClCompile Include="SignalState.cpp">
-      <Filter>Source Files\States</Filter>
-    </ClCompile>
-    <ClCompile Include="CollisionState.cpp">
-      <Filter>Source Files\States</Filter>
-    </ClCompile>
-    <ClCompile Include="ReceiverState.cpp">
-      <Filter>Source Files\States</Filter>
-    </ClCompile>
-    <ClCompile Include="ReceiverTransition.cpp">
-      <Filter>Source Files\States\Transitions</Filter>
-    </ClCompile>
-    <ClCompile Include="DataSourceState.cpp">
-      <Filter>Source Files\States</Filter>
-    </ClCompile>
-    <ClCompile Include="PositioningState.cpp">
-      <Filter>Source Files\States</Filter>
-    </ClCompile>
-    <ClCompile Include="TrackerGameObject.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="CollisionListener.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="PyramidCollisionShape.cpp">
       <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="StateMachine.cpp">
+      <Filter>Source Files\AI</Filter>
+    </ClCompile>
+    <ClCompile Include="State.cpp">
+      <Filter>Source Files\AI</Filter>
+    </ClCompile>
+    <ClCompile Include="DistanceTrigger.cpp">
+      <Filter>Source Files\AI\Triggers</Filter>
+    </ClCompile>
+    <ClCompile Include="Trigger.cpp">
+      <Filter>Source Files\AI</Filter>
+    </ClCompile>
+    <ClCompile Include="ChaseState.cpp">
+      <Filter>Source Files\AI\States</Filter>
+    </ClCompile>
+    <ClCompile Include="RunAwayState.cpp">
+      <Filter>Source Files\AI\States</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -179,47 +170,32 @@
     <ClInclude Include="OctreeSpacePartition.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="State.h">
-      <Filter>Header Files\States</Filter>
-    </ClInclude>
-    <ClInclude Include="StateTransition.h">
-      <Filter>Header Files\States\Transitions</Filter>
-    </ClInclude>
-    <ClInclude Include="SignalState.h">
-      <Filter>Header Files\States</Filter>
-    </ClInclude>
-    <ClInclude Include="StateMachine.h">
-      <Filter>Header Files\States</Filter>
-    </ClInclude>
-    <ClInclude Include="CollisionState.h">
-      <Filter>Header Files\States</Filter>
-    </ClInclude>
-    <ClInclude Include="CollisionTransition.h">
-      <Filter>Header Files\States\Transitions</Filter>
-    </ClInclude>
-    <ClInclude Include="ReceiverState.h">
-      <Filter>Header Files\States</Filter>
-    </ClInclude>
-    <ClInclude Include="ReceiverTransition.h">
-      <Filter>Header Files\States\Transitions</Filter>
-    </ClInclude>
-    <ClInclude Include="DataSourceState.h">
-      <Filter>Header Files\States</Filter>
-    </ClInclude>
-    <ClInclude Include="TardisState.h">
-      <Filter>Header Files\States</Filter>
-    </ClInclude>
     <ClInclude Include="DistanceConstraint.h">
       <Filter>Header Files\Physics\Constraints</Filter>
-    </ClInclude>
-    <ClInclude Include="TrackerGameObject.h">
-      <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="CollisionListener.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="PyramidCollisionShape.h">
       <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="StateMachine.h">
+      <Filter>Header Files\AI</Filter>
+    </ClInclude>
+    <ClInclude Include="State.h">
+      <Filter>Header Files\AI</Filter>
+    </ClInclude>
+    <ClInclude Include="DistanceTrigger.h">
+      <Filter>Header Files\AI\Triggers</Filter>
+    </ClInclude>
+    <ClInclude Include="Trigger.h">
+      <Filter>Header Files\AI</Filter>
+    </ClInclude>
+    <ClInclude Include="ChaseState.h">
+      <Filter>Header Files\AI\States</Filter>
+    </ClInclude>
+    <ClInclude Include="RunAwayState.h">
+      <Filter>Header Files\AI\States</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

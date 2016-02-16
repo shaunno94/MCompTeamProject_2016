@@ -10,7 +10,8 @@
 
 std::vector<GameObject*> TestCases::m_Resources;
 
-void TestCases::AddSimpleStackedRestingTestcase(Scene* scene, const Vec3Physics& pos) {
+void TestCases::AddSimpleStackedRestingTestcase(Scene* scene, const Vec3Physics& pos)
+{
 	Vec3Physics cubeScale = Vec3Physics(1.0f, 1.0f, 1.0f);
 	SimpleMeshObject* cube = new SimpleMeshObject("Cube Testcase1");
 	PhysicsObject* cubePO = cube->Physics();
@@ -43,7 +44,8 @@ void TestCases::AddSimpleStackedRestingTestcase(Scene* scene, const Vec3Physics&
 }
 
 
-void TestCases::AddSimpleSwingingTestcase(Scene* scene, const Vec3Physics& pos) {
+void TestCases::AddSimpleSwingingTestcase(Scene* scene, const Vec3Physics& pos)
+{
 	SimpleMeshObject* cube = new SimpleMeshObject("Cube");
 	cube->SetMesh(CommonMeshes::Cube(), false);
 	cube->SetLocalTransform(Mat4Physics::Scale(Vec3Physics(0.5f, 0.5f, 0.5f)));	//1m x 1m x 1m
@@ -58,7 +60,8 @@ void TestCases::AddSimpleSwingingTestcase(Scene* scene, const Vec3Physics& pos) 
 
 	std::stringstream ss;
 
-	for (size_t i = 0; i < 3; ++i) {
+	for (size_t i = 0; i < 3; ++i)
+	{
 		ss << "Sphere Swinging " << i;
 		SimpleMeshObject* sphere = new SimpleMeshObject(ss.str());
 		ss.str("");
@@ -80,7 +83,8 @@ void TestCases::AddSimpleSwingingTestcase(Scene* scene, const Vec3Physics& pos) 
 }
 
 
-void TestCases::AddPlaneTestcase(Scene* scene, const Vec3Physics& pos) {
+void TestCases::AddPlaneTestcase(Scene* scene, const Vec3Physics& pos)
+{
 	Vec3Physics halfVol = Vec3Physics(10.0f, 0.25f, 10.0f);
 	float length = halfVol.Length();
 	SimpleMeshObject* plane1 = new SimpleMeshObject("Plane1");
@@ -106,7 +110,8 @@ void TestCases::AddPlaneTestcase(Scene* scene, const Vec3Physics& pos) {
 }
 
 
-void TestCases::AddWall(Scene* scene, const Vec3Physics& pos, const Vec3Physics& scale) {
+void TestCases::AddWall(Scene* scene, const Vec3Physics& pos, const Vec3Physics& scale)
+{
 	float length = scale.Length();
 	SimpleMeshObject* plane1 = new SimpleMeshObject("Plane1");
 	plane1->SetMesh(CommonMeshes::Cube(), false);
@@ -121,11 +126,13 @@ void TestCases::AddWall(Scene* scene, const Vec3Physics& pos, const Vec3Physics&
 	m_Resources.push_back(plane1);
 }
 
-void TestCases::AddCuboidStack(Scene* scene, const Vec3Physics& pos, unsigned int size) {
+void TestCases::AddCuboidStack(Scene* scene, const Vec3Physics& pos, unsigned int size)
+{
 	Vec3Physics scale = Vec3Physics(1.0f, 1.0f, 1.0f);
 	float length = scale.Length();
 
-	for (unsigned int i = 0; i < size; ++i) {
+	for (unsigned int i = 0; i < size; ++i)
+	{
 		SimpleMeshObject* box = new SimpleMeshObject("Plane1");
 		box->SetMesh(CommonMeshes::Cube(), false);
 		box->SetLocalTransform(Mat4Physics::Scale(scale)); //80m width, 1m height, 80m depth
@@ -142,14 +149,37 @@ void TestCases::AddCuboidStack(Scene* scene, const Vec3Physics& pos, unsigned in
 }
 
 
-void TestCases::AddSpheresCuboid(Scene* scene, const Vec3Physics& pos, const Vec3Physics& count) {
+void TestCases::AddSphere(Scene* scene, const Vec3Physics& pos, unsigned int size)
+{
+	SimpleMeshObject* sphere = new SimpleMeshObject("Ball");
+	sphere->SetMesh(CommonMeshes::Sphere(), false);
+	sphere->SetLocalTransform(Mat4Physics::Scale(Vector3Simple(size, size, size))); //80m width, 1m height, 80m depth
+	sphere->SetColour(Vec4Graphics(0.8f, 0.8f, 0.8f, 1.0f));
+	sphere->SetBoundingRadius(size);
+	sphere->IsBoundingSphere(false);
+	sphere->SetBoundingHalfVolume(Vector3Simple(size, size, size));
+
+	sphere->Physics()->SetPosition(pos + Vec3Physics(0.0f, size, 0.0f));
+	sphere->Physics()->SetCollisionShape(new SphereCollisionShape(size));
+	sphere->Physics()->SetInverseMass(1.0f / (size * 10.0f));
+	sphere->Physics()->SetInverseInertia(sphere->Physics()->GetCollisionShape()->BuildInverseInertia(sphere->Physics()->GetInverseMass()));
+
+	scene->AddGameObject(sphere);
+	m_Resources.push_back(sphere);
+}
+
+void TestCases::AddSpheresCuboid(Scene* scene, const Vec3Physics& pos, const Vec3Physics& count)
+{
 	Vec3Physics start = pos - (count * 0.5f);
 	start.y += count.y;
 	Vec3Physics sphereScale = Vec3Physics(1.0f, 1.0f, 1.0f);
 
-	for (unsigned int x = 0; x < count.x; ++x) {
-		for (unsigned int y = 0; y < count.y; ++y) {
-			for (unsigned int z = 0; z < count.z; ++z) {
+	for (unsigned int x = 0; x < count.x; ++x)
+	{
+		for (unsigned int y = 0; y < count.y; ++y)
+		{
+			for (unsigned int z = 0; z < count.z; ++z)
+			{
 				SimpleMeshObject* sphere = new SimpleMeshObject("Sphere");
 				PhysicsObject* spherePO = sphere->Physics();
 				sphere->SetMesh(CommonMeshes::Sphere(), false);
@@ -169,7 +199,8 @@ void TestCases::AddSpheresCuboid(Scene* scene, const Vec3Physics& pos, const Vec
 	}
 }
 
-SimpleMeshObject* GetPyramid(const Vec3Physics& scale) {
+SimpleMeshObject* GetPyramid(const Vec3Physics& scale)
+{
 	SimpleMeshObject* pyramid = new SimpleMeshObject("Pyramid");
 	pyramid->SetMesh(CommonMeshes::Pyramid(), false);
 	pyramid->SetLocalTransform(Mat4Physics::Scale(scale));
@@ -183,7 +214,8 @@ SimpleMeshObject* GetPyramid(const Vec3Physics& scale) {
 	return pyramid;
 }
 
-void TestCases::AddStackedPyramidTestcase(Scene* scene, const Vec3Physics& pos, bool resting) {
+void TestCases::AddStackedPyramidTestcase(Scene* scene, const Vec3Physics& pos, bool resting)
+{
 	SimpleMeshObject* pyramid1 = GetPyramid(Vec3Physics(1.5f, 1.0f, 1.5f));
 	pyramid1->Physics()->SetPosition(pos + Vec3Physics(0.0f, 3.5f, 0.f));
 	pyramid1->Physics()->AtRest(resting);
@@ -216,7 +248,8 @@ void TestCases::AddStackedPyramidTestcase(Scene* scene, const Vec3Physics& pos, 
 }
 
 
-void TestCases::ReleaseResources() {
+void TestCases::ReleaseResources()
+{
 	for (GameObject* go : m_Resources)
 		delete go;
 }
