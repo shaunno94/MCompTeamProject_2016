@@ -33,11 +33,11 @@ void Scene::addGameObject(GameObject* obj)
 		obj->m_RenderComponent->m_Material->hasTranslucency ? transparentObjects.push_back(obj) : opaqueObjects.push_back(obj);
 }
 
-void Scene::UpdateNodeLists(float dt, Frustum& frustum)
+void Scene::UpdateNodeLists(float dt, Frustum& frustum, Vec3Graphics camPos)
+//TODO - separate Frustum check from OnUpdateObject
 {
 	Vec3Graphics pos, dir;
-	Vec3Graphics camPos = cam->GetPosition();
-
+	
 	//For opaque and translucent objects update and compute (sqr) distance between object and camera.
 	for (unsigned int i = 0; i < transparentObjects.size(); ++i)
 	{

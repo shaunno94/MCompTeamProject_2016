@@ -41,7 +41,7 @@ private:
 	static bool CompareByCameraDistance(const GameObject* a, const GameObject* b) { return (a->m_CamDist < b->m_CamDist); }
 	static bool CompareByCameraDistanceInv(const GameObject* a, const GameObject* b) { return (a->m_CamDist > b->m_CamDist); }
 	//Updates game objects by calling OnUpdateObject and then sorts the render lists for opaque and transparent objects.
-	void UpdateNodeLists(float dt, Frustum& frustum);
+	void UpdateNodeLists(float dt, Frustum& frustum, Vec3Graphics camPos);
 
 	std::vector<GameObject*> transparentObjects;
 	std::vector<GameObject*> opaqueObjects;
