@@ -1,31 +1,24 @@
 #pragma once
 #include "Math/nclglMath.h"
-#include "Mesh.h"
 #include "Camera.h"
 #include "Particle.h"
 #include "ParticleEmitter.h"
+#include "Material.h"
+#include "Helpers\interpolation.h"
 
 enum SystemType {BILLBOARD, TRAIL};
+
+enum ParticleBuffer {
+	POS_BUFFER, TEX_BUFFER, COLOUR_BUFFER
+};
 
 class ParticleSystem
 {
 public:
 
-	ParticleSystem(const std::string& texturePath = NULL);
+	ParticleSystem(ParticleEmitter* emitter, SystemType systemType,const std::string& texturePath, 
+		Material* material, unsigned int numParticles, Camera* camera, Shader* shader);
 	~ParticleSystem();
-
-	struct Vertex
-	{
-		Vertex()
-			:m_Pos(Vec3Graphics(0, 0, 0))
-			,m_Colour(Vec4Graphics(0, 0, 0, 0))
-			,m_Tex(Vec2Graphics(0, 0))
-		{}
-
-		Vec3Graphics m_Pos;
-		Vec4Graphics m_Colour;
-		Vec2Graphics m_Tex;
-	};
 
 	void EmitParticles();
 	void BuildVertexBuffer();
@@ -38,14 +31,23 @@ protected:
 	void RandomizePos();
 	void EmitParticle(Particle &particle);
 private:
+
 	Camera*					m_Camera;
 	ParticleEmitter*		m_ParticleEmitter;
-	GLuint					m_Texture;
+	Texture*				m_Texture;
 	SystemType				m_SystemType;
+	Material*				m_Material;
 	unsigned int			m_NumAlive;
 	std::vector<Particle>	m_Particles;
-	std::vector<Vertex>		m_VertexBuffer;
+	unsigned int			m_NumParticles;
+
+	GLuint					arrayObject;
+	GLuint					bufferObject[MAX_BUFFER];
+	GLfloat**				pos;
+	GLfloat**				tex;
+	GLfloat**				colour;
 
 	Vec3Graphics			m_Force;
+	Shader*					shader;
 
 };
