@@ -3,7 +3,7 @@
 
 #include "Renderer.h"
 
-LightMaterial::LightMaterial(Shader* shader, bool hasTranslucency) : Material(shader, hasTranslucency)
+LightMaterial::LightMaterial(OGLShader* shader, bool hasTranslucency) : Material(shader, hasTranslucency)
 {
 	shadowType = _NONE;
 	Set(ReservedOtherTextures.DEPTH.name, (int)ReservedOtherTextures.DEPTH.index);

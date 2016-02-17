@@ -23,7 +23,7 @@ private:
 	DebugDraw() {}
 	~DebugDraw();
 
-	static Shader* debugShader;
+	static OGLShader* debugShader;
 	static GLuint m_glArray;
 	static GLuint m_glBuffer;
 	static DebugDraw* DebugInstance;

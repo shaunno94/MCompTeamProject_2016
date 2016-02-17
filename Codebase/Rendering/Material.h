@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Shader.h"
+#include "OGLShader.h"
 #include "Math/nclglMath.h"
 #include <functional>
 #include <vector>
@@ -31,7 +31,7 @@ protected:
 	}
 
 	template<typename T>
-	static int setUniformValue(std::vector<std::pair<int, T>>& container, Shader* shader, const std::string& uniformName, const T& value)
+	static int setUniformValue(std::vector<std::pair<int, T>>& container, OGLShader* shader, const std::string& uniformName, const T& value)
 	{
 		int location = glGetUniformLocation(shader->GetProgram(), uniformName.c_str());
 		setUniformValue(container, location, value);
@@ -49,17 +49,17 @@ protected:
 	static Material* s_LastMaterialInUse;
 
 
-	Shader* shader;
+	OGLShader* shader;
 	std::vector<std::pair<int, Texture*>> m_uniformTextures;
 	bool repeating = true;
 
 public:
 	bool hasTranslucency;
 
-	Material(Shader* shader, bool hasTranslucency = false);
+	Material(OGLShader* shader, bool hasTranslucency = false);
 	virtual ~Material();
 
-	inline Shader* GetShader() const
+	inline OGLShader* GetShader() const
 	{
 		return shader;
 	}

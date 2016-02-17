@@ -1,3 +1,4 @@
+#ifndef ORBIS
 #include "Window.h"
 #include "Input/Mouse.h"
 #include "Input/Keyboard.h"
@@ -39,27 +40,6 @@ Window::Window(std::string title, int sizeX, int sizeY, bool fullScreen)	{
 	fullScreen ? position.y = 0.0f : position.y = 100.0f;
 
 	HINSTANCE hInstance = GetModuleHandle( NULL );
-
-//This creates the console window
-	//AllocConsole();
-
-	//int consoleHandle;	
-	//long stdHandle;
-	//FILE *file;	
-
-	//// redirect stdout
-	//stdHandle		= (long)GetStdHandle(STD_OUTPUT_HANDLE);	
-	//consoleHandle	= _open_osfhandle(stdHandle, _O_TEXT);
-	//file	= _fdopen( consoleHandle, "w" );
-	//*stdout = *file;
-	//setvbuf( stdout, NULL, _IONBF, 0 );
-
-	//// redirect stdin
-	//stdHandle	= (long)GetStdHandle(STD_INPUT_HANDLE);
-	//file		= _fdopen( consoleHandle, "r" );
-	//*stdin = *file;
-	//setvbuf( stdin, NULL, _IONBF, 0 );
-//
 
 	WNDCLASSEX windowClass;
 	ZeroMemory(&windowClass, sizeof(WNDCLASSEX));
@@ -341,3 +321,4 @@ void	Window::ShowOSPointer(bool show)	{
 		ShowCursor(0);
 	}
 }
+#endif

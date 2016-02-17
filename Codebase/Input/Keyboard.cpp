@@ -1,3 +1,4 @@
+#ifndef ORBIS
 #include "Keyboard.h"
 
 Keyboard::Keyboard(HWND &hwnd)	{
@@ -75,3 +76,4 @@ void Keyboard::Update(RAWINPUT* raw)	{
 		keyStates[key] = !(raw->data.keyboard.Flags & RI_KEY_BREAK);
 	}
 }
+#endif

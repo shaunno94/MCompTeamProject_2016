@@ -7,7 +7,7 @@
 
 Material* Material::s_LastMaterialInUse = nullptr;
 
-Material::Material(Shader* shader, bool hasTranslucency /* = false */) : shader(shader), hasTranslucency(hasTranslucency)
+Material::Material(OGLShader* shader, bool hasTranslucency /* = false */) : shader(shader), hasTranslucency(hasTranslucency)
 {
 	//Set(ReservedOtherTextures.DEPTH.name, ReservedOtherTextures.DEPTH.index);
 	assert(("Material class constructor was given a non operational shader.", shader->IsOperational()));

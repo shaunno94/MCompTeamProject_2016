@@ -1,5 +1,4 @@
 #include <cstdio>
-#include "Rendering\Window.h"
 #include "Rendering\Renderer.h"
 #include "PhysicsEngine\PhysicsEngineInstance.h"
 #include "Rendering\ModelLoader.h"
@@ -17,26 +16,18 @@ const unsigned int SUB_STEPS = 4;
 
 int main() {
 	//-------------------
-	//--- MAIN ENGINE ---
+	//--- MAIN Loop ---
 	//-------------------
 
-	//Initialise the Window
-	if (!Window::Initialise("Game Technologies - Framework Example", 1280, 800, false)) {
-		Window::Destroy();
+	//Initialise Renderer - including the window context if compiling for Windows - PC
+	Renderer renderer("Team Project - 2016", 1280, 800, false);
+	if (!renderer.HasInitialised()) {
 		return -1;
 	}
 
 	Window::GetWindow().LockMouseToWindow(true);
 	Window::GetWindow().ShowOSPointer(false);
 
-	/*CommonMeshes::InitializeMeshes();
-	NCLDebug::LoadShaders();*/
-
-	Renderer renderer(Window::GetWindow());
-	if (!renderer.HasInitialised()) {
-		return -1;
-	}
-	
 	//Initialise Bullet physics engine.
 	PhysicsEngineInstance::Instance()->setGravity(btVector3(0, -9.81, 0));
 
@@ -71,9 +62,8 @@ int main() {
 	floorPhysics->CreateCollisionShape(0, Vec3Physics(0, 1, 0), true);
 	floorPhysics->CreatePhysicsBody(0, Vec3Physics(0, -1, 0), QuatPhysics(0, 0, 0, 1));
 
-	Shader* simpleShader = new Shader(SHADER_DIR"textureVertex.glsl", SHADER_DIR"textureFragment.glsl");
-	//Shader* pointlightShader = new Shader(SHADER_DIR"pointlightvertex.glsl", SHADER_DIR"pointLightfragment.glsl");
-	Shader* pointlightShader = new Shader(SHADER_DIR"shadowCastingLightvertex.glsl", SHADER_DIR"ShadowCastingLightfragment.glsl");
+	OGLShader* simpleShader = new OGLShader(SHADER_DIR"textureVertex.glsl", SHADER_DIR"textureFragment.glsl");
+	OGLShader* pointlightShader = new OGLShader(SHADER_DIR"shadowCastingLightvertex.glsl", SHADER_DIR"shadowCastingLightfragment.glsl");
 
 	if (!pointlightShader->IsOperational())
 		return -1;
@@ -161,14 +151,12 @@ int main() {
 	while (Window::GetWindow().UpdateWindow() && !Window::GetKeyboard()->KeyDown(KEYBOARD_ESCAPE))
 	{
 		float ms = Window::GetWindow().GetTimer()->Get(1000.0f);
-		//dynamic_cast<RigidPhysicsObject*>(aiBall->GetPhysicsComponent())->GetPhysicsBody()->applyCentralForce(btVector3(10, 0, 0));
 		PhysicsEngineInstance::Instance()->stepSimulation(ms, SUB_STEPS, TIME_STEP);
 		renderer.RenderScene(ms);
 	}
 	//Cleanup
 	PhysicsEngineInstance::Release();
 	DebugDraw::Release();
-	Window::Destroy();
 	delete myScene;
 	return 0;
 }

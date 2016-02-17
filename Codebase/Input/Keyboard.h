@@ -18,6 +18,7 @@ _-_-_-_-_-_-_-|   /\_/\   NYANYANYAN
 _-_-_-_-_-_-_-""  ""   
 
 *//////////////////////////////////////////////////////////////////////////////
+#ifndef ORBIS
 #pragma once
 #include "InputDevice.h"
 
@@ -193,6 +194,4 @@ protected:
 	bool keyStates[KEYBOARD_MAX];		//Is the key down?
 	bool holdStates[KEYBOARD_MAX];		//Has the key been down for multiple updates?
 };
-
-
-
+#endif

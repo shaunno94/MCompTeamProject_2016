@@ -1,3 +1,4 @@
+#ifndef ORBIS
 #include "Matrix4Intrinsics.h"
 
 #include "Matrix3Intrinsics.h"
@@ -380,3 +381,4 @@ std::ostream& operator<<(std::ostream& o, const Matrix4Intrinsics& m)
 	       "\t" << m.values[3] << ", " << m.values[7] << ", " << m.values[11] << ", " << m.values [15] << LINE_SEPARATOR <<
 	       " )";
 }
+#endif

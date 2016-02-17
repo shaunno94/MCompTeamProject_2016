@@ -13,6 +13,7 @@ _-_-_-_-_-_-_-|   /\_/\   NYANYANYAN
 _-_-_-_-_-_-_-""  ""
 
 *//////////////////////////////////////////////////////////////////////////////
+#ifndef ORBIS
 #pragma once
 
 #include <iostream>
@@ -221,3 +222,4 @@ public:
 	//Handy string output for the matrix. Can get a bit messy, but better than nothing!
 	friend std::ostream& operator<<(std::ostream& o, const Matrix4Intrinsics& m);
 };
+#endif

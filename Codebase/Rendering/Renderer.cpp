@@ -3,7 +3,7 @@
 
 Renderer* Renderer::s_renderer;
 
-Renderer::Renderer(Window& parent) : OGLRenderer(parent)
+Renderer::Renderer(std::string title, int sizeX, int sizeY, bool fullScreen) : OGLRenderer(title, sizeX, sizeY, fullScreen)
 {
 	m_UpdateGlobalUniforms = true;
 
@@ -108,7 +108,7 @@ void Renderer::initFBO()
 	glEnable(GL_BLEND);
 
 	quad = new GameObject();
-	quad->SetRenderComponent(new RenderComponent(new LightMaterial(new Shader(SHADER_DIR"combinevert.glsl", SHADER_DIR"combinefrag.glsl")), Mesh::GenerateQuad()));
+	quad->SetRenderComponent(new RenderComponent(new LightMaterial(new OGLShader(SHADER_DIR"combinevert.glsl", SHADER_DIR"combinefrag.glsl")), Mesh::GenerateQuad()));
 	((LightMaterial*)quad->GetRenderComponent()->m_Material)->Set(ReservedOtherTextures.EMISSIVE.name, (int)ReservedOtherTextures.EMISSIVE.index);
 	((LightMaterial*)quad->GetRenderComponent()->m_Material)->Set(ReservedOtherTextures.SPECULAR.name, (int)ReservedOtherTextures.SPECULAR.index);
 }

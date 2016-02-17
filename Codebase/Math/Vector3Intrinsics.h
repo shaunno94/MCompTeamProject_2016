@@ -1,3 +1,4 @@
+#ifndef ORBIS
 #pragma once
 
 //4201-nameless structures
@@ -250,3 +251,4 @@ inline Vector3Intrinsics operator/(float f, const Vector3Intrinsics& v)
 {
 	return Vector3Intrinsics(f, f, f) / v;
 }
+#endif

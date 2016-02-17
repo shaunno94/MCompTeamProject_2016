@@ -3,7 +3,7 @@
 DebugDraw* DebugDraw::DebugInstance = nullptr;
 const char* DebugDraw::dFrag = SHADER_DIR"Debug/Fragment.glsl";
 const char* DebugDraw::dVertex = SHADER_DIR"Debug/Vertex.glsl";
-Shader* DebugDraw::debugShader = nullptr;
+OGLShader* DebugDraw::debugShader = nullptr;
 vector<btVector3> DebugDraw::lines = vector<btVector3>();
 GLuint DebugDraw::m_glArray = 0;
 GLuint DebugDraw::m_glBuffer =  0;
@@ -17,7 +17,7 @@ DebugDraw* DebugDraw::Instance()
 		DebugInstance = new DebugDraw();
 		glGenVertexArrays(1, &m_glArray);	
 		glGenBuffers(1, &m_glBuffer);
-		debugShader = new Shader(dVertex, dFrag);
+		debugShader = new OGLShader(dVertex, dFrag);
 
 		glBindVertexArray(m_glArray);
 		glBindBuffer(GL_ARRAY_BUFFER, m_glBuffer);

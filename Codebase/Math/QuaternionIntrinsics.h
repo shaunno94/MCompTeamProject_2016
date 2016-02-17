@@ -17,7 +17,7 @@ _-_-_-_-_-_-_-|   /\_/\   NYANYANYAN
 _-_-_-_-_-_-_-""  ""
 
 *//////////////////////////////////////////////////////////////////////////////
-
+#ifndef ORBIS
 #pragma once
 
 #include <iostream>
@@ -110,3 +110,4 @@ class QuaternionIntrinsics	{
 		return o << "Quat(" << q.x << "," << q.y << "," << q.z <<  "," << q.w << ")" << LINE_SEPARATOR;
 	}
 };
+#endif
