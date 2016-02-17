@@ -1,6 +1,6 @@
 #pragma once
 
-#include "GL/glew.h"
+#include "Dependencies/glew-1.13.0/include/GL/glew.h"
 #include "Dependencies/SOIL2/SOIL2.h"
 #pragma comment(lib, "SOIL2/soil2.lib")
 
@@ -8,6 +8,26 @@
 #include <unordered_map>
 #include <vector>
 #include "Helpers/common.h"
+
+#include <type_traits>
+
+static enum TextureFlags
+{
+	REPEATING = 1,
+	CLAMPING = 2,
+
+	NEAREST_NEIGHBOUR_MIN_FILTERING = 4,
+	NEAREST_NEIGHBOUR_MAX_FILTERING = 8,
+	NEAREST_NEIGHBOUR_MIN_MAX_FILTERING = 4 | 8,
+
+	BILINEAR_MIN_FILTERING = 16,
+	BILINEAR_MAX_FILTERING = 32,
+	BILINEAR_MIN_MAX_FILTERING = 16 | 32,
+
+	TRILINEAR_MIN_FILTERING = 64,
+	TRILINEAR_MAX_FILTERING = 128,
+	TRILINEAR_MIN_MAX_FILTERING = 64 | 128
+};
 
 
 /// @ingroup Rendering
@@ -107,6 +127,8 @@ public:
 	/// </summary>
 	static void ClearAll();
 
+	void SetTextureParams(unsigned int flags);
+
 protected:
 	~Texture();
 
@@ -115,6 +137,7 @@ protected:
 	static int s_memoryUsage;
 	void MeasureMemoryUsageAdd(GLuint textureId);
 	void MeasureMemoryUsageSubstract(GLuint textureId);
+
 
 
 	Texture(const std::string& filepath, size_t textureCopyIndex, bool preload = false);

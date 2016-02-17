@@ -59,4 +59,5 @@ protected:
 
 	bool m_UpdateGlobalUniforms;
 	float aspectRatio;
+	Mat4Graphics localProjMat;
 };

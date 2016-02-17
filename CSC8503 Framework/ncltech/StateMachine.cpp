@@ -1,45 +1,56 @@
 #include "StateMachine.h"
 
 
-StateMachine::StateMachine(void) {
-	m_CurrentState = nullptr;
-	m_CurrentStateIndex = 0;
+StateMachine::StateMachine()
+{
+	m_stateMap = new stateMapping();
 }
 
 
-StateMachine::~StateMachine(void) {
-	for (State* state : States)
-		delete state;
-	States.clear();
-	for (std::vector<std::pair<StateTransition*, unsigned int>>& transitionSet : StateTransitions) {
-		for (std::pair<StateTransition*, unsigned int>& transition : transitionSet)
-			delete transition.first;
-		transitionSet.clear();
-	}
-	StateTransitions.clear();
-}
+StateMachine::~StateMachine()
+{
 
-
-void StateMachine::AddState(State* state, std::vector<std::pair<StateTransition*, unsigned int>>& transitions) {
-	States.push_back(state);
-	StateTransitions.push_back(transitions);
-}
-
-void StateMachine::Update(float deltaTime) {
-	if(!m_CurrentState) {
-		m_CurrentState = States[m_CurrentStateIndex];
-		m_CurrentState->Start(nullptr);
-	}
-	m_CurrentState->Update(deltaTime);
-	for (std::pair<StateTransition*, unsigned int> transition : StateTransitions[m_CurrentStateIndex])
+	for (stateMapping::iterator it = m_stateMap->begin();
+		it != m_stateMap->end();
+		it++)
 	{
-		if(transition.first->Transition()) {
-			m_CurrentState->End();
-			m_CurrentStateIndex = transition.second;
-			State* oldState = m_CurrentState;
-			m_CurrentState = States[m_CurrentStateIndex];
-			m_CurrentState->Start(oldState);
-			return;
-		}
+		delete it->second;
 	}
+
+	m_stateMap->clear();
+	delete m_stateMap;
+	m_stateMap = nullptr;
+	activeState = nullptr;
 }
+
+void StateMachine::Update(float dt)
+{
+	activeState->Update(dt);
+}
+
+/// <summary>
+///		Check if state has already been added to the StateManager and if not load in
+/// </summary>
+/// <param name="stateName"> Identifier for State </param>
+/// <param name="state"> Actual State object</param>
+void StateMachine::AddState(std::string stateName, State* state)
+{
+	if (m_stateMap->find(stateName) == m_stateMap->end())
+		(*m_stateMap)[stateName] = state;
+}
+
+/// <summary>
+///		Get specific State
+/// </summary>
+/// <param name="stateName"> Name of state to change to </param>
+/// <returns> State matching </returns>
+bool StateMachine::ChangeState(std::string stateName)
+{
+	if (m_stateMap->find(stateName) != m_stateMap->end()) {
+		activeState = (*m_stateMap)[stateName];
+		activeState->Start();
+		return true;
+	}
+	return false;
+}
+

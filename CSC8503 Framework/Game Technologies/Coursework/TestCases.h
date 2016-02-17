@@ -15,6 +15,9 @@ public:
 	static void AddSpheresCuboid(Scene* scene, const Vec3Physics& pos, const Vec3Physics& count);
 	static void AddCuboidStack(Scene* scene, const Vec3Physics& pos, unsigned int size);
 
+
+	static void AddSphere(Scene* scene, const Vec3Physics& pos, unsigned int size);
+
 	static void ReleaseResources();
 };
 

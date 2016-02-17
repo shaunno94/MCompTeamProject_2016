@@ -97,6 +97,47 @@ void Texture::ClearAll()
 }
 
 
+void Texture::SetTextureParams(unsigned int flags)
+{
+	if (!textureId) 
+		LoadFromFile();
+
+	glBindTexture(GL_TEXTURE_2D, textureId);
+
+	// Repeat/Clamp options
+	if ((flags & REPEATING) == REPEATING) {
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+	}
+	else if ((flags & CLAMPING) == CLAMPING) {
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP);
+	}
+
+	// Filtering options
+	if ((flags & NEAREST_NEIGHBOUR_MIN_FILTERING) == NEAREST_NEIGHBOUR_MIN_FILTERING) {
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+	}
+	else if ((flags & BILINEAR_MIN_FILTERING) == BILINEAR_MIN_FILTERING) {
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	}
+	else if ((flags & TRILINEAR_MIN_FILTERING) == TRILINEAR_MIN_FILTERING) {
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+	}
+
+	if ((flags & NEAREST_NEIGHBOUR_MAX_FILTERING) == NEAREST_NEIGHBOUR_MAX_FILTERING) {
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+	}
+	else if ((flags & BILINEAR_MAX_FILTERING) == BILINEAR_MAX_FILTERING) {
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	}
+	else if ((flags & TRILINEAR_MAX_FILTERING) == TRILINEAR_MAX_FILTERING) {
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+	}
+
+	glBindTexture(GL_TEXTURE_2D, 0);
+}
+
 void Texture::MeasureMemoryUsageAdd(GLuint textureId)
 {
 	int width;
@@ -136,9 +177,6 @@ void Texture::MeasureMemoryUsageSubstract(GLuint textureId)
 
 	s_memoryUsage -= (width * height * ((r + g + b + a) / 8.0f));
 }
-
-
-
 
 Texture::Texture(const std::string& filepath, size_t index, bool preload) : filePath(filepath)
 {
@@ -190,6 +228,7 @@ void Texture::LoadFromFile()
 	{
 		std::stringstream message;
 		message << "SOIL loading error: '" << SOIL_last_result() << "' (" << filePath << ")";
+		//std::cout << "SOIL loading error: '" << SOIL_last_result() << "' (" << filePath << ")";
 		throw std::ios_base::failure(message.str());
 	}
 }

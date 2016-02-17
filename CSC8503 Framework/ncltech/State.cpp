@@ -1,19 +1,66 @@
 #include "State.h"
+#include "StateMachine.h"
 
 
-State::State(GameObject& go) {
-	m_GameObject = &go;
-	m_Active = false;
+State::State(StateMachine& stateMachine, GameObject& parent) :
+m_stateMachine(&stateMachine),
+m_parent(&parent),
+m_childStates(new stateMapping())
+{
+
 }
 
 
-State::~State(void) {
+State::~State()
+{
+	if (m_childStates->size() != 0) {
+		for (stateMapping::iterator it = m_childStates->begin();
+			it != m_childStates->end();
+			it++)
+		{
+			delete it->second;
+			m_childStates->erase(it);
+		}
+	}
+	delete m_childStates;
+
+	if (m_triggers.size() != 0) {
+		for (triggerPair* pair : m_triggers) {
+			delete pair->first;
+		}
+	}
+
 }
 
+void State::Update(float dt)
+{	
+	if (m_childStates->size() != 0)
+	{
+		(*m_childStates)[m_activeChildState]->Update(dt);
+	}
+	CheckTriggers();
+}
 
+bool State::CheckTriggers()
+{
+	for (triggerPair* &trigger : m_triggers) {
+		if (trigger->first->HasTriggered()) {
+			m_stateMachine->ChangeState(trigger->second);
+			return true;
+		}
+	}
 
-void State::Start(State* previousState) { m_Active = true; }
+	return false;
+}
 
-void State::Update(float deltaTime) {}
+void State::AddChildState(std::string stateName, State* childState)
+{
+	if (m_childStates->find(stateName) == m_childStates->end())
+		(*m_childStates)[stateName] = childState;
+}
 
-void State::End() { m_Active = false; }
+void State::AddTrigger(Trigger* trigger , std::string destState)
+{
+	m_triggers.push_back(new triggerPair(trigger, destState));
+}
+

@@ -104,7 +104,10 @@ Mesh* ReadMeshFromMGL(std::ifstream& in)
 				sstream << c;
 				in.get(c);
 			}
-			mtlData.textureMaps[i] = Texture::Get(MODEL_DIR + sstream.str());
+			Texture* newTexture = Texture::Get(MODEL_DIR + sstream.str());
+			newTexture->SetTextureParams(TextureFlags::REPEATING | TextureFlags::TRILINEAR_MIN_MAX_FILTERING);
+
+			mtlData.textureMaps[i] = newTexture;
 			sstream.str("");
 			sstream.clear();
 		}

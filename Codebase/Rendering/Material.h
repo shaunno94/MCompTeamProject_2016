@@ -51,6 +51,7 @@ protected:
 
 	Shader* shader;
 	std::vector<std::pair<int, Texture*>> m_uniformTextures;
+	bool repeating = true;
 
 public:
 	bool hasTranslucency;

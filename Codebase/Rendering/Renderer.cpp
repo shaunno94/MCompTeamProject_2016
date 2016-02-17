@@ -17,7 +17,7 @@ Renderer::Renderer(Window& parent) : OGLRenderer(parent)
 		return;
 	}*/
 	aspectRatio = float(width) / float(height);
-	projMatrix = Mat4Graphics::Perspective(1.0f, 15000.0f, aspectRatio, 45.0f);
+	localProjMat = Mat4Graphics::Perspective(1.0f, 15000.0f, aspectRatio, 45.0f);
 	glClearColor(0.2f, 0.2f, 0.2f, 1.0f);
 
 	glEnable(GL_DEPTH_TEST);
@@ -159,14 +159,11 @@ void Renderer::UpdateScene(float msec)
 //TODO:: Might need to be seperate from UpdateScene call if you want to update the scene once and draw several times (like for the cube shadow maps)
 void Renderer::RenderScene(float msec)
 {
-	projMatrix = Mat4Graphics::Perspective(1.0f, 15000.0f, aspectRatio, 45.0f);
+	projMatrix = localProjMat;
 	UpdateScene(msec);
 	glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
 
 	//glUseProgram(currentShader->GetProgram());
-	#if DEBUG_DRAW
-		PhysicsEngineInstance::Instance()->debugDrawWorld();
-	#endif
 	//Draws all objects attatched to the current scene.
 	if (currentScene)
 	{
@@ -175,20 +172,23 @@ void Renderer::RenderScene(float msec)
 		DrawPointLights(); //Second Pass
 		CombineBuffers(); //Final Pass
 	}
-
 	glUseProgram(0);
-
 	SwapBuffers();
 }
 
 void Renderer::FillBuffers()
 {
+	glDisable(GL_CULL_FACE);
 	glBindFramebuffer(GL_FRAMEBUFFER, bufferFBO);
 	glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
 
 	//SetCurrentShader(sceneShader);
 
 	UpdateShaderMatrices();
+
+#if DEBUG_DRAW
+	PhysicsEngineInstance::Instance()->debugDrawWorld();
+#endif
 
 	for (unsigned int i = 0; i < currentScene->getNumOpaqueObjects(); ++i)
 			currentScene->getOpaqueObject(i)->OnRenderObject();
@@ -197,6 +197,7 @@ void Renderer::FillBuffers()
 
 	glUseProgram(0);
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
+	glEnable(GL_CULL_FACE);
 }
 
 void Renderer::DrawPointLights()
