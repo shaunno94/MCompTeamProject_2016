@@ -51,6 +51,7 @@ protected:
 
 	Shader* shader;
 	std::vector<std::pair<int, Texture*>> m_uniformTextures;
+	bool repeating = true;
 
 public:
 	bool hasTranslucency;
@@ -58,7 +59,7 @@ public:
 	Material(Shader* shader, bool hasTranslucency = false);
 	virtual ~Material();
 
-	inline const Shader* GetShader() const
+	inline Shader* GetShader() const
 	{
 		return shader;
 	}

@@ -16,19 +16,20 @@ RenderComponent::~RenderComponent()
 //TODO: !!! Save available Mesh Texture locations on the Render Component !!!
 void RenderComponent::Draw()
 {
-	m_Material->Setup();
+	//Object is outside of view frustum
+	if (disabled)
+		return;
+
+	Renderer::GetInstance()->SetCurrentShader(m_Material->GetShader());
+
+	//model matrix
 	Renderer::UpdateUniform(m_Material->GetShader()->GetModelMatrixUniformLocation(), m_GameObject->GetWorldTransform());
 
 	//reset reserved mesh texture uniforms to use the right texture unit
 	for (GLint i = 0; i < ReservedMeshTextures.size; ++i)
 		Renderer::UpdateUniform(m_Material->GetShader()->GetReservedMeshTextureUniformLocation(i), i);
-	//reset reserved mesh colour uniforms
-	for (size_t i = 0; i < ReservedMeshColours.size; ++i)
-		Renderer::UpdateUniform(m_Material->GetShader()->GetReservedMeshColourUniformLocation(i), m_Mesh->GetColour(i));
-	//Object is outside of view frustum
-	if (disabled)
-		return;
-	m_Mesh->Draw();
+
+	m_Mesh->Draw(m_Material);
 }
 
 void RenderComponent::SetParent(GameObject* go)

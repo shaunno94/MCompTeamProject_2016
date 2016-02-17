@@ -4,9 +4,16 @@
 #include "PhysicsEngine\PhysicsEngineInstance.h"
 #include "Rendering\ModelLoader.h"
 #include "Rendering\DebugDraw.h"
+#include "Rendering\LightMaterial.h"
+
+// Includes for AI States and Triggers
+#include "AI\StateMachine.h"
+#include "AI\ChaseState.h"
+#include "AI\RunAwayState.h"
+#include "AI\DistanceTrigger.h"
 
 const float TIME_STEP = 1.0f / 120.0f;
-const unsigned int SUB_STEPS = 10;
+const unsigned int SUB_STEPS = 4;
 
 int main() {
 	//-------------------
@@ -33,45 +40,126 @@ int main() {
 	//Initialise Bullet physics engine.
 	PhysicsEngineInstance::Instance()->setGravity(btVector3(0, -9.81, 0));
 
-	#if DEBUG_DRAW
-		PhysicsEngineInstance::Instance()->setDebugDrawer(DebugDraw::Instance());
-		DebugDraw::Context(&renderer);
-	#endif
+#if DEBUG_DRAW
+	PhysicsEngineInstance::Instance()->setDebugDrawer(DebugDraw::Instance());
+	DebugDraw::Context(&renderer);
+#endif
 
-	//Test Scenario - Tardis (cuboid collision shape), floor (cuboid collision shape), ball (sphere collison shape)
+	//Test Scenario - Tardis (cuboid collision shape), floor (plane collision shape), ball (sphere collison shape)
 	Scene* myScene = new Scene();
+	myScene->getCamera()->SetPosition(Vec3Graphics(10, 5, 0));
+
 	//Game objects added to scene are delete by the scene so don't delete twice.
 	GameObject* ball = new GameObject("ball");
-	GameObject* floor = new GameObject("floor");
+	GameObject* aiBall = new GameObject("aiBall");
+	GameObject* light1 = new GameObject("l");
+	GameObject* light2 = new GameObject("l");
+	GameObject* stadium = new GameObject("stadium");
 
-	//Shader* simpleShader = new Shader(SHADER_DIR"textureVertex.glsl", SHADER_DIR"textureCoordFragment.glsl");
+	//Physics objects hold collision shape and collision object(body), 
+	//call CreateCollisionShape before CreatePhysicsBody or the object will not be created correctly.
+	//Physics objects will be deleted by the game object.
+	RigidPhysicsObject* ballPhysics = new RigidPhysicsObject();
+	ballPhysics->CreateCollisionShape(5.0);
+	ballPhysics->CreatePhysicsBody(5.0, Vec3Physics(0, 0, 0), QuatPhysics(0, 0, 0, 1), Vec3Physics(1, 1, 1));
+
+	RigidPhysicsObject* aiBallPhysics = new RigidPhysicsObject();
+	aiBallPhysics->CreateCollisionShape(2.0);
+	aiBallPhysics->CreatePhysicsBody(2.0, Vec3Physics(0.11, 15, 0.5), QuatPhysics(0, 0, 0, 1), Vec3Physics(1, 1, 1));
+	
+	RigidPhysicsObject* floorPhysics = new RigidPhysicsObject();
+	floorPhysics->CreateCollisionShape(0, Vec3Physics(0, 1, 0), true);
+	floorPhysics->CreatePhysicsBody(0, Vec3Physics(0, -1, 0), QuatPhysics(0, 0, 0, 1));
+
 	Shader* simpleShader = new Shader(SHADER_DIR"textureVertex.glsl", SHADER_DIR"textureFragment.glsl");
+	Shader* pointlightShader = new Shader(SHADER_DIR"pointlightvertex.glsl", SHADER_DIR"pointlightfragment.glsl");
+
+	if (!pointlightShader->IsOperational())
+		return -1;
+
 	if (!simpleShader->IsOperational())
 		return -1;
+
+	LightMaterial* lightMaterial = new LightMaterial(pointlightShader);
+	light1->SetRenderComponent(new RenderComponent(lightMaterial, ModelLoader::LoadMGL(MODEL_DIR"Common/ico.mgl", true)));
+	light1->SetWorldTransform(Mat4Graphics::Translation(Vec3Graphics(0, 2, 2)) *Mat4Graphics::Scale(Vec3Graphics(20, 20, 20)));
+	light1->SetBoundingRadius(20);
+
+	light2->SetRenderComponent(new RenderComponent(lightMaterial, ModelLoader::LoadMGL(MODEL_DIR"Common/ico.mgl", true)));
+	light2->SetWorldTransform(Mat4Graphics::Translation(Vec3Graphics(0, 600, 0)) *Mat4Graphics::Scale(Vec3Graphics(1600, 1600, 1600)));
+	light2->SetBoundingRadius(1600);
+
 	Material* material = new Material(simpleShader);
+	Material* ballMaterial = new Material(simpleShader);
+	ballMaterial->Set("diffuseTex", Texture::Get(TEXTURE_DIR"checkerboard.tga", true));
 
-	floor->SetRenderComponent(new RenderComponent(material, Mesh::GenerateQuad()));
-	floor->CreateCollisionShape(0, Vec3Physics(0, 1, 0), true);
-	floor->InitPhysics(0, Vec3Physics(0, -1, 0), QuatPhysics(0, 0, 0, 1));
-	floor->SetLocalScale(Vec3Graphics(20.0f, 20.0f, 1.0f));
-	myScene->addGameObject(floor);
+ 	stadium->SetRenderComponent(new RenderComponent(material, ModelLoader::LoadMGL(MODEL_DIR"Stadium/Stadium2.mgl", true)));
+	stadium->SetPhysicsComponent(floorPhysics);
+	stadium->GetPhysicsComponent()->GetPhysicsBody()->setRestitution(0.5);
+	stadium->SetLocalTransform(Mat4Graphics::Translation(Vec3Graphics(6.8, -28.5, -2.3)));
+	stadium->GetPhysicsComponent()->GetPhysicsBody()->setFriction(0.5);
+	stadium->GetPhysicsComponent()->GetPhysicsBody()->setHitFraction(0.5);
 
-	GameObject* tardis = new GameObject();
-	tardis->SetRenderComponent(new RenderComponent(material, ModelLoader::LoadMGL(MODEL_DIR"Tardis/TARDIS.mgl", true)));
-	tardis->CreateCollisionShape(Vec3Physics(5.0f, 1.0f, 5.0f), CUBOID);
-	tardis->InitPhysics(1, Vec3Physics(0, 15, 0), QuatPhysics(0, 0, 0, 1));
-	myScene->addGameObject(tardis);
 
-	ball->SetRenderComponent(new RenderComponent(material, ModelLoader::LoadMGL(MODEL_DIR"Common/sphere.mgl", true)));
-	ball->CreateCollisionShape(4.0);
-	ball->InitPhysics(1.0, Vec3Physics(0, 14, 0), QuatPhysics(0, 0, 0, 1), Vec3Physics(1, 1, 1));
+	myScene->addGameObject(stadium);
+	myScene->addLightObject(light1);
+	myScene->addLightObject(light2);
+
+	ball->SetRenderComponent(new RenderComponent(ballMaterial, ModelLoader::LoadMGL(MODEL_DIR"Common/sphere.mgl", true)));
+	ball->SetLocalTransform(Mat4Graphics::Scale(Vector3Simple(5, 5, 5)));
+	ball->SetPhysicsComponent(ballPhysics);
+	ball->GetPhysicsComponent()->GetPhysicsBody()->setRestitution(btScalar(0.9));
+	ball->GetPhysicsComponent()->GetPhysicsBody()->setFriction(0.5);
+	ball->GetPhysicsComponent()->GetPhysicsBody()->setHitFraction(0.5);
+
+
+
+	aiBall->SetRenderComponent(new RenderComponent(ballMaterial, ModelLoader::LoadMGL(MODEL_DIR"Common/sphere.mgl", true)));
+	aiBall->SetLocalTransform(Mat4Graphics::Scale(Vector3Simple(2, 2, 2)) * Mat4Graphics::Translation(Vector3Simple(0, 0, 0)));
+	aiBall->SetPhysicsComponent(aiBallPhysics);
+	aiBall->GetPhysicsComponent()->GetPhysicsBody()->setRestitution(btScalar(0.9));
+	aiBall->GetPhysicsComponent()->GetPhysicsBody()->setFriction(0.5);
+	aiBall->GetPhysicsComponent()->GetPhysicsBody()->setHitFraction(0.5);
+
+	//StateMachine* ballStateMachine = new StateMachine();
+
+	//ChaseState* chase = new ChaseState(*ballStateMachine, *aiBall, *ball);
+	//RunAwayState* run = new RunAwayState(*ballStateMachine, *aiBall, *ball);
+
+
+	//// Chase -> Run trigger 
+	////	Triggered when two objects are less than 5.0f apart
+	//DistanceTrigger* chaseToRun = new DistanceTrigger();
+	//chaseToRun->setupTrigger(*aiBall, *ball, 5.0f, true);
+	//chase->AddTrigger(chaseToRun, "Run");
+
+	//ballStateMachine->AddState("Chase", chase);
+
+
+	//// Run -> Chase trigger 
+	////	Triggered when two objects are greater than 25.0f apart
+	//DistanceTrigger* runToChase = new DistanceTrigger();
+	//runToChase->setupTrigger(*aiBall, *ball, 25.0f, false);
+	//run->AddTrigger(runToChase, "Chase");
+
+	//ballStateMachine->AddState("Run", run);
+
+	//ballStateMachine->ChangeState("Chase");
+
+	//aiBall->SetStateMachine(ballStateMachine);
+
 	myScene->addGameObject(ball);
+	myScene->addGameObject(aiBall);
 
 	renderer.SetCurrentScene(myScene);
-	
+
+	dynamic_cast<RigidPhysicsObject*>(ball->GetPhysicsComponent())->GetPhysicsBody()->setAngularVelocity(btVector3(1, 0, 0));
+	dynamic_cast<RigidPhysicsObject*>(aiBall->GetPhysicsComponent())->GetPhysicsBody()->applyCentralForce(btVector3(10, 0, 0));
+
 	while (Window::GetWindow().UpdateWindow() && !Window::GetKeyboard()->KeyDown(KEYBOARD_ESCAPE))
 	{
 		float ms = Window::GetWindow().GetTimer()->Get(1000.0f);
+		//dynamic_cast<RigidPhysicsObject*>(aiBall->GetPhysicsComponent())->GetPhysicsBody()->applyCentralForce(btVector3(10, 0, 0));
 		PhysicsEngineInstance::Instance()->stepSimulation(ms, SUB_STEPS, TIME_STEP);
 		renderer.RenderScene(ms);
 	}

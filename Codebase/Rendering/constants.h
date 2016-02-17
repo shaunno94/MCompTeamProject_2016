@@ -90,7 +90,31 @@ ReservedMeshTextures =
 	reservedMeshTextureCounter++, "specularColourTex",
 	reservedMeshTextureCounter++, "specularHighlightTex",
 	reservedMeshTextureCounter++, "alphaTex",
-	reservedMeshTextureCounter++, "bumpMap"
+	reservedMeshTextureCounter++, "bumpTex"
+};
+
+//TODO - remove?? no
+static const struct ReservedOtherTexturesStruct
+{
+	const union
+	{
+		const struct
+		{
+			ShaderUniformInfo DEPTH;
+			ShaderUniformInfo NORMALS;
+			ShaderUniformInfo EMISSIVE;
+			ShaderUniformInfo SPECULAR;
+		};
+		ShaderUniformInfo values[2];
+};
+	static const size_t size = 2;
+
+} ReservedOtherTextures =
+{
+	reservedMeshTextureCounter++, "depthTex",
+	reservedMeshTextureCounter++, "normTex",
+	reservedMeshTextureCounter++, "emissiveTex",
+	reservedMeshTextureCounter++, "specularTex"
 };
 
 /// <summary>

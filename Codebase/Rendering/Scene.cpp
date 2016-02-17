@@ -74,3 +74,8 @@ void Scene::UpdateNodeLists(float dt, Frustum& frustum)
 	InsertionSort(transparentObjects.begin(), transparentObjects.end(), Scene::CompareByCameraDistanceInv);
 	InsertionSort(opaqueObjects.begin(), opaqueObjects.end(), Scene::CompareByCameraDistance);
 }
+
+void Scene::addLightObject(GameObject* obj)
+{
+	lightObjects.push_back(obj);
+}
