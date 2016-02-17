@@ -5,9 +5,6 @@
 #include "Scene.h"
 #include "constants.h"
 #define DEBUG_DRAW 1
-//size of shadow textures, TODO - smaller?
-#define SHADOWSIZE 4096
-
 
 /// @ingroup Rendering
 /// <summary>
@@ -33,16 +30,16 @@ public:
 	void UpdateScene(float msec);
 
 protected:
-	Scene* currentScene;
+	/*Scene* currentScene;
 	Frustum frameFrustrum;
-	Frustum lightFrustrum;
+	Frustum lightFrustrum;*/
 	//--Contained in Scene--//
 	//Camera*	camera;
 
 	static Renderer* s_renderer;
 	//----------------------//
 
-	void FillBuffers(); //G- Buffer Fill Render Pass
+	/*void FillBuffers(); //G- Buffer Fill Render Pass
 	void DrawPointLights(); // Lighting Render Pass
 	void CombineBuffers(); // Combination Render Pass
 	void DrawShadow(GameObject* light);
@@ -68,4 +65,5 @@ protected:
 
 	bool m_UpdateGlobalUniforms;
 	float aspectRatio;
+	Mat4Graphics localProjMat;*/
 };

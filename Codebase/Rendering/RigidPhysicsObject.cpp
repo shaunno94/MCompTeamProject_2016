@@ -19,7 +19,7 @@ bool RigidPhysicsObject::CreatePhysicsBody(double mass, const Vec3Physics& posit
 
 	//Create a physics object.
 	//Rigid body object (http://www.bulletphysics.org/mediawiki-1.5.8/index.php/Rigid_Bodies)
-	m_ConstructionInfo = new btRigidBody::btRigidBodyConstructionInfo(mass, m_MotionState, m_ColShape, btVector3(0, 0, 0));
+	m_ConstructionInfo = new btRigidBody::btRigidBodyConstructionInfo(mass, m_MotionState, m_ColShape, btVector3(inertia.x, inertia.y, inertia.z));
 	m_CollisionObject = new btRigidBody(*m_ConstructionInfo);
 
 	if (particle)
