@@ -1,6 +1,5 @@
 #pragma once
 
-#include "OGLRenderer.h"
 #include "Camera.h"
 #include "Scene.h"
 #include "constants.h"
@@ -10,7 +9,13 @@
 /// <summary>
 /// Non-platform specific functionality for rendering a <see cref="Scene"/>.
 /// </summary>
+#ifndef ORBIS
+#include "OGLRenderer.h"
 class Renderer : public OGLRenderer
+#else
+#include "PS4Renderer.h"
+class Renderer : public PS4Renderer 
+#endif
 {
 public:
 
@@ -19,7 +24,7 @@ public:
 		return s_renderer;
 	}
 
-	Renderer(Window& parent);
+	Renderer(std::string title, int sizeX, int sizeY, bool fullScreen);
 	virtual ~Renderer(void);
 
 	void RenderScene(float msec);
@@ -60,4 +65,5 @@ protected:
 	bool m_UpdateGlobalUniforms;
 	float aspectRatio;
 	Mat4Graphics localProjMat;
+	float windowHeight, windowWidth;
 };

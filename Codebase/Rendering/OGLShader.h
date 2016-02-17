@@ -15,7 +15,7 @@ _-_-_-_-_-_-_-""  ""
 *//////////////////////////////////////////////////////////////////////////////
 
 #pragma once
-
+#ifndef ORBIS
 //TODO: remove this dependency?
 #include "OGLRenderer.h"
 #include "constants.h"
@@ -33,11 +33,11 @@ using namespace std;
 /// <summary>
 /// 
 /// </summary>
-class Shader
+class OGLShader
 {
 public:
-	Shader(string vertex, string fragment , string geometry = "", string tcsFile = "", string tesFile = "");
-	~Shader(void);
+	OGLShader(string vertex, string fragment, string geometry = "", string tcsFile = "", string tesFile = "");
+	~OGLShader(void);
 
 	inline GLuint  GetProgram() const
 	{
@@ -74,4 +74,4 @@ protected:
 	GLint m_ReservedMeshTextureLocations[ReservedMeshTextures.size];
 	GLint m_ReservedMeshColourLocations[ReservedMeshColours.size];
 };
-
+#endif

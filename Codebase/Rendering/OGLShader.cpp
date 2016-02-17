@@ -1,6 +1,7 @@
-#include "Shader.h"
+#ifndef ORBIS
+#include "OGLShader.h"
 
-Shader::Shader(std::string vFile, std::string fFile, std::string gFile, std::string tcsFile, std::string tesFile)
+OGLShader::OGLShader(std::string vFile, std::string fFile, std::string gFile, std::string tcsFile, std::string tesFile)
 {
 	program		= glCreateProgram();
 	objects[SHADER_VERTEX]		= GenerateShader(vFile	 , GL_VERTEX_SHADER);
@@ -60,7 +61,7 @@ Shader::Shader(std::string vFile, std::string fFile, std::string gFile, std::str
 		operational = GL_FALSE;
 }
 
-Shader::~Shader(void)
+OGLShader::~OGLShader(void)
 {
 	for (int i = 0; i < 3; ++i)
 	{
@@ -70,7 +71,7 @@ Shader::~Shader(void)
 	glDeleteProgram(program);
 }
 
-bool	Shader::LoadShaderFile(string from, string& into)
+bool OGLShader::LoadShaderFile(string from, string& into)
 {
 	ifstream	file;
 	string		temp;
@@ -97,7 +98,7 @@ bool	Shader::LoadShaderFile(string from, string& into)
 	return true;
 }
 
-GLuint	Shader::GenerateShader(string from, GLenum type)
+GLuint OGLShader::GenerateShader(string from, GLenum type)
 {
 	cout << "Compiling Shader..." << endl;
 
@@ -129,7 +130,7 @@ GLuint	Shader::GenerateShader(string from, GLenum type)
 	return shader;
 }
 
-void	Shader::SetDefaultAttributes()
+void OGLShader::SetDefaultAttributes()
 {
 	glBindAttribLocation(program, VERTEX_BUFFER,  "position");
 	glBindAttribLocation(program, NORMAL_BUFFER,  "normal");
@@ -138,3 +139,4 @@ void	Shader::SetDefaultAttributes()
 	//TODO: hm???
 	glBindAttribLocation(program, MAX_BUFFER + 1,  "transformIndex");
 }
+#endif

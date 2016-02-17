@@ -10,7 +10,7 @@ protected:
 	std::vector<std::pair<int, int>> m_uniformInts;
 
 public:
-	LightMaterial(Shader* shader, bool hasTranslucency = false);
+	LightMaterial(OGLShader* shader, bool hasTranslucency = false);
 	~LightMaterial();
 
 	virtual void Setup() override;

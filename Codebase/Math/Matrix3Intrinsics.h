@@ -1,3 +1,4 @@
+#ifndef ORBIS
 #pragma once
 
 #include "Matrix4Intrinsics.h"
@@ -147,4 +148,4 @@ class Matrix3Intrinsics {
 	//Handy string output for the matrix. Can get a bit messy, but better than nothing!
 	friend std::ostream& operator<<(std::ostream& o, const Matrix3Intrinsics& m);
 };
-
+#endif
