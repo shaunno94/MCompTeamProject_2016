@@ -5,6 +5,8 @@
 #include "Rendering\ModelLoader.h"
 #include "Rendering\DebugDraw.h"
 #include "Rendering\LightMaterial.h"
+#include "Rendering\ParticleManager.h"
+#include "Rendering\ParticleSystem.h"
 
 // Includes for AI States and Triggers
 #include "AI\StateMachine.h"
@@ -155,6 +157,9 @@ int main() {
 
 	dynamic_cast<RigidPhysicsObject*>(ball->GetPhysicsComponent())->GetPhysicsBody()->setAngularVelocity(btVector3(1, 0, 0));
 	dynamic_cast<RigidPhysicsObject*>(aiBall->GetPhysicsComponent())->GetPhysicsBody()->applyCentralForce(btVector3(10, 0, 0));
+
+	ParticleManager::Initialise();
+	//ParticleManager::AddSystem(new ParticleSystem());
 
 	while (Window::GetWindow().UpdateWindow() && !Window::GetKeyboard()->KeyDown(KEYBOARD_ESCAPE))
 	{
