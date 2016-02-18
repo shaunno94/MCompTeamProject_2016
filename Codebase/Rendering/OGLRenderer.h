@@ -100,6 +100,9 @@ protected:
 	void CombineBuffers(); // Combination Render Pass
 	void initFBO();
 	void GenerateScreenTexture(GLuint & into, bool depth = false);
+	void DrawShadow(GameObject* light);
+	void DrawShadow2D(GameObject* light);
+	void DrawShadowCube(GameObject* light);
 
 	GLuint bufferFBO; // FBO for G- Buffer pass
 	GLuint bufferColourTex; // Albedo goes here
@@ -109,6 +112,15 @@ protected:
 	GLuint pointLightFBO; // FBO for lighting pass
 	GLuint lightEmissiveTex; // Store emissive lighting
 	GLuint lightSpecularTex; // Store specular lighting
+
+	GLuint shadowFBO;
+	GLuint cubeShadowFBO;
+	GLuint shadowTex2D; //stores depths for shadow calulations
+	GLuint shadowTexCube; //stores depths for shadow calulations
+
+	Vec3Graphics directions[6];//TODO - should be constants
+	Vec3Graphics up[6];
+
 	GameObject* quad;
 	static Renderer* child;
 };

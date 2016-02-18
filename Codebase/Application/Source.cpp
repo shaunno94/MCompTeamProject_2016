@@ -62,7 +62,8 @@ int main() {
 	floorPhysics->CreatePhysicsBody(0, Vec3Physics(0, -1, 0), QuatPhysics(0, 0, 0, 1));
 
 	OGLShader* simpleShader = new OGLShader(SHADER_DIR"textureVertex.glsl", SHADER_DIR"textureFragment.glsl");
-	OGLShader* pointlightShader = new OGLShader(SHADER_DIR"pointlightvertex.glsl", SHADER_DIR"pointlightfragment.glsl");
+	OGLShader* pointlightShader = new OGLShader(SHADER_DIR"2dShadowLightvertex.glsl", SHADER_DIR"2dShadowLightfragment.glsl");
+	//OGLShader* pointlightShader = new OGLShader(SHADER_DIR"CubeShadowLightvertex.glsl", SHADER_DIR"CubeShadowLightfragment.glsl");
 
 	if (!pointlightShader->IsOperational())
 		return -1;
@@ -75,8 +76,9 @@ int main() {
 	light1->SetWorldTransform(Mat4Graphics::Translation(Vec3Graphics(0, 2, 2)) *Mat4Graphics::Scale(Vec3Graphics(20, 20, 20)));
 	light1->SetBoundingRadius(20);
 
+	lightMaterial->shadowType=_2D;
 	light2->SetRenderComponent(new RenderComponent(lightMaterial, ModelLoader::LoadMGL(MODEL_DIR"Common/ico.mgl", true)));
-	light2->SetWorldTransform(Mat4Graphics::Translation(Vec3Graphics(0, 600, 0)) *Mat4Graphics::Scale(Vec3Graphics(1600, 1600, 1600)));
+	light2->SetWorldTransform(Mat4Graphics::Translation(Vec3Graphics(600, 600, 600)) *Mat4Graphics::Scale(Vec3Graphics(1600, 1600, 1600)));
 	light2->SetBoundingRadius(1600);
 
 	Material* material = new Material(simpleShader);
@@ -92,7 +94,7 @@ int main() {
 
 
 	myScene->addGameObject(stadium);
-	myScene->addLightObject(light1);
+	//myScene->addLightObject(light1);
 	myScene->addLightObject(light2);
 
 	ball->SetRenderComponent(new RenderComponent(ballMaterial, ModelLoader::LoadMGL(MODEL_DIR"Common/sphere.mgl", true)));

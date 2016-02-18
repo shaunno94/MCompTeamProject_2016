@@ -378,7 +378,7 @@ void	Mesh::BufferData()
 	//moved here from constructor to not require OpenGL instance when using Mesh for format conversion
 	glGenVertexArrays(1, &arrayObject);
 
-	//GenerateNormals();
+	GenerateNormals();
 	//GenerateTangents();
 
 	glBindVertexArray(arrayObject);
@@ -475,7 +475,7 @@ void	Mesh::GenerateNormals()
 			Vec3Graphics& b = m_Vertices[i+1];
 			Vec3Graphics& c = m_Vertices[i+2];
 
-			Vec3Graphics normal = (b-a).Cross(c-a);
+			Vec3Graphics normal = (a-b).Cross(a-c);
 
 			m_Normals[i]	 = normal;
 			m_Normals[i+1] = normal;

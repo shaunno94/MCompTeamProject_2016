@@ -11,6 +11,8 @@ PS4Renderer()
 {
 	m_UpdateGlobalUniforms = true;
 	currentShader = nullptr;
+	//TODO: change SHADERDIR to SHADER_DIR
+	/*currentShader = new Shader(SHADER_DIR"basicVertex.glsl", SHADER_DIR"colourFragment.glsl");
 
 	aspectRatio = float(sizeX) / float(sizeY);
 	pixelPitch = Vec2Graphics(1.0f / float(sizeX), 1.0f / float(sizeY));
@@ -45,7 +47,7 @@ void Renderer::UpdateScene(float msec)
 		viewMatrix = currentScene->getCamera()->BuildViewMatrix();
 		//Updates all objects in the scene, sorts lists for rendering
 		frameFrustrum.FromMatrix(projMatrix * viewMatrix);
-		currentScene->UpdateNodeLists(msec, frameFrustrum);
+		currentScene->UpdateNodeLists(msec, frameFrustrum, currentScene->getCamera()->GetPosition());
 	}
 
 	if (m_UpdateGlobalUniforms)
@@ -81,9 +83,9 @@ void Renderer::RenderScene(float msec)
 	SwapBuffers();
 }
 
-void Renderer::OnUpdateScene()
+void Renderer::OnUpdateScene(float dt, Frustum& frustum, Vec3Graphics camPos)
 {
-
+	currentScene->UpdateNodeLists(dt, frustum, camPos);
 }
 
 void Renderer::OnRenderScene()
@@ -99,9 +101,13 @@ void Renderer::OnRenderLights()
 	for (unsigned int i = 0; i < currentScene->getNumLightObjects(); ++i)
 	{
 		GameObject* light = currentScene->getLightObject(i);
-		((LightMaterial*)light->GetRenderComponent()->m_Material)->Set("lightPos", light->GetWorldTransform().GetTranslation());
-		((LightMaterial*)light->GetRenderComponent()->m_Material)->Set("lightRadius", light->GetBoundingRadius());
-		((LightMaterial*)light->GetRenderComponent()->m_Material)->Set("lightColour", Vec4Graphics(1, 1, 1, 1));
+		DrawShadow(light);
+		LightMaterial* lm = (LightMaterial*)light->GetRenderComponent()->m_Material;
+		lm->Set("lightPos", light->GetWorldTransform().GetTranslation());
+		lm->Set("lightRadius", light->GetBoundingRadius());
+		lm->Set("lightColour", Vec4Graphics(1, 0.7, 0.5, 1));
+		lm->Set("cameraPos", currentScene->getCamera()->GetPosition());
+		lm->Set("shadowBias", lm->shadowBias);
 
 		UpdateShaderMatrices();
 

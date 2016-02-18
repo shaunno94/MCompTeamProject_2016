@@ -17,7 +17,7 @@ class Renderer : public PS4Renderer
 	friend class PS4Renderer;
 #endif
 public:
-	static Renderer* GetInstance() { return s_renderer; }	
+	static Renderer* GetInstance() { return s_renderer; }
 	void SetCurrentScene(Scene* s) { currentScene = s; }
 
 	Renderer(std::string title, int sizeX, int sizeY, bool fullScreen);
@@ -27,11 +27,12 @@ public:
 	void UpdateScene(float msec);
 
 protected:
-	void OnUpdateScene();
+	void OnUpdateScene(float dt, Frustum& frustum, Vec3Graphics camPos);
 	void OnRenderScene();
 	void OnRenderLights();
 
 	Frustum frameFrustrum;
+	Frustum lightFrustrum;
 	static Renderer* s_renderer;
 	void updateGlobalUniforms(Material* material);
 
