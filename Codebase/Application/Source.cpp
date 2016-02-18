@@ -3,7 +3,6 @@
 #include "PhysicsEngine\PhysicsEngineInstance.h"
 #include "Rendering\ModelLoader.h"
 #include "Rendering\DebugDraw.h"
-#include "Rendering\LightMaterial.h"
 
 // Includes for AI States and Triggers
 #include "AI\StateMachine.h"

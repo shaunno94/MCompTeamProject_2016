@@ -47,9 +47,9 @@ protected:
 
 	bool ShaderIsBinary(const string& name);
 
-	void	SubmitShaderSwitch(Gnmx::GnmxGfxContext& cmdList);
+	void SubmitShaderSwitch(Gnmx::GnmxGfxContext& cmdList);
 
-	int		GetConstantBuffer(const string &name);
+	int	GetConstantBuffer(const string &name);
 
 protected:
 	void*							fetchShader;

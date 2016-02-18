@@ -12,6 +12,22 @@
 #define SHADER_TES 4
 #define SHADER_MAX_STAGE_COUNT 5
 
+//A handy enumerator, to determine which member of the bufferObject array
+//holds which data
+/// @ingroup Rendering
+/// <summary>
+/// Enumerator, to determine which member of the bufferObject array holds which data
+/// </summary>
+enum MeshBuffer
+{
+	VERTEX_BUFFER,
+	TEXTURE_BUFFER,
+	NORMAL_BUFFER,
+	TANGENT_BUFFER,
+	INDEX_BUFFER,
+	MAX_BUFFER
+};
+
 #ifdef _DEBUG
 //In debug, the expectation is applications will be run from visual studio (starting directory being the project)
 #define SHADER_DIR	"../Assets/Shaders/"

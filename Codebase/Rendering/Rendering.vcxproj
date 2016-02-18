@@ -168,6 +168,7 @@
     <ClInclude Include="RigidPhysicsObject.h" />
     <ClInclude Include="Scene.h" />
     <ClInclude Include="OGLShader.h" />
+    <ClInclude Include="Shader.h" />
     <ClInclude Include="SoftPhysicsObject.h" />
     <ClInclude Include="Texture.h" />
     <ClInclude Include="Window.h" />

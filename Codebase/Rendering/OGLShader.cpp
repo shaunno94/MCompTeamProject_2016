@@ -1,5 +1,8 @@
 #ifndef ORBIS
 #include "OGLShader.h"
+#include <iostream>
+#include <fstream>
+using namespace std;
 
 OGLShader::OGLShader(std::string vFile, std::string fFile, std::string gFile, std::string tcsFile, std::string tesFile)
 {

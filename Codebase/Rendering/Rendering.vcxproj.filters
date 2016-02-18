@@ -126,6 +126,9 @@
     <ClInclude Include="Window.h">
       <Filter>Header Files\OGL_API</Filter>
     </ClInclude>
+    <ClInclude Include="Shader.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Renderer.cpp">
