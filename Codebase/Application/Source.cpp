@@ -3,6 +3,7 @@
 #include "PhysicsEngine\PhysicsEngineInstance.h"
 #include "Rendering\ModelLoader.h"
 #include "Rendering\DebugDraw.h"
+#include "Rendering\GameTimer.h"
 
 // Includes for AI States and Triggers
 #include "AI\StateMachine.h"
@@ -24,8 +25,7 @@ int main() {
 		return -1;
 	}
 
-	Window::GetWindow().LockMouseToWindow(true);
-	Window::GetWindow().ShowOSPointer(false);
+	GameTimer timer;
 
 	//Initialise Bullet physics engine.
 	PhysicsEngineInstance::Instance()->setGravity(btVector3(0, -9.81, 0));
@@ -148,7 +148,7 @@ int main() {
 
 	while (Window::GetWindow().UpdateWindow() && !Window::GetKeyboard()->KeyDown(KEYBOARD_ESCAPE))
 	{
-		float ms = Window::GetWindow().GetTimer()->Get(1000.0f);
+		float ms = timer.GetTimer()->Get(1000.0f);
 		PhysicsEngineInstance::Instance()->stepSimulation(ms, SUB_STEPS, TIME_STEP);
 		renderer.RenderScene(ms);
 	}

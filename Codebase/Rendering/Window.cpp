@@ -100,10 +100,6 @@ Window::Window(std::string title, int sizeX, int sizeY, bool fullScreen)	{
 	if(!mouse) {
 		mouse		= new Mouse(windowHandle);
 	}
-	//if(!timer) {
-		timer		= new DeltaTimer<float>();
-	//}
-	elapsedMS	= timer->Age(1000.0f);
 
 	Window::GetMouse()->SetAbsolutePositionBounds((unsigned int)size.x,(unsigned int)size.y);
 
@@ -111,6 +107,9 @@ Window::Window(std::string title, int sizeX, int sizeY, bool fullScreen)	{
 	GetCursorPos(&pt);
 	ScreenToClient(window->windowHandle, &pt);
 	Window::GetMouse()->SetAbsolutePosition(pt.x,pt.y);
+	
+	Window::GetWindow().LockMouseToWindow(true);
+	Window::GetWindow().ShowOSPointer(false);
 
 	LockMouseToWindow(lockMouse);
 	ShowOSPointer(showMouse);
@@ -145,9 +144,9 @@ void	Window::SetRenderer(OGLRenderer* r)	{
 bool	Window::UpdateWindow() {
 	MSG		msg;
 
-	float diff = timer->Age(1000.0f)-elapsedMS;
+	//float diff = timer->Age(1000.0f)-elapsedMS;
 
-	Window::GetMouse()->UpdateDoubleClick(diff);
+	//Window::GetMouse()->UpdateDoubleClick(diff);
 
 	Window::GetKeyboard()->UpdateHolds();
 	Window::GetMouse()->UpdateHolds();
@@ -156,7 +155,7 @@ bool	Window::UpdateWindow() {
 		CheckMessages(msg); 
 	}
 
-	elapsedMS = timer->Age(1000.0f);
+	//elapsedMS = timer->Age(1000.0f);
 
 	return !forceQuit;
 }

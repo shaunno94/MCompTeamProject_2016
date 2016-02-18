@@ -151,6 +151,7 @@
     <ClInclude Include="ExtendedMaterial.h" />
     <ClInclude Include="Frustum.h" />
     <ClInclude Include="GameObject.h" />
+    <ClInclude Include="GameTimer.h" />
     <ClInclude Include="LightMaterial.h" />
     <ClInclude Include="Material.h" />
     <ClInclude Include="Mesh.h" />
