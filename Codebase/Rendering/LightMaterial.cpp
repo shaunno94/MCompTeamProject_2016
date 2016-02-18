@@ -1,6 +1,4 @@
 #include "LightMaterial.h"
-
-
 #include "Renderer.h"
 
 LightMaterial::LightMaterial(OGLShader* shader, bool hasTranslucency) : Material(shader, hasTranslucency)

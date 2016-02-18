@@ -2,7 +2,6 @@
 #pragma once
 #include "Helpers/common.h"
 #include <string>
-#include <fstream>
 #include <vector>
 
 #include "Dependencies/glew-1.13.0/include/GL/glew.h"
@@ -13,8 +12,7 @@
 #pragma comment(lib, "opengl32.lib")
 #pragma comment(lib, "glew-1.13.0/lib/Release/Win32/glew32s.lib")
 
-#include "OGLShader.h"		
-#include "Mesh.h"		
+#include "LightMaterial.h"
 #include <vector>
 
 //#define OPENGL_DEBUGGING
@@ -37,7 +35,12 @@ static const float biasValues[16] =
 static const Mat4Graphics biasMatrix(biasValues);
 
 class OGLShader;
-
+class GameObject;
+class Renderer;
+enum CULL
+{
+	FRONT, BACK
+};
 /// @ingroup Rendering
 /// <summary>
 /// OpenGL specific functionality for the Renderer.
@@ -77,6 +80,7 @@ protected:
 	virtual void	Resize(int x, int y);
 
 	void			SetTextureRepeating(GLuint target, bool state);
+	void SetCullFace(enum CULL c) { glCullFace(c == FRONT ? GL_FRONT : GL_BACK); };
 
 	OGLShader* currentShader;
 
@@ -90,5 +94,34 @@ protected:
 
 	HDC		deviceContext;	//...Device context?
 	HGLRC	renderContext;	//Permanent Rendering Context
+
+	void FillBuffers(); //G- Buffer Fill Render Pass
+	void DrawPointLights(); // Lighting Render Pass
+	void CombineBuffers(); // Combination Render Pass
+	void initFBO();
+	void GenerateScreenTexture(GLuint & into, bool depth = false);
+	void DrawShadow(GameObject* light);
+	void DrawShadow2D(GameObject* light);
+	void DrawShadowCube(GameObject* light);
+
+	GLuint bufferFBO; // FBO for G- Buffer pass
+	GLuint bufferColourTex; // Albedo goes here
+	GLuint bufferNormalTex; // Normals go here
+	GLuint bufferDepthTex; // Depth goes here
+
+	GLuint pointLightFBO; // FBO for lighting pass
+	GLuint lightEmissiveTex; // Store emissive lighting
+	GLuint lightSpecularTex; // Store specular lighting
+
+	GLuint shadowFBO;
+	GLuint cubeShadowFBO;
+	GLuint shadowTex2D; //stores depths for shadow calulations
+	GLuint shadowTexCube; //stores depths for shadow calulations
+
+	Vec3Graphics directions[6];//TODO - should be constants
+	Vec3Graphics up[6];
+
+	GameObject* quad;
+	static Renderer* child;
 };
 #endif
