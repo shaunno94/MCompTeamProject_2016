@@ -2,32 +2,28 @@
 
 Renderer* Renderer::s_renderer = nullptr;
 
-Renderer::Renderer(std::string title, int sizeX, int sizeY, bool fullScreen) : OGLRenderer(title, sizeX, sizeY, fullScreen)
+Renderer::Renderer(std::string title, int sizeX, int sizeY, bool fullScreen) :
+#ifndef ORBIS 
+OGLRenderer(title, sizeX, sizeY, fullScreen)
+#else
+PS4Renderer()
+#endif
 {
 	m_UpdateGlobalUniforms = true;
-
 	currentShader = nullptr;
-	//TODO: change SHADERDIR to SHADER_DIR
-	/*currentShader = new Shader(SHADER_DIR"basicVertex.glsl", SHADER_DIR"colourFragment.glsl");
 
-	/*if (!currentShader->IsOperational())
-	{
-		return;
-	}*/
-	aspectRatio = float(width) / float(height);
+	aspectRatio = float(sizeX) / float(sizeY);
+	pixelPitch = Vec2Graphics(1.0f / float(sizeX), 1.0f / float(sizeY));
 	localProjMat = Mat4Graphics::Perspective(1.0f, 15000.0f, aspectRatio, 45.0f);
 
 	currentScene = nullptr;
-	init = true;
+
 	if (!s_renderer)
 		s_renderer = this;
 	child = this;
 }
 
-Renderer::~Renderer(void)
-{
-	delete quad;
-}
+Renderer::~Renderer(void) {}
 
 void Renderer::updateGlobalUniforms(Material* material)
 {
@@ -36,7 +32,7 @@ void Renderer::updateGlobalUniforms(Material* material)
 	{
 		Vec3Graphics camPos = currentScene->getCamera()->GetPosition();
 		auto test = lightMat->Set("cameraPos", camPos);
-		lightMat->Set("pixelSize", Vec2Graphics(1.0f / width, 1.0f / height));
+		lightMat->Set("pixelSize", pixelPitch);
 		int i = 0;
 	}
 }

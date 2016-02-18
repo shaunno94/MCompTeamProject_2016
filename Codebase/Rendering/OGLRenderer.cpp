@@ -38,7 +38,6 @@ OGLRenderer::OGLRenderer(std::string title, int sizeX, int sizeY, bool fullScree
 		}
 	}
 
-
 	HWND windowHandle = Window::GetWindow().GetHandle();
 
 	// Did We Get A Device Context?
@@ -108,7 +107,6 @@ OGLRenderer::OGLRenderer(std::string title, int sizeX, int sizeY, bool fullScree
 		return;
 	}
 	//We do support OGL 3! Let's set it up...
-
 	int attribs[] =
 	{
 		WGL_CONTEXT_MAJOR_VERSION_ARB, major,	//TODO: Maybe lock this to 3? We might actually get an OpenGL 4.x context...
@@ -142,12 +140,22 @@ OGLRenderer::OGLRenderer(std::string title, int sizeX, int sizeY, bool fullScree
 		std::cout << "OGLRenderer::OGLRenderer(): Cannot initialise GLEW!" << std::endl;	//It's all gone wrong!
 		return;
 	}
+
 	//If we get this far, everything's going well!
 	glClearColor(0.2f, 0.2f, 0.2f, 1.0f);			//When we clear the screen, we want it to be dark grey
 
-	currentShader = 0;							//0 is the 'null' object name for shader programs...
+	currentShader = nullptr;							//0 is the 'null' object name for shader programs...
 
-	Window::GetWindow().SetRenderer(this);					//Tell our window about the new renderer! (Which will in turn resize the renderer window to fit...)
+	Window::GetWindow().SetRenderer(this);					//Tell our window about the new renderer! (Which will in turn resize the renderer window to fit...)	
+	
+	RECT clientRect, windowRect;
+	if (GetClientRect(windowHandle, &clientRect) && GetWindowRect(windowHandle, &windowRect))
+	{
+		int widthDiff = (windowRect.right - windowRect.left) - (clientRect.right - clientRect.left);
+		int heightDiff = (windowRect.bottom - windowRect.top) - (clientRect.bottom - clientRect.top);
+		Resize(int(width + widthDiff), int(height + heightDiff));
+	}
+
 	glEnable(GL_DEPTH_TEST);
 	glEnable(GL_DEPTH_CLAMP);
 	glEnable(GL_CULL_FACE);
@@ -163,6 +171,7 @@ Destructor. Deletes the default shader, and the OpenGL rendering context.
 */
 OGLRenderer::~OGLRenderer(void)
 {
+	delete quad;
 	glDeleteTextures(1, &bufferColourTex);
 	glDeleteTextures(1, &bufferNormalTex);
 	glDeleteTextures(1, &bufferDepthTex);

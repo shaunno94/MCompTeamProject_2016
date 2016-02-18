@@ -138,7 +138,7 @@ void Texture::SetTextureParams(unsigned int flags)
 	glBindTexture(GL_TEXTURE_2D, 0);
 }
 
-void Texture::MeasureMemoryUsageAdd(GLuint textureId)
+void Texture::MeasureMemoryUsageAdd(texId textureId)
 {
 	int width;
 	int height;
@@ -158,7 +158,7 @@ void Texture::MeasureMemoryUsageAdd(GLuint textureId)
 	s_memoryUsage += (width * height * ((r + g + b + a) / 8.0f));
 }
 
-void Texture::MeasureMemoryUsageSubstract(GLuint textureId)
+void Texture::MeasureMemoryUsageSubstract(texId textureId)
 {
 	int width;
 	int height;

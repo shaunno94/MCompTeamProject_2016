@@ -47,14 +47,14 @@ enum MeshBuffer
 /// </summary>
 struct ShaderUniformInfo
 {
-	unsigned int index;
+	unsigned char index;
 	char* name;
 };
 
 /// <summary>
 /// Internal counter for easily setting ReservedMeshTexturesStruct indices.
 /// </summary>
-static size_t reservedMeshTextureCounter = 0;
+static unsigned char reservedMeshTextureCounter = 0;
 
 /// <summary>
 /// A static constant structure for representing a collection of reserved Mesh Texture uniforms.
@@ -136,7 +136,7 @@ static const struct ReservedOtherTexturesStruct
 /// <summary>
 /// Internal counter for easily setting ReservedMeshTexturesStruct indices.
 /// </summary>
-static size_t reservedMeshColourCounter = 0;
+static unsigned char reservedMeshColourCounter = 0;
 
 /// <summary>
 /// A static constant structure for representing a collection of reserved Mesh colour uniforms.

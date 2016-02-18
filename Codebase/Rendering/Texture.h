@@ -1,8 +1,10 @@
 #pragma once
 
+#ifndef ORBIS
 #include "Dependencies/glew-1.13.0/include/GL/glew.h"
 #include "Dependencies/SOIL2/SOIL2.h"
 #pragma comment(lib, "SOIL2/soil2.lib")
+#endif
 
 #include <string>
 #include <unordered_map>
@@ -10,6 +12,12 @@
 #include "Helpers/common.h"
 
 #include <type_traits>
+
+#ifdef ORBIS
+typedef unsigned int texId;
+#else
+typedef GLuint texId;
+#endif
 
 static enum TextureFlags
 {
@@ -65,7 +73,7 @@ public:
 	/// If this texture is not loaded onto the GPU, the <see cref="Texture::LoadFromFile"/> will be called automatically.
 	/// </remarks>
 	/// <returns>GPU texture id.</returns>
-	inline GLuint GetTextureId()
+	inline texId GetTextureId()
 	{
 		if (!textureId) LoadFromFile();
 		return textureId;
@@ -135,15 +143,15 @@ protected:
 	static std::unordered_map<std::string, std::vector<Texture*>> s_textureRecords;
 
 	static int s_memoryUsage;
-	void MeasureMemoryUsageAdd(GLuint textureId);
-	void MeasureMemoryUsageSubstract(GLuint textureId);
+	void MeasureMemoryUsageAdd(texId textureId);
+	void MeasureMemoryUsageSubstract(texId textureId);
 
 
 
 	Texture(const std::string& filepath, size_t textureCopyIndex, bool preload = false);
 
 
-	GLuint textureId;
+	texId textureId;
 	size_t textureCopyIndex;
 	std::string filePath;
 	unsigned int m_referenceCount;

@@ -196,6 +196,7 @@
     <ClCompile Include="RigidPhysicsObject.cpp" />
     <ClCompile Include="Scene.cpp" />
     <ClCompile Include="OGLShader.cpp" />
+    <ClCompile Include="Shader.cpp" />
     <ClCompile Include="SoftPhysicsObject.cpp" />
     <ClCompile Include="Texture.cpp" />
     <ClCompile Include="Window.cpp" />

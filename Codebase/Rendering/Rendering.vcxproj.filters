@@ -206,5 +206,8 @@
     <ClCompile Include="Window.cpp">
       <Filter>Source Files\OGL_API</Filter>
     </ClCompile>
+    <ClCompile Include="Shader.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>

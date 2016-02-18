@@ -39,5 +39,6 @@ protected:
 	float aspectRatio;
 	Mat4Graphics localProjMat;
 	float windowHeight, windowWidth;
+	Vec2Graphics pixelPitch;
 	Scene* currentScene;
 };

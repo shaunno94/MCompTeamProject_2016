@@ -16,8 +16,6 @@ _-_-_-_-_-_-_-""  ""
 
 #pragma once
 #ifndef ORBIS
-//TODO: remove this dependency?
-//#include "OGLRenderer.h"
 #include "Dependencies/glew-1.13.0/include/GL/glew.h"
 #include "Dependencies/glew-1.13.0/include/GL/wglew.h"
 #include <string>

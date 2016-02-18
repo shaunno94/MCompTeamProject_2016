@@ -29,10 +29,10 @@ Matrix4Simple::Matrix4Simple(const Matrix3Simple& mat) {
 	values[3] = values[7] = values[12] = values[13] = values[14] = 0.0f;
 	values[15] = 1.0f;
 }
-
+/*
 Matrix4Simple::Matrix4Simple(const Matrix4Intrinsics& mat) {
 	memcpy(&values[0], &mat.values[0], sizeof(Matrix4Intrinsics));
-}
+}*/
 
 Matrix4Simple Matrix4Simple::GetRotation() const {
 	Matrix4Simple result;
@@ -62,9 +62,9 @@ Matrix4Simple Matrix4Simple::GetTransposedRotation() const {
 }
 
 
-Matrix4Simple Matrix4Simple::operator*(const Matrix4Intrinsics& v) const {
+/*Matrix4Simple Matrix4Simple::operator*(const Matrix4Intrinsics& v) const {
 	return *this * Matrix4Simple(v.values);
-};
+};*/
 
 
 Matrix4Simple Matrix4Simple::Perspective(float znear, float zfar, float aspect, float fov) {
