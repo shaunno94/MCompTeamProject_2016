@@ -1,6 +1,6 @@
 #pragma once
 #include "Material.h"
-enum shadowType{ _NONE, _2D/*, _CUBE*/ };
+enum shadowType{ _NONE, _2D, _CUBE };
 
 class LightMaterial : public Material
 {

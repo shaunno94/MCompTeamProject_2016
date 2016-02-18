@@ -52,6 +52,7 @@ protected:
 	void CombineBuffers(); // Combination Render Pass
 	void DrawShadow(GameObject* light);
 	void DrawShadow2D(GameObject* light);
+	void DrawShadowCube(GameObject* light);
 
 	void initFBO();
 	void GenerateScreenTexture(GLuint & into, bool depth = false);
@@ -63,11 +64,13 @@ protected:
 	GLuint bufferNormalTex; // Normals go here
 	GLuint bufferDepthTex; // Depth goes here
 	GLuint shadowFBO; 
+	GLuint cubeShadowFBO;
 
 	GLuint pointLightFBO; // FBO for lighting pass
 	GLuint lightEmissiveTex; // Store emissive lighting
 	GLuint lightSpecularTex; // Store specular lighting
-	GLuint ShadowTex2D; //stores depths for shadow calulations
+	GLuint shadowTex2D; //stores depths for shadow calulations
+	GLuint shadowTexCube; //stores depths for shadow calulations
 
 	GameObject* quad;
 
@@ -75,4 +78,7 @@ protected:
 	float aspectRatio;
 	Mat4Graphics localProjMat;
 	float windowHeight, windowWidth;
+
+	Vec3Graphics directions[6];
+	Vec3Graphics up[6];
 };

@@ -63,7 +63,8 @@ int main() {
 	floorPhysics->CreatePhysicsBody(0, Vec3Physics(0, -1, 0), QuatPhysics(0, 0, 0, 1));
 
 	OGLShader* simpleShader = new OGLShader(SHADER_DIR"textureVertex.glsl", SHADER_DIR"textureFragment.glsl");
-	OGLShader* pointlightShader = new OGLShader(SHADER_DIR"shadowCastingLightvertex.glsl", SHADER_DIR"shadowCastingLightfragment.glsl");
+	OGLShader* pointlightShader = new OGLShader(SHADER_DIR"2dShadowLightvertex.glsl", SHADER_DIR"2dShadowLightfragment.glsl");
+	//OGLShader* pointlightShader = new OGLShader(SHADER_DIR"CubeShadowLightvertex.glsl", SHADER_DIR"CubeShadowLightfragment.glsl");
 
 	if (!pointlightShader->IsOperational())
 		return -1;
