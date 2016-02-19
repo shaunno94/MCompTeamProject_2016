@@ -514,10 +514,9 @@ void OGLRenderer::DrawShadowCube(GameObject* light){
 			GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, shadowTexCube, 0);
 		glClear(GL_DEPTH_BUFFER_BIT);
 
-		viewMatrix = Mat4Graphics::View(
-			pos, pos + directions[i], up[i]); //modify;
+		viewMatrix = Mat4Graphics::View(pos, pos + directions[i], up[i]); //modify;
 
-		textureMatrix = biasMatrix *(projMatrix * viewMatrix);
+		//textureMatrix = biasMatrix *(projMatrix * viewMatrix);
 
 		UpdateShaderMatrices();
 
@@ -528,9 +527,14 @@ void OGLRenderer::DrawShadowCube(GameObject* light){
 	glUseProgram(0);
 	glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE);
 	glViewport(0, 0, width, height);
-	glClearColor(0.2f, 0.2f, 0.2f, 1.0f);
-	glBindFramebuffer(GL_FRAMEBUFFER, 0);
-	((LightMaterial*)light->GetRenderComponent()->m_Material)->Set("lightProj", projMatrix);
+	
+	//((LightMaterial*)light->GetRenderComponent()->m_Material)->Set("lightProj", Mat4Graphics::Perspective(1, 15000, 1, 90));
+
+	glBindFramebuffer(GL_FRAMEBUFFER, pointLightFBO);
+	
+	glActiveTexture(GL_TEXTURE0 + ReservedOtherTextures.SHADOW_CUBE.index);
+	glBindTexture(GL_TEXTURE_CUBE_MAP, shadowTexCube);
+	glActiveTexture(GL_TEXTURE0);
 
 	projMatrix = child->localProjMat;
 	viewMatrix = child->currentScene->getCamera()->BuildViewMatrix();
