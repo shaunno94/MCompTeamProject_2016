@@ -2,6 +2,7 @@
 #include <cstdio>
 #include <cassert>
 #include "Helpers/common.h"
+#include <utility>
 
 #if _DEBUG
 #define ERROR_NET(message) fprintf(stderr, message)
@@ -20,6 +21,71 @@ bool Net::s_Initialized = false;
 NetServer* Net::s_NetServer = nullptr;
 NetClient* Net::s_NetClient = nullptr;
 
+NetConnectionData::NetConnectionData(std::string& address) : addressStr(address)
+{
+	m_peer = nullptr;
+	m_initialConnectMade = false;
+	enet_address_set_host(&m_address, address.c_str());
+	m_address.port = NET_SERVICE_PORT;
+}
+NetConnectionData::~NetConnectionData()
+{
+	if (m_peer)
+	{
+		enet_peer_reset(m_peer);
+		m_peer = nullptr;
+	}
+}
+
+NetConnectionState NetConnectionData::GetState() const
+{
+	if (!m_initialConnectMade)
+		return NetConnectionState::NetPeerConnecting;
+	if (m_peer == nullptr)
+		return NetConnectionState::NetPeerDisconnected;
+
+	if (m_peer->state == ENET_PEER_STATE_DISCONNECTED)
+		return NetConnectionState::NetPeerDisconnected;
+	else if (m_peer->state == ENET_PEER_STATE_CONNECTED)
+		return NetConnectionState::NetPeerConnected;
+	else if (m_peer->state <= ENET_PEER_STATE_CONNECTION_SUCCEEDED)
+		return NetConnectionState::NetPeerConnecting;
+	else
+		return NetConnectionState::NetPeerDisconnecting;
+}
+
+void NetConnectionDataInternal::Update()
+{
+	switch (m_peer->state)
+	{
+	case ENET_PEER_STATE_DISCONNECTED:
+		m_timer.Get();//resetting the timer
+		break;
+	case ENET_PEER_STATE_CONNECTING:
+	case ENET_PEER_STATE_ACKNOWLEDGING_CONNECT:
+	case ENET_PEER_STATE_CONNECTION_PENDING:
+	case ENET_PEER_STATE_CONNECTION_SUCCEEDED:
+		if (m_timer.Peek(1000.0f/*milliseconds*/) >= NET_CONNECTION_TIMEOUT)
+		{
+			enet_peer_reset(m_peer);//force disconnect
+			m_timer.Get();
+		}
+		break;
+	case ENET_PEER_STATE_CONNECTED:
+		m_timer.Get();//resetting the timer
+		break;
+	case ENET_PEER_STATE_DISCONNECT_LATER:
+	case ENET_PEER_STATE_DISCONNECTING:
+	case ENET_PEER_STATE_ACKNOWLEDGING_DISCONNECT:
+	case ENET_PEER_STATE_ZOMBIE:
+		if (m_timer.Peek(1000.0f/*milliseconds*/) >= NET_DISCONNECTION_TIMEOUT)
+		{
+			enet_peer_reset(m_peer);//force disconnect
+			m_timer.Get();
+		}
+		break;
+	}
+}
 
 bool Net::Init()
 {
@@ -100,7 +166,7 @@ NetServer::NetServer()
 	         0      /* assume any amount of incoming bandwidth */,
 	         0      /* assume any amount of outgoing bandwidth */
 	       );
-	updateFlushTimeout = 1000.0f;
+	updateFlushTimeout = 700.0f;
 	state = NetPreparingSession;
 	if (host == nullptr)
 	{
@@ -135,9 +201,9 @@ void NetServer::Service()
 				event.peer->data = nullptr;
 				AddNewConnection(event.peer);
 				break;
-			case NetInSession:
+			default:
 				PROMPT_NET(
-				  "Aborting mid-session client connection from %x:%u."LINE_SEPARATOR_DEF,
+				  "Aborting client connection from %x:%u."LINE_SEPARATOR_DEF,
 				  event.peer->address.host,
 				  event.peer->address.port
 				);
@@ -160,12 +226,9 @@ void NetServer::Service()
 
 		case ENET_EVENT_TYPE_DISCONNECT:
 			PROMPT_NET("%s disconnected."LINE_SEPARATOR_DEF, netHost->event.peer->data);
-			/* Reset the peer's client information. */
-			if (event.peer->data)
-				delete event.peer->data;
-			event.peer->data = nullptr;
 			ProcessDisconnection(event.peer);
 		}
+
 		if (updateFlushTimer.Peek(1000.0f/*milliseconds*/) >= updateFlushTimeout)
 			break;
 	}
@@ -231,11 +294,18 @@ void NetServer::ProcessDisconnection(ENetPeer* peer)
 		newRoot->next = unexpectedDisconnections;
 		unexpectedDisconnections = newRoot;
 	}
+	else
+	{
+		/* Reset the peer's client information. */
+		if (peer->data)
+			delete peer->data;
+		peer->data = nullptr;
+	}
 }
 
 NetClient::NetClient()
 {
-	memset(this, 0, sizeof(NetClient));
+	//memset(this, 0, sizeof(NetClient));
 	connectionStatus = NetPeerDisconnected;
 	host = enet_host_create(
 	         NULL /* create a client host */,
@@ -244,7 +314,7 @@ NetClient::NetClient()
 	         0,
 	         0
 	       );
-	updateFlushTimeout = 1000.0f;
+	updateFlushTimeout = 700.0f;
 	state = NetPreparingSession;
 	if (host == nullptr)
 	{
@@ -258,9 +328,56 @@ NetClient::~NetClient()
 		enet_host_destroy(host);
 }
 
+void NetClient::ConnectToServerService()
+{
+	connection->SetPeer(enet_host_connect(m_host, &connection->GetAddress(), 2, 0));
+	connection->SetInitialConnection(true);
+	if (connection->GetPeer() == nullptr)
+	{
+		PROMPT_NET("No available peers for initiating an ENet connection."LINE_SEPARATOR_DEF);
+		return;
+	}
+	ENetEvent event;
+	/* Wait up to NET_CONNECTION_TIMEOUT milliseconds for the connection attempt to succeed. */
+	if (enet_host_service(m_host, &event, NET_CONNECTION_TIMEOUT) > 0 && event.type == ENET_EVENT_TYPE_CONNECT)
+	{
+		PROMPT_NET(
+		  "Connection to the server %s succeeded."LINE_SEPARATOR_DEF,
+		  connection->addressStr
+		);
+	}
+	else
+	{
+		enet_peer_reset(connection->GetPeer());
+		PROMPT_NET(
+		  "Connection to the server %s failed."LINE_SEPARATOR_DEF,
+		  connection->addressStr
+		);
+	}
+}
+
+void NetClient::ConnectToServer(std::string& address)
+{
+	if (m_threadHandle.valid())
+		m_threadHandle.get();
+	if (connection)
+		delete connection;
+	connection = new NetConnectionDataInternal(address);
+	m_threadHandle = std::move(std::async(std::launch::async, &NetClient::ConnectToServerService, this));
+}
+
+bool NetClient::StartSession()
+{
+	if (connection.GetState() != NetConnectionState::NetPeerConnected)
+		return false;
+
+	auto test = std::async(std::launch::async, &NetClient::Service, this);
+	return true;
+}
 
 void NetClient::Service()
 {
+	connection.Update();
 	switch (connectionStatus)
 	{
 	case NetPeerConnecting:
@@ -285,15 +402,28 @@ void NetClient::Service()
 		switch (event.type)
 		{
 		case ENET_EVENT_TYPE_CONNECT:
-			PROMPT_NET(
-			  "Connected to server %x:%u."LINE_SEPARATOR_DEF,
-			  event.peer->address.host,
-			  event.peer->address.port
-			);
+			if (connectionStatus != NetPeerConnected)
+				PROMPT_NET(
+				  "Connected to server %x:%u."LINE_SEPARATOR_DEF,
+				  event.peer->address.host,
+				  event.peer->address.port
+				);
 			/* Store any relevant client information here. */
 			event.peer->data = nullptr;
 			connectionStatus = NetPeerConnected;
 			break;
+
+			/* Store any relevant client information here. */
+			event.peer->data = nullptr;
+			AddNewConnection(event.peer);
+			break;
+		default:
+			PROMPT_NET(
+			  "Aborting client connection from %x:%u."LINE_SEPARATOR_DEF,
+			  event.peer->address.host,
+			  event.peer->address.port
+			);
+			Disconnect(event.peer);
 
 		case ENET_EVENT_TYPE_RECEIVE:
 			PROMPT_NET(
@@ -344,7 +474,7 @@ void NetClient::TryConnect(const char* ip, float timeoutMilliseconds)
 NetConnectionStatus NetClient::GetConnectionStatus()
 {
 	/* Wait up to 0 seconds for the connection attempt to succeed. */
-	if (enet_host_service(client, &event, 0) > 0 && event.type == ENET_EVENT_TYPE_CONNECT)
+	if (enet_host_service(host, &event, 0) > 0 && event.type == ENET_EVENT_TYPE_CONNECT)
 	{
 		PROMPT_NET("Connection succeeded.");
 		connectionStatus = NetPeerConnected;

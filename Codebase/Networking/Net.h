@@ -2,6 +2,7 @@
 #include "enet/enet.h"
 #include <mutex>
 #include "Helpers/DeltaTimer.h"
+#include <future>
 
 typedef ENetAddress NetAddress;
 
@@ -83,10 +84,12 @@ public:
 enum NetHostState: unsigned char
 {
 	NetPreparingSession,
-	NetInSession
+	NetInSession,
+	NetOffline
 };
 
-enum NetConnectionStatus
+//Needs removing?
+enum NetConnectionState
 {
 	NetPeerConnecting,
 	NetPeerConnected,
@@ -94,8 +97,63 @@ enum NetConnectionStatus
 	NetPeerDisconnected
 };
 
+#define NET_CONNECTION_TIMEOUT 700 /*ms*/
+#define NET_DISCONNECTION_TIMEOUT 700 /*ms*/
+
+class NetConnectionData
+{
+	friend class NetConnectionDataInternal;
+public:
+	NetConnectionState GetState() const;
+	inline ENetPeer* GetPeer()
+	{
+		return m_peer;
+	}
+	inline ENetPeer* GetPeer()
+	{
+		return m_peer;
+	}
+	inline const NetAddress& GetAddress() const
+	{
+		return m_address;
+	}
+	const std::string addressStr;
+
+private:
+	NetConnectionData(std::string& address);
+	~NetConnectionData();
+	bool m_initialConnectMade;
+	NetAddress m_address;
+	ENetPeer* m_peer;
+	DeltaTimer<float> m_timer;
+};
+
+class NetConnectionDataInternal : public NetConnectionData
+{
+public:
+	NetConnectionDataInternal(std::string& address) : NetConnectionData(address) {}
+
+	inline void SetPeer(ENetPeer* peer)
+	{
+		m_peer = peer;
+	}
+	inline void SetInitialConnection(bool val = true)
+	{
+		m_initialConnectMade = val;
+	}
+
+	void Update();
+};
+
 struct NetPeerListNode
 {
+	~NetPeerListNode()
+	{
+		if (peer->data)
+			delete peer->data;
+		peer->data = nullptr;
+	}
+
 	ENetPeer* peer;
 	NetPeerListNode* next;
 };
@@ -104,11 +162,14 @@ class NetHost
 {
 	friend class Net;
 protected:
-	ENetAddress address;
-	ENetHost* host;
-	NetHostState state;
-	float updateFlushTimeout;
-	DeltaTimer<float> updateFlushTimer;
+	std::future<void> m_threadHandle;
+	ENetAddress m_address;
+	ENetHost* m_host;
+	NetHostState m_state;
+	//timer to force flush messages
+	float m_updateFlushTimeout;
+	DeltaTimer<float> m_updateFlushTimer;
+	std::string m_name;
 };
 
 class NetServer : public NetHost
@@ -144,14 +205,21 @@ private:
 
 };
 
+
+
 class NetClient : public NetHost
 {
 	friend class Net;
 public:
-	void TryConnect(const char* ip, float timeoutMilliseconds = 5000.0f);
-	NetConnectionStatus GetConnectionStatus();
+	void TryConnect(const char* ip);
+	NetConnectionState GetConnectionStatus();
+
+	void ConnectToServerService();
+	void ConnectToServer(std::string& address);
 
 	NetSession* GetSession();
+
+	bool StartSession();
 
 private:
 	NetClient();
@@ -159,12 +227,7 @@ private:
 
 	void Service();
 
-	ENetPeer* peer;
-	NetConnectionStatus connectionStatus;
-	float connectionTimeout;
-	float disconnectionTimeout;
-	DeltaTimer<float> connectionTimer;
-	DeltaTimer<float> disconnectionTimer;
+	NetConnectionDataInternal* connection;
 };
 
 #define NET_SERVICE_VERSION 1.0f
@@ -187,7 +250,6 @@ private:
 
 	static NetServer* s_NetServer;
 	static NetClient* s_NetClient;
-
 };
 
 
