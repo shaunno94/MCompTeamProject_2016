@@ -1,3 +1,4 @@
+#ifndef ORBIS
 #pragma once
 
 #include "FixedSizeAllocator.h"
@@ -184,3 +185,4 @@ public:
 	}
 
 };
+#endif

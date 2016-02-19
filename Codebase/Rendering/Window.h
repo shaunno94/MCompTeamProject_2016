@@ -3,6 +3,7 @@ Class:Window
 Author:Rich Davison
 Description:Creates and handles the Window, including the initialisation of the mouse and keyboard.
 */
+#ifndef ORBIS
 #pragma once
 #pragma warning( disable : 4099 )
 
@@ -28,14 +29,11 @@ class OGLRenderer;
 /// <summary>
 /// 
 /// </summary>
-class Window	{
+class Window	
+{
+	friend class OGLRenderer;
 public:
-	static bool Initialise(std::string title = "OpenGL Framework", int sizeX = 800, int sizeY = 600, bool fullScreen = false);
-	static void Destroy();
 	static Window& GetWindow() { return *window; }
-
-
-
 
 	bool	UpdateWindow();	
 
@@ -55,7 +53,10 @@ public:
 
 	DeltaTimer<float>*   GetTimer()		{return timer;}
 
-protected:
+protected:	
+	static bool Initialise(std::string title = "OpenGL Framework", int sizeX = 800, int sizeY = 600, bool fullScreen = false);
+	static void Destroy();
+
 	void	CheckMessages(MSG &msg);
 	static LRESULT CALLBACK WindowProc(HWND hWnd,UINT message,WPARAM wParam,LPARAM lParam);
 
@@ -86,3 +87,4 @@ private:
 	Window(std::string title = "OpenGL Framework", int sizeX = 800, int sizeY = 600, bool fullScreen = false);
 	~Window(void);
 };
+#endif

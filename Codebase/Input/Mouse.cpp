@@ -1,3 +1,4 @@
+#ifndef ORBIS
 #include "Mouse.h"
 
 Mouse::Mouse(HWND &hwnd)	{
@@ -210,3 +211,4 @@ void Mouse::UpdateDoubleClick(float msec)	{
 		}
 	}	
 }
+#endif

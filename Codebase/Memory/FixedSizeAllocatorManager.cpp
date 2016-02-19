@@ -1,3 +1,4 @@
+#ifndef ORBIS
 #include "FixedSizeAllocatorManager.h"
 
 const size_t FixedSizeAllocatorManager::ALLOCATOR_BLOCK_SIZES[ALLOCATOR_BLOCK_SIZES_SIZE] = {
@@ -37,4 +38,4 @@ FixedSizeAllocatorManager::FixedSizeAllocatorManager(
 		m_allocators[i].Reset(ALLOCATOR_BLOCK_SIZES[i], pageSize, alignment);
 	}
 }
-
+#endif

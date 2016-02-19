@@ -1,3 +1,4 @@
+#ifndef ORBIS
 #include "FixedSizeAllocator.h"
 
 #include <algorithm>
@@ -168,3 +169,4 @@ void FixedSizeAllocator::FillAllocatedBlock(BlockHeader* p)
         m_blockAlignmentPadding
     );
 }
+#endif

@@ -2,10 +2,25 @@
 
 #include <string>
 #include <algorithm>
+#include <smmintrin.h>
 
 /** @defgroup Helpers Helpers
 *  Collection of helpful functionality.
 *  @{
+*/
+
+/*
+MEM_ALIGN
+struct {
+	union {
+		struct {
+			float x;
+			float y;
+			float z;
+		};
+		__m128 mmvalue;
+	};
+};
 */
 
 /// <summary>

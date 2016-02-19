@@ -15,7 +15,7 @@ protected:
 	std::vector<std::pair<int, int>> m_uniformInts;
 
 public:
-	ExtendedMaterial(Shader* shader, bool hasTranslucency = false);
+	ExtendedMaterial(OGLShader* shader, bool hasTranslucency = false);
 	~ExtendedMaterial();
 
 	virtual void Setup() override;

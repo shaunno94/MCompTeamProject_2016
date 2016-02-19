@@ -26,22 +26,6 @@ _-_-_-_-_-_-_-""  ""
 
 class Material;
 
-//A handy enumerator, to determine which member of the bufferObject array
-//holds which data
-/// @ingroup Rendering
-/// <summary>
-/// Enumerator, to determine which member of the bufferObject array holds which data
-/// </summary>
-enum MeshBuffer
-{
-	VERTEX_BUFFER	,
-	TEXTURE_BUFFER	,
-	NORMAL_BUFFER	,
-	TANGENT_BUFFER	,
-	INDEX_BUFFER	,
-	MAX_BUFFER
-};
-
 /// @ingroup Rendering
 /// <summary>
 /// 

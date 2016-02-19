@@ -1,3 +1,4 @@
+#ifndef ORBIS
 #pragma once
 
 //4201-nameless structures; 4324-structure being padded for alignment
@@ -103,3 +104,4 @@ inline Vector3_1Intrinsics operator+(float f, const Vector3_1Intrinsics& v) { re
 inline Vector3_1Intrinsics operator-(float f, const Vector3_1Intrinsics& v) { return Vector3_1Intrinsics(_mm_set1_ps(f)) - v; }
 inline Vector3_1Intrinsics operator*(float f, const Vector3_1Intrinsics& v) { return v * f; }
 inline Vector3_1Intrinsics operator/(float f, const Vector3_1Intrinsics& v) { return Vector3_1Intrinsics(_mm_set1_ps(f)) / v; }
+#endif

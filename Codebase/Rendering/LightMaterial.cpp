@@ -1,9 +1,7 @@
 #include "LightMaterial.h"
-
-
 #include "Renderer.h"
 
-LightMaterial::LightMaterial(Shader* shader, bool hasTranslucency) : Material(shader, hasTranslucency)
+LightMaterial::LightMaterial(OGLShader* shader, bool hasTranslucency) : Material(shader, hasTranslucency)
 {
 	Set(ReservedOtherTextures.DEPTH.name, (int)ReservedOtherTextures.DEPTH.index);
 	Set(ReservedOtherTextures.NORMALS.name, (int)ReservedOtherTextures.NORMALS.index);
