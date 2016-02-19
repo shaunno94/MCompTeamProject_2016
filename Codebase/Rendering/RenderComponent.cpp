@@ -23,13 +23,13 @@ void RenderComponent::Draw()
 	Renderer::GetInstance()->SetCurrentShader(m_Material->GetShader());
 
 	//model matrix
-	Renderer::UpdateUniform(m_Material->GetShader()->GetModelMatrixUniformLocation(), m_GameObject->GetWorldTransform());
+	Renderer::UpdateUniform(m_Material->GetShader()->GetResourceByName("modelMatrix"), m_GameObject->GetWorldTransform());
 
 	//reset reserved mesh texture uniforms to use the right texture unit
-	for (GLint i = 0; i < ReservedMeshTextures.size; ++i)
+	for (int i = 0; i < ReservedMeshTextures.size; ++i)
 		Renderer::UpdateUniform(m_Material->GetShader()->GetReservedMeshTextureUniformLocation(i), i);
-
-	m_Mesh->Draw(m_Material);
+	
+	m_Mesh->Draw(m_Material);	
 }
 
 void RenderComponent::SetParent(GameObject* go)

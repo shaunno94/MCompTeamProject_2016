@@ -15,7 +15,7 @@ protected:
 	
 
 public:
-	LightMaterial(OGLShader* shader, bool hasTranslucency = false);
+	LightMaterial(BaseShader* shader, bool hasTranslucency = false);
 	~LightMaterial();
 
 	virtual void Setup() override;

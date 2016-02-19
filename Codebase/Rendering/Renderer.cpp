@@ -12,7 +12,6 @@ PS4Renderer()
 	m_UpdateGlobalUniforms = true;
 	currentShader = nullptr;
 	//TODO: change SHADERDIR to SHADER_DIR
-	/*currentShader = new Shader(SHADER_DIR"basicVertex.glsl", SHADER_DIR"colourFragment.glsl");
 
 	aspectRatio = float(sizeX) / float(sizeY);
 	pixelPitch = Vec2Graphics(1.0f / float(sizeX), 1.0f / float(sizeY));

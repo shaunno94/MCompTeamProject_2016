@@ -17,6 +17,7 @@ _-_-_-_-_-_-_-""  ""
 #include "Helpers/degrees.h"
 #include "constants.h"
 #include "Renderer.h"
+#include "OGLShader.h"
 
 /*
 Creates an OpenGL 3.2 CORE PROFILE rendering context. Sets itself
@@ -233,21 +234,19 @@ void OGLRenderer::UpdateShaderMatrices()
 {
 	if (currentShader)
 	{
-		//part of the RenderComponent now
-		//glUniformMatrix4fv(glGetUniformLocation(currentShader->GetProgram(), "modelMatrix"), 1, false, (float*)&modelMatrix);
+		//Model Matrix in RenderComponent class.
+		//Texture matrix in material class.
 		glUniformMatrix4fv(glGetUniformLocation(currentShader->GetProgram(), "viewMatrix"), 1, false, (float*)&viewMatrix);
-		glUniformMatrix4fv(glGetUniformLocation(currentShader->GetProgram(), "projMatrix"), 1, false, (float*)&projMatrix);
-		//part of the material now
-		//glUniformMatrix4fv(glGetUniformLocation(currentShader->GetProgram(), "textureMatrix"), 1, false, (float*)&textureMatrix);
+		glUniformMatrix4fv(glGetUniformLocation(currentShader->GetProgram(), "projMatrix"), 1, false, (float*)&projMatrix);	
 	}
 }
 
 
-void OGLRenderer::SetCurrentShader(OGLShader* s)
+void OGLRenderer::SetCurrentShader(BaseShader* s)
 {
-	currentShader = s;
+	currentShader = static_cast<OGLShader*>(s);
 
-	glUseProgram(s->GetProgram());
+	glUseProgram(currentShader->GetProgram());
 }
 
 void OGLRenderer::SetTextureRepeating(GLuint target, bool repeating)
@@ -401,7 +400,7 @@ void OGLRenderer::initFBO()
 
 	//quad for final render
 	quad = new GameObject();
-	quad->SetRenderComponent(new RenderComponent(new LightMaterial(new OGLShader(SHADER_DIR"combinevert.glsl", SHADER_DIR"combinefrag.glsl")), Mesh::GenerateQuad()));
+	quad->SetRenderComponent(new RenderComponent(new LightMaterial(new OGLShader(SHADER_DIR"combinevert.glsl", SHADER_DIR"combinefrag.glsl")), OGLMesh::GenerateQuad()));
 	((LightMaterial*)quad->GetRenderComponent()->m_Material)->Set(ReservedOtherTextures.EMISSIVE.name, (int)ReservedOtherTextures.EMISSIVE.index);
 	((LightMaterial*)quad->GetRenderComponent()->m_Material)->Set(ReservedOtherTextures.SPECULAR.name, (int)ReservedOtherTextures.SPECULAR.index);
 }

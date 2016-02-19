@@ -48,8 +48,11 @@ void Scene::UpdateNodeLists(float dt, Frustum& frustum, Vec3Graphics camPos)
 			transparentObjects[i]->m_RenderComponent->disabled = true;
 			continue;
 		}
-
 		transparentObjects[i]->m_RenderComponent->disabled = false;
+
+		if (dt == 0)
+			continue;
+
 		pos = transparentObjects[i]->GetWorldTransform().GetTranslation();
 		dir = pos - camPos;
 		transparentObjects[i]->m_CamDist = dir.Dot(dir);
@@ -63,8 +66,11 @@ void Scene::UpdateNodeLists(float dt, Frustum& frustum, Vec3Graphics camPos)
 			opaqueObjects[i]->m_RenderComponent->disabled = true;
 			continue;
 		}
-
 		opaqueObjects[i]->m_RenderComponent->disabled = false;
+		
+		if (dt == 0)
+			continue;
+
 		pos = opaqueObjects[i]->GetWorldTransform().GetTranslation();
 		dir = pos - camPos;
 		opaqueObjects[i]->m_CamDist = dir.Dot(dir);

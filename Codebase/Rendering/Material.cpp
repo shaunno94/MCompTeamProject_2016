@@ -7,7 +7,7 @@
 
 Material* Material::s_LastMaterialInUse = nullptr;
 
-Material::Material(OGLShader* shader, bool hasTranslucency /* = false */) : shader(shader), hasTranslucency(hasTranslucency)
+Material::Material(BaseShader* shader, bool hasTranslucency /* = false */) : shader(shader), hasTranslucency(hasTranslucency)
 {
 	//Set(ReservedOtherTextures.DEPTH.name, ReservedOtherTextures.DEPTH.index);
 	assert(("Material class constructor was given a non operational shader.", shader->IsOperational()));
@@ -21,7 +21,6 @@ void Material::Setup()
 	//if (s_LastMaterialInUse == this) return;
 
 
-	Renderer::GetInstance()->SetCurrentShader(shader);
 	Renderer::GetInstance()->UpdateShaderMatrices();
 	GLint textureUnit = ReservedMeshTextures.size + ReservedOtherTextures.size;
 	for(auto it = m_uniformTextures.begin(); it != m_uniformTextures.end(); ++it)

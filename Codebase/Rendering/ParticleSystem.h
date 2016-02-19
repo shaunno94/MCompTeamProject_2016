@@ -40,7 +40,7 @@ protected:
 private:
 	Camera*					m_Camera;
 	ParticleEmitter*		m_ParticleEmitter;
-	GLuint					m_Texture;
+	unsigned int			m_Texture;
 	SystemType				m_SystemType;
 	unsigned int			m_NumAlive;
 	std::vector<Particle>	m_Particles;

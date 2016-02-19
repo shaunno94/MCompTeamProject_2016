@@ -61,8 +61,13 @@ int main() {
 	floorPhysics->CreateCollisionShape(0, Vec3Physics(0, 1, 0), true);
 	floorPhysics->CreatePhysicsBody(0, Vec3Physics(0, -1, 0), QuatPhysics(0, 0, 0, 1));
 
-	OGLShader* simpleShader = new OGLShader(SHADER_DIR"textureVertex.glsl", SHADER_DIR"textureFragment.glsl");
-	OGLShader* pointlightShader = new OGLShader(SHADER_DIR"2dShadowLightvertex.glsl", SHADER_DIR"2dShadowLightfragment.glsl");
+#ifndef ORBIS
+	BaseShader* simpleShader = new OGLShader(SHADER_DIR"textureVertex.glsl", SHADER_DIR"textureFragment.glsl");
+	BaseShader* pointlightShader = new OGLShader(SHADER_DIR"2dShadowLightvertex.glsl", SHADER_DIR"2dShadowLightfragment.glsl");
+#else
+	BaseShader* simpleShader = new PS4Shader(SHADER_DIR"textureVertex.glsl", SHADER_DIR"textureFragment.glsl");
+	BaseShader* pointlightShader = new PS4Shader(SHADER_DIR"2dShadowLightvertex.glsl", SHADER_DIR"2dShadowLightfragment.glsl");
+#endif
 	//OGLShader* pointlightShader = new OGLShader(SHADER_DIR"CubeShadowLightvertex.glsl", SHADER_DIR"CubeShadowLightfragment.glsl");
 
 	if (!pointlightShader->IsOperational())
@@ -83,7 +88,7 @@ int main() {
 
 	Material* material = new Material(simpleShader);
 	Material* ballMaterial = new Material(simpleShader);
-	ballMaterial->Set("diffuseTex", Texture::Get(TEXTURE_DIR"checkerboard.tga", true));
+	ballMaterial->Set(ReservedMeshTextures.DIFFUSE.name, Texture::Get(TEXTURE_DIR"checkerboard.tga", true));
 
  	stadium->SetRenderComponent(new RenderComponent(material, ModelLoader::LoadMGL(MODEL_DIR"Stadium/Stadium2.mgl", true)));
 	stadium->SetPhysicsComponent(floorPhysics);
@@ -148,15 +153,24 @@ int main() {
 	dynamic_cast<RigidPhysicsObject*>(ball->GetPhysicsComponent())->GetPhysicsBody()->setAngularVelocity(btVector3(1, 0, 0));
 	dynamic_cast<RigidPhysicsObject*>(aiBall->GetPhysicsComponent())->GetPhysicsBody()->applyCentralForce(btVector3(10, 0, 0));
 
+#ifndef ORBIS
 	while (Window::GetWindow().UpdateWindow() && !Window::GetKeyboard()->KeyDown(KEYBOARD_ESCAPE))
+#else
+	while (true)
+#endif
 	{
 		float ms = timer.GetTimer()->Get(1000.0f);
 		PhysicsEngineInstance::Instance()->stepSimulation(ms, SUB_STEPS, TIME_STEP);
 		renderer.RenderScene(ms);
 	}
+
 	//Cleanup
 	PhysicsEngineInstance::Release();
+
+#if DEBUG_DRAW
 	DebugDraw::Release();
+#endif
+
 	delete myScene;
 	return 0;
 }

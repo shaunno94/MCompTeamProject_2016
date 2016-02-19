@@ -20,6 +20,7 @@ _-_-_-_-_-_-_-""  ""
 #include "Dependencies/glew-1.13.0/include/GL/wglew.h"
 #include <string>
 #include "constants.h"
+#include "Shader.h"
 
 #define SHADER_VERTEX   0
 #define SHADER_FRAGMENT 1
@@ -34,7 +35,7 @@ using namespace std;
 /// <summary>
 /// 
 /// </summary>
-class OGLShader
+class OGLShader : public BaseShader
 {
 public:
 	OGLShader(string vertex, string fragment, string geometry = "", string tcsFile = "", string tesFile = "");
@@ -44,7 +45,7 @@ public:
 	{
 		return program;
 	}
-	inline bool IsOperational() const
+	inline bool IsOperational() const override
 	{
 		return operational == GL_TRUE;
 	}
@@ -53,13 +54,18 @@ public:
 	{
 		return m_ModelMatrixLocation;
 	}
-	inline GLint GetReservedMeshTextureUniformLocation(size_t index) const
+	inline GLint GetReservedMeshTextureUniformLocation(size_t index) const override
 	{
 		return m_ReservedMeshTextureLocations[index];
 	}
 	inline GLint GetReservedMeshColourUniformLocation(size_t index) const
 	{
 		return m_ReservedMeshColourLocations[index];
+	}
+
+	int GetResourceByName(const std::string& name) const override
+	{
+		return glGetUniformLocation(program, name.c_str());
 	}
 
 protected:
