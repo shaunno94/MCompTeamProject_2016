@@ -5,8 +5,7 @@
 #include "ParticleEmitter.h"
 #include "Material.h"
 #include "Helpers\interpolation.h"
-
-enum SystemType {BILLBOARD, TRAIL};
+#include "Renderer.h"
 
 enum ParticleBuffer {
 	POS_BUFFER, TEX_BUFFER, COLOUR_BUFFER
@@ -16,8 +15,7 @@ class ParticleSystem
 {
 public:
 
-	ParticleSystem(ParticleEmitter* emitter, SystemType systemType,const std::string& texturePath, 
-		Material* material, unsigned int numParticles, Camera* camera, Shader* shader);
+	ParticleSystem(ParticleEmitter* emitter, const std::string& texturePath, unsigned int numParticles, Camera* camera, Shader* shader, Renderer* renderer);
 	~ParticleSystem();
 
 	void EmitParticles();
@@ -35,8 +33,6 @@ private:
 	Camera*					m_Camera;
 	ParticleEmitter*		m_ParticleEmitter;
 	Texture*				m_Texture;
-	SystemType				m_SystemType;
-	Material*				m_Material;
 	unsigned int			m_NumAlive;
 	std::vector<Particle>	m_Particles;
 	unsigned int			m_NumParticles;
@@ -49,5 +45,6 @@ private:
 
 	Vec3Graphics			m_Force;
 	Shader*					shader;
+	Renderer*				renderer;
 
 };

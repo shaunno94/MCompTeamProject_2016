@@ -7,6 +7,7 @@
 #include "Rendering\LightMaterial.h"
 #include "Rendering\ParticleManager.h"
 #include "Rendering\ParticleSystem.h"
+#include "Rendering\CubeEmitter.h"
 
 // Includes for AI States and Triggers
 #include "AI\StateMachine.h"
@@ -75,6 +76,7 @@ int main() {
 
 	Shader* simpleShader = new Shader(SHADER_DIR"textureVertex.glsl", SHADER_DIR"textureFragment.glsl");
 	Shader* pointlightShader = new Shader(SHADER_DIR"pointlightvertex.glsl", SHADER_DIR"pointlightfragment.glsl");
+	Shader* particleShader = new Shader(SHADER_DIR"particleRenderVert.glsl", SHADER_DIR"particleRenderFrag.glsl", SHADER_DIR"particleRenderGeom.glsl");
 
 	if (!pointlightShader->IsOperational())
 		return -1;
@@ -122,6 +124,9 @@ int main() {
 	aiBall->GetPhysicsComponent()->GetPhysicsBody()->setRestitution(btScalar(0.9));
 	aiBall->GetPhysicsComponent()->GetPhysicsBody()->setFriction(0.5);
 	aiBall->GetPhysicsComponent()->GetPhysicsBody()->setHitFraction(0.5);
+
+	ParticleManager::Initialise();
+	//ParticleManager::GetManager().AddSystem(new ParticleSystem(new CubeEmitter(),TEXTURE_DIR"particle.tga",1000,myScene->getCamera(),particleShader, &renderer));
 
 	//StateMachine* ballStateMachine = new StateMachine();
 

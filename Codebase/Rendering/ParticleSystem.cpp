@@ -1,15 +1,15 @@
 #include "ParticleSystem.h"
 
-ParticleSystem::ParticleSystem(ParticleEmitter* emitter, SystemType systemType, const std::string& texturePath,
-                               Material* material, unsigned int numParticles, Camera* camera, Shader* shader)
+ParticleSystem::ParticleSystem(ParticleEmitter* emitter, const std::string& texturePath,
+                                unsigned int numParticles, Camera* camera, Shader* shader, Renderer* renderer)
 	:m_Camera(camera)
 	, m_Texture(NULL)
 	, m_Force(0,-9.81f,0)
 	, m_NumAlive(0)
 	, m_ParticleEmitter(emitter)
-	, m_Material(material)
 	, m_NumParticles(numParticles)
 	, shader(shader)
+	, renderer(renderer)
 {
 	LoadTexture(texturePath);
 	pos[numParticles][3];
@@ -123,8 +123,6 @@ void ParticleSystem::Render()
 {
 	GLuint textureID = m_Texture->GetTextureId();
 	glGenTextures(1, &textureID);
-	m_Material->Setup();
-	m_Material->Set("texture", m_Texture);
 
 	glActiveTexture(GL_TEXTURE0);
 	glBindTexture(GL_TEXTURE_BUFFER, m_Texture->GetTextureId());
@@ -137,6 +135,7 @@ void ParticleSystem::Render()
 
 	glDrawArrays(GL_LINE_LOOP, 0, m_NumParticles);
 
+	
 	glUseProgram(0);
 
 }
