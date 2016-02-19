@@ -2,6 +2,7 @@
 #include "GameObject.h"
 #include <vector>
 #include "Camera.h"
+#include "Controler.h"
 #include "Helpers\collections.h"
 #include "Frustum.h"
 
@@ -30,6 +31,7 @@ public:
 
 	Camera* getCamera(){ return cam; }
 
+	void setPlayerConrtoler(Controler* c){ playerConroler = c; }
 	void addGameObject(GameObject* obj);
 	void addLightObject(GameObject* obj);
 
@@ -46,6 +48,7 @@ private:
 	std::vector<GameObject*> transparentObjects;
 	std::vector<GameObject*> opaqueObjects;
 	std::vector<GameObject*> lightObjects;
-	Camera* cam;	
+	Camera* cam;
+	Controler* playerConroler;	
 };
 

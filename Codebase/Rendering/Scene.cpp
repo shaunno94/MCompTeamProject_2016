@@ -4,6 +4,7 @@
 Scene::Scene()
 {
 	cam = new Camera(0.0f, 0.0f, Vec3Graphics(0, 0, 0));
+	playerConroler = NULL;
 }
 
 
@@ -18,6 +19,8 @@ Scene::~Scene()
 		delete obj;
 	}
 	delete cam;
+	if (playerConroler)
+		delete playerConroler;
 	transparentObjects.clear();
 	opaqueObjects.clear();
 }
@@ -37,13 +40,13 @@ void Scene::UpdateNodeLists(float dt, Frustum& frustum, Vec3Graphics camPos)
 //TODO - separate Frustum check from OnUpdateObject
 {
 	Vec3Graphics pos, dir;
-	
+
 	//For opaque and translucent objects update and compute (sqr) distance between object and camera.
 	for (unsigned int i = 0; i < transparentObjects.size(); ++i)
 	{
 		transparentObjects[i]->OnUpdateObject(dt);
 
-		if (!frustum.InsideFrustum(transparentObjects[i])) 
+		if (!frustum.InsideFrustum(transparentObjects[i]))
 		{
 			transparentObjects[i]->m_RenderComponent->disabled = true;
 			continue;
@@ -58,7 +61,7 @@ void Scene::UpdateNodeLists(float dt, Frustum& frustum, Vec3Graphics camPos)
 	{
 		opaqueObjects[i]->OnUpdateObject(dt);
 
-		if (!frustum.InsideFrustum(opaqueObjects[i])) 
+		if (!frustum.InsideFrustum(opaqueObjects[i]))
 		{
 			opaqueObjects[i]->m_RenderComponent->disabled = true;
 			continue;

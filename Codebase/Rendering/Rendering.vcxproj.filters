@@ -43,6 +43,12 @@
     <Filter Include="Source Files\GNM_API">
       <UniqueIdentifier>{3de32fb1-e97e-48de-8248-2fb0dc54fdb7}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\Input">
+      <UniqueIdentifier>{ff28f1fa-cf5a-48bf-8cf4-33f9af1d9157}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Input">
+      <UniqueIdentifier>{356a0ef8-011e-463d-be96-72cda5646e9d}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Renderer.h">
@@ -132,6 +138,15 @@
     <ClInclude Include="GameTimer.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="ControlerComponent.h">
+      <Filter>Header Files\Input</Filter>
+    </ClInclude>
+    <ClInclude Include="Controler.h">
+      <Filter>Header Files\Input</Filter>
+    </ClInclude>
+    <ClInclude Include="KeyboardControler.h">
+      <Filter>Header Files\Input</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Renderer.cpp">
@@ -205,6 +220,12 @@
     </ClCompile>
     <ClCompile Include="Window.cpp">
       <Filter>Source Files\OGL_API</Filter>
+    </ClCompile>
+    <ClCompile Include="ControlerComponent.cpp">
+      <Filter>Source Files\Input</Filter>
+    </ClCompile>
+    <ClCompile Include="KeyboardControler.cpp">
+      <Filter>Source Files\Input</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

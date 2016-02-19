@@ -29,6 +29,7 @@ _-_-_-_-_-_-_-""  ""
 #include "RigidPhysicsObject.h"
 #include "SoftPhysicsObject.h"
 #include "RenderComponent.h"
+#include "ControlerComponent.h"
 #include <vector>
 #include "AI\StateMachine.h"
 
@@ -101,6 +102,16 @@ public:
 		return m_RenderComponent;
 	}
 
+	void SetControlerComponent(ControlerComponent* comp)
+	{
+		m_Controler = comp;
+		//m_Controler->SetParent(this);
+	}
+	ControlerComponent* GetControlerComponent() const
+	{
+		return m_Controler;
+	}
+
 	void SetPhysicsComponent(PhysicsObject* comp)
 	{
 		m_PhysicsObj = comp;
@@ -124,6 +135,7 @@ protected:
 
 	RenderComponent*			m_RenderComponent;
 	PhysicsObject*				m_PhysicsObj;
+	ControlerComponent*			m_Controler;
 
 	float						m_BoundingRadius;	//Unused
 	Mat4Graphics				m_WorldTransform;

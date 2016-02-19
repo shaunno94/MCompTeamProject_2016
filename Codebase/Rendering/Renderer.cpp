@@ -44,6 +44,7 @@ void Renderer::UpdateScene(float msec)
 		//Updates all objects in the scene, sorts lists for rendering
 		frameFrustrum.FromMatrix(projMatrix * viewMatrix);
 		currentScene->UpdateNodeLists(msec, frameFrustrum, currentScene->getCamera()->GetPosition());
+		currentScene->playerConroler->CheckInput();
 	}
 
 	if (m_UpdateGlobalUniforms)

@@ -10,6 +10,7 @@
 #include "AI\ChaseState.h"
 #include "AI\RunAwayState.h"
 #include "AI\DistanceTrigger.h"
+#include "Rendering\KeyboardControler.h"
 
 const float TIME_STEP = 1.0f / 120.0f;
 const unsigned int SUB_STEPS = 4;
@@ -56,7 +57,7 @@ int main() {
 	RigidPhysicsObject* aiBallPhysics = new RigidPhysicsObject();
 	aiBallPhysics->CreateCollisionShape(2.0);
 	aiBallPhysics->CreatePhysicsBody(2.0, Vec3Physics(0.11, 15, 0.5), QuatPhysics(0, 0, 0, 1), Vec3Physics(1, 1, 1));
-	
+
 	RigidPhysicsObject* floorPhysics = new RigidPhysicsObject();
 	floorPhysics->CreateCollisionShape(0, Vec3Physics(0, 1, 0), true);
 	floorPhysics->CreatePhysicsBody(0, Vec3Physics(0, -1, 0), QuatPhysics(0, 0, 0, 1));
@@ -76,7 +77,7 @@ int main() {
 	light1->SetWorldTransform(Mat4Graphics::Translation(Vec3Graphics(0, 2, 2)) *Mat4Graphics::Scale(Vec3Graphics(20, 20, 20)));
 	light1->SetBoundingRadius(20);
 
-	lightMaterial->shadowType=_2D;
+	lightMaterial->shadowType = _2D;
 	light2->SetRenderComponent(new RenderComponent(lightMaterial, ModelLoader::LoadMGL(MODEL_DIR"Common/ico.mgl", true)));
 	light2->SetWorldTransform(Mat4Graphics::Translation(Vec3Graphics(600, 600, 600)) *Mat4Graphics::Scale(Vec3Graphics(1600, 1600, 1600)));
 	light2->SetBoundingRadius(1600);
@@ -85,7 +86,7 @@ int main() {
 	Material* ballMaterial = new Material(simpleShader);
 	ballMaterial->Set("diffuseTex", Texture::Get(TEXTURE_DIR"checkerboard.tga", true));
 
- 	stadium->SetRenderComponent(new RenderComponent(material, ModelLoader::LoadMGL(MODEL_DIR"Stadium/Stadium2.mgl", true)));
+	stadium->SetRenderComponent(new RenderComponent(material, ModelLoader::LoadMGL(MODEL_DIR"Stadium/Stadium2.mgl", true)));
 	stadium->SetPhysicsComponent(floorPhysics);
 	stadium->GetPhysicsComponent()->GetPhysicsBody()->setRestitution(0.5);
 	stadium->SetLocalTransform(Mat4Graphics::Translation(Vec3Graphics(6.8, -28.5, -2.3)));
@@ -104,7 +105,8 @@ int main() {
 	ball->GetPhysicsComponent()->GetPhysicsBody()->setFriction(0.5);
 	ball->GetPhysicsComponent()->GetPhysicsBody()->setHitFraction(0.5);
 
-
+	ControlerComponent* cc = new ControlerComponent(ball);
+	myScene->setPlayerConrtoler(new KeyboardControler(cc));
 
 	aiBall->SetRenderComponent(new RenderComponent(ballMaterial, ModelLoader::LoadMGL(MODEL_DIR"Common/sphere.mgl", true)));
 	aiBall->SetLocalTransform(Mat4Graphics::Scale(Vector3Simple(2, 2, 2)) * Mat4Graphics::Translation(Vector3Simple(0, 0, 0)));
