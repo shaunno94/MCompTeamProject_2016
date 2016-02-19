@@ -111,7 +111,7 @@ int main() {
 	aiBall->GetPhysicsComponent()->GetPhysicsBody()->setFriction(0.5);
 	aiBall->GetPhysicsComponent()->GetPhysicsBody()->setHitFraction(0.5);
 
-	ParticleManager::Initialise();
+	//ParticleManager::Initialise();
 	//ParticleManager::GetManager().AddSystem(new ParticleSystem(new CubeEmitter(),TEXTURE_DIR"particle.tga",1000,myScene->getCamera(),particleShader, &renderer));
 
 	//StateMachine* ballStateMachine = new StateMachine();
@@ -149,7 +149,7 @@ int main() {
 	dynamic_cast<RigidPhysicsObject*>(ball->GetPhysicsComponent())->GetPhysicsBody()->setAngularVelocity(btVector3(1, 0, 0));
 	dynamic_cast<RigidPhysicsObject*>(aiBall->GetPhysicsComponent())->GetPhysicsBody()->applyCentralForce(btVector3(10, 0, 0));
 
-	ParticleManager::Initialise();
+	//ParticleManager::Initialise();
 	//ParticleManager::AddSystem(new ParticleSystem());
 
 	while (Window::GetWindow().UpdateWindow() && !Window::GetKeyboard()->KeyDown(KEYBOARD_ESCAPE))

@@ -1,14 +1,13 @@
 #include "ParticleSystem.h"
 
 ParticleSystem::ParticleSystem(ParticleEmitter* emitter, const std::string& texturePath,
-                                unsigned int numParticles, Camera* camera, Shader* shader, Renderer* renderer)
+                                unsigned int numParticles, Camera* camera, Renderer* renderer)
 	:m_Camera(camera)
 	, m_Texture(NULL)
 	, m_Force(0,-9.81f,0)
 	, m_NumAlive(0)
 	, m_ParticleEmitter(emitter)
 	, m_NumParticles(numParticles)
-	, shader(shader)
 	, renderer(renderer)
 {
 	LoadTexture(texturePath);
@@ -127,11 +126,11 @@ void ParticleSystem::Render()
 	glActiveTexture(GL_TEXTURE0);
 	glBindTexture(GL_TEXTURE_BUFFER, m_Texture->GetTextureId());
 
-	glBindAttribLocation(shader->GetProgram(), 0, "pos");
-	glBindAttribLocation(shader->GetProgram(), 1, "tex");
-	glBindAttribLocation(shader->GetProgram(), 2, "colour");
+	//glBindAttribLocation(shader->GetProgram(), 0, "pos");
+	//glBindAttribLocation(shader->GetProgram(), 1, "tex");
+	//glBindAttribLocation(shader->GetProgram(), 2, "colour");
 
-	glUseProgram(shader->GetProgram());
+	//glUseProgram(shader->GetProgram());
 
 	glDrawArrays(GL_LINE_LOOP, 0, m_NumParticles);
 

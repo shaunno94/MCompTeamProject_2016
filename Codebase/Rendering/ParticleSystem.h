@@ -15,7 +15,7 @@ class ParticleSystem
 {
 public:
 
-	ParticleSystem(ParticleEmitter* emitter, const std::string& texturePath, unsigned int numParticles, Camera* camera, Shader* shader, Renderer* renderer);
+	ParticleSystem(ParticleEmitter* emitter, const std::string& texturePath, unsigned int numParticles, Camera* camera, Renderer* renderer);
 	~ParticleSystem();
 
 	void EmitParticles();
@@ -44,7 +44,6 @@ private:
 	GLfloat**				colour;
 
 	Vec3Graphics			m_Force;
-	Shader*					shader;
 	Renderer*				renderer;
 
 };
