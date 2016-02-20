@@ -1,3 +1,4 @@
+#ifdef ORBIS
 #pragma once
 #include "Memory/PS4Memory.h"
 #include <gnmx.h>
@@ -18,4 +19,4 @@ protected:
 	sce::Gnmx::GnmxGfxContext commandBuffer;
 	uint64_t frameTag;
 };
-
+#endif

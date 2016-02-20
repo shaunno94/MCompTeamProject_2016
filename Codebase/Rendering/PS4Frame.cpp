@@ -1,3 +1,4 @@
+#ifdef ORBIS
 #include "PS4Frame.h"
 #include <gnmx\basegfxcontext.h>
 
@@ -65,3 +66,4 @@ void  PS4Frame::EndFrame()
 {
 	commandBuffer.writeImmediateAtEndOfPipeWithInterrupt(sce::Gnm::kEopFlushCbDbCaches, &frameTag, FRAME_DONE, sce::Gnm::kCacheActionNone);
 }
+#endif
