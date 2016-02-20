@@ -45,8 +45,8 @@ protected:
 	static void UpdateUniformValue(std::vector<std::pair<int, T>>& container)
 	{
 		for (auto it = container.begin(); it != container.end(); ++it)
-			Renderer::UpdateUniform(it->first, it->second);
-			//bool b = true;
+			//Renderer::UpdateUniform(it->first, it->second);
+			bool b = true;
 	}
 
 	static const unsigned int TEXTURE_UNIT_START = 0;

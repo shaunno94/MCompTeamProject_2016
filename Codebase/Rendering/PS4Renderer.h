@@ -1,11 +1,13 @@
 #pragma once
 #ifdef ORBIS
+#include <gnm.h>
+#include <gnmx\fetchshaderhelper.h>
+#include <..\samples\sample_code\graphics\api_gnm\toolkit\toolkit.h>
+
 #include "Helpers/common.h"
-#include <string>
-#include <vector>
 #include "LightMaterial.h"
-#include "Math/nclglMath.h"
 #include "PS4Shader.h"
+#include "PS4Frame.h"
 
 enum CULL
 {
@@ -31,8 +33,9 @@ struct PS4ScreenBuffer
 
 class Renderer;
 class GameObject;
+class Renderer;
 
-class PS4Renderer
+class PS4Renderer : public PS4Memory
 {
 public:
 	PS4Renderer();
@@ -60,7 +63,7 @@ protected:
 	void DrawShadow(GameObject* light);
 	void CombineBuffers();
 	void SwapBuffers();
-	void SwapCommandBuffer();
+	
 	void SetCullFace(CULL c);
 	
 	Mat4Graphics projMatrix;	//Projection matrix
@@ -70,6 +73,30 @@ protected:
 	static Renderer* child;
 	PS4Shader* currentShader;
 
+	//Per frame pointers.
+	PS4ScreenBuffer* currentPS4Buffer;  //Pointer to whichever buffer we're currently using...
+	sce::Gnmx::GnmxGfxContext*	currentGFXContext;
+	PS4Frame* currentFrame;
+	PS4Frame* frames;
+	int framesSubmitted;
+
+	int currentGPUBuffer;
+	const int _MaxCMDBufferCount = 3;
+
+	//VIDEO SYSTEM VARIABLES
+	int videoHandle;
+
+	//SCREEN BUFFER VARIABLES
+	const int _bufferCount = 3;	//How many screen buffers should we have
+	int	currentScreenBuffer;
+	int	prevScreenBuffer;
+	PS4ScreenBuffer** screenBuffers;	//Pointer to our screen buffers
+
+	//Memory Allocation
+	const int _GarlicMemory = (1024 * 1024 * 512);
+	const int _OnionMemory = (1024 * 1024 * 256);
+	sce::Gnmx::Toolkit::StackAllocator	stackAllocators[MEMORYMAX];
+	
 	bool init = false;
 
 private:
@@ -83,6 +110,9 @@ private:
 
 	void	SetRenderBuffer(PS4ScreenBuffer* buffer, bool clearColour, bool clearDepth, bool clearStencil);
 	void	ClearBuffer(bool colour, bool depth, bool stencil);
+	
+	void SwapCommandBuffer();
+	void SwapScreenBuffer();
 
 	PS4ScreenBuffer* GenerateScreenBuffer(uint width, uint height, bool colour = true, bool depth = true, bool stencil = false);
 };

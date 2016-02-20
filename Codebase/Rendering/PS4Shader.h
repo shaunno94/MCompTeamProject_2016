@@ -24,38 +24,27 @@ using std::string;
 //};
 class PS4Shader : public PS4Memory, public BaseShader
 {
-	//friend class PS4RendererBase;
+	//friend class PS4Renderer;
 public:
 	PS4Shader(const string& vertex, const string& pixel, const string& geometry = "", const string& hull = "", const string& domain = "");
 	~PS4Shader();
 
 protected:
-	
-	//PS4Shader(const string& vertex, const string& pixel);
 	void GenerateVertexShader(const string&name, bool makeFetch);
-
 	void GeneratePixelShader(const string&name);
-
 	void GenerateHullShader(const string& name);
-	 
 	void GenerateDomainShader(const string& name);
-
 	void GenerateGeometryShader(const string& name);
-
 	void GenerateFetchShader(char* binData);
-
-	bool LoadShaderText(const string &name, string&into);
-
-	bool LoadShaderBinary(const string &name, char*& into, int& dataSize);
-
-	bool ShaderIsBinary(const string& name);
-
-	void SubmitShaderSwitch(sce::Gnmx::GnmxGfxContext& cmdList);
-
-	int	GetResourceByName(const std::string &name) const override;
-
-	bool IsOperational() const override { return operational; }
 	
+	bool LoadShaderText(const string &name, string&into);
+	bool LoadShaderBinary(const string &name, char*& into, int& dataSize);
+	bool ShaderIsBinary(const string& name);
+	
+	void SubmitShaderSwitch(sce::Gnmx::GnmxGfxContext& cmdList);
+	
+	int	GetResourceByName(const std::string &name) const override;
+	bool IsOperational() const override { return operational; }
 	int GetReservedMeshTextureUniformLocation(size_t index) const override { return m_ReservedMeshTextureLocations[index]; }
 
 protected:

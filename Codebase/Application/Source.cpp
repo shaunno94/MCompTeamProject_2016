@@ -14,7 +14,7 @@
 const float TIME_STEP = 1.0f / 120.0f;
 const unsigned int SUB_STEPS = 4;
 
-int main() {
+int main(void) {
 	//-------------------
 	//--- MAIN Loop ---
 	//-------------------
@@ -66,8 +66,8 @@ int main() {
 	BaseShader* pointlightShader = new OGLShader(SHADER_DIR"2dShadowLightvertex.glsl", SHADER_DIR"2dShadowLightfragment.glsl");
 	//BaseShader* pointlightShader = new OGLShader(SHADER_DIR"CubeShadowLightvertex.glsl", SHADER_DIR"CubeShadowLightfragment.glsl");
 #else
-	BaseShader* simpleShader = new PS4Shader(SHADER_DIR"textureVertex.glsl", SHADER_DIR"textureFragment.glsl");
-	BaseShader* pointlightShader = new PS4Shader(SHADER_DIR"2dShadowLightvertex.glsl", SHADER_DIR"2dShadowLightfragment.glsl");
+	BaseShader* simpleShader = new PS4Shader(COMPILED_SHADER_DIR_D"textureVertex.glsl", COMPILED_SHADER_DIR_D"textureFragment.glsl");
+	BaseShader* pointlightShader = new PS4Shader(COMPILED_SHADER_DIR_D"2dShadowLightvertex.glsl", COMPILED_SHADER_DIR_D"2dShadowLightfragment.glsl");
 #endif
 	
 	if (!pointlightShader->IsOperational() || !simpleShader->IsOperational())

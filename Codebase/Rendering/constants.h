@@ -40,6 +40,8 @@ enum MeshBuffer
 #else
 //In release, the expectation is applications will be run from the .exe files (starting directory being the .exe location)
 #define SHADER_DIR	"Assets/Shaders/"
+#define COMPILED_SHADER_DIR_D "ORBIS_Debug"
+#define COMPILED_SHADER_DIR "ORBIS_Release"
 #define MODEL_DIR	"Assets/Models/"
 #define TEXTURE_DIR  "Assets/Textures/"
 #define AUDIO_DIR	"Assets/AUDIO/"

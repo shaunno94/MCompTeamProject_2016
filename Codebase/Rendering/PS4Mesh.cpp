@@ -1,5 +1,8 @@
 #ifdef ORBIS
 #include "PS4Mesh.h"
+#include "Renderer.h"
+#include "OGLShader.h"
+#include "Material.h"
 
 PS4Mesh::PS4Mesh(size_t numVertices, Vec3Graphics* vertices, Vec2Graphics* texCoords, Vec3Graphics* normals, Vec3Graphics* tangents, size_t numIndices, size_t* indices)
 : Mesh(numVertices, vertices, texCoords, normals, tangents, numIndices, indices)
@@ -71,14 +74,29 @@ void PS4Mesh::BufferData()
 
 void PS4Mesh::InitAttributeBuffer(sce::Gnm::Buffer &buffer, sce::Gnm::DataFormat format, void*offset)
 {
-	int lolz = sizeof(MeshVertex);
 	buffer.initAsVertexBuffer(offset, format, sizeof(MeshVertex), m_NumVertices);
 	buffer.setResourceMemoryType(sce::Gnm::kResourceMemoryTypeRO);
 }
 
-void PS4Mesh::Draw(Material* m)
+void PS4Mesh::Draw(Material* material)
 {
+	//reserved textures
+	/*for (unsigned int i = 0; i < ReservedMeshTextures.size; ++i)
+	{
+		if (m_Textures[i])
+			m_Textures[i]->Load(i);
+	}
+	//reserved colours
+	for (unsigned int i = 0; i < ReservedMeshColours.size; ++i)
+		Renderer::UpdateUniform(static_cast<PS4Shader*>(material->GetShader())->GetReservedMeshColourUniformLocation(i), GetColour(i));
+	//reserved float
+	Renderer::UpdateUniform(glGetUniformLocation(static_cast<OGLShader*>(material->GetShader())->GetProgram(), "specExponent"), GetSpecExponent());
 
+	material->Setup();*/
+
+
+	for (auto child : m_Children)
+		child->Draw(material);
 }
 
 void PS4Mesh::SubmitDraw(sce::Gnmx::GnmxGfxContext& cmdList, sce::Gnm::ShaderStage stage)
