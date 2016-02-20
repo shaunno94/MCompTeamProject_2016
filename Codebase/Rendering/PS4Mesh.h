@@ -2,20 +2,14 @@
 #pragma once
 #include "Mesh.h"
 #include "Memory/PS4Memory.h"
-
-#include <gnm.h>
-#include <gnmx\context.h>
-#include <..\samples\sample_code\graphics\api_gnm\toolkit\allocators.h>
-#include <..\samples\sample_code\graphics\api_gnm\toolkit\stack_allocator.h>
 #include <gnm\dataformats.h>
-
-using namespace sce;
 
 class PS4Mesh : public Mesh, public PS4Memory
 {
 	friend class PS4RendererBase;
 public:
 	PS4Mesh();
+	PS4Mesh(size_t numVertices, Vec3Graphics* vertices, Vec2Graphics* texCoords, Vec3Graphics* normals, Vec3Graphics* tangents, size_t numIndices, size_t* indices);
 	virtual ~PS4Mesh();
 
 	void DrawDebugNormals(float length = 5.0f) override {};
@@ -30,8 +24,8 @@ public:
 	void SetPrimitiveType(pType type) override;
 
 protected:
-	void	SubmitDraw(Gnmx::GnmxGfxContext& cmdList, Gnm::ShaderStage stage);
-	void	InitAttributeBuffer(sce::Gnm::Buffer &buffer, Gnm::DataFormat format, void*offset);
+	void	SubmitDraw(sce::Gnmx::GnmxGfxContext& cmdList, sce::Gnm::ShaderStage stage);
+	void	InitAttributeBuffer(sce::Gnm::Buffer &buffer, sce::Gnm::DataFormat format, void*offset);
 
 	//Gpu simply has a 4 byte alignment!
 	struct MeshVertex

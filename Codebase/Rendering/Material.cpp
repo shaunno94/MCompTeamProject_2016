@@ -22,13 +22,11 @@ void Material::Setup()
 
 
 	Renderer::GetInstance()->UpdateShaderMatrices();
-	GLint textureUnit = ReservedMeshTextures.size + ReservedOtherTextures.size;
+	int textureUnit = ReservedMeshTextures.size + ReservedOtherTextures.size;
 	for(auto it = m_uniformTextures.begin(); it != m_uniformTextures.end(); ++it)
 	{
 		it->second->Load(textureUnit);
-
 		Renderer::UpdateUniform(it->first, textureUnit++);
-
 	}
 
 

@@ -70,7 +70,7 @@
     <LibraryPath>$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|ORBIS'">
-    <IncludePath>$(SCE_ORBIS_SAMPLE_DIR)\;$(IncludePath)</IncludePath>
+    <IncludePath>$(SCE_ORBIS_SAMPLE_DIR)\sample_code\;$(IncludePath)</IncludePath>
     <LibraryPath>$(SCE_ORBIS_SAMPLE_DIR)\sample_code\graphics\api_gnm\toolkit;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|ORBIS'">
@@ -129,16 +129,20 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="AlignmentWrapper.h" />
+    <ClInclude Include="allocator.h" />
+    <ClInclude Include="allocators.h" />
     <ClInclude Include="common.h" />
     <ClInclude Include="FixedSizeAllocator.h" />
     <ClInclude Include="FixedSizeAllocatorManager.h" />
     <ClInclude Include="PS4Memory.h" />
+    <ClInclude Include="stack_allocator.h" />
     <ClInclude Include="STLAlignedAllocator.h" />
     <ClInclude Include="STLManagedAllocator.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="FixedSizeAllocator.cpp" />
     <ClCompile Include="FixedSizeAllocatorManager.cpp" />
+    <ClCompile Include="PS4Memory.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

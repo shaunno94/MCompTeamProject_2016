@@ -1,4 +1,5 @@
 #pragma once
+#ifndef ORBIS
 #include "Math/nclglMath.h"
 #include "Mesh.h"
 #include "Camera.h"
@@ -49,3 +50,4 @@ private:
 	Vec3Graphics			m_Force;
 
 };
+#endif

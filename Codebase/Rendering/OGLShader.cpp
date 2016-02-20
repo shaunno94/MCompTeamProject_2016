@@ -52,12 +52,12 @@ OGLShader::OGLShader(std::string vFile, std::string fFile, std::string gFile, st
 		}
 		else
 		{
-			m_ModelMatrixLocation = glGetUniformLocation(GetProgram(), "modelMatrix");
+			m_ModelMatrixLocation = GetResourceByName("modelMatrix");
 			for (size_t i = 0; i < ReservedMeshTextures.size; ++i)
-				m_ReservedMeshTextureLocations[i] = glGetUniformLocation(GetProgram(), ReservedMeshTextures.values[i].name);
+				m_ReservedMeshTextureLocations[i] = GetResourceByName(ReservedMeshTextures.values[i].name);
 
 			for (size_t i = 0; i < ReservedMeshColours.size; ++i)
-				m_ReservedMeshColourLocations[i] = glGetUniformLocation(GetProgram(), ReservedMeshColours.values[i].name);
+				m_ReservedMeshColourLocations[i] = GetResourceByName(ReservedMeshColours.values[i].name);
 		}
 	}
 	else

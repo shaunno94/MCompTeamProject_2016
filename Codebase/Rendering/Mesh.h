@@ -109,7 +109,7 @@ public:
 	{
 		return m_TextureCoords;
 	}
-	inline unsigned int* GetIndices()
+	inline size_t* GetIndices()
 	{
 		return m_Indices;
 	}
@@ -159,6 +159,6 @@ protected:
 	//Pointer to vertex tangents attribute data
 	Vec3Graphics*		m_Tangents;
 	//Pointer to vertex indices attribute data
-	unsigned int*	m_Indices;
+	size_t*	m_Indices;
 };
 

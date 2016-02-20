@@ -3,10 +3,8 @@
 #include <Memory\PS4Memory.h>
 #include <gnmx\shaderbinary.h>
 #include <shader\binary.h>
-
-
 #include <vector>
-#include "Shader.h"
+#include "BaseShader.h"
 
 using std::vector;
 using std::string;
@@ -58,7 +56,7 @@ protected:
 
 	bool IsOperational() const override { return operational; }
 	
-	int GetReservedMeshTextureUniformLocation(size_t index) const override {}
+	int GetReservedMeshTextureUniformLocation(size_t index) const override { return m_ReservedMeshTextureLocations[index]; }
 
 protected:
 	void*							fetchShader;
@@ -85,5 +83,9 @@ protected:
 
 	//PS4PipelineType pipelineType;
 	bool operational = false;
+
+	int m_ModelMatrixLocation;
+	int m_ReservedMeshTextureLocations[ReservedMeshTextures.size];
+	int m_ReservedMeshColourLocations[ReservedMeshColours.size];
 };
 #endif

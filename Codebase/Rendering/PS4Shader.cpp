@@ -8,7 +8,7 @@
 
 using std::ifstream;
 
-PS4Shader::PS4Shader(const string& vertex, const string& pixel, const string& geometry = "", const string& hull = "", const string& domain = "")
+PS4Shader::PS4Shader(const string& vertex, const string& pixel, const string& geometry, const string& hull, const string& domain)
 {
 	fetchShader = nullptr;
 	vertexShader = nullptr;
@@ -28,6 +28,14 @@ PS4Shader::PS4Shader(const string& vertex, const string& pixel, const string& ge
 		GenerateHullShader(hull);
 		GenerateDomainShader(domain);
 	}
+
+	m_ModelMatrixLocation = GetResourceByName("modelMatrix");
+	for (size_t i = 0; i < ReservedMeshTextures.size; ++i)
+		m_ReservedMeshTextureLocations[i] = GetResourceByName(ReservedMeshTextures.values[i].name);
+
+	for (size_t i = 0; i < ReservedMeshColours.size; ++i)
+		m_ReservedMeshColourLocations[i] = GetResourceByName(ReservedMeshColours.values[i].name);
+
 	operational = true;
 }
 

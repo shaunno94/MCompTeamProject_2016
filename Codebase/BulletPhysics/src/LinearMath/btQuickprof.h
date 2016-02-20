@@ -23,10 +23,6 @@
 #include "btAlignedAllocator.h"
 #include <new>
 
-
-
-
-
 #define USE_BT_CLOCK 1
 
 #ifdef USE_BT_CLOCK

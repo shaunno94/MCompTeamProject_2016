@@ -1,3 +1,4 @@
+#ifndef ORBIS
 #include "ParticleSystem.h"
 
 ParticleSystem::ParticleSystem(const std::string& texturePath)
@@ -142,3 +143,4 @@ void ParticleSystem::Render()
 
 	glPopAttrib();
 }
+#endif

@@ -294,6 +294,63 @@ void OGLRenderer::UpdateUniform(GLint location, unsigned int u)
 	if (location >= 0) glUniform1ui(location, u);
 }
 
+unsigned int OGLRenderer::TextureMemoryUsage(unsigned int id)
+{
+	int width;
+	int height;
+	int r, g, b, a;
+
+	glBindTexture(GL_TEXTURE_2D, id);
+
+	glGetTexLevelParameteriv(GL_TEXTURE_2D, 0, GL_TEXTURE_RED_SIZE, &r);
+	glGetTexLevelParameteriv(GL_TEXTURE_2D, 0, GL_TEXTURE_GREEN_SIZE, &g);
+	glGetTexLevelParameteriv(GL_TEXTURE_2D, 0, GL_TEXTURE_BLUE_SIZE, &b);
+	glGetTexLevelParameteriv(GL_TEXTURE_2D, 0, GL_TEXTURE_ALPHA_SIZE, &a);
+	glGetTexLevelParameteriv(GL_TEXTURE_2D, 0, GL_TEXTURE_WIDTH, &width);
+	glGetTexLevelParameteriv(GL_TEXTURE_2D, 0, GL_TEXTURE_HEIGHT, &height);
+
+	glBindTexture(GL_TEXTURE_2D, 0);
+	return (width * height * ((r + g + b + a) / 8.0f));
+}
+
+void OGLRenderer::SetTextureFlags(unsigned int id, unsigned int flags)
+{
+	glBindTexture(GL_TEXTURE_2D, GLuint(id));
+
+	// Repeat/Clamp options
+	if ((flags & REPEATING) == REPEATING) {
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+	}
+	else if ((flags & CLAMPING) == CLAMPING) {
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP);
+	}
+
+	// Filtering options
+	if ((flags & NEAREST_NEIGHBOUR_MIN_FILTERING) == NEAREST_NEIGHBOUR_MIN_FILTERING) {
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+	}
+	else if ((flags & BILINEAR_MIN_FILTERING) == BILINEAR_MIN_FILTERING) {
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	}
+	else if ((flags & TRILINEAR_MIN_FILTERING) == TRILINEAR_MIN_FILTERING) {
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+	}
+
+	if ((flags & NEAREST_NEIGHBOUR_MAX_FILTERING) == NEAREST_NEIGHBOUR_MAX_FILTERING) {
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+	}
+	else if ((flags & BILINEAR_MAX_FILTERING) == BILINEAR_MAX_FILTERING) {
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	}
+	else if ((flags & TRILINEAR_MAX_FILTERING) == TRILINEAR_MAX_FILTERING) {
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+	}
+
+	glBindTexture(GL_TEXTURE_2D, 0);
+}
+
 void OGLRenderer::initFBO()
 {
 	glGenFramebuffers(1, &bufferFBO);

@@ -4,6 +4,11 @@
 #include "Dependencies/glew-1.13.0/include/GL/glew.h"
 #include "Dependencies/SOIL2/SOIL2.h"
 #pragma comment(lib, "SOIL2/soil2.lib")
+#else
+#include <fstream>
+#include <gnf.h>
+#include <gnm\texture.h>
+#include "Memory/PS4Memory.h"
 #endif
 
 #include <string>
@@ -13,13 +18,7 @@
 
 #include <type_traits>
 
-#ifdef ORBIS
-typedef unsigned int texId;
-#else
-typedef GLuint texId;
-#endif
-
-static enum TextureFlags
+enum TextureFlags
 {
 	REPEATING = 1,
 	CLAMPING = 2,
@@ -37,6 +36,11 @@ static enum TextureFlags
 	TRILINEAR_MIN_MAX_FILTERING = 64 | 128
 };
 
+#ifndef ORBIS
+typedef unsigned int textureHandle;
+#else
+typedef const sce::Gnm::Texture* textureHandle;
+#endif
 
 /// @ingroup Rendering
 /// <summary>
@@ -45,7 +49,12 @@ static enum TextureFlags
 /// <remarks>
 /// This class tracks texture requests and needs to be instantiated and cleaned up through static factory methods.
 /// </remarks>
+#ifndef ORBIS
 class Texture
+#else
+class Texture : public PS4Memory
+#endif
+
 {
 public:
 
@@ -73,10 +82,10 @@ public:
 	/// If this texture is not loaded onto the GPU, the <see cref="Texture::LoadFromFile"/> will be called automatically.
 	/// </remarks>
 	/// <returns>GPU texture id.</returns>
-	inline texId GetTextureId()
+	inline textureHandle GetTextureId()
 	{
 		if (!textureId) LoadFromFile();
-		return textureId;
+			return textureId;
 	}
 	/// <summary>
 	/// File path of the texture.
@@ -143,15 +152,12 @@ protected:
 	static std::unordered_map<std::string, std::vector<Texture*>> s_textureRecords;
 
 	static int s_memoryUsage;
-	void MeasureMemoryUsageAdd(texId textureId);
-	void MeasureMemoryUsageSubstract(texId textureId);
-
-
+	void MeasureMemoryUsageAdd(textureHandle textureId);
+	void MeasureMemoryUsageSubtract(textureHandle textureId);
 
 	Texture(const std::string& filepath, size_t textureCopyIndex, bool preload = false);
 
-
-	texId textureId;
+	textureHandle textureId;
 	size_t textureCopyIndex;
 	std::string filePath;
 	unsigned int m_referenceCount;

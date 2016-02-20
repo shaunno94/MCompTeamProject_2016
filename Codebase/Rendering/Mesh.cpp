@@ -73,7 +73,7 @@ Mesh* Mesh::GenerateQuad(Vec2Graphics texCoords)
 	m->SetPrimitiveType(TRIANGLE_STRIP);
 
 	m->m_Vertices = new Vec3Graphics[m->m_NumVertices];
-	m->m_Indices = new unsigned int[m->m_NumIndices];
+	m->m_Indices = new size_t[m->m_NumIndices];
 	m->m_TextureCoords = new Vec2Graphics[m->m_NumVertices];
 	m->m_Normals = new Vec3Graphics[m->m_NumVertices];
 	m->m_Tangents = new Vec3Graphics[m->m_NumVertices];
@@ -111,7 +111,7 @@ Mesh* Mesh::GenerateQuadAlt()
 	m->SetPrimitiveType(TRIANGLE_STRIP);
 
 	m->m_Vertices = new Vec3Graphics[m->m_NumVertices];
-	m->m_Indices = new unsigned int[m->m_NumIndices];
+	m->m_Indices = new size_t[m->m_NumIndices];
 	m->m_TextureCoords = new Vec2Graphics[m->m_NumVertices];
 	m->m_Normals = new Vec3Graphics[m->m_NumVertices];
 	m->m_Tangents = new Vec3Graphics[m->m_NumVertices];
@@ -149,7 +149,7 @@ Mesh* Mesh::GenerateQuadTexCoordCol(Vec2Graphics scale, Vec2Graphics texCoord, V
 	m->SetPrimitiveType(TRIANGLE_STRIP);
 
 	m->m_Vertices = new Vec3Graphics[m->m_NumVertices];
-	m->m_Indices = new unsigned int[m->m_NumIndices];
+	m->m_Indices = new size_t[m->m_NumIndices];
 	m->m_TextureCoords = new Vec2Graphics[m->m_NumVertices];
 	m->m_Normals = new Vec3Graphics[m->m_NumVertices];
 	m->m_Tangents = new Vec3Graphics[m->m_NumVertices];

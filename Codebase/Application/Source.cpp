@@ -64,17 +64,15 @@ int main() {
 #ifndef ORBIS
 	BaseShader* simpleShader = new OGLShader(SHADER_DIR"textureVertex.glsl", SHADER_DIR"textureFragment.glsl");
 	BaseShader* pointlightShader = new OGLShader(SHADER_DIR"2dShadowLightvertex.glsl", SHADER_DIR"2dShadowLightfragment.glsl");
+	//BaseShader* pointlightShader = new OGLShader(SHADER_DIR"CubeShadowLightvertex.glsl", SHADER_DIR"CubeShadowLightfragment.glsl");
 #else
 	BaseShader* simpleShader = new PS4Shader(SHADER_DIR"textureVertex.glsl", SHADER_DIR"textureFragment.glsl");
 	BaseShader* pointlightShader = new PS4Shader(SHADER_DIR"2dShadowLightvertex.glsl", SHADER_DIR"2dShadowLightfragment.glsl");
 #endif
-	//OGLShader* pointlightShader = new OGLShader(SHADER_DIR"CubeShadowLightvertex.glsl", SHADER_DIR"CubeShadowLightfragment.glsl");
-
-	if (!pointlightShader->IsOperational())
+	
+	if (!pointlightShader->IsOperational() || !simpleShader->IsOperational())
 		return -1;
 
-	if (!simpleShader->IsOperational())
-		return -1;
 
 	LightMaterial* lightMaterial = new LightMaterial(pointlightShader);
 	light1->SetRenderComponent(new RenderComponent(lightMaterial, ModelLoader::LoadMGL(MODEL_DIR"Common/ico.mgl", true)));
@@ -97,7 +95,6 @@ int main() {
 	stadium->GetPhysicsComponent()->GetPhysicsBody()->setFriction(0.5);
 	stadium->GetPhysicsComponent()->GetPhysicsBody()->setHitFraction(0.5);
 
-
 	myScene->addGameObject(stadium);
 	//myScene->addLightObject(light1);
 	myScene->addLightObject(light2);
@@ -108,8 +105,6 @@ int main() {
 	ball->GetPhysicsComponent()->GetPhysicsBody()->setRestitution(btScalar(0.9));
 	ball->GetPhysicsComponent()->GetPhysicsBody()->setFriction(0.5);
 	ball->GetPhysicsComponent()->GetPhysicsBody()->setHitFraction(0.5);
-
-
 
 	aiBall->SetRenderComponent(new RenderComponent(ballMaterial, ModelLoader::LoadMGL(MODEL_DIR"Common/sphere.mgl", true)));
 	aiBall->SetLocalTransform(Mat4Graphics::Scale(Vector3Simple(2, 2, 2)) * Mat4Graphics::Translation(Vector3Simple(0, 0, 0)));

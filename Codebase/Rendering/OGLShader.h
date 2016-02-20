@@ -20,7 +20,7 @@ _-_-_-_-_-_-_-""  ""
 #include "Dependencies/glew-1.13.0/include/GL/wglew.h"
 #include <string>
 #include "constants.h"
-#include "Shader.h"
+#include "BaseShader.h"
 
 #define SHADER_VERTEX   0
 #define SHADER_FRAGMENT 1

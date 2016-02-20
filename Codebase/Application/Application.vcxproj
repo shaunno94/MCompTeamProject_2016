@@ -66,7 +66,7 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|ORBIS'">
-    <IncludePath>$(SCE_ORBIS_SAMPLE_DIR)\;$(IncludePath)</IncludePath>
+    <IncludePath>$(SCE_ORBIS_SAMPLE_DIR)\sample_code\;$(IncludePath)</IncludePath>
     <LibraryPath>$(SCE_ORBIS_SAMPLE_DIR)\sample_code\graphics\api_gnm\toolkit;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|ORBIS'">
@@ -91,13 +91,20 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>NOMINMAX;_MBCS;ORBIS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>..\BulletPhysics\src;$(SolutionDir);$(SolutionDir)Dependencies;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>NOMINMAX;ORBIS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>$(SCE_ORBIS_SAMPLE_DIR)\;$(IncludePath);..\BulletPhysics\src;$(SolutionDir);$(SolutionDir)Dependencies;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <RuntimeTypeInfo>true</RuntimeTypeInfo>
+      <CppExceptions>true</CppExceptions>
+      <Warnings>WarningsOff</Warnings>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>$(SolutionDir)Dependencies;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(SCE_ORBIS_SAMPLE_DIR)\sample_code\graphics\api_gnm\toolkit;$(LibraryPath);$(SolutionDir)Dependencies;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
+    <ProjectReference>
+      <UseLibraryDependencyInputs>false</UseLibraryDependencyInputs>
+    </ProjectReference>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ClCompile>
@@ -125,6 +132,8 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>NOMINMAX;NDEBUG;GLEW_STATIC;_MBCS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <AdditionalIncludeDirectories>..\BulletPhysics\src;$(SolutionDir);$(SolutionDir)Dependencies;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <RuntimeTypeInfo>true</RuntimeTypeInfo>
+      <CppExceptions>true</CppExceptions>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
@@ -137,17 +146,20 @@
     <ClCompile Include="Source.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\AI\AI.vcxproj">
-      <Project>{ea8b500e-59fa-4a79-8398-08f85f821cc7}</Project>
-    </ProjectReference>
     <ProjectReference Include="..\BulletPhysics\build3\vs2010\BulletCollision.vcxproj">
       <Project>{40ea9fb9-b6a7-0546-bb80-77339701554e}</Project>
     </ProjectReference>
     <ProjectReference Include="..\BulletPhysics\build3\vs2010\BulletDynamics.vcxproj">
       <Project>{dc95e089-a36f-e041-a7cd-54df1737639b}</Project>
     </ProjectReference>
+    <ProjectReference Include="..\BulletPhysics\build3\vs2010\BulletSoftBody.vcxproj">
+      <Project>{adcfed9a-e56e-e440-b14b-8df86a36f142}</Project>
+    </ProjectReference>
     <ProjectReference Include="..\BulletPhysics\build3\vs2010\LinearMath.vcxproj">
       <Project>{e9a76716-ef48-2d48-b6ae-09a54f748cae}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\Helpers\Helpers.vcxproj">
+      <Project>{dd6d26aa-e01c-4600-8bc6-2f768a74ca8b}</Project>
     </ProjectReference>
     <ProjectReference Include="..\Input\Input.vcxproj">
       <Project>{c60fce67-02e6-493e-ba76-03cc04043046}</Project>
@@ -155,11 +167,19 @@
     <ProjectReference Include="..\Math\Math.vcxproj">
       <Project>{bbdee9f7-c011-44dc-a8f4-86cc2b87adc7}</Project>
     </ProjectReference>
+    <ProjectReference Include="..\Memory\Memory.vcxproj">
+      <Project>{84f8e699-7dc9-4e84-9677-c38fb5f2bf2f}</Project>
+    </ProjectReference>
     <ProjectReference Include="..\PhysicsEngine\PhysicsEngine.vcxproj">
       <Project>{2cc601e3-e95d-4c55-b786-474f898780f5}</Project>
     </ProjectReference>
     <ProjectReference Include="..\Rendering\Rendering.vcxproj">
       <Project>{b7a9766d-22d7-48e8-b28a-c48c6e42af98}</Project>
+      <Private>false</Private>
+      <ReferenceOutputAssembly>true</ReferenceOutputAssembly>
+      <CopyLocalSatelliteAssemblies>false</CopyLocalSatelliteAssemblies>
+      <LinkLibraryDependencies>true</LinkLibraryDependencies>
+      <UseLibraryDependencyInputs>false</UseLibraryDependencyInputs>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

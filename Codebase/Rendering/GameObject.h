@@ -47,7 +47,7 @@ class GameObject
 
 public:
 	GameObject(const std::string& name = "");
-	~GameObject();
+	virtual ~GameObject();
 
 	const std::string& GetName()
 	{

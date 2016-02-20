@@ -3,8 +3,10 @@
 
 #include <gnm.h>
 #include <gnmx\context.h>
-#include <.\sample_code\graphics\api_gnm\toolkit\stack_allocator.h>
-#include <.\sample_code\graphics\api_gnm\toolkit\allocators.h>
+//#include "stack_allocator.h"
+//#include "allocators.h"
+#include <..\samples\sample_code\graphics\api_gnm\toolkit\stack_allocator.h>
+#include <..\samples\sample_code\graphics\api_gnm\toolkit\allocators.h>
 
 class PS4Memory	
 {
