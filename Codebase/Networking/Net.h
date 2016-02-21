@@ -17,6 +17,23 @@ enum NetMessageStrategy : unsigned char
 
 #define NET_PEER_NAME_LENGTH 20
 
+#if _DEBUG
+#define ERROR_NET(message) fprintf(stderr, message)
+#else
+#define ERROR_NET() ((void)0)
+#endif
+
+#if _DEBUG
+#define PROMPT_NET(message) printf(message)
+#else
+#define PROMPT_NET() ((void)0)
+#endif
+
+#if _DEBUG
+#define DEBUG_NET
+#endif
+
+
 /// <summary>
 /// Peer information.
 /// </summary>
@@ -81,12 +98,6 @@ public:
 	//get connection info
 };
 
-enum NetHostState: unsigned char
-{
-	NetPreparingSession,
-	NetInSession,
-	NetOffline
-};
 
 //Needs removing?
 enum NetConnectionState
@@ -97,52 +108,51 @@ enum NetConnectionState
 	NetPeerDisconnected
 };
 
-#define NET_CONNECTION_TIMEOUT 700 /*ms*/
-#define NET_DISCONNECTION_TIMEOUT 700 /*ms*/
+#define NET_CONNECTION_TIMEOUT 3000 /*ms*/
+#define NET_DISCONNECTION_TIMEOUT 3000 /*ms*/
+#define NET_UPDATE_FLUSH_TIMEOUT 700 /*ms*/
 
 class NetConnectionData
 {
-	friend class NetConnectionDataInternal;
 public:
 	NetConnectionState GetState() const;
 	inline ENetPeer* GetPeer()
 	{
 		return m_peer;
 	}
-	inline ENetPeer* GetPeer()
+	inline const std::string& GetAddressStr() const
 	{
-		return m_peer;
+		return m_addressStr;
 	}
-	inline const NetAddress& GetAddress() const
+	inline bool IsApproved() const
 	{
-		return m_address;
+		return m_approved;
 	}
-	const std::string addressStr;
+	inline bool IsReady()
+	{
+		return m_ready;
+	}
+	//TODO: send ready state changes
+	void IsReady(bool val);
 
-private:
-	NetConnectionData(std::string& address);
+protected:
+	/// <summary>
+	/// Creates connection to a server
+	/// </summary>
+	/// <param name="address"></param>
+	NetConnectionData(const std::string& address);
+	/// <summary>
+	/// Saves connection from a client
+	/// </summary>
+	/// <param name="peer"></param>
+	NetConnectionData(ENetPeer* peer);
 	~NetConnectionData();
-	bool m_initialConnectMade;
-	NetAddress m_address;
+
 	ENetPeer* m_peer;
-	DeltaTimer<float> m_timer;
-};
-
-class NetConnectionDataInternal : public NetConnectionData
-{
-public:
-	NetConnectionDataInternal(std::string& address) : NetConnectionData(address) {}
-
-	inline void SetPeer(ENetPeer* peer)
-	{
-		m_peer = peer;
-	}
-	inline void SetInitialConnection(bool val = true)
-	{
-		m_initialConnectMade = val;
-	}
-
-	void Update();
+	bool m_initialConnectMade;
+	bool m_approved;
+	bool m_ready;
+	std::string m_addressStr;
 };
 
 struct NetPeerListNode
@@ -162,73 +172,21 @@ class NetHost
 {
 	friend class Net;
 protected:
-	std::future<void> m_threadHandle;
-	ENetAddress m_address;
+	NetHost();
+
 	ENetHost* m_host;
-	NetHostState m_state;
-	//timer to force flush messages
-	float m_updateFlushTimeout;
-	DeltaTimer<float> m_updateFlushTimer;
+	DeltaTimer<float> m_timer;
+
+	//check if session needs processing/updating
+	volatile bool m_stopService;
+	volatile bool m_sessionUpdated;
+	NetSession* m_sessionRead;
+	NetSession* m_sessionWrite;
+
+	std::future<void> m_threadHandle;
 	std::string m_name;
 };
 
-class NetServer : public NetHost
-{
-	friend class Net;
-public:
-	NetAddress GetIp(); //???
-
-	NetAddress GetConnection();
-
-	void AddPeer();
-
-	NetSession* StartSession();
-	void Disconnect(ENetPeer* peer);
-
-private:
-	NetServer();
-	~NetServer();
-
-	void Service();
-	void HandleDisconnections();
-
-	NetPeerListNode* newConnections; //found connections
-	NetPeerListNode* approvedConnections; //server approved connections
-	NetPeerListNode* pendingDisconnections;
-	NetPeerListNode* unexpectedDisconnections;
-	DeltaTimer<float> disconnectionTimer;
-
-	static bool RemoveFromList(NetPeerListNode* list, ENetPeer* peer);
-
-	void AddNewConnection(ENetPeer* peer);
-	void ProcessDisconnection(ENetPeer* peer);
-
-};
-
-
-
-class NetClient : public NetHost
-{
-	friend class Net;
-public:
-	void TryConnect(const char* ip);
-	NetConnectionState GetConnectionStatus();
-
-	void ConnectToServerService();
-	void ConnectToServer(std::string& address);
-
-	NetSession* GetSession();
-
-	bool StartSession();
-
-private:
-	NetClient();
-	~NetClient();
-
-	void Service();
-
-	NetConnectionDataInternal* connection;
-};
 
 #define NET_SERVICE_VERSION 1.0f
 #define NET_SERVICE_PORT 1234

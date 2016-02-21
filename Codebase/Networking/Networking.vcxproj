@@ -67,6 +67,8 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="Net.h" />
+    <ClInclude Include="NetClient.h" />
+    <ClInclude Include="NetServer.h" />
     <ClInclude Include="WindowsNetworkSockets.h" />
   </ItemGroup>
   <ItemGroup>
@@ -76,6 +78,8 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Net.cpp" />
+    <ClCompile Include="NetClient.cpp" />
+    <ClCompile Include="NetServer.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
