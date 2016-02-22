@@ -37,10 +37,10 @@ enum NetMessageStrategy : unsigned char
 /// <summary>
 /// Peer information.
 /// </summary>
-struct NetPeerInfo
+struct NetPlayerInfo
 {
 	char name[NET_PEER_NAME_LENGTH];
-	unsigned char playerIndex;
+	unsigned char index;
 };
 
 /// <summary>
@@ -155,18 +155,6 @@ protected:
 	std::string m_addressStr;
 };
 
-struct NetPeerListNode
-{
-	~NetPeerListNode()
-	{
-		if (peer->data)
-			delete peer->data;
-		peer->data = nullptr;
-	}
-
-	ENetPeer* peer;
-	NetPeerListNode* next;
-};
 
 class NetHost
 {
