@@ -29,7 +29,8 @@ public:
 	float z;
 	float w;
 
-	inline Vector4Simple  operator*(const float a) const { return Vector4Simple(x * a,y * a, z * a, w * a); }
+	inline Vector4Simple  operator*(const float a) const { return Vector4Simple(x * a, y * a, z * a, w * a); }
+	inline Vector4Simple  operator+(const Vector4Simple v) const { return Vector4Simple(x + v.x, y * v.y, z * v.z, w + v.w); }
 
 	static const Vector4Simple ZEROS;
 	static const Vector4Simple ONES;

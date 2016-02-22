@@ -4,6 +4,7 @@
 #include "Rendering\ModelLoader.h"
 #include "Rendering\DebugDraw.h"
 
+
 // Includes for AI States and Triggers
 #include "AI\StateMachine.h"
 #include "AI\ChaseState.h"
@@ -101,8 +102,6 @@ int main() {
 	ball->GetPhysicsComponent()->GetPhysicsBody()->setRestitution(btScalar(0.9));
 	ball->GetPhysicsComponent()->GetPhysicsBody()->setFriction(0.5);
 	ball->GetPhysicsComponent()->GetPhysicsBody()->setHitFraction(0.5);
-
-
 
 	aiBall->SetRenderComponent(new RenderComponent(ballMaterial, ModelLoader::LoadMGL(MODEL_DIR"Common/sphere.mgl", true)));
 	aiBall->SetLocalTransform(Mat4Graphics::Scale(Vector3Simple(2, 2, 2)) * Mat4Graphics::Translation(Vector3Simple(0, 0, 0)));
