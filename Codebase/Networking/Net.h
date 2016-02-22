@@ -76,26 +76,47 @@ struct NetMessage : public NetMessgaHeader
 
 struct NetBuffer
 {
-	static size_t maxConnections;
-	static size_t maxMessageTypes;
+	void AddNetMessage();
+	void GetNetMessage();
 
-	NetMessage* messages;
+protected:
+
+	std::vector<NetMessage*> m_messages;
 };
 
 class NetSession
 {
 public:
-	std::timed_mutex sendMutex;
-	std::timed_mutex recvMutex;
+	inline bool IsUpdated() const
+	{
+		return m_updated;
+	}
 
+	std::timed_mutex sendMutex;
 	NetBuffer sendBuffer;
-	NetBuffer recvBuffer;
+
+protected:
+
+	volatile bool m_updated;
 
 	//mutex
 	//send()
 	//connection count
 	//my connection index
 	//get connection info
+};
+
+class NetSessionInternal : public NetSession
+{
+public:
+
+	inline void IsUpdated(bool val)
+	{
+		m_updated = val;
+	}
+
+	std::timed_mutex recvMutex;
+	NetBuffer recvBuffer;
 };
 
 
@@ -159,6 +180,13 @@ protected:
 class NetHost
 {
 	friend class Net;
+
+public:
+	inline NetSession* GetSessionFrame() const
+	{
+		return m_sessionReadFrame;
+	}
+
 protected:
 	NetHost();
 
@@ -167,9 +195,7 @@ protected:
 
 	//check if session needs processing/updating
 	volatile bool m_stopService;
-	volatile bool m_sessionUpdated;
-	NetSession* m_sessionRead;
-	NetSession* m_sessionWrite;
+	NetSession* m_session;
 
 	std::future<void> m_threadHandle;
 	std::string m_name;

@@ -16,8 +16,7 @@ public:
 		return m_connection;
 	}
 
-	NetSession* GetSession();
-	bool StartSession();
+	void Ready(bool val = true);
 
 private:
 	class NetConnectionDataClient : public NetConnectionData
