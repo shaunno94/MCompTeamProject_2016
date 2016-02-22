@@ -73,6 +73,7 @@ void GameObject::OnUpdateObject(float dt)
 	{
 		child->OnUpdateObject(dt);
 	}
+
 	UpdateTransform();
 }
 

@@ -11,6 +11,7 @@
 #include "AI\ChaseState.h"
 #include "AI\RunAwayState.h"
 #include "AI\DistanceTrigger.h"
+#include "AI\ShooterAgent.h"
 
 const float TIME_STEP = 1.0f / 120.0f;
 const unsigned int SUB_STEPS = 4;
@@ -108,6 +109,9 @@ int main(void) {
 	aiBall->GetPhysicsComponent()->GetPhysicsBody()->setRestitution(btScalar(0.9));
 	aiBall->GetPhysicsComponent()->GetPhysicsBody()->setFriction(0.5);
 	aiBall->GetPhysicsComponent()->GetPhysicsBody()->setHitFraction(0.5);
+
+
+	//GameObject* aiBall = new ShooterAgent(material, "shooter");
 
 	//StateMachine* ballStateMachine = new StateMachine();
 
