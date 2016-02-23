@@ -42,10 +42,6 @@ private:
 		{
 			m_initialConnectMade = val;
 		}
-		inline void IsApproved(bool val)
-		{
-			m_approved = val;
-		}
 	};
 
 	void ConnectToServerService();

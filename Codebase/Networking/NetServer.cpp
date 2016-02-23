@@ -42,6 +42,16 @@ NetServer::~NetServer()
 }
 
 
+void NetServer::AddToSession()
+{
+	//TODO:assign ID
+	//TODO:send a message for the new member about the session
+	m_session
+}
+void NetServer::RemoveFromSession()
+{
+
+}
 
 void NetServer::DisconnectService()
 {
@@ -50,7 +60,7 @@ void NetServer::DisconnectService()
 
 	m_state == NetServerDisconnecting;
 
-	for (auto connection : m_connections)
+	for (auto connection : m_pendingConnections)
 	{
 		enet_peer_disconnect(connection->GetPeer(), 0);
 		connection->GetTimer().Get();
@@ -62,7 +72,7 @@ void NetServer::DisconnectService()
 		if (connection->GetState() != NetPeerDisconnected)
 			++pendingDisconnectionCount;
 	}
-	m_connections.clear();
+	m_pendingConnections.clear();
 	m_timer.Get();
 	while (pendingDisconnectionCount > 0 && m_timer.Peek(1000.0f/*milliseconds*/) < NET_DISCONNECTION_TIMEOUT)
 	{
@@ -166,6 +176,21 @@ void NetServer::Service()
 }
 
 
+NetSession* NetServer::StartSession()
+{
+	((NetConnectionData*)m_pendingConnections[0])->IsApproved();
+	size_t size = m_pendingConnections.size();
+	for (size_t i = 0; i < size; ++i)
+	{
+		if (!m_pendingConnections[i]->IsApproved())
+		{
+			
+		}
+	}
+	m_session = new NetSessionInternal();
+	m_session
+}
+
 void NetServer::HandleDisconnections()
 {
 	//TODO: handle new disconnections and expiration
@@ -182,7 +207,7 @@ void NetServer::AddNewConnection(ENetPeer* peer)
 	);
 	/* Store any relevant client information here. */
 	peer->data = new std::string("TestName");
-	m_connections.push_back(new NetConnectionDataServer(peer));
+	m_pendingConnections.push_back(new NetConnectionDataServer(peer));
 }
 
 

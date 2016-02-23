@@ -61,6 +61,35 @@ NetConnectionState NetConnectionData::GetState() const
 }
 
 
+NetSessionReader::NetSessionReader(NetSessionMessagesBuffer* buffer)
+{
+	m_buffer = buffer;
+	m_result = nullptr;
+}
+
+NetSessionReader::~NetSessionReader()
+{
+	if (m_result)
+		m_buffer->m_mutex.unlock();
+}
+
+const NetSessionMessages* NetSessionReader::GetMessages()
+{
+	if (m_result)
+		return m_result;
+
+	if (m_buffer->m_mutex.try_lock())
+	{
+		m_result = &m_buffer->m_messageBuffers[(++(m_buffer->m_writeIndex)) % 2];
+	}
+	else if (m_buffer->m_timer.Peek(1000.0f) > NET_FORCE_READ_SESSION_TIMEOUT)
+	{
+		m_buffer->m_mutex.lock();
+		m_result = &m_buffer->m_messageBuffers[(++(m_buffer->m_writeIndex)) % 2];
+	}
+}
+
+
 void NetBuffer::AddNetMessage()
 {
 
@@ -92,6 +121,8 @@ void Net::Clear()
 {
 	if (s_Initialized)
 		enet_deinitialize();
+
+	s_Initialized = false;
 
 	if (s_NetServer)
 	{

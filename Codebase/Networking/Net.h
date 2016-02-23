@@ -74,14 +74,52 @@ struct NetMessage : public NetMessgaHeader
 	char* data;
 };
 
-struct NetBuffer
+typedef std::vector<std::vector<NetMessage*>> NetSessionMessages;
+
+class NetSessionMessagesBuffer
+{
+	friend class NetSessionReader;
+public:
+	void AddNetMessage();
+	void Flush();
+
+	void Clear();
+
+protected:
+	NetSessionMessagesBuffer();
+	~NetSessionMessagesBuffer();
+
+	DeltaTimer<float> m_timer;
+	std::timed_mutex m_mutex;
+	size_t m_writeIndex;
+	NetSessionMessages m_messageBuffers[2];
+};
+
+#define NET_FORCE_READ_SESSION_TIMEOUT 700
+
+class NetSessionReader
+{
+public:
+	NetSessionReader(NetSessionMessagesBuffer* buffer);
+	~NetSessionReader();
+
+	const NetSessionMessages* GetMessages();
+
+private:
+	NetSessionMessages* m_result;
+	NetSessionMessagesBuffer* m_buffer;
+};
+
+struct NetMessageBufferServer : public NetSessionMessagesBuffer
 {
 	void AddNetMessage();
 	void GetNetMessage();
 
 protected:
-
-	std::vector<NetMessage*> m_messages;
+	//buffer messages using 3 frames for the networking thread to process
+	static const size_t m_messageBufferSize = 3;
+	volatile size_t m_messageBufferReadIndex;
+	std::vector<NetMessage*> m_messageBuffers[m_messageBufferSize];
 };
 
 class NetSession
@@ -98,7 +136,8 @@ public:
 protected:
 
 	volatile bool m_updated;
-
+	//TODO: state for preparing and active for the server
+	int state;
 	//mutex
 	//send()
 	//connection count
@@ -116,7 +155,9 @@ public:
 	}
 
 	std::timed_mutex recvMutex;
-	NetBuffer recvBuffer;
+
+	NetSessionMessagesBuffer m_outgoingBuffer;
+	NetSessionMessagesBuffer m_incomingBuffer;
 };
 
 
@@ -145,16 +186,10 @@ public:
 	{
 		return m_addressStr;
 	}
-	inline bool IsApproved() const
-	{
-		return m_approved;
-	}
 	inline bool IsReady()
 	{
 		return m_ready;
 	}
-	//TODO: send ready state changes
-	void IsReady(bool val);
 
 protected:
 	/// <summary>
@@ -171,7 +206,6 @@ protected:
 
 	ENetPeer* m_peer;
 	bool m_initialConnectMade;
-	bool m_approved;
 	bool m_ready;
 	std::string m_addressStr;
 };
