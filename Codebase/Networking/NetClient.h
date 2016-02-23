@@ -6,8 +6,6 @@ class NetClient : public NetHost
 {
 	friend class Net;
 public:
-	NetConnectionState GetConnectionStatus();
-
 	void ConnectToServer(const std::string& address);
 	void DisconnectFromServer();
 
@@ -17,7 +15,9 @@ public:
 	}
 
 	NetSession* GetSession();
-	bool StartSession();
+
+	NetClient();
+	~NetClient();
 
 private:
 	class NetConnectionDataClient : public NetConnectionData
@@ -46,9 +46,6 @@ private:
 			m_approved = val;
 		}
 	};
-
-	NetClient();
-	~NetClient();
 
 	void ConnectToServerService();
 	void DisconnectFromServerService();

@@ -1,101 +1,57 @@
-#include "Networking/WindowsNetworkSockets.h"
-
+#include "Networking/NetClient.h"
+#include "Helpers/common.h"
+#include <iostream>
 
 int main()
 {
-	addrinfo* addr;
-	SOCKET s = NULL;
+	//Initialize the networking settings
+	Net::Init();
 
-	if (init())
+	//create client instance
+	NetClient* client = new NetClient();
+
+	std::cout << "Give Server address:"LINE_SEPARATOR_DEF;
+
+	std::string addressStr;
+	std::cin >> addressStr;
+
+	//try to connect to an address
+	client->ConnectToServer(addressStr);
+	//get back connection handle
+	auto connection = client->GetConnection();
+
+	//wait for the connection to finish
+	while (connection->GetState() != NetPeerDisconnected && connection->GetState() != NetPeerConnected)
+	{}
+
+	switch (connection->GetState())
 	{
-		printf("Unable to initialize the Winsock library."LINE_SEPARATOR_DEF);
-		exit(1);
+	case NetPeerConnected:
+		std::cout << "Connection successful!"LINE_SEPARATOR_DEF;
+		break;
+	default:
+		std::cout << "Connection failed!"LINE_SEPARATOR_DEF;
+		delete client;
+		int temp;
+		std::cin >> temp;
+		return 1;
 	}
 
-	if (addressing(addr))
+	//wait for approval
+	while (!connection->IsApproved() && connection->GetState() == NetPeerConnected)
+	{}
+
+	//send ready state for the session
+	connection->IsReady(true);
+
+	auto session = client->GetSession();
+	session->
+	if ()
 	{
-		printf("Unable to initialize addressing information."LINE_SEPARATOR_DEF);
-		exit(1);
 	}
 
-	//creating a socket for the server to listen to
-	if ((s = socket(addr->ai_family, addr->ai_socktype, addr->ai_protocol)) == INVALID_SOCKET)
+	while (connection->)
 	{
-		printf("Unable to create a socket"LINE_SEPARATOR_DEF);
-		printf(
-		  "Failed with error: %d"LINE_SEPARATOR_DEF"%s"LINE_SEPARATOR_DEF,
-		  WSAGetLastError(), gai_strerror(WSAGetLastError())
-		);
-		exit(1);
-	}
-	else
-	{
-		printf("Socket created successfully."LINE_SEPARATOR_DEF);
-	}
 
-	//bind to the socket created above
-	if (connect(s, addr->ai_addr, addr->ai_addrlen))
-	{
-		printf("Unable to connect to server."LINE_SEPARATOR_DEF);
-		printf(
-		  "Failed with error: %d"LINE_SEPARATOR_DEF
-		  "%s"LINE_SEPARATOR_DEF,
-		  WSAGetLastError(),
-		  gai_strerror(WSAGetLastError())
-		);
 	}
-	else
-	{
-		printf("Connected to the server."LINE_SEPARATOR_DEF);
-	}
-
-	//finished with addrinfo struct now
-	freeaddrinfo(addr);
-
-	//char buff[BUFFSIZE];
-	//could use MSG_WAITALLflag
-	//int bytesReceived = recv(s, buff, BUFFSIZE - 1, 0);
-	size_t messageSize;
-	int bytesReceived = recv(s, (char*)&messageSize, sizeof(size_t), 0);
-	if (bytesReceived == -1)
-	{
-		printf("Error receiving"LINE_SEPARATOR_DEF);
-		printf(
-		  "Failed with error: %d"LINE_SEPARATOR_DEF
-		  "%s"LINE_SEPARATOR_DEF,
-		  WSAGetLastError(),
-		  gai_strerror(WSAGetLastError())
-		);
-	}
-	else
-	{
-		char* buff = new char[messageSize];
-		size_t written = 0;
-		while ((bytesReceived = recv(s, buff + written, messageSize - written, 0)) > 0)
-		{
-			written += bytesReceived;
-			printf("read %d bytes"LINE_SEPARATOR_DEF, written);
-			if (written >= messageSize)
-			{
-				printf("done reading"LINE_SEPARATOR_DEF);
-				break;
-			}
-		}
-		//bytesReceived = recv(s, buff, messageSize, 0);
-		buff[messageSize] = '\0';
-		printf(
-		  "Message received. Received %d bytes."LINE_SEPARATOR_DEF
-		  "Message is: %s"LINE_SEPARATOR_DEF,
-		  bytesReceived,
-		  buff
-		);
-	}
-
-	char* hw = "Hello Server";
-	send(s, hw, strlen(hw), 0);
-
-	closesocket(s);
-	WSACleanup();
-
-	while (true);
 }

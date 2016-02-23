@@ -147,15 +147,6 @@ void NetClient::DisconnectFromServer()
 	m_threadHandle = std::move(std::async(std::launch::async, &NetClient::DisconnectFromServerService, this));
 }
 
-bool NetClient::StartSession()
-{
-	if (m_connection->GetState() != NetConnectionState::NetPeerConnected)
-		return false;
-
-	auto test = std::async(std::launch::async, &NetClient::Service, this);
-	return true;
-}
-
 void NetClient::Service()
 {
 	while (true)
