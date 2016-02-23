@@ -538,7 +538,7 @@ void OGLRenderer::DrawShadowCube(GameObject* light){
 
 	projMatrix = child->localProjMat;
 	viewMatrix = child->currentScene->getCamera()->BuildViewMatrix();
-	child->OnUpdateScene(0, child->frameFrustrum, child->currentScene->getCamera()->GetPosition());
+	child->OnUpdateScene(child->frameFrustrum, child->currentScene->getCamera()->GetPosition());
 }
 
 
@@ -558,7 +558,7 @@ void OGLRenderer::DrawShadow2D(GameObject* light){
 
 	//draw game objects
 	child->lightFrustrum.FromMatrix(projMatrix * viewMatrix);
-	child->OnUpdateScene(0, child->lightFrustrum, light->GetWorldTransform().GetTranslation());
+	child->OnUpdateScene(child->lightFrustrum, light->GetWorldTransform().GetTranslation());
 
 	glDisable(GL_CULL_FACE);
 	child->OnRenderScene();
@@ -578,6 +578,6 @@ void OGLRenderer::DrawShadow2D(GameObject* light){
 	projMatrix = child->localProjMat;
 	//viewMatrix = currentScene->getCamera()->BuildViewMatrix();
 	
-	child->OnUpdateScene(0, child->frameFrustrum, child->currentScene->getCamera()->GetPosition());
+	child->OnUpdateScene(child->frameFrustrum, child->currentScene->getCamera()->GetPosition());
 }
 #endif

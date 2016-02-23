@@ -10,7 +10,7 @@
 #include "AI\ChaseState.h"
 #include "AI\RunAwayState.h"
 #include "AI\DistanceTrigger.h"
-#include "Rendering\KeyboardControler.h"
+#include "Rendering\KeyboardController.h"
 
 const float TIME_STEP = 1.0f / 120.0f;
 const unsigned int SUB_STEPS = 4;
@@ -51,8 +51,8 @@ int main() {
 	//call CreateCollisionShape before CreatePhysicsBody or the object will not be created correctly.
 	//Physics objects will be deleted by the game object.
 	RigidPhysicsObject* ballPhysics = new RigidPhysicsObject();
-	ballPhysics->CreateCollisionShape(5.0);
-	ballPhysics->CreatePhysicsBody(5.0, Vec3Physics(0, 0, 0), QuatPhysics(0, 0, 0, 1), Vec3Physics(1, 1, 1));
+	ballPhysics->CreateCollisionShape(Vec3Physics(5.0, 5.0, 5.0),CUBOID);
+	ballPhysics->CreatePhysicsBody(5.0, Vec3Physics(0, 5, 0), QuatPhysics(0, 0, 0, 1), Vec3Physics(1, 1, 1));
 
 	RigidPhysicsObject* aiBallPhysics = new RigidPhysicsObject();
 	aiBallPhysics->CreateCollisionShape(2.0);
@@ -91,6 +91,7 @@ int main() {
 	stadium->GetPhysicsComponent()->GetPhysicsBody()->setRestitution(0.5);
 	stadium->SetLocalTransform(Mat4Graphics::Translation(Vec3Graphics(6.8, -28.5, -2.3)));
 	stadium->GetPhysicsComponent()->GetPhysicsBody()->setFriction(0.5);
+	stadium->GetPhysicsComponent()->GetPhysicsBody()->setRollingFriction(0.5);
 	stadium->GetPhysicsComponent()->GetPhysicsBody()->setHitFraction(0.5);
 
 
@@ -98,15 +99,16 @@ int main() {
 	//myScene->addLightObject(light1);
 	myScene->addLightObject(light2);
 
-	ball->SetRenderComponent(new RenderComponent(ballMaterial, ModelLoader::LoadMGL(MODEL_DIR"Common/sphere.mgl", true)));
+	ball->SetRenderComponent(new RenderComponent(ballMaterial, ModelLoader::LoadMGL(MODEL_DIR"Common/cube.mgl", true)));
 	ball->SetLocalTransform(Mat4Graphics::Scale(Vector3Simple(5, 5, 5)));
 	ball->SetPhysicsComponent(ballPhysics);
 	ball->GetPhysicsComponent()->GetPhysicsBody()->setRestitution(btScalar(0.9));
 	ball->GetPhysicsComponent()->GetPhysicsBody()->setFriction(0.5);
+	ball->GetPhysicsComponent()->GetPhysicsBody()->setRollingFriction(0.5);
 	ball->GetPhysicsComponent()->GetPhysicsBody()->setHitFraction(0.5);
 
-	ControlerComponent* cc = new ControlerComponent(ball);
-	myScene->setPlayerConrtoler(new KeyboardControler(cc));
+	ControllerComponent* cc = new ControllerComponent(ball);
+	myScene->setPlayerController(new KeyboardController(cc));
 
 	aiBall->SetRenderComponent(new RenderComponent(ballMaterial, ModelLoader::LoadMGL(MODEL_DIR"Common/sphere.mgl", true)));
 	aiBall->SetLocalTransform(Mat4Graphics::Scale(Vector3Simple(2, 2, 2)) * Mat4Graphics::Translation(Vector3Simple(0, 0, 0)));

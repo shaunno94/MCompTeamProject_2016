@@ -24,9 +24,9 @@ GameObject::~GameObject()
 		delete m_RenderComponent;
 		m_RenderComponent = nullptr;
 	}
-	if (m_Controler) {
-		delete m_Controler;
-		m_Controler = nullptr;
+	if (m_Controller) {
+		delete m_Controller;
+		m_Controller = nullptr;
 	}
 }
 
@@ -77,8 +77,8 @@ void GameObject::OnUpdateObject(float dt)
 	{
 		child->OnUpdateObject(dt);
 	}
-	if (m_Controler)
-		m_Controler->updateObject(dt);
+	if (m_Controller)
+		m_Controller->updateObject(dt);
 	UpdateTransform();
 }
 

@@ -2,7 +2,7 @@
 #include "GameObject.h"
 #include <vector>
 #include "Camera.h"
-#include "Controler.h"
+#include "Controller.h"
 #include "Helpers\collections.h"
 #include "Frustum.h"
 
@@ -31,7 +31,7 @@ public:
 
 	Camera* getCamera(){ return cam; }
 
-	void setPlayerConrtoler(Controler* c){ playerConroler = c; }
+	void setPlayerController(Controller* c){ playerController = c; }
 	void addGameObject(GameObject* obj);
 	void addLightObject(GameObject* obj);
 
@@ -44,11 +44,12 @@ private:
 	static bool CompareByCameraDistanceInv(const GameObject* a, const GameObject* b) { return (a->m_CamDist > b->m_CamDist); }
 	//Updates game objects by calling OnUpdateObject and then sorts the render lists for opaque and transparent objects.
 	void UpdateNodeLists(float dt, Frustum& frustum, Vec3Graphics camPos);
+	void UpdateFrustumCulling(Frustum& frustum, Vec3Graphics camPos);
 
 	std::vector<GameObject*> transparentObjects;
 	std::vector<GameObject*> opaqueObjects;
 	std::vector<GameObject*> lightObjects;
 	Camera* cam;
-	Controler* playerConroler;	
+	Controller* playerController;	
 };
 

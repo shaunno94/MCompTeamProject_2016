@@ -138,13 +138,13 @@
     <ClInclude Include="GameTimer.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="ControlerComponent.h">
+    <ClInclude Include="Controller.h">
       <Filter>Header Files\Input</Filter>
     </ClInclude>
-    <ClInclude Include="Controler.h">
+    <ClInclude Include="ControllerComponent.h">
       <Filter>Header Files\Input</Filter>
     </ClInclude>
-    <ClInclude Include="KeyboardControler.h">
+    <ClInclude Include="KeyboardController.h">
       <Filter>Header Files\Input</Filter>
     </ClInclude>
   </ItemGroup>
@@ -221,10 +221,10 @@
     <ClCompile Include="Window.cpp">
       <Filter>Source Files\OGL_API</Filter>
     </ClCompile>
-    <ClCompile Include="ControlerComponent.cpp">
+    <ClCompile Include="ControllerComponent.cpp">
       <Filter>Source Files\Input</Filter>
     </ClCompile>
-    <ClCompile Include="KeyboardControler.cpp">
+    <ClCompile Include="KeyboardController.cpp">
       <Filter>Source Files\Input</Filter>
     </ClCompile>
   </ItemGroup>

@@ -27,7 +27,7 @@ public:
 	void UpdateScene(float msec);
 
 protected:
-	void OnUpdateScene(float dt, Frustum& frustum, Vec3Graphics camPos);
+	void OnUpdateScene(Frustum& frustum, Vec3Graphics camPos);
 	void OnRenderScene();
 	void OnRenderLights();
 

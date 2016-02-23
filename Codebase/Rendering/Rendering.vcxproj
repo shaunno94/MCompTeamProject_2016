@@ -146,15 +146,15 @@
   <ItemGroup>
     <ClInclude Include="Camera.h" />
     <ClInclude Include="constants.h" />
-    <ClInclude Include="Controler.h" />
-    <ClInclude Include="ControlerComponent.h" />
+    <ClInclude Include="Controller.h" />
+    <ClInclude Include="ControllerComponent.h" />
     <ClInclude Include="CubeEmitter.h" />
     <ClInclude Include="DebugDraw.h" />
     <ClInclude Include="ExtendedMaterial.h" />
     <ClInclude Include="Frustum.h" />
     <ClInclude Include="GameObject.h" />
     <ClInclude Include="GameTimer.h" />
-    <ClInclude Include="KeyboardControler.h" />
+    <ClInclude Include="KeyboardController.h" />
     <ClInclude Include="LightMaterial.h" />
     <ClInclude Include="Material.h" />
     <ClInclude Include="Mesh.h" />
@@ -179,13 +179,13 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Camera.cpp" />
-    <ClCompile Include="ControlerComponent.cpp" />
+    <ClCompile Include="ControllerComponent.cpp" />
     <ClCompile Include="DebugDraw.cpp" />
     <ClCompile Include="CubeEmitter.cpp" />
     <ClCompile Include="ExtendedMaterial.cpp" />
     <ClCompile Include="Frustum.cpp" />
     <ClCompile Include="GameObject.cpp" />
-    <ClCompile Include="KeyboardControler.cpp" />
+    <ClCompile Include="KeyboardController.cpp" />
     <ClCompile Include="LightMaterial.cpp" />
     <ClCompile Include="Material.cpp" />
     <ClCompile Include="Mesh.cpp" />
