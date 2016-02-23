@@ -58,12 +58,11 @@ public:
 
 	bool			HasInitialised() const;
 
-
-	OGLShader*			GetCurrentShader() const
+	OGLShader*	GetCurrentShader() const
 	{
 		return currentShader;
 	}
-	void			SetCurrentShader(OGLShader* s);
+	void SetCurrentShader(BaseShader* s);
 
 	static void UpdateUniform(GLint location, const Mat4Graphics& mat4);
 	static void UpdateUniform(GLint location, const Mat3Graphics& mat3);
@@ -75,6 +74,8 @@ public:
 	static void UpdateUniform(GLint location, int i);
 	static void UpdateUniform(GLint location, unsigned int u);
 	void UpdateShaderMatrices();
+	void SetTextureFlags(unsigned int id, unsigned int flags);
+	unsigned int TextureMemoryUsage(unsigned int id);
 
 protected:
 	virtual void	Resize(int x, int y);

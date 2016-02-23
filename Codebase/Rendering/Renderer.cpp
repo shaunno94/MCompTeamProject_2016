@@ -2,26 +2,29 @@
 
 Renderer* Renderer::s_renderer = nullptr;
 
-Renderer::Renderer(std::string title, int sizeX, int sizeY, bool fullScreen) : OGLRenderer(title, sizeX, sizeY, fullScreen)
+Renderer::Renderer(std::string title, int sizeX, int sizeY, bool fullScreen) :
+#ifndef ORBIS 
+OGLRenderer(title, sizeX, sizeY, fullScreen)
+#else
+PS4Renderer()
+#endif
 {
 	m_UpdateGlobalUniforms = true;
-
 	currentShader = nullptr;
+	//TODO: change SHADERDIR to SHADER_DIR
 
-	aspectRatio = float(width) / float(height);
+	aspectRatio = float(sizeX) / float(sizeY);
+	pixelPitch = Vec2Graphics(1.0f / float(sizeX), 1.0f / float(sizeY));
 	localProjMat = Mat4Graphics::Perspective(1.0f, 15000.0f, aspectRatio, 45.0f);
 
 	currentScene = nullptr;
-	init = true;
+
 	if (!s_renderer)
 		s_renderer = this;
 	child = this;
 }
 
-Renderer::~Renderer(void)
-{
-	delete quad;
-}
+Renderer::~Renderer(void) {}
 
 void Renderer::updateGlobalUniforms(Material* material)
 {
@@ -30,7 +33,7 @@ void Renderer::updateGlobalUniforms(Material* material)
 	{
 		Vec3Graphics camPos = currentScene->getCamera()->GetPosition();
 		auto test = lightMat->Set("cameraPos", camPos);
-		lightMat->Set("pixelSize", Vec2Graphics(1.0f / width, 1.0f / height));
+		lightMat->Set("pixelSize", pixelPitch);
 		int i = 0;
 	}
 }
@@ -48,9 +51,9 @@ void Renderer::UpdateScene(float msec)
 	}
 
 	if (m_UpdateGlobalUniforms)
-	{
+	{	
 		for (unsigned int i = 0; i < currentScene->getNumLightObjects(); ++i)
-	{
+		{
 			auto rc = currentScene->getLightObject(i)->GetRenderComponent();
 
 			updateGlobalUniforms(rc->m_Material);
@@ -88,9 +91,9 @@ void Renderer::OnUpdateScene(Frustum& frustum, Vec3Graphics camPos)
 void Renderer::OnRenderScene()
 {
 	for (unsigned int i = 0; i < currentScene->getNumOpaqueObjects(); ++i)
-			currentScene->getOpaqueObject(i)->OnRenderObject();
+		currentScene->getOpaqueObject(i)->OnRenderObject();
 	for (unsigned int i = 0; i < currentScene->getNumTransparentObjects(); ++i)
-			currentScene->getTransparentObject(i)->OnRenderObject();
+		currentScene->getTransparentObject(i)->OnRenderObject();
 }
 
 void Renderer::OnRenderLights()
@@ -105,11 +108,11 @@ void Renderer::OnRenderLights()
 		lm->Set("lightColour", Vec4Graphics(1, 0.7, 0.5, 1));
 		lm->Set("cameraPos", currentScene->getCamera()->GetPosition());
 		lm->Set("shadowBias", lm->shadowBias);
-		
+
 		UpdateShaderMatrices();
 
 		float dist = (light->GetWorldTransform().GetTranslation() - currentScene->getCamera()->GetPosition()).Length();
-		
+
 		if (dist < light->GetBoundingRadius())  // camera is inside the light volume !
 			SetCullFace(FRONT);
 		else

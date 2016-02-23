@@ -4,6 +4,7 @@
 #include "Rendering\ModelLoader.h"
 #include "Rendering\DebugDraw.h"
 #include "Rendering\GameTimer.h"
+#include "Stadium.h"
 
 // Includes for AI States and Triggers
 #include "AI\StateMachine.h"
@@ -15,7 +16,7 @@
 const float TIME_STEP = 1.0f / 120.0f;
 const unsigned int SUB_STEPS = 4;
 
-int main() {
+int main(void) {
 	//-------------------
 	//--- MAIN Loop ---
 	//-------------------
@@ -45,7 +46,6 @@ int main() {
 	GameObject* aiBall = new GameObject("aiBall");
 	GameObject* light1 = new GameObject("l");
 	GameObject* light2 = new GameObject("l");
-	GameObject* stadium = new GameObject("stadium");
 
 	//Physics objects hold collision shape and collision object(body), 
 	//call CreateCollisionShape before CreatePhysicsBody or the object will not be created correctly.
@@ -57,20 +57,23 @@ int main() {
 	RigidPhysicsObject* aiBallPhysics = new RigidPhysicsObject();
 	aiBallPhysics->CreateCollisionShape(2.0);
 	aiBallPhysics->CreatePhysicsBody(2.0, Vec3Physics(0.11, 15, 0.5), QuatPhysics(0, 0, 0, 1), Vec3Physics(1, 1, 1));
-
+	
 	RigidPhysicsObject* floorPhysics = new RigidPhysicsObject();
 	floorPhysics->CreateCollisionShape(0, Vec3Physics(0, 1, 0), true);
 	floorPhysics->CreatePhysicsBody(0, Vec3Physics(0, -1, 0), QuatPhysics(0, 0, 0, 1));
 
-	OGLShader* simpleShader = new OGLShader(SHADER_DIR"textureVertex.glsl", SHADER_DIR"textureFragment.glsl");
-	OGLShader* pointlightShader = new OGLShader(SHADER_DIR"2dShadowLightvertex.glsl", SHADER_DIR"2dShadowLightfragment.glsl");
-	//OGLShader* pointlightShader = new OGLShader(SHADER_DIR"CubeShadowLightvertex.glsl", SHADER_DIR"CubeShadowLightfragment.glsl");
+#ifndef ORBIS
+	BaseShader* simpleShader = new OGLShader(SHADER_DIR"textureVertex.glsl", SHADER_DIR"textureFragment.glsl");
+	BaseShader* pointlightShader = new OGLShader(SHADER_DIR"2dShadowLightvertex.glsl", SHADER_DIR"2dShadowLightfragment.glsl");
+	//BaseShader* pointlightShader = new OGLShader(SHADER_DIR"CubeShadowLightvertex.glsl", SHADER_DIR"CubeShadowLightfragment.glsl");
+#else
+	BaseShader* simpleShader = new PS4Shader(COMPILED_SHADER_DIR_D"textureVertex.glsl", COMPILED_SHADER_DIR_D"textureFragment.glsl");
+	BaseShader* pointlightShader = new PS4Shader(COMPILED_SHADER_DIR_D"2dShadowLightvertex.glsl", COMPILED_SHADER_DIR_D"2dShadowLightfragment.glsl");
+#endif
 
-	if (!pointlightShader->IsOperational())
+	if (!pointlightShader->IsOperational() || !simpleShader->IsOperational())
 		return -1;
 
-	if (!simpleShader->IsOperational())
-		return -1;
 
 	LightMaterial* lightMaterial = new LightMaterial(pointlightShader);
 	light1->SetRenderComponent(new RenderComponent(lightMaterial, ModelLoader::LoadMGL(MODEL_DIR"Common/ico.mgl", true)));
@@ -84,16 +87,10 @@ int main() {
 
 	Material* material = new Material(simpleShader);
 	Material* ballMaterial = new Material(simpleShader);
-	ballMaterial->Set("diffuseTex", Texture::Get(TEXTURE_DIR"checkerboard.tga", true));
+	ballMaterial->Set(ReservedMeshTextures.DIFFUSE.name, Texture::Get(TEXTURE_DIR"checkerboard.tga", true));
 
-	stadium->SetRenderComponent(new RenderComponent(material, ModelLoader::LoadMGL(MODEL_DIR"Stadium/Stadium2.mgl", true)));
-	stadium->SetPhysicsComponent(floorPhysics);
-	stadium->GetPhysicsComponent()->GetPhysicsBody()->setRestitution(0.5);
-	stadium->SetLocalTransform(Mat4Graphics::Translation(Vec3Graphics(6.8, -28.5, -2.3)));
-	stadium->GetPhysicsComponent()->GetPhysicsBody()->setFriction(0.5);
-	stadium->GetPhysicsComponent()->GetPhysicsBody()->setRollingFriction(0.5);
-	stadium->GetPhysicsComponent()->GetPhysicsBody()->setHitFraction(0.5);
-
+	// Create Stadium
+	GameObject* stadium = new Stadium(material, "stadium"); 
 
 	myScene->addGameObject(stadium);
 	//myScene->addLightObject(light1);
@@ -152,15 +149,24 @@ int main() {
 	dynamic_cast<RigidPhysicsObject*>(ball->GetPhysicsComponent())->GetPhysicsBody()->setAngularVelocity(btVector3(1, 0, 0));
 	dynamic_cast<RigidPhysicsObject*>(aiBall->GetPhysicsComponent())->GetPhysicsBody()->applyCentralForce(btVector3(10, 0, 0));
 
+#ifndef ORBIS
 	while (Window::GetWindow().UpdateWindow() && !Window::GetKeyboard()->KeyDown(KEYBOARD_ESCAPE))
+#else
+	while (true)
+#endif
 	{
 		float ms = timer.GetTimer()->Get(1000.0f);
 		PhysicsEngineInstance::Instance()->stepSimulation(ms, SUB_STEPS, TIME_STEP);
 		renderer.RenderScene(ms);
 	}
+
 	//Cleanup
 	PhysicsEngineInstance::Release();
+
+#if DEBUG_DRAW
 	DebugDraw::Release();
+#endif
+
 	delete myScene;
 	return 0;
 }

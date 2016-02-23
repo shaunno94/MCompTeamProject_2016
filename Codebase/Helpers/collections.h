@@ -50,7 +50,7 @@ template<typename T>
 /// <returns>Indicator if a match was found (true if found and false otherwise)</returns>
 bool FindSwapErase(std::vector<T>& v, const T& val)
 {
-	std::vector<T>::iterator it = std::find(v.begin(), v.end(), val);
+	auto it = std::find(v.begin(), v.end(), val);
 	if (it != v.end())
 	{
 		std::swap(*it, v.back());

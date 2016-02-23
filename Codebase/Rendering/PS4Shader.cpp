@@ -8,69 +8,91 @@
 
 using std::ifstream;
 
-PS4Shader::PS4Shader()
+PS4Shader::PS4Shader(const string& vertex, const string& pixel, const string& geometry, const string& hull, const string& domain)
 {
-	fetchShader = NULL;
-	vertexShader = NULL;
-	pixelShader = NULL;
+	fetchShader = nullptr;
+	vertexShader = nullptr;
+	pixelShader = nullptr;
+	geometryShader = nullptr;
+	hullShader = nullptr;
+
+	GenerateVertexShader(vertex, true);
+	GeneratePixelShader(pixel);
+
+	if (!geometry.empty())
+	{
+		GenerateGeometryShader(geometry);
+	}
+	if (!hull.empty() && !domain.empty())
+	{
+		GenerateHullShader(hull);
+		GenerateDomainShader(domain);
+	}
+
+	m_ModelMatrixLocation = GetResourceByName("modelMatrix");
+	for (size_t i = 0; i < ReservedMeshTextures.size; ++i)
+		m_ReservedMeshTextureLocations[i] = GetResourceByName(ReservedMeshTextures.values[i].name);
+
+	for (size_t i = 0; i < ReservedMeshColours.size; ++i)
+		m_ReservedMeshColourLocations[i] = GetResourceByName(ReservedMeshColours.values[i].name);
+
+	operational = true;
 }
 
-PS4Shader* PS4Shader::GenerateShader(const string& vertex, const string& pixel) {
-	PS4Shader* shader = new PS4Shader();
-
-	shader->GenerateVertexShader(vertex, true);
-	shader->GeneratePixelShader(pixel);
-
-	return shader;
-}
 
 PS4Shader::~PS4Shader()
 {
 }
 
 void PS4Shader::GenerateVertexShader(const string&name, bool makeFetch) {
-	char*	binData = NULL;	//resulting compiled shader bytes
+	char*	binData = nullptr;	//resulting compiled shader bytes
 	int		binSize = 0;
-	Gnmx::ShaderInfo shaderInfo;
+	sce::Gnmx::ShaderInfo shaderInfo;
 
-	if (ShaderIsBinary(name)) {
-		if (LoadShaderBinary(name, binData, binSize)) {
+	if (ShaderIsBinary(name)) 
+	{
+		if (LoadShaderBinary(name, binData, binSize)) 
+		{
 			vertexBinary.loadFromMemory(binData, binSize);
 
 			//sce::Shader::Binary::Buffer* constantBuffer = vertexBinary.getBufferResourceByName("LOLBUFFER");
 
-			Gnmx::parseShader(&shaderInfo, binData);
+			sce::Gnmx::parseShader(&shaderInfo, binData);
 
-			void* shaderBinary = garlicAllocator.allocate(shaderInfo.m_gpuShaderCodeSize, Gnm::kAlignmentOfShaderInBytes);
-			void* shaderHeader = onionAllocator.allocate(shaderInfo.m_vsShader->computeSize(), Gnm::kAlignmentOfBufferInBytes);
+			void* shaderBinary = garlicAllocator.allocate(shaderInfo.m_gpuShaderCodeSize, sce::Gnm::kAlignmentOfShaderInBytes);
+			void* shaderHeader = onionAllocator.allocate(shaderInfo.m_vsShader->computeSize(), sce::Gnm::kAlignmentOfBufferInBytes);
 
 			memcpy(shaderBinary, shaderInfo.m_gpuShaderCode, shaderInfo.m_gpuShaderCodeSize);
 			memcpy(shaderHeader, shaderInfo.m_vsShader, shaderInfo.m_vsShader->computeSize());
 
-			vertexShader = (Gnmx::VsShader*)shaderHeader;
+			vertexShader = (sce::Gnmx::VsShader*)shaderHeader;
 			vertexShader->patchShaderGpuAddress(shaderBinary);
 		}
-		else {
+		else 
+		{
 			std::cout << "Failed to generate vertex shader: " << name << " from binary. " << std::endl;
 			return;
 		}
 	}
-	else {
+	else 
+	{
 		string shaderString;
-		if (LoadShaderText(name, shaderString)) {
+		if (LoadShaderText(name, shaderString)) 
+		{
 			//shaderString now contains the pssl shader data
 			//MAGIC GOES HERE
 		}
-		else {
+		else 
+		{
 			std::cout << "Failed to generate vertex shader: " << name << " from raw text. " << std::endl;
 			return;
 		}
 	}
 
-	Gnm::registerResource(nullptr, ownerHandle, vertexShader->getBaseAddress(),
-		shaderInfo.m_gpuShaderCodeSize, name.c_str(), Gnm::kResourceTypeShaderBaseAddress, 0);
+	sce::Gnm::registerResource(nullptr, ownerHandle, vertexShader->getBaseAddress(),
+		shaderInfo.m_gpuShaderCodeSize, name.c_str(), sce::Gnm::kResourceTypeShaderBaseAddress, 0);
 
-	Gnmx::generateInputOffsetsCache(&vertexCache, Gnm::kShaderStageVs, vertexShader);
+	sce::Gnmx::generateInputOffsetsCache(&vertexCache, Gnm::kShaderStageVs, vertexShader);
 
 	if (makeFetch) {
 		GenerateFetchShader(binData);
@@ -79,47 +101,160 @@ void PS4Shader::GenerateVertexShader(const string&name, bool makeFetch) {
 }
 
 void PS4Shader::GenerateFetchShader(char* binData) {
-	fetchShader = garlicAllocator.allocate(Gnmx::Toolkit::calculateMemoryRequiredForVsFetchShader(binData));
+	fetchShader = garlicAllocator.allocate(sce::Gnmx::Toolkit::calculateMemoryRequiredForVsFetchShader(binData));
 
 	uint32_t shaderModifier;
-	Gnmx::generateVsFetchShader(fetchShader, &shaderModifier, vertexShader, NULL);
+	sce::Gnmx::generateVsFetchShader(fetchShader, &shaderModifier, vertexShader, NULL);
 
 	vertexShader->applyFetchShaderModifier(shaderModifier);
 }
 
-void PS4Shader::GeneratePixelShader(const string&name) {
-	char*	binData = NULL;	//resulting compiled shader bytes
+void PS4Shader::GeneratePixelShader(const string&name) 
+{
+	char*	binData = nullptr;	//resulting compiled shader bytes
 	int		binSize = 0;
-	Gnmx::ShaderInfo shaderInfo;
+	sce::Gnmx::ShaderInfo shaderInfo;
 
-	if (ShaderIsBinary(name)) {
-		if (LoadShaderBinary(name, binData, binSize)) {
+	if (ShaderIsBinary(name))
+	{
+		if (LoadShaderBinary(name, binData, binSize)) 
+		{
 			pixelBinary.loadFromMemory(binData, binSize);
-			Gnmx::parseShader(&shaderInfo, binData);
+			sce::Gnmx::parseShader(&shaderInfo, binData);
 
-			void* shaderBinary = garlicAllocator.allocate(shaderInfo.m_gpuShaderCodeSize, Gnm::kAlignmentOfShaderInBytes);
-			void* shaderHeader = onionAllocator.allocate(shaderInfo.m_psShader->computeSize(), Gnm::kAlignmentOfBufferInBytes);
+			void* shaderBinary = garlicAllocator.allocate(shaderInfo.m_gpuShaderCodeSize, sce::Gnm::kAlignmentOfShaderInBytes);
+			void* shaderHeader = onionAllocator.allocate(shaderInfo.m_psShader->computeSize(), sce::Gnm::kAlignmentOfBufferInBytes);
 
 			memcpy(shaderBinary, shaderInfo.m_gpuShaderCode, shaderInfo.m_gpuShaderCodeSize);
 			memcpy(shaderHeader, shaderInfo.m_psShader, shaderInfo.m_psShader->computeSize());
 
-			pixelShader = (Gnmx::PsShader*)shaderHeader;
+			pixelShader = (sce::Gnmx::PsShader*)shaderHeader;
 			pixelShader->patchShaderGpuAddress(shaderBinary);
 		}
+		else
+		{
+			std::cout << "Failed to generate vertex shader: " << name << " from binary. " << std::endl;
+			return;
+		}
 	}
-	else {
-		bool a = true;
+	else 
+	{
+		std::cout << "Pixel Shader is not binary: " << name << std::endl;
+		return;
 	}
 
-	Gnm::registerResource(nullptr, ownerHandle, vertexShader->getBaseAddress(),
-		shaderInfo.m_gpuShaderCodeSize, name.c_str(), Gnm::kResourceTypeShaderBaseAddress, 0);
+	sce::Gnm::registerResource(nullptr, ownerHandle, vertexShader->getBaseAddress(),
+		shaderInfo.m_gpuShaderCodeSize, name.c_str(), sce::Gnm::kResourceTypeShaderBaseAddress, 0);
 
-	Gnmx::generateInputOffsetsCache(&pixelCache, Gnm::kShaderStagePs, pixelShader);
+	sce::Gnmx::generateInputOffsetsCache(&pixelCache, Gnm::kShaderStagePs, pixelShader);
 
 	//delete binData;
 }
 
+void PS4Shader::GenerateHullShader(const string& name)
+{
+	char*	binData = nullptr;	//resulting compiled shader bytes
+	int		binSize = 0;
+	sce::Gnmx::ShaderInfo shaderInfo;
 
+	if (ShaderIsBinary(name)) 
+	{
+		if (LoadShaderBinary(name, binData, binSize)) 
+		{
+			hullBinary.loadFromMemory(binData, binSize);
+			sce::Gnmx::parseShader(&shaderInfo, binData);
+
+			void* shaderBinary = garlicAllocator.allocate(shaderInfo.m_gpuShaderCodeSize, sce::Gnm::kAlignmentOfShaderInBytes);
+			void* shaderHeader = onionAllocator.allocate(shaderInfo.m_psShader->computeSize(), sce::Gnm::kAlignmentOfBufferInBytes);
+
+			memcpy(shaderBinary, shaderInfo.m_gpuShaderCode, shaderInfo.m_gpuShaderCodeSize);
+			memcpy(shaderHeader, shaderInfo.m_psShader, shaderInfo.m_psShader->computeSize());
+
+			hullShader = (sce::Gnmx::HsShader*)shaderHeader;
+			hullShader->patchShaderGpuAddress(shaderBinary);
+		}
+	}
+	else 
+	{
+		std::cout << "Hull Shader is not binary: " << name << std::endl;
+		return;
+	}
+
+	sce::Gnm::registerResource(nullptr, ownerHandle, vertexShader->getBaseAddress(),
+		shaderInfo.m_gpuShaderCodeSize, name.c_str(), sce::Gnm::kResourceTypeShaderBaseAddress, 0);
+
+	sce::Gnmx::generateInputOffsetsCache(&hullCache, Gnm::kShaderStageHs, hullShader);
+}
+
+void PS4Shader::GenerateDomainShader(const string& name)
+{
+	char*	binData = nullptr;	//resulting compiled shader bytes
+	int		binSize = 0;
+	sce::Gnmx::ShaderInfo shaderInfo;
+
+	if (ShaderIsBinary(name)) 
+	{
+		if (LoadShaderBinary(name, binData, binSize)) 
+		{
+			domainBinary.loadFromMemory(binData, binSize);
+			sce::Gnmx::parseShader(&shaderInfo, binData);
+
+			void* shaderBinary = garlicAllocator.allocate(shaderInfo.m_gpuShaderCodeSize, sce::Gnm::kAlignmentOfShaderInBytes);
+			void* shaderHeader = onionAllocator.allocate(shaderInfo.m_psShader->computeSize(), sce::Gnm::kAlignmentOfBufferInBytes);
+
+			memcpy(shaderBinary, shaderInfo.m_gpuShaderCode, shaderInfo.m_gpuShaderCodeSize);
+			memcpy(shaderHeader, shaderInfo.m_psShader, shaderInfo.m_psShader->computeSize());
+
+			domainShader = (sce::Gnmx::EsShader*)shaderHeader;
+			domainShader->patchShaderGpuAddress(shaderBinary);
+		}
+	}
+	else 
+	{
+		std::cout << "Domain Shader is not binary: " << name << std::endl;
+		return;
+	}
+
+	sce::Gnm::registerResource(nullptr, ownerHandle, vertexShader->getBaseAddress(),
+		shaderInfo.m_gpuShaderCodeSize, name.c_str(), sce::Gnm::kResourceTypeShaderBaseAddress, 0);
+
+	sce::Gnmx::generateInputOffsetsCache(&domainCache, Gnm::kShaderStageEs, domainShader);
+}
+
+void PS4Shader::GenerateGeometryShader(const string& name)
+{
+	char*	binData = nullptr;	//resulting compiled shader bytes
+	int		binSize = 0;
+	sce::Gnmx::ShaderInfo shaderInfo;
+
+	if (ShaderIsBinary(name))
+	{
+		if (LoadShaderBinary(name, binData, binSize))
+		{
+			geometryBinary.loadFromMemory(binData, binSize);
+			sce::Gnmx::parseShader(&shaderInfo, binData);
+
+			void* shaderBinary = garlicAllocator.allocate(shaderInfo.m_gpuShaderCodeSize, sce::Gnm::kAlignmentOfShaderInBytes);
+			void* shaderHeader = onionAllocator.allocate(shaderInfo.m_psShader->computeSize(), sce::Gnm::kAlignmentOfBufferInBytes);
+
+			memcpy(shaderBinary, shaderInfo.m_gpuShaderCode, shaderInfo.m_gpuShaderCodeSize);
+			memcpy(shaderHeader, shaderInfo.m_psShader, shaderInfo.m_psShader->computeSize());
+
+			geometryShader = (sce::Gnmx::GsShader*)shaderHeader;
+			//geometryShader->patchShaderGpuAddress(shaderBinary); ??? GsShader does not have this function
+		}
+	}
+	else
+	{
+		std::cout << "Geometry Shader is not binary: " << name << std::endl;
+		return;
+	}
+
+	sce::Gnm::registerResource(nullptr, ownerHandle, vertexShader->getBaseAddress(),
+		shaderInfo.m_gpuShaderCodeSize, name.c_str(), sce::Gnm::kResourceTypeShaderBaseAddress, 0);
+
+	sce::Gnmx::generateInputOffsetsCache(&geometryCache, Gnm::kShaderStageGs, geometryShader);
+}
 
 bool PS4Shader::LoadShaderText(const string &name, string&into) {
 
@@ -155,20 +290,20 @@ bool PS4Shader::ShaderIsBinary(const string& name) {
 	return false;
 }
 
-void	PS4Shader::SubmitShaderSwitch(Gnmx::GnmxGfxContext& cmdList) {
-	cmdList.setActiveShaderStages(Gnm::kActiveShaderStagesVsPs);
+void	PS4Shader::SubmitShaderSwitch(sce::Gnmx::GnmxGfxContext& cmdList) {
+	cmdList.setActiveShaderStages(sce::Gnm::kActiveShaderStagesVsPs);
 
 	cmdList.setVsShader(vertexShader, 0, fetchShader, &vertexCache);
 	cmdList.setPsShader(pixelShader, &pixelCache);
 }
 
-int		PS4Shader::GetConstantBuffer(const string &name) {
+int	PS4Shader::GetResourceByName(const string &name) const
+{
 	sce::Shader::Binary::Buffer* constantBuffer = vertexBinary.getBufferResourceByName(name.c_str());
-	if (!constantBuffer) {
+	if (!constantBuffer) 
+	{
 		return -1;
 	}
 	return constantBuffer->m_resourceIndex;
 }
-
-
 #endif

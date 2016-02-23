@@ -1,6 +1,6 @@
 #pragma once
 
-#include "OGLShader.h"
+#include "BaseShader.h"
 #include "Math/nclglMath.h"
 #include <functional>
 #include <vector>
@@ -8,6 +8,9 @@
 #include <string>
 #include "Texture.h"
 
+/*#ifdef ORBIS
+#include "Renderer.h"
+#endif*/
 
 class Material
 {
@@ -31,9 +34,9 @@ protected:
 	}
 
 	template<typename T>
-	static int setUniformValue(std::vector<std::pair<int, T>>& container, OGLShader* shader, const std::string& uniformName, const T& value)
+	static int setUniformValue(std::vector<std::pair<int, T>>& container, BaseShader* shader, const std::string& uniformName, const T& value)
 	{
-		int location = glGetUniformLocation(shader->GetProgram(), uniformName.c_str());
+		int location = shader->GetResourceByName(uniformName);
 		setUniformValue(container, location, value);
 		return location;
 	}
@@ -42,24 +45,27 @@ protected:
 	static void UpdateUniformValue(std::vector<std::pair<int, T>>& container)
 	{
 		for (auto it = container.begin(); it != container.end(); ++it)
+#ifndef ORBIS
 			Renderer::UpdateUniform(it->first, it->second);
+#else //A temporary fix
+			bool b = true;
+#endif
 	}
 
-	static const GLuint TEXTURE_UNIT_START = GL_TEXTURE0;
+	static const unsigned int TEXTURE_UNIT_START = 0;
 	static Material* s_LastMaterialInUse;
 
-
-	OGLShader* shader;
+	BaseShader* shader;
 	std::vector<std::pair<int, Texture*>> m_uniformTextures;
 	bool repeating = true;
 
 public:
 	bool hasTranslucency;
 
-	Material(OGLShader* shader, bool hasTranslucency = false);
+	Material(BaseShader* shader, bool hasTranslucency = false);
 	virtual ~Material();
 
-	inline OGLShader* GetShader() const
+	inline BaseShader* GetShader() const
 	{
 		return shader;
 	}
@@ -69,6 +75,4 @@ public:
 	int Set(const std::string& uniformName, Texture* texture);
 
 	void Set(int uniformLocation, Texture* texture);
-
 };
-

@@ -88,7 +88,7 @@ Window::Window(std::string title, int sizeX, int sizeY, bool fullScreen)	{
                         NULL,				// No Menus!
                         hInstance,			// application handle
                         NULL);				// No multiple windows!
-
+	
  	if(!windowHandle) {
 		std::cout << "Window::Window(): Failed to create window!" << std::endl;
 		return;

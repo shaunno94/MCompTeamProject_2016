@@ -17,6 +17,7 @@ _-_-_-_-_-_-_-""  ""
 #include "Helpers/degrees.h"
 #include "constants.h"
 #include "Renderer.h"
+#include "OGLShader.h"
 
 /*
 Creates an OpenGL 3.2 CORE PROFILE rendering context. Sets itself
@@ -37,7 +38,6 @@ OGLRenderer::OGLRenderer(std::string title, int sizeX, int sizeY, bool fullScree
 			return;
 		}
 	}
-
 
 	HWND windowHandle = Window::GetWindow().GetHandle();
 
@@ -108,7 +108,6 @@ OGLRenderer::OGLRenderer(std::string title, int sizeX, int sizeY, bool fullScree
 		return;
 	}
 	//We do support OGL 3! Let's set it up...
-
 	int attribs[] =
 	{
 		WGL_CONTEXT_MAJOR_VERSION_ARB, major,	//TODO: Maybe lock this to 3? We might actually get an OpenGL 4.x context...
@@ -142,12 +141,22 @@ OGLRenderer::OGLRenderer(std::string title, int sizeX, int sizeY, bool fullScree
 		std::cout << "OGLRenderer::OGLRenderer(): Cannot initialise GLEW!" << std::endl;	//It's all gone wrong!
 		return;
 	}
+
 	//If we get this far, everything's going well!
 	glClearColor(0.2f, 0.2f, 0.2f, 1.0f);			//When we clear the screen, we want it to be dark grey
 
-	currentShader = 0;							//0 is the 'null' object name for shader programs...
+	currentShader = nullptr;							//0 is the 'null' object name for shader programs...
 
-	Window::GetWindow().SetRenderer(this);					//Tell our window about the new renderer! (Which will in turn resize the renderer window to fit...)
+	Window::GetWindow().SetRenderer(this);					//Tell our window about the new renderer! (Which will in turn resize the renderer window to fit...)	
+	
+	RECT clientRect, windowRect;
+	if (GetClientRect(windowHandle, &clientRect) && GetWindowRect(windowHandle, &windowRect))
+	{
+		int widthDiff = (windowRect.right - windowRect.left) - (clientRect.right - clientRect.left);
+		int heightDiff = (windowRect.bottom - windowRect.top) - (clientRect.bottom - clientRect.top);
+		Resize(int(width + widthDiff), int(height + heightDiff));
+	}
+
 	glEnable(GL_DEPTH_TEST);
 	glEnable(GL_DEPTH_CLAMP);
 	glEnable(GL_CULL_FACE);
@@ -163,6 +172,7 @@ Destructor. Deletes the default shader, and the OpenGL rendering context.
 */
 OGLRenderer::~OGLRenderer(void)
 {
+	delete quad;
 	glDeleteTextures(1, &bufferColourTex);
 	glDeleteTextures(1, &bufferNormalTex);
 	glDeleteTextures(1, &bufferDepthTex);
@@ -224,21 +234,19 @@ void OGLRenderer::UpdateShaderMatrices()
 {
 	if (currentShader)
 	{
-		//part of the RenderComponent now
-		//glUniformMatrix4fv(glGetUniformLocation(currentShader->GetProgram(), "modelMatrix"), 1, false, (float*)&modelMatrix);
+		//Model Matrix in RenderComponent class.
+		//Texture matrix in material class.
 		glUniformMatrix4fv(glGetUniformLocation(currentShader->GetProgram(), "viewMatrix"), 1, false, (float*)&viewMatrix);
-		glUniformMatrix4fv(glGetUniformLocation(currentShader->GetProgram(), "projMatrix"), 1, false, (float*)&projMatrix);
-		//part of the material now
-		//glUniformMatrix4fv(glGetUniformLocation(currentShader->GetProgram(), "textureMatrix"), 1, false, (float*)&textureMatrix);
+		glUniformMatrix4fv(glGetUniformLocation(currentShader->GetProgram(), "projMatrix"), 1, false, (float*)&projMatrix);	
 	}
 }
 
 
-void OGLRenderer::SetCurrentShader(OGLShader* s)
+void OGLRenderer::SetCurrentShader(BaseShader* s)
 {
-	currentShader = s;
+	currentShader = static_cast<OGLShader*>(s);
 
-	glUseProgram(s->GetProgram());
+	glUseProgram(currentShader->GetProgram());
 }
 
 void OGLRenderer::SetTextureRepeating(GLuint target, bool repeating)
@@ -284,6 +292,63 @@ void OGLRenderer::UpdateUniform(GLint location, int i)
 void OGLRenderer::UpdateUniform(GLint location, unsigned int u)
 {
 	if (location >= 0) glUniform1ui(location, u);
+}
+
+unsigned int OGLRenderer::TextureMemoryUsage(unsigned int id)
+{
+	int width;
+	int height;
+	int r, g, b, a;
+
+	glBindTexture(GL_TEXTURE_2D, id);
+
+	glGetTexLevelParameteriv(GL_TEXTURE_2D, 0, GL_TEXTURE_RED_SIZE, &r);
+	glGetTexLevelParameteriv(GL_TEXTURE_2D, 0, GL_TEXTURE_GREEN_SIZE, &g);
+	glGetTexLevelParameteriv(GL_TEXTURE_2D, 0, GL_TEXTURE_BLUE_SIZE, &b);
+	glGetTexLevelParameteriv(GL_TEXTURE_2D, 0, GL_TEXTURE_ALPHA_SIZE, &a);
+	glGetTexLevelParameteriv(GL_TEXTURE_2D, 0, GL_TEXTURE_WIDTH, &width);
+	glGetTexLevelParameteriv(GL_TEXTURE_2D, 0, GL_TEXTURE_HEIGHT, &height);
+
+	glBindTexture(GL_TEXTURE_2D, 0);
+	return (width * height * ((r + g + b + a) / 8.0f));
+}
+
+void OGLRenderer::SetTextureFlags(unsigned int id, unsigned int flags)
+{
+	glBindTexture(GL_TEXTURE_2D, GLuint(id));
+
+	// Repeat/Clamp options
+	if ((flags & REPEATING) == REPEATING) {
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+	}
+	else if ((flags & CLAMPING) == CLAMPING) {
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP);
+	}
+
+	// Filtering options
+	if ((flags & NEAREST_NEIGHBOUR_MIN_FILTERING) == NEAREST_NEIGHBOUR_MIN_FILTERING) {
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+	}
+	else if ((flags & BILINEAR_MIN_FILTERING) == BILINEAR_MIN_FILTERING) {
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	}
+	else if ((flags & TRILINEAR_MIN_FILTERING) == TRILINEAR_MIN_FILTERING) {
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+	}
+
+	if ((flags & NEAREST_NEIGHBOUR_MAX_FILTERING) == NEAREST_NEIGHBOUR_MAX_FILTERING) {
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+	}
+	else if ((flags & BILINEAR_MAX_FILTERING) == BILINEAR_MAX_FILTERING) {
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	}
+	else if ((flags & TRILINEAR_MAX_FILTERING) == TRILINEAR_MAX_FILTERING) {
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+	}
+
+	glBindTexture(GL_TEXTURE_2D, 0);
 }
 
 void OGLRenderer::initFBO()
@@ -392,7 +457,7 @@ void OGLRenderer::initFBO()
 
 	//quad for final render
 	quad = new GameObject();
-	quad->SetRenderComponent(new RenderComponent(new LightMaterial(new OGLShader(SHADER_DIR"combinevert.glsl", SHADER_DIR"combinefrag.glsl")), Mesh::GenerateQuad()));
+	quad->SetRenderComponent(new RenderComponent(new LightMaterial(new OGLShader(SHADER_DIR"combinevert.glsl", SHADER_DIR"combinefrag.glsl")), OGLMesh::GenerateQuad()));
 	((LightMaterial*)quad->GetRenderComponent()->m_Material)->Set(ReservedOtherTextures.EMISSIVE.name, (int)ReservedOtherTextures.EMISSIVE.index);
 	((LightMaterial*)quad->GetRenderComponent()->m_Material)->Set(ReservedOtherTextures.SPECULAR.name, (int)ReservedOtherTextures.SPECULAR.index);
 }

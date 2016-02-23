@@ -17,8 +17,6 @@ _-_-_-_-_-_-_-""  ""
 *//////////////////////////////////////////////////////////////////////////////
 
 #pragma once
-
-#include "OGLRenderer.h"
 #include <vector>
 #include "Math/nclglMath.h"
 #include "constants.h"
@@ -37,6 +35,11 @@ struct MeshMtlData
 	float specExponent;
 };
 
+enum pType
+{
+	TRIANGLE, TRIANGLE_STRIP
+};
+
 /// @ingroup Rendering
 /// <summary>
 /// 
@@ -50,7 +53,7 @@ public:
 	Mesh(size_t numVertices, Vec3Graphics* vertices, Vec2Graphics* texCoords, Vec3Graphics* normals, Vec3Graphics* tangents, size_t numIndices, size_t* indices);
 	virtual ~Mesh(void);
 
-	void Draw(Material* material);
+	virtual void Draw(Material* material) = 0;
 
 	inline void AddChild(Mesh* m)
 	{
@@ -68,8 +71,6 @@ public:
 	static Mesh*	GenerateQuadAlt();
 	//Generates a coloured quad, going from -1 to 1 on the x and z axis, with adjustable texture coords.
 	static Mesh*	GenerateQuadTexCoordCol(Vec2Graphics scale, Vec2Graphics texCoord, Vec4Graphics colour); //NX 01/11/2012
-
-	static Mesh*	GenerateIcosphere(unsigned int tessalationLevel);
 
 	//Gets the Mesh's diffuse map. Returns an OpenGL texture 'name'
 	inline Texture*  GetTexture(size_t index) const
@@ -114,8 +115,8 @@ public:
 	}
 
 	//Extra stuff!!!! Aren't I nice?
-	void	DrawDebugNormals(float length = 5.0f);
-	void	DrawDebugTangents(float length = 5.0f);
+	virtual void DrawDebugNormals(float length) = 0;
+	virtual void DrawDebugTangents(float length) = 0;
 
 	//Generates normals for all facets. Assumes geometry type is GL_TRIANGLES...
 	void	GenerateNormals();
@@ -124,33 +125,25 @@ public:
 	void	GenerateTangents();
 
 	void	SetMtlData(const MeshMtlData& data);
-	void	SetTexture(Texture* tex, size_t index);
+	void	SetTexture(Texture* tex, size_t index);	
+	//Buffers all VBO data into graphics memory. Required before drawing!
+	virtual void BufferData() = 0;
+	virtual void SetPrimitiveType(pType type) = 0;
 
 protected:
-	//Buffers all VBO data into graphics memory. Required before drawing!
-	void	BufferData();
-
 	//Helper function for GenerateTangents
 	Vec3Graphics GenerateTangent(const Vec3Graphics& a,const Vec3Graphics& b,const Vec3Graphics& c,const Vec2Graphics& ta,const Vec2Graphics& tb,const Vec2Graphics& tc);
 
-
 	std::vector<Mesh*> m_Children;
 
-	//VAO for this mesh
-	GLuint	arrayObject;
-	//VBOs for this mesh
-	GLuint	bufferObject[MAX_BUFFER];
 	//Number of vertices for this mesh
-	GLuint	m_NumVertices;
-	//Primitive type for this mesh (GL_TRIANGLES...etc)
-	GLuint	type;
+	unsigned int m_NumVertices;
+	//Number of indices for this mesh
+	unsigned int m_NumIndices;
 
 	Texture* m_Textures[ReservedMeshTextures.size];
 	Vec3Graphics m_Colours[ReservedMeshColours.size];
 	float m_SpecExponent;
-
-	//Number of indices for this mesh
-	GLuint			m_NumIndices;
 
 	//You might wonder why we keep pointers to vertex data once
 	//it's sent off to graphics memory. For basic meshes, there's no

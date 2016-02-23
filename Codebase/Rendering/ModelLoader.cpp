@@ -87,7 +87,12 @@ Mesh* ReadMeshFromMGL(std::ifstream& in)
 #endif
 	}
 
-	Mesh* mesh = new Mesh(numVertices, vertices, texCoords, normals, tangents, numIndices, indices);
+#ifndef ORBIS
+	Mesh* mesh = new OGLMesh(numVertices, vertices, texCoords, normals, tangents, numIndices, indices);
+#else
+	Mesh* mesh = new PS4Mesh(numVertices, vertices, texCoords, normals, tangents, numIndices, indices);
+#endif
+	
 	MeshMtlData mtlData;
 	memset(&mtlData, 0, sizeof(MeshMtlData));
 

@@ -12,6 +12,8 @@ bool RigidPhysicsObject::CreatePhysicsBody(double mass, const Vec3Physics& posit
 	if (!m_ColShape)
 		return false;
 
+	btVector3 btInertia = btVector3(inertia.x, inertia.y, inertia.z);
+
 	//Motion state (http://www.bulletphysics.org/mediawiki-1.5.8/index.php/MotionStates)
 	m_MotionState = new btDefaultMotionState(btTransform(btQuaternion(orientation.x, orientation.y, orientation.z, orientation.w),
 		btVector3(position.x, position.y, position.z)));

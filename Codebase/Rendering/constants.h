@@ -40,6 +40,8 @@ enum MeshBuffer
 #else
 //In release, the expectation is applications will be run from the .exe files (starting directory being the .exe location)
 #define SHADER_DIR	"Assets/Shaders/"
+#define COMPILED_SHADER_DIR_D "ORBIS_Debug"
+#define COMPILED_SHADER_DIR "ORBIS_Release"
 #define MODEL_DIR	"Assets/Models/"
 #define TEXTURE_DIR  "Assets/Textures/"
 #define AUDIO_DIR	"Assets/AUDIO/"
@@ -50,14 +52,14 @@ enum MeshBuffer
 /// </summary>
 struct ShaderUniformInfo
 {
-	unsigned int index;
+	unsigned char index;
 	char* name;
 };
 
 /// <summary>
 /// Internal counter for easily setting ReservedMeshTexturesStruct indices.
 /// </summary>
-static size_t reservedMeshTextureCounter = 0;
+static unsigned char reservedMeshTextureCounter = 0;
 
 /// <summary>
 /// A static constant structure for representing a collection of reserved Mesh Texture uniforms.
@@ -142,7 +144,7 @@ static const struct ReservedOtherTexturesStruct
 /// <summary>
 /// Internal counter for easily setting ReservedMeshTexturesStruct indices.
 /// </summary>
-static size_t reservedMeshColourCounter = 0;
+static unsigned char reservedMeshColourCounter = 0;
 
 /// <summary>
 /// A static constant structure for representing a collection of reserved Mesh colour uniforms.

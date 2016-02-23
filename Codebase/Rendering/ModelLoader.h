@@ -1,7 +1,12 @@
 #pragma once
 
 #include <string>
-#include "Mesh.h"
+
+#ifndef ORBIS
+#include "OGLMesh.h"
+#else
+#include "PS4Mesh.h"
+#endif
 #include "constants.h"
 
 /// @ingroup Rendering
