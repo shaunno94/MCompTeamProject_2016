@@ -21,6 +21,7 @@ _-_-_-_-_-_-_-""  ""
 #include "Math/nclglMath.h"
 #include "constants.h"
 #include "Texture.h"
+#include <cstdint>
 
 class Material;
 
@@ -50,7 +51,7 @@ public:
 	friend class ModelLoader;
 
 	Mesh(void);
-	Mesh(size_t numVertices, Vec3Graphics* vertices, Vec2Graphics* texCoords, Vec3Graphics* normals, Vec3Graphics* tangents, size_t numIndices, size_t* indices);
+	Mesh(uint32_t numVertices, Vec3Graphics* vertices, Vec2Graphics* texCoords, Vec3Graphics* normals, Vec3Graphics* tangents, uint32_t numIndices, uint32_t* indices);
 	virtual ~Mesh(void);
 
 	virtual void Draw(Material* material) = 0;
@@ -73,11 +74,11 @@ public:
 	static Mesh*	GenerateQuadTexCoordCol(Vec2Graphics scale, Vec2Graphics texCoord, Vec4Graphics colour); //NX 01/11/2012
 
 	//Gets the Mesh's diffuse map. Returns an OpenGL texture 'name'
-	inline Texture*  GetTexture(size_t index) const
+	inline Texture*  GetTexture(uint32_t index) const
 	{
 		return m_Textures[index];
 	}
-	inline const Vec3Graphics& GetColour(size_t index) const
+	inline const Vec3Graphics& GetColour(uint32_t index) const
 	{
 		return m_Colours[index];
 	}
@@ -85,11 +86,11 @@ public:
 	{
 		return m_SpecExponent;
 	}
-	inline size_t GetNumVertices()
+	inline uint32_t GetNumVertices()
 	{
 		return m_NumVertices;
 	}
-	inline size_t GetNumIndices()
+	inline uint32_t GetNumIndices()
 	{
 		return m_NumIndices;
 	}
@@ -109,7 +110,7 @@ public:
 	{
 		return m_TextureCoords;
 	}
-	inline size_t* GetIndices()
+	inline uint32_t* GetIndices()
 	{
 		return m_Indices;
 	}
@@ -125,7 +126,7 @@ public:
 	void	GenerateTangents();
 
 	void	SetMtlData(const MeshMtlData& data);
-	void	SetTexture(Texture* tex, size_t index);	
+	void	SetTexture(Texture* tex, uint32_t index);
 	//Buffers all VBO data into graphics memory. Required before drawing!
 	virtual void BufferData() = 0;
 	virtual void SetPrimitiveType(pType type) = 0;
@@ -137,9 +138,9 @@ protected:
 	std::vector<Mesh*> m_Children;
 
 	//Number of vertices for this mesh
-	unsigned int m_NumVertices;
+	uint32_t m_NumVertices;
 	//Number of indices for this mesh
-	unsigned int m_NumIndices;
+	uint32_t m_NumIndices;
 
 	Texture* m_Textures[ReservedMeshTextures.size];
 	Vec3Graphics m_Colours[ReservedMeshColours.size];
@@ -159,6 +160,6 @@ protected:
 	//Pointer to vertex tangents attribute data
 	Vec3Graphics*		m_Tangents;
 	//Pointer to vertex indices attribute data
-	size_t*	m_Indices;
+	uint32_t*	m_Indices;
 };
 

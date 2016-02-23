@@ -7,8 +7,18 @@
 
 Mesh::Mesh(void)
 {
-	m_Textures[ReservedMeshTextures.size] = {};
-	m_Colours[ReservedMeshColours.size] = {};
+	m_Textures[ReservedMeshTextures.size];
+	m_Colours[ReservedMeshColours.size];
+
+	for (auto& t : m_Textures)
+	{
+		t = nullptr;
+	}
+	for (auto& c: m_Colours)
+	{
+		c = Vec3Graphics::ZEROS;
+	}
+
 	m_SpecExponent = 0.0f;
 
 	m_Colours[ReservedMeshColours.AMBIENT.index] = Vec3Graphics(0.2f, 0.2f, 0.2);
@@ -24,10 +34,20 @@ Mesh::Mesh(void)
 	m_Indices = nullptr;
 }
 
-Mesh::Mesh(size_t numVertices, Vec3Graphics* vertices, Vec2Graphics* texCoords, Vec3Graphics* normals, Vec3Graphics* tangents, size_t numIndices, size_t* indices)
+Mesh::Mesh(uint32_t numVertices, Vec3Graphics* vertices, Vec2Graphics* texCoords, Vec3Graphics* normals, Vec3Graphics* tangents, uint32_t numIndices, uint32_t* indices)
 {
-	m_Textures[ReservedMeshTextures.size] = {};
-	m_Colours[ReservedMeshColours.size] = {};
+	m_Textures[ReservedMeshTextures.size];
+	m_Colours[ReservedMeshColours.size];
+
+	for (auto& t : m_Textures)
+	{
+		t = nullptr;
+	}
+	for (auto& c : m_Colours)
+	{
+		c = Vec3Graphics::ZEROS;
+	}
+
 	m_SpecExponent = 0.0f;
 
 	m_NumVertices = 0;
@@ -47,7 +67,7 @@ Mesh::Mesh(size_t numVertices, Vec3Graphics* vertices, Vec2Graphics* texCoords, 
 
 Mesh::~Mesh(void)
 {
-	for (size_t i = 0; i < ReservedMeshTextures.size; ++i)
+	for (uint32_t i = 0; i < ReservedMeshTextures.size; ++i)
 	{
 		if (m_Textures[i])
 			m_Textures[i]->Clear();
@@ -73,7 +93,7 @@ Mesh* Mesh::GenerateQuad(Vec2Graphics texCoords)
 	m->SetPrimitiveType(TRIANGLE_STRIP);
 
 	m->m_Vertices = new Vec3Graphics[m->m_NumVertices];
-	m->m_Indices = new size_t[m->m_NumIndices];
+	m->m_Indices = new uint32_t[m->m_NumIndices];
 	m->m_TextureCoords = new Vec2Graphics[m->m_NumVertices];
 	m->m_Normals = new Vec3Graphics[m->m_NumVertices];
 	m->m_Tangents = new Vec3Graphics[m->m_NumVertices];
@@ -111,7 +131,7 @@ Mesh* Mesh::GenerateQuadAlt()
 	m->SetPrimitiveType(TRIANGLE_STRIP);
 
 	m->m_Vertices = new Vec3Graphics[m->m_NumVertices];
-	m->m_Indices = new size_t[m->m_NumIndices];
+	m->m_Indices = new uint32_t[m->m_NumIndices];
 	m->m_TextureCoords = new Vec2Graphics[m->m_NumVertices];
 	m->m_Normals = new Vec3Graphics[m->m_NumVertices];
 	m->m_Tangents = new Vec3Graphics[m->m_NumVertices];
@@ -149,7 +169,7 @@ Mesh* Mesh::GenerateQuadTexCoordCol(Vec2Graphics scale, Vec2Graphics texCoord, V
 	m->SetPrimitiveType(TRIANGLE_STRIP);
 
 	m->m_Vertices = new Vec3Graphics[m->m_NumVertices];
-	m->m_Indices = new size_t[m->m_NumIndices];
+	m->m_Indices = new uint32_t[m->m_NumIndices];
 	m->m_TextureCoords = new Vec2Graphics[m->m_NumVertices];
 	m->m_Normals = new Vec3Graphics[m->m_NumVertices];
 	m->m_Tangents = new Vec3Graphics[m->m_NumVertices];
@@ -274,7 +294,7 @@ Vec3Graphics Mesh::GenerateTangent(const Vec3Graphics& a, const Vec3Graphics& b,
 	return axis * factor;
 }
 
-void Mesh::SetTexture(Texture* tex, size_t index)
+void Mesh::SetTexture(Texture* tex, uint32_t index)
 {
 	if (m_Textures[index])
 		m_Textures[index]->Clear();
@@ -285,7 +305,7 @@ void Mesh::SetTexture(Texture* tex, size_t index)
 
 void Mesh::SetMtlData(const MeshMtlData& data)
 {
-	for (size_t i = 0; i < ReservedMeshTextures.size; ++i)
+	for (uint32_t i = 0; i < ReservedMeshTextures.size; ++i)
 	{
 		if (m_Textures[i])
 			m_Textures[i]->Clear();
@@ -293,7 +313,7 @@ void Mesh::SetMtlData(const MeshMtlData& data)
 		if (m_Textures[i])
 			m_Textures[i]->ReserveCopy();
 	}
-	for (size_t i = 0; i < ReservedMeshColours.size; ++i)
+	for (uint32_t i = 0; i < ReservedMeshColours.size; ++i)
 	{
 		m_Colours[i] = data.colours[i];
 	}

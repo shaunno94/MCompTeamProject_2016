@@ -69,7 +69,7 @@
     <IncludePath>..\BulletPhysics\src;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|ORBIS'">
-    <IncludePath>..\BulletPhysics\src;$(IncludePath)</IncludePath>
+    <IncludePath>..\;..\BulletPhysics\src;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <IncludePath>..\BulletPhysics\src;$(IncludePath)</IncludePath>
@@ -93,7 +93,9 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>ORBIS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <InlinedScopes>true</InlinedScopes>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
@@ -145,6 +147,9 @@
     </ProjectReference>
     <ProjectReference Include="..\BulletPhysics\build3\vs2010\LinearMath.vcxproj">
       <Project>{e9a76716-ef48-2d48-b6ae-09a54f748cae}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\Memory\Memory.vcxproj">
+      <Project>{84f8e699-7dc9-4e84-9677-c38fb5f2bf2f}</Project>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

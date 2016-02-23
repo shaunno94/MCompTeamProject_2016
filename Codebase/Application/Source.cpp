@@ -4,6 +4,7 @@
 #include "Rendering\ModelLoader.h"
 #include "Rendering\DebugDraw.h"
 #include "Rendering\GameTimer.h"
+#include <fstream>
 
 // Includes for AI States and Triggers
 #include "AI\StateMachine.h"
@@ -14,17 +15,37 @@
 const float TIME_STEP = 1.0f / 120.0f;
 const unsigned int SUB_STEPS = 4;
 
+#ifndef ORBIS
+const unsigned int SCREEN_HEIGHT = 800;
+const unsigned int SCREEN_WIDTH = 1280;
+const string SIMPLESHADER_VERT = SHADER_DIR"textureVertex.glsl";
+const string SIMPLESHADER_FRAG = SHADER_DIR"textureFragment.glsl";
+const string POINTLIGHTSHADER_VERT = SHADER_DIR"2dShadowLightvertex.glsl";
+const string POINTLIGHTSHADER_FRAG = SHADER_DIR"2dShadowLightfragment.glsl";
+#else
+const unsigned int SCREEN_HEIGHT = 1080;
+const unsigned int SCREEN_WIDTH = 1920;
+const string SIMPLESHADER_VERT = SHADER_DIR"textureVertex.sb";
+const string SIMPLESHADER_FRAG = SHADER_DIR"textureFragment.sb";
+const string POINTLIGHTSHADER_VERT = SHADER_DIR"2dShadowLightvertex.sb";
+const string POINTLIGHTSHADER_FRAG = SHADER_DIR"2dShadowLightfragment.sb";
+//System Variables
+unsigned int sceLibcHeapExtendedAlloc = 1;			/* Switch to dynamic allocation */
+size_t sceLibcHeapSize = 512 * 1024 * 1024;			/* Set up heap area upper limit as 256 MiB */
+//int sceUserMainThreadPriority = SCE_KERNEL_DEFAULT_PRIORITY_USER;
+#endif
+
 int main(void) {
 	//-------------------
 	//--- MAIN Loop ---
 	//-------------------
-
+	
 	//Initialise Renderer - including the window context if compiling for Windows - PC
-	Renderer renderer("Team Project - 2016", 1280, 800, false);
-	if (!renderer.HasInitialised()) {
+	Renderer renderer("Team Project - 2016", SCREEN_WIDTH, SCREEN_HEIGHT, false);
+	if (!renderer.HasInitialised()) 
+	{
 		return -1;
 	}
-
 	GameTimer timer;
 
 	//Initialise Bullet physics engine.
@@ -42,8 +63,8 @@ int main(void) {
 	//Game objects added to scene are delete by the scene so don't delete twice.
 	GameObject* ball = new GameObject("ball");
 	GameObject* aiBall = new GameObject("aiBall");
-	GameObject* light1 = new GameObject("l");
-	GameObject* light2 = new GameObject("l");
+	GameObject* light1 = new GameObject("l1");
+	GameObject* light2 = new GameObject("l2");
 	GameObject* stadium = new GameObject("stadium");
 
 	//Physics objects hold collision shape and collision object(body), 
@@ -62,17 +83,16 @@ int main(void) {
 	floorPhysics->CreatePhysicsBody(0, Vec3Physics(0, -1, 0), QuatPhysics(0, 0, 0, 1));
 
 #ifndef ORBIS
-	BaseShader* simpleShader = new OGLShader(SHADER_DIR"textureVertex.glsl", SHADER_DIR"textureFragment.glsl");
-	BaseShader* pointlightShader = new OGLShader(SHADER_DIR"2dShadowLightvertex.glsl", SHADER_DIR"2dShadowLightfragment.glsl");
+	BaseShader* simpleShader = new OGLShader(SIMPLESHADER_VERT, SIMPLESHADER_FRAG);
+	BaseShader* pointlightShader = new OGLShader(POINTLIGHTSHADER_VERT, POINTLIGHTSHADER_FRAG);
 	//BaseShader* pointlightShader = new OGLShader(SHADER_DIR"CubeShadowLightvertex.glsl", SHADER_DIR"CubeShadowLightfragment.glsl");
 #else
-	BaseShader* simpleShader = new PS4Shader(COMPILED_SHADER_DIR_D"textureVertex.glsl", COMPILED_SHADER_DIR_D"textureFragment.glsl");
-	BaseShader* pointlightShader = new PS4Shader(COMPILED_SHADER_DIR_D"2dShadowLightvertex.glsl", COMPILED_SHADER_DIR_D"2dShadowLightfragment.glsl");
+	BaseShader* simpleShader = new PS4Shader(SIMPLESHADER_VERT, SIMPLESHADER_FRAG);
+	BaseShader* pointlightShader = new PS4Shader(POINTLIGHTSHADER_VERT, POINTLIGHTSHADER_FRAG);
 #endif
 	
 	if (!pointlightShader->IsOperational() || !simpleShader->IsOperational())
 		return -1;
-
 
 	LightMaterial* lightMaterial = new LightMaterial(pointlightShader);
 	light1->SetRenderComponent(new RenderComponent(lightMaterial, ModelLoader::LoadMGL(MODEL_DIR"Common/ico.mgl", true)));

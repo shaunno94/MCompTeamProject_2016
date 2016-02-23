@@ -1,4 +1,62 @@
-float4 main() : S_TARGET_OUTPUT
+SamplerState samp0			: register(s0);
+
+Texture2D depthTex			: register(t0);
+Texture2D normTex			: register(t1);
+Texture2D shadowTex			: register(t2); //Texture2DShadow ????
+
+ConstantBuffer ShaderConstants
 {
-	return float4(1.0f, 1.0f, 1.0f, 1.0f);
+	column_major matrix shadowBias;
+	float2 pixelSize;
+	float3 cameraPos;
+	float lightRadius;
+	float3 lightPos;
+	float4 lightColour;
+};
+
+struct VS_OUTPUT
+{
+	float4 position	: S_POSITION;
+	float4x4 inverseProjView;
+};
+
+float4 main(VS_OUTPUT In) : S_TARGET_OUTPUT
+{
+	float3 pos = float3(In.position.x * pixelSize.x, In.position.y * pixelSize.y, 0.0);
+	pos.z = depthTex.Sample(samp0, pos.xy).r;
+
+	float3 normal = float3(normalize(normTex.Sample(samp0, pos.xy).xyz * 2.0 - 1.0)); 
+
+	float4 clipSpace = mul(In.inverseProjView, In.position);
+	pos = clipSpace.xyz / clipSpace.w;	
+
+	float dist = length(lightPos - pos);
+	float atten = 1.0 - clamp(dist / lightRadius, 0.0, 1.0);
+
+	if(atten == 0.0)
+	{
+		discard;
+	}
+		
+	float3 incident = normalize(lightPos - pos);
+	float3 viewDir = normalize(cameraPos - pos);
+	float3 halfDir = normalize(incident + viewDir);
+
+	float lambert = saturate(dot(incident, normal)); //Same as clamp(x, 0, 1)
+	float rFactor = saturate(dot(halfDir, normal)); //Same as clamp(x, 0, 1)
+	float sFactor = pow(rFactor, 33.0);
+
+	float shadow = 1.0;
+
+	float4 shadowProj = mul(shadowBias, float4(pos + (normal * 1.5), 1.0));
+	if(shadowProj.w > 0.0)
+	{
+		//Not sure how this will be handled in PSSL
+	}
+
+	lambert *= shadow;
+	sFactor *= shadow;
+
+	return float4(lightColour.xyz * lambert * atten, 1.0); //Need to find out how to output to multiple targets
+	//float4(lightColour.xyz * sFactor * atten * 0.33, 1.0)
 }
