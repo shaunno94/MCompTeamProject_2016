@@ -4,7 +4,7 @@
 #include "Rendering\ModelLoader.h"
 #include "Rendering\DebugDraw.h"
 #include "Rendering\GameTimer.h"
-#include <fstream>
+#include "Stadium.h"
 
 // Includes for AI States and Triggers
 #include "AI\StateMachine.h"
@@ -39,7 +39,7 @@ int main(void) {
 	//-------------------
 	//--- MAIN Loop ---
 	//-------------------
-	
+
 	//Initialise Renderer - including the window context if compiling for Windows - PC
 	Renderer renderer("Team Project - 2016", SCREEN_WIDTH, SCREEN_HEIGHT, false);
 	if (!renderer.HasInitialised()) 
@@ -63,9 +63,8 @@ int main(void) {
 	//Game objects added to scene are delete by the scene so don't delete twice.
 	GameObject* ball = new GameObject("ball");
 	GameObject* aiBall = new GameObject("aiBall");
-	GameObject* light1 = new GameObject("l1");
-	GameObject* light2 = new GameObject("l2");
-	GameObject* stadium = new GameObject("stadium");
+	GameObject* light1 = new GameObject("l");
+	GameObject* light2 = new GameObject("l");
 
 	//Physics objects hold collision shape and collision object(body), 
 	//call CreateCollisionShape before CreatePhysicsBody or the object will not be created correctly.
@@ -108,12 +107,8 @@ int main(void) {
 	Material* ballMaterial = new Material(simpleShader);
 	ballMaterial->Set(ReservedMeshTextures.DIFFUSE.name, Texture::Get(TEXTURE_DIR"checkerboard.tga", true));
 
- 	stadium->SetRenderComponent(new RenderComponent(material, ModelLoader::LoadMGL(MODEL_DIR"Stadium/Stadium2.mgl", true)));
-	stadium->SetPhysicsComponent(floorPhysics);
-	stadium->GetPhysicsComponent()->GetPhysicsBody()->setRestitution(0.5);
-	stadium->SetLocalTransform(Mat4Graphics::Translation(Vec3Graphics(6.8, -28.5, -2.3)));
-	stadium->GetPhysicsComponent()->GetPhysicsBody()->setFriction(0.5);
-	stadium->GetPhysicsComponent()->GetPhysicsBody()->setHitFraction(0.5);
+	// Create Stadium
+	GameObject* stadium = new Stadium(material, "stadium"); 
 
 	myScene->addGameObject(stadium);
 	//myScene->addLightObject(light1);
