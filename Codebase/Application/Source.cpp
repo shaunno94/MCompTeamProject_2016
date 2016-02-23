@@ -52,8 +52,10 @@ int main(void) {
 	PhysicsEngineInstance::Instance()->setGravity(btVector3(0, -9.81, 0));
 
 #if DEBUG_DRAW
+#ifndef ORBIS
 	PhysicsEngineInstance::Instance()->setDebugDrawer(DebugDraw::Instance());
 	DebugDraw::Context(&renderer);
+#endif
 #endif
 
 	//Test Scenario - Tardis (cuboid collision shape), floor (plane collision shape), ball (sphere collison shape)
@@ -178,7 +180,9 @@ int main(void) {
 	PhysicsEngineInstance::Release();
 
 #if DEBUG_DRAW
+#ifndef ORBIS
 	DebugDraw::Release();
+#endif
 #endif
 
 	delete myScene;
