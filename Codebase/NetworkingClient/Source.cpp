@@ -44,11 +44,9 @@ int main()
 	//send ready state for the session
 	connection->IsReady(true);
 
+	client->GetSession();
+
 	auto session = client->GetSession();
-	session->
-	if ()
-	{
-	}
 
 	while (connection->)
 	{

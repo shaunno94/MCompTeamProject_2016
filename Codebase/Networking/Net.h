@@ -182,9 +182,9 @@ class NetHost
 	friend class Net;
 
 public:
-	inline NetSession* GetSessionFrame() const
+	inline NetSession* GetSession() const
 	{
-		return m_sessionReadFrame;
+		return m_session;
 	}
 
 protected:
