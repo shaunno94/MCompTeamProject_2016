@@ -1,13 +1,11 @@
 #include "Texture.h"
 
-#include "../Dependencies/SOIL2/SOIL2.h"
 #include <iostream>
 #include <sstream>
-
+#include "Renderer.h"
 
 std::unordered_map<std::string, std::vector<Texture*>> Texture::s_textureRecords;
 int Texture::s_memoryUsage = 0;
-
 
 Texture* Texture::Make(const std::string& filePath, bool preload)
 {
@@ -81,7 +79,6 @@ void Texture::Clear()
 	}
 }
 
-
 void Texture::ClearAll()
 {
 	for (auto it = s_textureRecords.begin(); it != s_textureRecords.end() ; ++it)
@@ -96,49 +93,22 @@ void Texture::ClearAll()
 	s_textureRecords.clear();
 }
 
-
-void Texture::MeasureMemoryUsageAdd(GLuint textureId)
+void Texture::SetTextureParams(unsigned int flags)
 {
-	int width;
-	int height;
-	int r, g, b, a;
-
-	glBindTexture(GL_TEXTURE_2D, textureId);
-
-	glGetTexLevelParameteriv(GL_TEXTURE_2D, 0, GL_TEXTURE_RED_SIZE, &r);
-	glGetTexLevelParameteriv(GL_TEXTURE_2D, 0, GL_TEXTURE_GREEN_SIZE, &g);
-	glGetTexLevelParameteriv(GL_TEXTURE_2D, 0, GL_TEXTURE_BLUE_SIZE, &b);
-	glGetTexLevelParameteriv(GL_TEXTURE_2D, 0, GL_TEXTURE_ALPHA_SIZE, &a);
-	glGetTexLevelParameteriv(GL_TEXTURE_2D, 0, GL_TEXTURE_WIDTH, &width);
-	glGetTexLevelParameteriv(GL_TEXTURE_2D, 0, GL_TEXTURE_HEIGHT, &height);
-
-	glBindTexture(GL_TEXTURE_2D, 0);
-
-	s_memoryUsage += (width * height * ((r + g + b + a) / 8.0f));
+	if (!textureId) 
+		LoadFromFile();
+	Renderer::GetInstance()->SetTextureFlags(textureId, flags);
 }
 
-void Texture::MeasureMemoryUsageSubstract(GLuint textureId)
+void Texture::MeasureMemoryUsageAdd(textureHandle textureId)
 {
-	int width;
-	int height;
-	int r, g, b, a;
-
-	glBindTexture(GL_TEXTURE_2D, textureId);
-
-	glGetTexLevelParameteriv(GL_TEXTURE_2D, 0, GL_TEXTURE_RED_SIZE, &r);
-	glGetTexLevelParameteriv(GL_TEXTURE_2D, 0, GL_TEXTURE_GREEN_SIZE, &g);
-	glGetTexLevelParameteriv(GL_TEXTURE_2D, 0, GL_TEXTURE_BLUE_SIZE, &b);
-	glGetTexLevelParameteriv(GL_TEXTURE_2D, 0, GL_TEXTURE_ALPHA_SIZE, &a);
-	glGetTexLevelParameteriv(GL_TEXTURE_2D, 0, GL_TEXTURE_WIDTH, &width);
-	glGetTexLevelParameteriv(GL_TEXTURE_2D, 0, GL_TEXTURE_HEIGHT, &height);
-
-	glBindTexture(GL_TEXTURE_2D, 0);
-
-	s_memoryUsage -= (width * height * ((r + g + b + a) / 8.0f));
+	s_memoryUsage += Renderer::GetInstance()->TextureMemoryUsage(textureId);
 }
 
-
-
+void Texture::MeasureMemoryUsageSubtract(textureHandle textureId)
+{
+	s_memoryUsage -= Renderer::GetInstance()->TextureMemoryUsage(textureId);
+}
 
 Texture::Texture(const std::string& filepath, size_t index, bool preload) : filePath(filepath)
 {
@@ -153,20 +123,23 @@ Texture::~Texture()
 	if(textureId)
 	{
 #ifdef _DEBUG
-		MeasureMemoryUsageSubstract(textureId);
+		MeasureMemoryUsageSubtract(textureId);
 #endif
+#ifndef ORBIS
 		glDeleteTextures(1, &textureId);
 		textureId = 0;
+#else
+		delete textureId;
+#endif
 	}
 }
-
-
+#ifndef ORBIS
 void Texture::LoadFromFile()
 {
 	if (textureId)
 	{
 #ifdef _DEBUG
-		MeasureMemoryUsageSubstract(textureId);
+		MeasureMemoryUsageSubtract(textureId);
 #endif
 		glDeleteTextures(1, &textureId);
 		textureId = 0;
@@ -190,9 +163,48 @@ void Texture::LoadFromFile()
 	{
 		std::stringstream message;
 		message << "SOIL loading error: '" << SOIL_last_result() << "' (" << filePath << ")";
+		//std::cout << "SOIL loading error: '" << SOIL_last_result() << "' (" << filePath << ")";
 		throw std::ios_base::failure(message.str());
 	}
 }
+#else
+void Texture::LoadFromFile()
+{
+	std::ifstream file(filePath, std::ios::binary);
+
+	if (!file)
+		return;
+
+	sce::Gnf::Header header;
+	file.read((char*)&header, sizeof(header));
+
+	if (header.m_magicNumber != sce::Gnf::kMagic)
+		return; //This wasn't actually a gnf file!!!
+
+	char* rawContents = new char[header.m_contentsSize];
+	file.read((char*)rawContents, header.m_contentsSize);
+
+	sce::Gnf::Contents* contentsDesc = (sce::Gnf::Contents*)rawContents;
+
+	sce::Gnm::SizeAlign dataParams = getTexturePixelsSize(contentsDesc, 0);
+
+	void *pixelsAddr = garlicAllocator.allocate(dataParams);
+	sce::Gnm::registerResource(nullptr, ownerHandle, pixelsAddr, dataParams.m_size, filePath.c_str(), sce::Gnm::kResourceTypeTextureBaseAddress, 0);
+
+	file.seekg(getTexturePixelsByteOffset(contentsDesc, 0), ios::cur); //fast forward in the file a bit
+	file.read((char*)pixelsAddr, dataParams.m_size);
+
+	textureId = patchTextures(contentsDesc, 0, 1, &pixelsAddr);
+
+	/*tex->width = tex->apiTexture.getWidth();
+	tex->height = tex->apiTexture.getHeight();
+	tex->bpp = tex->apiTexture.getDepth();*/
+
+	//textureId->setResourceMemoryType(Gnm::kResourceMemoryTypeRO);
+	file.close();
+	delete rawContents;
+}
+#endif
 
 /// <summary>
 /// Loads a texture to it's texture unit for use in shaders
@@ -200,7 +212,14 @@ void Texture::LoadFromFile()
 /// <returns></returns>
 void Texture::Load(unsigned int textureUnit)
 {
+#ifndef ORBIS
 	glActiveTexture(GL_TEXTURE0 + textureUnit);
-	if (!textureId) LoadFromFile();
+	if (!textureId) 
+		LoadFromFile();
 	glBindTexture(GL_TEXTURE_2D, textureId);
+#else
+	if (!textureId) 
+		LoadFromFile();
+	//currentGFXContext->setTextures(Gnm::kShaderStagePs, textureUnit, 1, textureId);
+#endif
 }

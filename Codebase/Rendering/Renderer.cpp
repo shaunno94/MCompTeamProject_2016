@@ -1,40 +1,41 @@
 #include "Renderer.h"
 
-Renderer* Renderer::s_renderer;
+Renderer* Renderer::s_renderer = nullptr;
 
-Renderer::Renderer(Window& parent) : OGLRenderer(parent)
+Renderer::Renderer(std::string title, int sizeX, int sizeY, bool fullScreen) :
+#ifndef ORBIS 
+OGLRenderer(title, sizeX, sizeY, fullScreen)
+#else
+PS4Renderer()
+#endif
 {
-	triangle = Mesh::GenerateTriangle();
-	camera = new Camera(0.0f, 0.0f, Vec3Graphics(0, 0, 0));
-
+	m_UpdateGlobalUniforms = true;
 	currentShader = nullptr;
 	//TODO: change SHADERDIR to SHADER_DIR
-	/*currentShader = new Shader(SHADER_DIR"basicVertex.glsl", SHADER_DIR"colourFragment.glsl");
 
-	if (!currentShader->IsOperational())
-	{
-		return;
-	}*/
-
-	projMatrix = Mat4Graphics::Perspective(1.0f, 15000.0f, (float)width / (float)height, 45.0f);
-	//projMatrix = Mat4Graphics::Orthographic(-1, 1, 1, -1, -1, 1);
-	glClearColor(0.2f, 0.2f, 0.2f, 1.0f);
-
-	glEnable(GL_DEPTH_TEST);
-	glEnable(GL_DEPTH_CLAMP);
-	glEnable(GL_CULL_FACE);
-	glEnable(GL_BLEND);
-	glDepthFunc(GL_LEQUAL);
-	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+	aspectRatio = float(sizeX) / float(sizeY);
+	pixelPitch = Vec2Graphics(1.0f / float(sizeX), 1.0f / float(sizeY));
+	localProjMat = Mat4Graphics::Perspective(1.0f, 15000.0f, aspectRatio, 45.0f);
 
 	currentScene = nullptr;
-	init = true;
+
 	if (!s_renderer)
 		s_renderer = this;
+	child = this;
 }
-Renderer::~Renderer(void)
+
+Renderer::~Renderer(void) {}
+
+void Renderer::updateGlobalUniforms(Material* material)
 {
-	delete triangle;
+	auto lightMat = dynamic_cast<LightMaterial*>(material);
+	if (lightMat)
+	{
+		Vec3Graphics camPos = currentScene->getCamera()->GetPosition();
+		auto test = lightMat->Set("cameraPos", camPos);
+		lightMat->Set("pixelSize", pixelPitch);
+		int i = 0;
+	}
 }
 
 void Renderer::UpdateScene(float msec)
@@ -45,13 +46,18 @@ void Renderer::UpdateScene(float msec)
 		viewMatrix = currentScene->getCamera()->BuildViewMatrix();
 		//Updates all objects in the scene, sorts lists for rendering
 		frameFrustrum.FromMatrix(projMatrix * viewMatrix);
-		currentScene->UpdateNodeLists(msec, frameFrustrum);
+		currentScene->UpdateNodeLists(msec, frameFrustrum, currentScene->getCamera()->GetPosition());
 	}
-	else
-	{
-		camera->UpdateCamera(msec);
-		viewMatrix = camera->BuildViewMatrix();
-		//viewMatrix.ToIdentity();
+
+	if (m_UpdateGlobalUniforms)
+	{	
+		for (unsigned int i = 0; i < currentScene->getNumLightObjects(); ++i)
+		{
+			auto rc = currentScene->getLightObject(i)->GetRenderComponent();
+
+			updateGlobalUniforms(rc->m_Material);
+		}
+		//m_UpdateGlobalUniforms = false;
 	}
 	//TODO: This will not work. As each object could have its own shader, the update needs to be called for each game object.
 	//TODO: When we add UBOs this approach will be valid again, so no need to spend a lot of time fixing this issue.
@@ -61,30 +67,56 @@ void Renderer::UpdateScene(float msec)
 //TODO:: Might need to be seperate from UpdateScene call if you want to update the scene once and draw several times (like for the cube shadow maps)
 void Renderer::RenderScene(float msec)
 {
+	projMatrix = localProjMat;
 	UpdateScene(msec);
-	glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
 
 	//glUseProgram(currentShader->GetProgram());
-
 	//Draws all objects attatched to the current scene.
 	if (currentScene)
 	{
-		//Draw opaques
-		for (unsigned int i = 0; i < currentScene->getNumOpaqueObjects(); ++i)
-		{
-			currentScene->getOpaqueObject(i)->OnRenderObject();
-		}
-		//Draw transparent
-		for (unsigned int i = 0; i < currentScene->getNumTransparentObjects(); ++i)
-		{
-			currentScene->getTransparentObject(i)->OnRenderObject();
-		}
+		//Draw
+		FillBuffers(); //First Pass
+		DrawPointLights(); //Second Pass
+		CombineBuffers(); //Final Pass
 	}
-	else
-	{
-		triangle->Draw();
-	}
-	glUseProgram(0);
-
 	SwapBuffers();
+}
+
+void Renderer::OnUpdateScene(float dt, Frustum& frustum, Vec3Graphics camPos)
+{
+	currentScene->UpdateNodeLists(dt, frustum, camPos);
+}
+
+void Renderer::OnRenderScene()
+{
+	for (unsigned int i = 0; i < currentScene->getNumOpaqueObjects(); ++i)
+		currentScene->getOpaqueObject(i)->OnRenderObject();
+	for (unsigned int i = 0; i < currentScene->getNumTransparentObjects(); ++i)
+		currentScene->getTransparentObject(i)->OnRenderObject();
+}
+
+void Renderer::OnRenderLights()
+{
+	for (unsigned int i = 0; i < currentScene->getNumLightObjects(); ++i)
+	{
+		GameObject* light = currentScene->getLightObject(i);
+		DrawShadow(light);
+		LightMaterial* lm = (LightMaterial*)light->GetRenderComponent()->m_Material;
+		lm->Set("lightPos", light->GetWorldTransform().GetTranslation());
+		lm->Set("lightRadius", light->GetBoundingRadius());
+		lm->Set("lightColour", Vec4Graphics(1, 0.7, 0.5, 1));
+		lm->Set("cameraPos", currentScene->getCamera()->GetPosition());
+		lm->Set("shadowBias", lm->shadowBias);
+
+		UpdateShaderMatrices();
+
+		float dist = (light->GetWorldTransform().GetTranslation() - currentScene->getCamera()->GetPosition()).Length();
+
+		if (dist < light->GetBoundingRadius())  // camera is inside the light volume !
+			SetCullFace(FRONT);
+		else
+			SetCullFace(BACK);
+
+		light->OnRenderObject();
+	}
 }

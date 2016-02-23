@@ -233,3 +233,14 @@ $RECYCLE.BIN/
 # Exclude Dependencies and Assets folder
 !**/[Dd]ependencies/**
 !**/[Aa]ssets/**
+*.o
+Codebase/Rendering/ORBIS_Release/Rendering.tlog/orbis-clang-cl.read.1.tlog
+*.tlog
+*.a
+Codebase/ORBIS_Debug/textureFragment.sb
+*.elf
+Codebase/ORBIS_Debug/2dShadowLightvertex.sb
+*.o-0ab29b5c
+*.o-bebc4921
+Codebase/ORBIS_Debug/2dShadowLightfragment.sb
+*.sb

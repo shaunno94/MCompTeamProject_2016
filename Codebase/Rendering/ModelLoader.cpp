@@ -1,6 +1,7 @@
 #include "ModelLoader.h"
 #include "Helpers/File.h"
 #include <sstream>
+#include <fstream>
 
 
 #define MGL_LOAD_FAST_EXPERIMENTAL 1
@@ -86,7 +87,12 @@ Mesh* ReadMeshFromMGL(std::ifstream& in)
 #endif
 	}
 
-	Mesh* mesh = new Mesh(numVertices, vertices, texCoords, normals, tangents, numIndices, indices);
+#ifndef ORBIS
+	Mesh* mesh = new OGLMesh(numVertices, vertices, texCoords, normals, tangents, numIndices, indices);
+#else
+	Mesh* mesh = new PS4Mesh(numVertices, vertices, texCoords, normals, tangents, numIndices, indices);
+#endif
+	
 	MeshMtlData mtlData;
 	memset(&mtlData, 0, sizeof(MeshMtlData));
 
@@ -104,7 +110,10 @@ Mesh* ReadMeshFromMGL(std::ifstream& in)
 				sstream << c;
 				in.get(c);
 			}
-			mtlData.textureMaps[i] = Texture::Get(MODEL_DIR + sstream.str());
+			Texture* newTexture = Texture::Get(MODEL_DIR + sstream.str());
+			newTexture->SetTextureParams(TextureFlags::REPEATING | TextureFlags::TRILINEAR_MIN_MAX_FILTERING);
+
+			mtlData.textureMaps[i] = newTexture;
 			sstream.str("");
 			sstream.clear();
 		}

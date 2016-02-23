@@ -12,6 +12,25 @@
 #define SHADER_TES 4
 #define SHADER_MAX_STAGE_COUNT 5
 
+//size of shadow textures, TODO - smaller?
+#define SHADOWSIZE 4096
+
+//A handy enumerator, to determine which member of the bufferObject array
+//holds which data
+/// @ingroup Rendering
+/// <summary>
+/// Enumerator, to determine which member of the bufferObject array holds which data
+/// </summary>
+enum MeshBuffer
+{
+	VERTEX_BUFFER,
+	TEXTURE_BUFFER,
+	NORMAL_BUFFER,
+	TANGENT_BUFFER,
+	INDEX_BUFFER,
+	MAX_BUFFER
+};
+
 #ifdef _DEBUG
 //In debug, the expectation is applications will be run from visual studio (starting directory being the project)
 #define SHADER_DIR	"../Assets/Shaders/"
@@ -21,6 +40,8 @@
 #else
 //In release, the expectation is applications will be run from the .exe files (starting directory being the .exe location)
 #define SHADER_DIR	"Assets/Shaders/"
+#define COMPILED_SHADER_DIR_D "ORBIS_Debug"
+#define COMPILED_SHADER_DIR "ORBIS_Release"
 #define MODEL_DIR	"Assets/Models/"
 #define TEXTURE_DIR  "Assets/Textures/"
 #define AUDIO_DIR	"Assets/AUDIO/"
@@ -31,14 +52,14 @@
 /// </summary>
 struct ShaderUniformInfo
 {
-	unsigned int index;
+	unsigned char index;
 	char* name;
 };
 
 /// <summary>
 /// Internal counter for easily setting ReservedMeshTexturesStruct indices.
 /// </summary>
-static size_t reservedMeshTextureCounter = 0;
+static unsigned char reservedMeshTextureCounter = 0;
 
 /// <summary>
 /// A static constant structure for representing a collection of reserved Mesh Texture uniforms.
@@ -90,13 +111,38 @@ ReservedMeshTextures =
 	reservedMeshTextureCounter++, "specularColourTex",
 	reservedMeshTextureCounter++, "specularHighlightTex",
 	reservedMeshTextureCounter++, "alphaTex",
-	reservedMeshTextureCounter++, "bumpMap"
+	reservedMeshTextureCounter++, "bumpTex"
+};
+
+static const struct ReservedOtherTexturesStruct
+{
+	const union
+	{
+		const struct
+		{
+			ShaderUniformInfo DEPTH;
+			ShaderUniformInfo NORMALS;
+			ShaderUniformInfo EMISSIVE;
+			ShaderUniformInfo SPECULAR;
+			ShaderUniformInfo SHADOW_2D;
+		};
+		ShaderUniformInfo values[5];
+};
+	static const size_t size = 5;
+
+} ReservedOtherTextures =
+{
+	reservedMeshTextureCounter++, "depthTex",
+	reservedMeshTextureCounter++, "normTex",
+	reservedMeshTextureCounter++, "emissiveTex",
+	reservedMeshTextureCounter++, "specularTex",
+	reservedMeshTextureCounter++, "shadowTex"
 };
 
 /// <summary>
 /// Internal counter for easily setting ReservedMeshTexturesStruct indices.
 /// </summary>
-static size_t reservedMeshColourCounter = 0;
+static unsigned char reservedMeshColourCounter = 0;
 
 /// <summary>
 /// A static constant structure for representing a collection of reserved Mesh colour uniforms.

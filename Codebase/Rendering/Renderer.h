@@ -1,41 +1,45 @@
 #pragma once
-
-#include "OGLRenderer.h"
-#include "Camera.h"
 #include "Scene.h"
-#include "constants.h"
-
+#define DEBUG_DRAW 0
 /// @ingroup Rendering
 /// <summary>
 /// Non-platform specific functionality for rendering a <see cref="Scene"/>.
 /// </summary>
+#ifndef ORBIS
+#include "OGLRenderer.h"
 class Renderer : public OGLRenderer
 {
+	friend class OGLRenderer;
+#else
+#include "PS4Renderer.h"
+class Renderer : public PS4Renderer 
+{
+	friend class PS4Renderer;
+#endif
 public:
+	static Renderer* GetInstance() { return s_renderer; }
+	void SetCurrentScene(Scene* s) { currentScene = s; }
 
-	static Renderer* GetInstance()
-	{
-		return s_renderer;
-	}
-
-	Renderer(Window& parent);
+	Renderer(std::string title, int sizeX, int sizeY, bool fullScreen);
 	virtual ~Renderer(void);
 
 	void RenderScene(float msec);
-	void SetCurrentScene(Scene* s)
-	{
-		currentScene = s;
-	}
 	void UpdateScene(float msec);
 
 protected:
+	void OnUpdateScene(float dt, Frustum& frustum, Vec3Graphics camPos);
+	void OnRenderScene();
+	void OnRenderLights();
 
-	Scene* currentScene;
 	Frustum frameFrustrum;
-	//--Contained in Scene--//
-	Mesh*	triangle;
-	Camera*	camera;
-
+	Frustum lightFrustrum;
 	static Renderer* s_renderer;
-	//----------------------//
+	void updateGlobalUniforms(Material* material);
+
+	bool m_UpdateGlobalUniforms;
+	float aspectRatio;
+	Mat4Graphics localProjMat;
+	float windowHeight, windowWidth;
+	Vec2Graphics pixelPitch;
+	Scene* currentScene;
 };

@@ -3,6 +3,7 @@ Class:Window
 Author:Rich Davison
 Description:Creates and handles the Window, including the initialisation of the mouse and keyboard.
 */
+#ifndef ORBIS
 #pragma once
 #pragma warning( disable : 4099 )
 
@@ -16,7 +17,6 @@ Description:Creates and handles the Window, including the initialisation of the 
 #include "OGLRenderer.h"
 #include "Input/Keyboard.h"
 #include "Input/Mouse.h"
-#include "Helpers/DeltaTimer.h"
 
 #define WIN32_LEAN_AND_MEAN
 #define VC_EXTRALEAN
@@ -28,14 +28,11 @@ class OGLRenderer;
 /// <summary>
 /// 
 /// </summary>
-class Window	{
+class Window	
+{
+	friend class OGLRenderer;
 public:
-	static bool Initialise(std::string title = "OpenGL Framework", int sizeX = 800, int sizeY = 600, bool fullScreen = false);
-	static void Destroy();
 	static Window& GetWindow() { return *window; }
-
-
-
 
 	bool	UpdateWindow();	
 
@@ -53,9 +50,10 @@ public:
 	static Keyboard*	GetKeyboard()	{return keyboard;}
 	static Mouse*		GetMouse()		{return mouse;}
 
-	DeltaTimer<float>*   GetTimer()		{return timer;}
+protected:	
+	static bool Initialise(std::string title = "OpenGL Framework", int sizeX = 800, int sizeY = 600, bool fullScreen = false);
+	static void Destroy();
 
-protected:
 	void	CheckMessages(MSG &msg);
 	static LRESULT CALLBACK WindowProc(HWND hWnd,UINT message,WPARAM wParam,LPARAM lParam);
 
@@ -64,8 +62,6 @@ protected:
 	static Window*		window;
 	static Keyboard*	keyboard;
 	static Mouse*		mouse;
-
-	DeltaTimer<float>*	timer;
 
 	OGLRenderer*		renderer;
 
@@ -78,11 +74,10 @@ protected:
 	Vec2				position;
 	Vec2				size;
 
-	float				elapsedMS;
-
 	bool				mouseLeftWindow;
 
 private:
 	Window(std::string title = "OpenGL Framework", int sizeX = 800, int sizeY = 600, bool fullScreen = false);
 	~Window(void);
 };
+#endif

@@ -158,7 +158,7 @@ public:
 			m_angularDamping(btScalar(0.)),
 			m_friction(btScalar(0.5)),
 			m_rollingFriction(btScalar(0)),
-			m_restitution(btScalar(0.)),
+			m_restitution(btScalar(0)),
 			m_linearSleepingThreshold(btScalar(0.8)),
 			m_angularSleepingThreshold(btScalar(1.f)),
 			m_additionalDamping(false),

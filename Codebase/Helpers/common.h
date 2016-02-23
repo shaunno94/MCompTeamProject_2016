@@ -2,10 +2,25 @@
 
 #include <string>
 #include <algorithm>
+#include <smmintrin.h>
 
 /** @defgroup Helpers Helpers
 *  Collection of helpful functionality.
 *  @{
+*/
+
+/*
+MEM_ALIGN
+struct {
+	union {
+		struct {
+			float x;
+			float y;
+			float z;
+		};
+		__m128 mmvalue;
+	};
+};
 */
 
 /// <summary>
@@ -54,7 +69,7 @@ template <typename T>
 /// <param name="min">Min value.</param>
 /// <param name="max">Max value.</param>
 /// <returns>Clamped value.</returns>
-T Clamp(T in, T min, T max)
+T ClampValues(T in, T min, T max)
 {
 	return std::min(std::max(in, min), max);
 }
