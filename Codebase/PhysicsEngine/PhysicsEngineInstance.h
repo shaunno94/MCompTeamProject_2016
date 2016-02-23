@@ -3,10 +3,6 @@
 #include <mutex>
 #include <btBulletDynamicsCommon.h>
 
-#ifdef ORBIS
-#include <Memory\PS4Memory.h>
-#endif
-
 //Collision callback which should return false if the entity is a particle i.e. group ID == 0 and mask == 0.
 //This will tell bullet to not consider particles in collision detection / response (hopefully - untested) 
 struct ParticleFilterCallback : public btOverlapFilterCallback
@@ -20,11 +16,7 @@ struct ParticleFilterCallback : public btOverlapFilterCallback
 	}
 };
 
-#ifdef ORBIS
-class PhysicsEngineInstance : public PS4Memory
-#else
 class PhysicsEngineInstance
-#endif
 {	
 public:
 	//Provide global access to the only instance of this class
@@ -34,10 +26,7 @@ public:
 		{
 			std::lock_guard<std::mutex> lock(m_mConstructed);		//Lock is required here though, to prevent multiple threads initialising multiple instances of the class when it turns out it has not been initialised yet
 			if (!m_pInstance) //Check to see if a previous thread has already initialised an instance in the time it took to acquire a lock.
-			{
-#ifdef ORBIS
-				//btAlignedAllocSetCustomAligned((btAlignedAllocFunc*)&PS4Memory::alloc, (btAlignedFreeFunc*)&PS4Memory::free);
-#endif			
+			{		
 				//Broadphase collision object - Dynamic tree AABB
 				bf = new btDbvtBroadphase();
 

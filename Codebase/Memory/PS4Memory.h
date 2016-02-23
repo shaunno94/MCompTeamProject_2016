@@ -18,14 +18,5 @@ protected:
 	static sce::Gnmx::Toolkit::IAllocator	garlicAllocator;
 	//Handle
 	static sce::Gnm::OwnerHandle			ownerHandle;
-
-	static void* alloc(uint32_t size, uint32_t alignment)
-	{
-		return garlicAllocator.allocate(size, alignment);
-	}
-	static void free(void* ptr)
-	{
-		garlicAllocator.release(ptr);
-	}
 };
 #endif
