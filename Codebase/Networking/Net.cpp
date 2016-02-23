@@ -60,6 +60,16 @@ NetConnectionState NetConnectionData::GetState() const
 	return NetConnectionState::NetPeerDisconnecting;
 }
 
+
+void NetBuffer::AddNetMessage()
+{
+
+}
+void NetBuffer::GetNetMessage()
+{
+
+}
+
 bool Net::Init()
 {
 	if (!s_Initialized)
@@ -127,9 +137,8 @@ NetHost::NetHost()
 {
 	m_host = nullptr;
 	m_stopService = false;
-	m_sessionUpdated = false;
-	m_sessionRead = nullptr;
-	m_sessionWrite = nullptr;
+	m_sessionReadFrame = nullptr;
+	m_sessionWriteFrame = nullptr;
 }
 
 

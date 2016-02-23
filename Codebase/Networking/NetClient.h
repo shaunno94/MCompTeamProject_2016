@@ -14,6 +14,7 @@ public:
 		return m_connection;
 	}
 
+	void Ready(bool val = true);
 	NetSession* GetSession();
 
 	NetClient();

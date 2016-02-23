@@ -147,6 +147,12 @@ void NetClient::DisconnectFromServer()
 	m_threadHandle = std::move(std::async(std::launch::async, &NetClient::DisconnectFromServerService, this));
 }
 
+
+void NetClient::Ready(bool val)
+{
+	//TODO: SEND A READY MESSAGE
+}
+
 void NetClient::Service()
 {
 	while (true)
