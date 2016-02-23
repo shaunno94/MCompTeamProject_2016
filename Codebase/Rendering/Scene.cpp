@@ -68,12 +68,8 @@ void Scene::UpdateFrustumCulling(Frustum& frustum, Vec3Graphics camPos){
 		if (!frustum.InsideFrustum(transparentObjects[i]))
 		{
 			transparentObjects[i]->m_RenderComponent->disabled = true;
-			continue;
 		}
 		transparentObjects[i]->m_RenderComponent->disabled = false;
-
-		if (dt == 0)
-			continue;
 
 		pos = transparentObjects[i]->GetWorldTransform().GetTranslation();
 		dir = pos - camPos;
@@ -84,13 +80,9 @@ void Scene::UpdateFrustumCulling(Frustum& frustum, Vec3Graphics camPos){
 		if (!frustum.InsideFrustum(opaqueObjects[i]))
 		{
 			opaqueObjects[i]->m_RenderComponent->disabled = true;
-			continue;
 		}
 		opaqueObjects[i]->m_RenderComponent->disabled = false;
 		
-		if (dt == 0)
-			continue;
-
 		pos = opaqueObjects[i]->GetWorldTransform().GetTranslation();
 		dir = pos - camPos;
 		opaqueObjects[i]->m_CamDist = dir.Dot(dir);
