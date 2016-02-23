@@ -21,27 +21,27 @@ bool GUISystem::HasInitialised()
 	return init;
 }
 
-void GUISystem::AddComponent(GUI_Component* component)
+void GUISystem::AddComponent(GUIOrthoElements* component)
 {
-	m_Components.push_back(component);
+	m_elements.push_back(component);
 }
 
-void GUISystem::RemoveComponent(GUI_Component* component)
+void GUISystem::RemoveComponent(GUIOrthoElements* component)
 {
-	for (unsigned int i = 0; i < m_Components.size(); ++i)
+	for (unsigned int i = 0; i < m_elements.size(); ++i)
 	{
-		if (m_Components[i] == component)
-			m_Components.erase(m_Components.begin());
+		if (m_elements[i] == component)
+			m_elements.erase(m_elements.begin());
 	}
 }
 
 void GUISystem::Update(float delta)
 {
-	for (unsigned int i = 0; i < m_Components.size(); ++i)
+	for (unsigned int i = 0; i < m_elements.size(); ++i)
 	{
-		if (!m_Components[i]->Update(delta))
+		if (!m_elements[i]->Update(delta))
 		{
-			delete m_Components[i];
+			delete m_elements[i];
 		}
 	}
 }
@@ -50,11 +50,11 @@ void GUISystem::Render(float delta)
 {
 	Update(delta);
 
-	for (unsigned int i = 0; i < m_Components.size(); ++i)
-		m_Components[i]->Render();
+	for (unsigned int i = 0; i < m_elements.size(); ++i)
+		m_elements[i]->Render();
 }
 
 void GUISystem::Shutdown()
 {
-	m_Components.clear();
+	m_elements.clear();
 }

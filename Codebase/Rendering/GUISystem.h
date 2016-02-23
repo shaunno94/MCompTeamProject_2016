@@ -1,4 +1,4 @@
-#include "GUI_Component.h"
+#include "GUIOrthoElements.h"
 
 class GUISystem
 {
@@ -7,8 +7,8 @@ public:
 	static void Destroy();
 	static GUISystem& GetManager(){ return *guiSystem; };
 
-	void AddComponent(GUI_Component* component);
-	void RemoveComponent(GUI_Component* component);
+	void AddComponent(GUIOrthoElements* element);
+	void RemoveComponent(GUIOrthoElements* element);
 	void Update(float delta);
 	void Render(float delta);
 	void Shutdown();
@@ -22,6 +22,6 @@ protected:
 private:
 	GUISystem();
 	~GUISystem(void);
-	std::vector<GUI_Component*> m_Components;
+	std::vector<GUIOrthoElements*> m_elements;
 
 };
