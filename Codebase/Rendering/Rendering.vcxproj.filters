@@ -46,6 +46,24 @@
     <Filter Include="PS4Shaders">
       <UniqueIdentifier>{7c1933be-f444-40cc-9968-5a8b90a16558}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\UI">
+      <UniqueIdentifier>{efbaec60-98a4-4d61-bd72-8437c399fccf}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\UI">
+      <UniqueIdentifier>{527d2b9a-08e1-4c85-8cfd-504b9d789985}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\UI\HUD_GUI">
+      <UniqueIdentifier>{9ab7a03a-31e7-41f6-be86-676e9652b272}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\UI\Score_Table_GUI">
+      <UniqueIdentifier>{fafb15a4-631a-4991-b203-014cb65a0e7f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\UI\ScoreTable_GUI">
+      <UniqueIdentifier>{a0fff451-da59-44be-baad-55106ad8d8f9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\UI\HUD_GUI">
+      <UniqueIdentifier>{41eec608-7ba7-4b2f-842b-b2f6c70820d4}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Renderer.h">
@@ -144,6 +162,33 @@
     <ClInclude Include="PS4Frame.h">
       <Filter>Header Files\GNM_API</Filter>
     </ClInclude>
+    <ClInclude Include="GUISystem.h">
+      <Filter>Header Files\UI</Filter>
+    </ClInclude>
+    <ClInclude Include="HUD_GUI.h">
+      <Filter>Header Files\UI\HUD_GUI</Filter>
+    </ClInclude>
+    <ClInclude Include="Scoreboard_GUI.h">
+      <Filter>Header Files\UI\HUD_GUI</Filter>
+    </ClInclude>
+    <ClInclude Include="Nitro_GUI.h">
+      <Filter>Header Files\UI\HUD_GUI</Filter>
+    </ClInclude>
+    <ClInclude Include="EventText_GUI.h">
+      <Filter>Header Files\UI\HUD_GUI</Filter>
+    </ClInclude>
+    <ClInclude Include="TableBackground_GUI.h">
+      <Filter>Header Files\UI\Score_Table_GUI</Filter>
+    </ClInclude>
+    <ClInclude Include="ScoreTable_GUI.h">
+      <Filter>Header Files\UI\Score_Table_GUI</Filter>
+    </ClInclude>
+    <ClInclude Include="TextInfo_GUI.h">
+      <Filter>Header Files\UI\Score_Table_GUI</Filter>
+    </ClInclude>
+    <ClInclude Include="GUI_Component.h">
+      <Filter>Header Files\UI</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Renderer.cpp">
@@ -229,6 +274,33 @@
     </ClCompile>
     <ClCompile Include="PS4Frame.cpp">
       <Filter>Source Files\GNM_API</Filter>
+    </ClCompile>
+    <ClCompile Include="GUISystem.cpp">
+      <Filter>Source Files\UI</Filter>
+    </ClCompile>
+    <ClCompile Include="HUD_GUI.cpp">
+      <Filter>Source Files\UI\HUD_GUI</Filter>
+    </ClCompile>
+    <ClCompile Include="Scoreboard_GUI.cpp">
+      <Filter>Source Files\UI\HUD_GUI</Filter>
+    </ClCompile>
+    <ClCompile Include="Nitro_GUI.cpp">
+      <Filter>Source Files\UI\HUD_GUI</Filter>
+    </ClCompile>
+    <ClCompile Include="EventText_GUI.cpp">
+      <Filter>Source Files\UI\HUD_GUI</Filter>
+    </ClCompile>
+    <ClCompile Include="Scoretable_GUI.cpp">
+      <Filter>Source Files\UI\ScoreTable_GUI</Filter>
+    </ClCompile>
+    <ClCompile Include="TableBackground_GUI.cpp">
+      <Filter>Source Files\UI\ScoreTable_GUI</Filter>
+    </ClCompile>
+    <ClCompile Include="TextInfo_GUI.cpp">
+      <Filter>Source Files\UI\ScoreTable_GUI</Filter>
+    </ClCompile>
+    <ClCompile Include="GUI_Component.cpp">
+      <Filter>Source Files\UI</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

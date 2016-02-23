@@ -152,14 +152,19 @@
     <ClInclude Include="constants.h" />
     <ClInclude Include="CubeEmitter.h" />
     <ClInclude Include="DebugDraw.h" />
+    <ClInclude Include="EventText_GUI.h" />
     <ClInclude Include="ExtendedMaterial.h" />
     <ClInclude Include="Frustum.h" />
     <ClInclude Include="GameObject.h" />
     <ClInclude Include="GameTimer.h" />
+    <ClInclude Include="GUISystem.h" />
+    <ClInclude Include="GUI_Component.h" />
+    <ClInclude Include="HUD_GUI.h" />
     <ClInclude Include="LightMaterial.h" />
     <ClInclude Include="Material.h" />
     <ClInclude Include="Mesh.h" />
     <ClInclude Include="ModelLoader.h" />
+    <ClInclude Include="Nitro_GUI.h" />
     <ClInclude Include="OGLMesh.h" />
     <ClInclude Include="OGLRenderer.h" />
     <ClInclude Include="Particle.h" />
@@ -177,7 +182,11 @@
     <ClInclude Include="Scene.h" />
     <ClInclude Include="OGLShader.h" />
     <ClInclude Include="BaseShader.h" />
+    <ClInclude Include="Scoreboard_GUI.h" />
+    <ClInclude Include="ScoreTable_GUI.h" />
     <ClInclude Include="SoftPhysicsObject.h" />
+    <ClInclude Include="TableBackground_GUI.h" />
+    <ClInclude Include="TextInfo_GUI.h" />
     <ClInclude Include="Texture.h" />
     <ClInclude Include="Window.h" />
   </ItemGroup>
@@ -185,13 +194,18 @@
     <ClCompile Include="Camera.cpp" />
     <ClCompile Include="DebugDraw.cpp" />
     <ClCompile Include="CubeEmitter.cpp" />
+    <ClCompile Include="EventText_GUI.cpp" />
     <ClCompile Include="ExtendedMaterial.cpp" />
     <ClCompile Include="Frustum.cpp" />
     <ClCompile Include="GameObject.cpp" />
+    <ClCompile Include="GUISystem.cpp" />
+    <ClCompile Include="GUI_Component.cpp" />
+    <ClCompile Include="HUD_GUI.cpp" />
     <ClCompile Include="LightMaterial.cpp" />
     <ClCompile Include="Material.cpp" />
     <ClCompile Include="Mesh.cpp" />
     <ClCompile Include="ModelLoader.cpp" />
+    <ClCompile Include="Nitro_GUI.cpp" />
     <ClCompile Include="OGLMesh.cpp" />
     <ClCompile Include="OGLRenderer.cpp" />
     <ClCompile Include="ParticleManager.cpp" />
@@ -207,7 +221,11 @@
     <ClCompile Include="Scene.cpp" />
     <ClCompile Include="OGLShader.cpp" />
     <ClCompile Include="BaseShader.cpp" />
+    <ClCompile Include="Scoreboard_GUI.cpp" />
+    <ClCompile Include="Scoretable_GUI.cpp" />
     <ClCompile Include="SoftPhysicsObject.cpp" />
+    <ClCompile Include="TableBackground_GUI.cpp" />
+    <ClCompile Include="TextInfo_GUI.cpp" />
     <ClCompile Include="Texture.cpp" />
     <ClCompile Include="Window.cpp" />
   </ItemGroup>
