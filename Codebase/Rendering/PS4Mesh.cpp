@@ -4,7 +4,7 @@
 #include "OGLShader.h"
 #include "Material.h"
 
-PS4Mesh::PS4Mesh(size_t numVertices, Vec3Graphics* vertices, Vec2Graphics* texCoords, Vec3Graphics* normals, Vec3Graphics* tangents, size_t numIndices, size_t* indices)
+PS4Mesh::PS4Mesh(uint32_t numVertices, Vec3Graphics* vertices, Vec2Graphics* texCoords, Vec3Graphics* normals, Vec3Graphics* tangents, uint32_t numIndices, uint32_t* indices)
 : Mesh(numVertices, vertices, texCoords, normals, tangents, numIndices, indices)
 {
 	primitiveType = sce::Gnm::PrimitiveType::kPrimitiveTypeTriStrip;
@@ -77,7 +77,7 @@ void PS4Mesh::InitAttributeBuffer(sce::Gnm::Buffer &buffer, sce::Gnm::DataFormat
 	buffer.initAsVertexBuffer(offset, format, sizeof(MeshVertex), m_NumVertices);
 	buffer.setResourceMemoryType(sce::Gnm::kResourceMemoryTypeRO);
 }
-
+//To-Do: Implement this :)
 void PS4Mesh::Draw(Material* material)
 {
 	//reserved textures

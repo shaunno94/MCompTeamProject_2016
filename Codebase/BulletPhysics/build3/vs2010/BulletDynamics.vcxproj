@@ -158,6 +158,7 @@
       <FloatingPointModel>Fast</FloatingPointModel>
       <DebugInformationFormat>
       </DebugInformationFormat>
+      <RuntimeTypeInfo>true</RuntimeTypeInfo>
     </ClCompile>
     <ResourceCompile>
       <PreprocessorDefinitions>
@@ -256,6 +257,9 @@
       <FloatingPointModel>Fast</FloatingPointModel>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
       <ProgramDataBaseFileName>$(OutDir)BulletDynamics_vs2010_debug.pdb</ProgramDataBaseFileName>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <InlinedScopes>true</InlinedScopes>
+      <RuntimeTypeInfo>true</RuntimeTypeInfo>
     </ClCompile>
     <ResourceCompile>
       <PreprocessorDefinitions>_DEBUG=1;%(PreprocessorDefinitions)</PreprocessorDefinitions>

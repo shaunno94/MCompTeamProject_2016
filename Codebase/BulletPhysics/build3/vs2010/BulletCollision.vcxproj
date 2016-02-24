@@ -160,6 +160,7 @@
       </DebugInformationFormat>
       <OptimizationLevel>Level3</OptimizationLevel>
       <UnrollLoops>true</UnrollLoops>
+      <RuntimeTypeInfo>true</RuntimeTypeInfo>
     </ClCompile>
     <ResourceCompile>
       <PreprocessorDefinitions>
@@ -258,6 +259,9 @@
       <FloatingPointModel>Fast</FloatingPointModel>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
       <ProgramDataBaseFileName>$(OutDir)BulletCollision_vs2010_debug.pdb</ProgramDataBaseFileName>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <InlinedScopes>true</InlinedScopes>
+      <RuntimeTypeInfo>true</RuntimeTypeInfo>
     </ClCompile>
     <ResourceCompile>
       <PreprocessorDefinitions>_DEBUG=1;%(PreprocessorDefinitions)</PreprocessorDefinitions>

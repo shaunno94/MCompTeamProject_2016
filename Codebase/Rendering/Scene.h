@@ -2,6 +2,7 @@
 #include "GameObject.h"
 #include <vector>
 #include "Camera.h"
+#include "Controller.h"
 #include "Helpers\collections.h"
 #include "Frustum.h"
 
@@ -19,17 +20,24 @@ public:
 	~Scene();
 
 	GameObject* getOpaqueObject(unsigned int i) { return opaqueObjects[i]; }
-	
+
 	GameObject* getTransparentObject(unsigned int i){ return transparentObjects[i]; }
-	
+
 	GameObject* getLightObject(unsigned int i){ return lightObjects[i]; }
-	
+
 	unsigned int getNumTransparentObjects() { return transparentObjects.size(); }
 	unsigned int getNumOpaqueObjects() { return opaqueObjects.size(); }
 	unsigned int getNumLightObjects() { return lightObjects.size(); }
 
 	Camera* getCamera(){ return cam; }
 
+	void setPlayerController(Controller* c){ playerController = c; }
+	void attachCam(GameObject* player){
+		if (cam)
+			delete cam;
+
+		cam = new Camera(player);
+	}
 	void addGameObject(GameObject* obj);
 	void addLightObject(GameObject* obj);
 
@@ -42,10 +50,12 @@ private:
 	static bool CompareByCameraDistanceInv(const GameObject* a, const GameObject* b) { return (a->m_CamDist > b->m_CamDist); }
 	//Updates game objects by calling OnUpdateObject and then sorts the render lists for opaque and transparent objects.
 	void UpdateNodeLists(float dt, Frustum& frustum, Vec3Graphics camPos);
+	void UpdateFrustumCulling(Frustum& frustum, Vec3Graphics camPos);
 
 	std::vector<GameObject*> transparentObjects;
 	std::vector<GameObject*> opaqueObjects;
 	std::vector<GameObject*> lightObjects;
-	Camera* cam;	
+	Camera* cam;
+	Controller* playerController;
 };
 

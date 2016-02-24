@@ -348,6 +348,12 @@ void OGLRenderer::SetTextureFlags(unsigned int id, unsigned int flags)
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR_MIPMAP_LINEAR);
 	}
 
+	if ((flags & ANISOTROPIC_FILTERING) == ANISOTROPIC_FILTERING) {
+		GLfloat max_aniso;
+		glGetFloatv(GL_MAX_TEXTURE_MAX_ANISOTROPY_EXT, &max_aniso);
+		glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAX_ANISOTROPY_EXT, max_aniso);
+	}
+
 	glBindTexture(GL_TEXTURE_2D, 0);
 }
 
@@ -579,10 +585,9 @@ void OGLRenderer::DrawShadowCube(GameObject* light){
 			GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, shadowTexCube, 0);
 		glClear(GL_DEPTH_BUFFER_BIT);
 
-		viewMatrix = Mat4Graphics::View(
-			pos, pos + directions[i], up[i]); //modify;
+		viewMatrix = Mat4Graphics::View(pos, pos + directions[i], up[i]); //modify;
 
-		textureMatrix = biasMatrix *(projMatrix * viewMatrix);
+		//textureMatrix = biasMatrix *(projMatrix * viewMatrix);
 
 		UpdateShaderMatrices();
 
@@ -593,13 +598,18 @@ void OGLRenderer::DrawShadowCube(GameObject* light){
 	glUseProgram(0);
 	glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE);
 	glViewport(0, 0, width, height);
-	glClearColor(0.2f, 0.2f, 0.2f, 1.0f);
-	glBindFramebuffer(GL_FRAMEBUFFER, 0);
-	((LightMaterial*)light->GetRenderComponent()->m_Material)->Set("lightProj", projMatrix);
+	
+	//((LightMaterial*)light->GetRenderComponent()->m_Material)->Set("lightProj", Mat4Graphics::Perspective(1, 15000, 1, 90));
+
+	glBindFramebuffer(GL_FRAMEBUFFER, pointLightFBO);
+	
+	glActiveTexture(GL_TEXTURE0 + ReservedOtherTextures.SHADOW_CUBE.index);
+	glBindTexture(GL_TEXTURE_CUBE_MAP, shadowTexCube);
+	glActiveTexture(GL_TEXTURE0);
 
 	projMatrix = child->localProjMat;
 	viewMatrix = child->currentScene->getCamera()->BuildViewMatrix();
-	child->OnUpdateScene(0, child->frameFrustrum, child->currentScene->getCamera()->GetPosition());
+	child->OnUpdateScene(child->frameFrustrum, child->currentScene->getCamera()->GetPosition());
 }
 
 
@@ -619,7 +629,7 @@ void OGLRenderer::DrawShadow2D(GameObject* light){
 
 	//draw game objects
 	child->lightFrustrum.FromMatrix(projMatrix * viewMatrix);
-	child->OnUpdateScene(0, child->lightFrustrum, light->GetWorldTransform().GetTranslation());
+	child->OnUpdateScene(child->lightFrustrum, light->GetWorldTransform().GetTranslation());
 
 	glDisable(GL_CULL_FACE);
 	child->OnRenderScene();
@@ -639,6 +649,6 @@ void OGLRenderer::DrawShadow2D(GameObject* light){
 	projMatrix = child->localProjMat;
 	//viewMatrix = currentScene->getCamera()->BuildViewMatrix();
 	
-	child->OnUpdateScene(0, child->frameFrustrum, child->currentScene->getCamera()->GetPosition());
+	child->OnUpdateScene(child->frameFrustrum, child->currentScene->getCamera()->GetPosition());
 }
 #endif

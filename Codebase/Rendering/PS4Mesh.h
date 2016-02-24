@@ -9,7 +9,7 @@ class PS4Mesh : public Mesh, public PS4Memory
 	//friend class PS4Renderer;
 public:
 	PS4Mesh();
-	PS4Mesh(size_t numVertices, Vec3Graphics* vertices, Vec2Graphics* texCoords, Vec3Graphics* normals, Vec3Graphics* tangents, size_t numIndices, size_t* indices);
+	PS4Mesh(uint32_t numVertices, Vec3Graphics* vertices, Vec2Graphics* texCoords, Vec3Graphics* normals, Vec3Graphics* tangents, uint32_t numIndices, uint32_t* indices);
 	virtual ~PS4Mesh();
 
 	void DrawDebugNormals(float length = 5.0f) override {};

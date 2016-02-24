@@ -24,6 +24,10 @@ GameObject::~GameObject()
 		delete m_RenderComponent;
 		m_RenderComponent = nullptr;
 	}
+	if (m_Controller) {
+		delete m_Controller;
+		m_Controller = nullptr;
+}
 }
 
 GameObject*	GameObject::FindGameObject(const std::string& name)
@@ -73,6 +77,8 @@ void GameObject::OnUpdateObject(float dt)
 	{
 		child->OnUpdateObject(dt);
 	}
+	if (m_Controller)
+		m_Controller->updateObject(dt);
 	UpdateTransform();
 }
 

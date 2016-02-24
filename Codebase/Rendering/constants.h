@@ -33,18 +33,30 @@ enum MeshBuffer
 
 #ifdef _DEBUG
 //In debug, the expectation is applications will be run from visual studio (starting directory being the project)
+#ifndef ORBIS
 #define SHADER_DIR	"../Assets/Shaders/"
 #define MODEL_DIR	"../Assets/Models/"
 #define TEXTURE_DIR  "../Assets/Textures/"
 #define AUDIO_DIR	"../Assets/AUDIO/"
 #else
+#define SHADER_DIR	"/app0/Assets/PS4Shaders/"
+#define MODEL_DIR	"/app0/Assets/Models/"
+#define TEXTURE_DIR  "/app0/Assets/Textures/"
+#define AUDIO_DIR	"/app0/Assets/AUDIO/"
+#endif
+#else
+#ifndef ORBIS
 //In release, the expectation is applications will be run from the .exe files (starting directory being the .exe location)
 #define SHADER_DIR	"Assets/Shaders/"
-#define COMPILED_SHADER_DIR_D "ORBIS_Debug"
-#define COMPILED_SHADER_DIR "ORBIS_Release"
 #define MODEL_DIR	"Assets/Models/"
 #define TEXTURE_DIR  "Assets/Textures/"
 #define AUDIO_DIR	"Assets/AUDIO/"
+#else
+#define SHADER_DIR "/app0/Assets/PS4Shaders/"
+#define MODEL_DIR	"/app0/Assets/Models/"
+#define TEXTURE_DIR  "/app0/Assets/Textures/"
+#define AUDIO_DIR	"/app0/Assets/AUDIO/"
+#endif
 #endif
 
 /// <summary>
@@ -125,10 +137,11 @@ static const struct ReservedOtherTexturesStruct
 			ShaderUniformInfo EMISSIVE;
 			ShaderUniformInfo SPECULAR;
 			ShaderUniformInfo SHADOW_2D;
+			ShaderUniformInfo SHADOW_CUBE;
 		};
-		ShaderUniformInfo values[5];
+		ShaderUniformInfo values[6];
 };
-	static const size_t size = 5;
+	static const size_t size = 6;
 
 } ReservedOtherTextures =
 {
@@ -136,7 +149,8 @@ static const struct ReservedOtherTexturesStruct
 	reservedMeshTextureCounter++, "normTex",
 	reservedMeshTextureCounter++, "emissiveTex",
 	reservedMeshTextureCounter++, "specularTex",
-	reservedMeshTextureCounter++, "shadowTex"
+	reservedMeshTextureCounter++, "shadowTex",
+	reservedMeshTextureCounter++, "shadowTexCube"
 };
 
 /// <summary>

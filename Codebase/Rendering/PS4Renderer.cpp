@@ -19,6 +19,7 @@ PS4Renderer::PS4Renderer()
 	InitialiseMemoryAllocators();
 	InitialiseGCMRendering();
 	InitialiseVideoSystem();
+	init = true;
 
 	SwapBuffers();
 }
@@ -79,12 +80,13 @@ void PS4Renderer::InitialiseMemoryAllocators()
 
 void PS4Renderer::DestroyMemoryAllocators() 
 {
-
+	//stackAllocators[GARLIC].deinit();
+	//stackAllocators[ONION].deinit();
 }
 
 void	PS4Renderer::DestroyGCMRendering() 
 {
-	//onionAllocator->release(frames);
+	//onionAllocator.release(frames);
 }
 
 void	PS4Renderer::DestroyVideoSystem() 
@@ -121,7 +123,7 @@ void PS4Renderer::FillBuffers()
 	currentGFXContext->waitUntilSafeForRendering(videoHandle, currentGPUBuffer);
 	SetRenderBuffer(currentPS4Buffer, true, true, true);
 
-	//defaultShader->SubmitShaderSwitch(*currentGFXContext);
+	currentShader->SubmitShaderSwitch(*currentGFXContext);
 
 	//Primitive Setup State
 	sce::Gnm::PrimitiveSetup primitiveSetup;
@@ -143,8 +145,7 @@ void PS4Renderer::FillBuffers()
 	trilinearSampler.init();
 	trilinearSampler.setMipFilterMode(sce::Gnm::kMipFilterModeLinear);
 
-	//trilinearSampler.set
-	trilinearSampler.setXyFilterMode(sce::Gnm::kFilterModeBilinear, sce::Gnm::kFilterModeBilinear);
+	trilinearSampler.setXyFilterMode(sce::Gnm::kFilterModeAnisoBilinear, sce::Gnm::kFilterModeAnisoBilinear);
 
 	//currentGFXContext->setTextures(sce::Gnm::kShaderStagePs, 0, 1, &defaultTexture->GetAPITexture());
 	//currentGFXContext->setSamplers(sce::Gnm::kShaderStagePs, 0, 1, &trilinearSampler);
@@ -152,7 +153,6 @@ void PS4Renderer::FillBuffers()
 	child->OnRenderScene();
 
 	currentFrame->EndFrame();
-
 	framesSubmitted++;
 }
 

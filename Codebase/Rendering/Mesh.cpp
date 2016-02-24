@@ -7,8 +7,18 @@
 
 Mesh::Mesh(void)
 {
-	m_Textures[ReservedMeshTextures.size] = {};
-	m_Colours[ReservedMeshColours.size] = {};
+	m_Textures[ReservedMeshTextures.size];
+	m_Colours[ReservedMeshColours.size];
+
+	for (auto& t : m_Textures)
+	{
+		t = nullptr;
+	}
+	for (auto& c: m_Colours)
+	{
+		c = Vec3Graphics::ZEROS;
+	}
+
 	m_SpecExponent = 0.0f;
 
 	m_Colours[ReservedMeshColours.AMBIENT.index] = Vec3Graphics(0.2f, 0.2f, 0.2);
@@ -24,10 +34,20 @@ Mesh::Mesh(void)
 	m_Indices = nullptr;
 }
 
-Mesh::Mesh(size_t numVertices, Vec3Graphics* vertices, Vec2Graphics* texCoords, Vec3Graphics* normals, Vec3Graphics* tangents, size_t numIndices, size_t* indices)
+Mesh::Mesh(uint32_t numVertices, Vec3Graphics* vertices, Vec2Graphics* texCoords, Vec3Graphics* normals, Vec3Graphics* tangents, uint32_t numIndices, uint32_t* indices)
 {
-	m_Textures[ReservedMeshTextures.size] = {};
-	m_Colours[ReservedMeshColours.size] = {};
+	m_Textures[ReservedMeshTextures.size];
+	m_Colours[ReservedMeshColours.size];
+
+	for (auto& t : m_Textures)
+	{
+		t = nullptr;
+	}
+	for (auto& c : m_Colours)
+	{
+		c = Vec3Graphics::ZEROS;
+	}
+
 	m_SpecExponent = 0.0f;
 
 	m_NumVertices = 0;
@@ -47,7 +67,7 @@ Mesh::Mesh(size_t numVertices, Vec3Graphics* vertices, Vec2Graphics* texCoords, 
 
 Mesh::~Mesh(void)
 {
-	for (size_t i = 0; i < ReservedMeshTextures.size; ++i)
+	for (uint32_t i = 0; i < ReservedMeshTextures.size; ++i)
 	{
 		if (m_Textures[i])
 			m_Textures[i]->Clear();
@@ -69,11 +89,11 @@ Mesh* Mesh::GenerateQuad(Vec2Graphics texCoords)
 #endif
 	
 	m->m_NumVertices = 4;
-	m->m_NumIndices = 6;
+	m->m_NumIndices = 4;
 	m->SetPrimitiveType(TRIANGLE_STRIP);
 
 	m->m_Vertices = new Vec3Graphics[m->m_NumVertices];
-	m->m_Indices = new size_t[m->m_NumIndices];
+	m->m_Indices = new uint32_t[m->m_NumIndices];
 	m->m_TextureCoords = new Vec2Graphics[m->m_NumVertices];
 	m->m_Normals = new Vec3Graphics[m->m_NumVertices];
 	m->m_Tangents = new Vec3Graphics[m->m_NumVertices];
@@ -98,6 +118,46 @@ Mesh* Mesh::GenerateQuad(Vec2Graphics texCoords)
 	return m;
 }
 
+Mesh* Mesh::GenerateQuad(Vec3Graphics* vertices, Vec2Graphics texCoords /* = Vec2Graphics(1.0f, 1.0f) */)
+{
+#ifndef ORBIS
+	Mesh* m = new OGLMesh();
+#else
+	Mesh* m = new PS4Mesh();
+#endif
+
+	m->m_NumVertices = 4;
+	m->m_NumIndices = 4;
+	m->SetPrimitiveType(TRIANGLE_STRIP);
+
+	m->m_Vertices = new Vec3Graphics[m->m_NumVertices];
+	m->m_Indices = new size_t[m->m_NumIndices];
+	m->m_TextureCoords = new Vec2Graphics[m->m_NumVertices];
+	m->m_Normals = new Vec3Graphics[m->m_NumVertices];
+	m->m_Tangents = new Vec3Graphics[m->m_NumVertices];
+
+	m->m_Vertices[0] = vertices[0];
+	m->m_Vertices[1] = vertices[1];
+	m->m_Vertices[2] = vertices[3];
+	m->m_Vertices[3] = vertices[2];
+
+	m->m_TextureCoords[0] = Vec2Graphics(0.0f, texCoords.y);
+	m->m_TextureCoords[1] = Vec2Graphics(0.0f, 0.0f);
+	m->m_TextureCoords[2] = Vec2Graphics(texCoords.x, texCoords.y);
+	m->m_TextureCoords[3] = Vec2Graphics(texCoords.x, 0.0f);
+
+	Vec3Graphics normal = (vertices[1] - vertices[0]).Cross(vertices[2] - vertices[0]);
+
+	for (int i = 0; i < m->m_NumIndices; ++i)
+	{
+		m->m_Normals[i] = normal;
+		m->m_Tangents[i] = normal.Cross(normal);
+		m->m_Indices[i] = i;
+	}
+	m->BufferData();
+	return m;
+}
+
 Mesh* Mesh::GenerateQuadAlt()
 {
 #ifndef ORBIS
@@ -111,7 +171,7 @@ Mesh* Mesh::GenerateQuadAlt()
 	m->SetPrimitiveType(TRIANGLE_STRIP);
 
 	m->m_Vertices = new Vec3Graphics[m->m_NumVertices];
-	m->m_Indices = new size_t[m->m_NumIndices];
+	m->m_Indices = new uint32_t[m->m_NumIndices];
 	m->m_TextureCoords = new Vec2Graphics[m->m_NumVertices];
 	m->m_Normals = new Vec3Graphics[m->m_NumVertices];
 	m->m_Tangents = new Vec3Graphics[m->m_NumVertices];
@@ -149,7 +209,7 @@ Mesh* Mesh::GenerateQuadTexCoordCol(Vec2Graphics scale, Vec2Graphics texCoord, V
 	m->SetPrimitiveType(TRIANGLE_STRIP);
 
 	m->m_Vertices = new Vec3Graphics[m->m_NumVertices];
-	m->m_Indices = new size_t[m->m_NumIndices];
+	m->m_Indices = new uint32_t[m->m_NumIndices];
 	m->m_TextureCoords = new Vec2Graphics[m->m_NumVertices];
 	m->m_Normals = new Vec3Graphics[m->m_NumVertices];
 	m->m_Tangents = new Vec3Graphics[m->m_NumVertices];
@@ -178,6 +238,9 @@ void Mesh::GenerateNormals()
 {
 	if (!m_Normals)
 		m_Normals = new Vec3Graphics[m_NumVertices];
+	else
+		return;
+
 	for (unsigned int i = 0; i < m_NumVertices; ++i)
 		m_Normals[i] = Vec3Graphics();
 
@@ -222,6 +285,9 @@ void Mesh::GenerateTangents()
 	//Extra! stops rare occurrence of this function being called
 	//on a mesh without tex coords, which would break quite badly!
 	if (!m_TextureCoords)
+		return;
+
+	if (m_Tangents)
 		return;
 
 	if (!m_Tangents)
@@ -274,7 +340,7 @@ Vec3Graphics Mesh::GenerateTangent(const Vec3Graphics& a, const Vec3Graphics& b,
 	return axis * factor;
 }
 
-void Mesh::SetTexture(Texture* tex, size_t index)
+void Mesh::SetTexture(Texture* tex, uint32_t index)
 {
 	if (m_Textures[index])
 		m_Textures[index]->Clear();
@@ -285,7 +351,7 @@ void Mesh::SetTexture(Texture* tex, size_t index)
 
 void Mesh::SetMtlData(const MeshMtlData& data)
 {
-	for (size_t i = 0; i < ReservedMeshTextures.size; ++i)
+	for (uint32_t i = 0; i < ReservedMeshTextures.size; ++i)
 	{
 		if (m_Textures[i])
 			m_Textures[i]->Clear();
@@ -293,7 +359,7 @@ void Mesh::SetMtlData(const MeshMtlData& data)
 		if (m_Textures[i])
 			m_Textures[i]->ReserveCopy();
 	}
-	for (size_t i = 0; i < ReservedMeshColours.size; ++i)
+	for (uint32_t i = 0; i < ReservedMeshColours.size; ++i)
 	{
 		m_Colours[i] = data.colours[i];
 	}

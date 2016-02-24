@@ -35,8 +35,6 @@ PS4Shader::PS4Shader(const string& vertex, const string& pixel, const string& ge
 
 	for (size_t i = 0; i < ReservedMeshColours.size; ++i)
 		m_ReservedMeshColourLocations[i] = GetResourceByName(ReservedMeshColours.values[i].name);
-
-	operational = true;
 }
 
 
@@ -71,6 +69,7 @@ void PS4Shader::GenerateVertexShader(const string&name, bool makeFetch) {
 		else 
 		{
 			std::cout << "Failed to generate vertex shader: " << name << " from binary. " << std::endl;
+			operational = false;
 			return;
 		}
 	}
@@ -97,6 +96,7 @@ void PS4Shader::GenerateVertexShader(const string&name, bool makeFetch) {
 	if (makeFetch) {
 		GenerateFetchShader(binData);
 	}
+	operational = true;
 	//delete binData;//done with bindata now!
 }
 
@@ -133,7 +133,8 @@ void PS4Shader::GeneratePixelShader(const string&name)
 		}
 		else
 		{
-			std::cout << "Failed to generate vertex shader: " << name << " from binary. " << std::endl;
+			std::cout << "Failed to generate pixel shader: " << name << " from binary. " << std::endl;
+			operational = false;
 			return;
 		}
 	}
@@ -147,7 +148,7 @@ void PS4Shader::GeneratePixelShader(const string&name)
 		shaderInfo.m_gpuShaderCodeSize, name.c_str(), sce::Gnm::kResourceTypeShaderBaseAddress, 0);
 
 	sce::Gnmx::generateInputOffsetsCache(&pixelCache, Gnm::kShaderStagePs, pixelShader);
-
+	operational = true;
 	//delete binData;
 }
 
@@ -177,6 +178,7 @@ void PS4Shader::GenerateHullShader(const string& name)
 	else 
 	{
 		std::cout << "Hull Shader is not binary: " << name << std::endl;
+		operational = false;
 		return;
 	}
 
@@ -184,6 +186,7 @@ void PS4Shader::GenerateHullShader(const string& name)
 		shaderInfo.m_gpuShaderCodeSize, name.c_str(), sce::Gnm::kResourceTypeShaderBaseAddress, 0);
 
 	sce::Gnmx::generateInputOffsetsCache(&hullCache, Gnm::kShaderStageHs, hullShader);
+	operational = true;
 }
 
 void PS4Shader::GenerateDomainShader(const string& name)
@@ -212,6 +215,7 @@ void PS4Shader::GenerateDomainShader(const string& name)
 	else 
 	{
 		std::cout << "Domain Shader is not binary: " << name << std::endl;
+		operational = false;
 		return;
 	}
 
@@ -219,6 +223,7 @@ void PS4Shader::GenerateDomainShader(const string& name)
 		shaderInfo.m_gpuShaderCodeSize, name.c_str(), sce::Gnm::kResourceTypeShaderBaseAddress, 0);
 
 	sce::Gnmx::generateInputOffsetsCache(&domainCache, Gnm::kShaderStageEs, domainShader);
+	operational = true;
 }
 
 void PS4Shader::GenerateGeometryShader(const string& name)
@@ -247,6 +252,7 @@ void PS4Shader::GenerateGeometryShader(const string& name)
 	else
 	{
 		std::cout << "Geometry Shader is not binary: " << name << std::endl;
+		operational = false;
 		return;
 	}
 
@@ -254,6 +260,7 @@ void PS4Shader::GenerateGeometryShader(const string& name)
 		shaderInfo.m_gpuShaderCodeSize, name.c_str(), sce::Gnm::kResourceTypeShaderBaseAddress, 0);
 
 	sce::Gnmx::generateInputOffsetsCache(&geometryCache, Gnm::kShaderStageGs, geometryShader);
+	operational = true;
 }
 
 bool PS4Shader::LoadShaderText(const string &name, string&into) {
@@ -263,20 +270,18 @@ bool PS4Shader::LoadShaderText(const string &name, string&into) {
 
 bool PS4Shader::LoadShaderBinary(const string &name, char*& into, int& dataSize) {
 	std::ifstream binFile(name, std::ios::binary);
-
-	if (!binFile) {
+	if (!binFile)
 		return false;
-	}
+
 	binFile.seekg(0, ios::end);
 	int size = binFile.tellg();
-
 	into = new char[size];
 
 	binFile.seekg(0, ios::beg);
 	binFile.read(into, size);
 
 	dataSize = size;
-
+	binFile.close();
 	return true;
 }
 
@@ -290,9 +295,9 @@ bool PS4Shader::ShaderIsBinary(const string& name) {
 	return false;
 }
 
-void	PS4Shader::SubmitShaderSwitch(sce::Gnmx::GnmxGfxContext& cmdList) {
+void	PS4Shader::SubmitShaderSwitch(sce::Gnmx::GnmxGfxContext& cmdList) 
+{
 	cmdList.setActiveShaderStages(sce::Gnm::kActiveShaderStagesVsPs);
-
 	cmdList.setVsShader(vertexShader, 0, fetchShader, &vertexCache);
 	cmdList.setPsShader(pixelShader, &pixelCache);
 }
