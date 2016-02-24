@@ -24,7 +24,7 @@ using std::string;
 //};
 class PS4Shader : public PS4Memory, public BaseShader
 {
-	//friend class PS4Renderer;
+	friend class PS4Renderer;
 public:
 	PS4Shader(const string& vertex, const string& pixel, const string& geometry = "", const string& hull = "", const string& domain = "");
 	~PS4Shader();

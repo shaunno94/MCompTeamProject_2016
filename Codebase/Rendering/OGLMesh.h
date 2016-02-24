@@ -31,7 +31,7 @@ class OGLMesh : public Mesh
 public:
 
 	OGLMesh(void);
-	OGLMesh(size_t numVertices, Vec3Graphics* vertices, Vec2Graphics* texCoords, Vec3Graphics* normals, Vec3Graphics* tangents, size_t numIndices, size_t* indices);
+	OGLMesh(uint32_t numVertices, Vec3Graphics* vertices, Vec2Graphics* texCoords, Vec3Graphics* normals, Vec3Graphics* tangents, uint32_t numIndices, uint32_t* indices);
 	virtual ~OGLMesh(void);
 
 	void Draw(Material* material) override;

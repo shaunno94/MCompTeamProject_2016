@@ -56,7 +56,7 @@ bool PhysicsObject::CreateCollisionShape(std::vector<btConvexHullShape*> shapes)
 {
 	m_ColShape = new btCompoundShape();
 	for (int i = 0; i < shapes.size(); i++) {
-		dynamic_cast<btCompoundShape*>(m_ColShape)->addChildShape(btTransform::getIdentity(), shapes[i]);
+		static_cast<btCompoundShape*>(m_ColShape)->addChildShape(btTransform::getIdentity(), shapes[i]);
 	}
 	return true;
 }
@@ -65,7 +65,7 @@ bool PhysicsObject::CreateCollisionShape(const btVector3* points, int numPoints)
 {
 	m_ColShape = new btConvexHullShape();
 	for (int i = 0; i < numPoints; i++) {
-		dynamic_cast<btConvexHullShape*>(m_ColShape)->addPoint(points[i]);
+		static_cast<btConvexHullShape*>(m_ColShape)->addPoint(points[i]);
 	}
 	return true;
 }

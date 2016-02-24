@@ -14,7 +14,7 @@ OGLMesh::OGLMesh(void)
 	type = GL_TRIANGLES;
 }
 
-OGLMesh::OGLMesh(size_t numVertices, Vec3Graphics* vertices, Vec2Graphics* texCoords, Vec3Graphics* normals, Vec3Graphics* tangents, size_t numIndices, size_t* indices) 
+OGLMesh::OGLMesh(uint32_t numVertices, Vec3Graphics* vertices, Vec2Graphics* texCoords, Vec3Graphics* normals, Vec3Graphics* tangents, uint32_t numIndices, uint32_t* indices) 
 : Mesh(numVertices, vertices, texCoords, normals, tangents, numIndices, indices)
 {
 	for (unsigned int i = 0; i < MAX_BUFFER; ++i)

@@ -159,6 +159,8 @@ class Matrix4Simple	{
 
 	Matrix4Simple& Transpose();
 
+	static Matrix4Simple Inverse(Matrix4Simple& a);
+
 
 	//Handy string output for the matrix. Can get a bit messy, but better than nothing!
 	inline friend std::ostream& operator<<(std::ostream& o, const Matrix4Simple& m) {

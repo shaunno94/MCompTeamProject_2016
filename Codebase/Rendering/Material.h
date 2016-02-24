@@ -8,9 +8,10 @@
 #include <string>
 #include "Texture.h"
 
-/*#ifdef ORBIS
-#include "Renderer.h"
-#endif*/
+#ifdef ORBIS
+//#include "Renderer.h"
+//class Renderer;
+#endif
 
 class Material
 {
@@ -75,4 +76,7 @@ public:
 	int Set(const std::string& uniformName, Texture* texture);
 
 	void Set(int uniformLocation, Texture* texture);
+
+private:
+	
 };
