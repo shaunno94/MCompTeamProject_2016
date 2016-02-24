@@ -107,6 +107,8 @@ int main(void) {
 	ControllerComponent* cc = new ControllerComponent(ball);
 	myScene->setPlayerController(new KeyboardController(cc));
 
+	myScene->attachCam(ball);
+
 	aiBall->SetRenderComponent(new RenderComponent(ballMaterial, ModelLoader::LoadMGL(MODEL_DIR"Common/sphere.mgl", true)));
 	aiBall->SetLocalTransform(Mat4Graphics::Scale(Vector3Simple(2, 2, 2)) * Mat4Graphics::Translation(Vector3Simple(0, 0, 0)));
 	aiBall->SetPhysicsComponent(aiBallPhysics);

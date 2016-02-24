@@ -20,11 +20,11 @@ public:
 	~Scene();
 
 	GameObject* getOpaqueObject(unsigned int i) { return opaqueObjects[i]; }
-	
+
 	GameObject* getTransparentObject(unsigned int i){ return transparentObjects[i]; }
-	
+
 	GameObject* getLightObject(unsigned int i){ return lightObjects[i]; }
-	
+
 	unsigned int getNumTransparentObjects() { return transparentObjects.size(); }
 	unsigned int getNumOpaqueObjects() { return opaqueObjects.size(); }
 	unsigned int getNumLightObjects() { return lightObjects.size(); }
@@ -32,6 +32,12 @@ public:
 	Camera* getCamera(){ return cam; }
 
 	void setPlayerController(Controller* c){ playerController = c; }
+	void attachCam(GameObject* player){
+		if (cam)
+			delete cam;
+
+		cam = new Camera(player);
+	}
 	void addGameObject(GameObject* obj);
 	void addLightObject(GameObject* obj);
 
@@ -50,6 +56,6 @@ private:
 	std::vector<GameObject*> opaqueObjects;
 	std::vector<GameObject*> lightObjects;
 	Camera* cam;
-	Controller* playerController;	
+	Controller* playerController;
 };
 

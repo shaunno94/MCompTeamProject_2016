@@ -19,6 +19,7 @@ class Renderer : public PS4Renderer
 public:
 	static Renderer* GetInstance() { return s_renderer; }
 	void SetCurrentScene(Scene* s) { currentScene = s; }
+	Scene* GetCurrentScene() { return currentScene; }
 
 	Renderer(std::string title, int sizeX, int sizeY, bool fullScreen);
 	virtual ~Renderer(void);
