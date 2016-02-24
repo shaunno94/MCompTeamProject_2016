@@ -18,7 +18,7 @@ ControllerComponent::~ControllerComponent()
 }
 
 void ControllerComponent::updateObject(float dt){
-	if (force.Length() > 0.0000001)
+	if (force.Length() > 0.0000001 || torque.Length() > 0.0000001)
 		dynamic_cast<RigidPhysicsObject*>(m_parent->GetPhysicsComponent())->GetPhysicsBody()->activate();
 	dynamic_cast<RigidPhysicsObject*>(m_parent->GetPhysicsComponent())->GetPhysicsBody()->applyCentralForce(btVector3(force.x, force.y, force.z) * dt);
 	force.ToZero();
@@ -57,10 +57,9 @@ void ControllerComponent::getCameraControl(float& pitch, float& yaw){
 	pitch = fmin(pitch, 45.0f);
 	pitch = fmax(pitch, -45.0f);
 
-	yaw = fmin(yaw, 45.0f);
-	yaw = fmax(yaw, -45.0f);
-	/*if (yaw < 0)
+
+	if (yaw < 0)
 		yaw += 360.0f;
 	if (yaw > 360.0f)
-		yaw -= 360.0f;*/
+		yaw -= 360.0f;
 }
