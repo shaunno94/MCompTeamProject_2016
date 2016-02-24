@@ -1,3 +1,4 @@
+#ifndef ORBIS
 #include "QuaternionIntrinsics.h"
 #include "Helpers/degrees.h"
 #include "Helpers/common.h"
@@ -143,3 +144,4 @@ QuaternionIntrinsics QuaternionIntrinsics::Interpolate(const QuaternionIntrinsic
 
 	return _mm_add_ps(_mm_mul_ps(_mm_set1_ps(sclp), pStart.mmvalue), _mm_mul_ps(_mm_set1_ps(sclq), end.mmvalue));
 }
+#endif

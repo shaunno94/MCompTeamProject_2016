@@ -10,7 +10,7 @@ _-_-_-_-_-_-_-|   /\_/\   NYANYANYAN
 _-_-_-_-_-_-_-""  ""   
 
 *//////////////////////////////////////////////////////////////////////////////
-
+#ifndef ORBIS
 #pragma once
 
 #include "InputDevice.h"
@@ -108,4 +108,4 @@ protected:
 	//Mouse pointer sensitivity. Set this negative to get a headache!
 	float		sensitivity;
 };
-
+#endif

@@ -1,5 +1,6 @@
 #pragma once
 #include "GameObject.h"
+#include <vector>
 
 /// @ingroup Rendering
 /// <summary>
@@ -38,10 +39,10 @@ private:
 		float distance;
 		Vec3Graphics normal;
 
-		bool Plane::PointInPlane(const Vec3Physics& position) const 
+		bool PointInPlane(const Vec3Physics& position) const 
 		{
 			return !(position.Dot(normal) + distance < -0.001f);
 		}
 	};
-	vector<Plane> planes;
+	std::vector<Plane> planes;
 };

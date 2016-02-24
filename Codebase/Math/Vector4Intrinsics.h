@@ -1,3 +1,4 @@
+#ifndef ORBIS
 #pragma once
 
 //4201-nameless structure;
@@ -107,3 +108,4 @@ inline Vector4Intrinsics operator+(float f, const Vector4Intrinsics& v) { return
 inline Vector4Intrinsics operator-(float f, const Vector4Intrinsics& v) { return Vector4Intrinsics(_mm_set1_ps(f)) - v; }
 inline Vector4Intrinsics operator*(float f, const Vector4Intrinsics& v) { return v * f; }
 inline Vector4Intrinsics operator/(float f, const Vector4Intrinsics& v) { return Vector4Intrinsics(_mm_set1_ps(f)) / v; }
+#endif

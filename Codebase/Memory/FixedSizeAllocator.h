@@ -1,3 +1,4 @@
+#ifndef ORBIS
 #pragma once
 
 #ifdef _DEBUG
@@ -227,4 +228,4 @@ private:
     /// <returns>Allocator value.</returns>
     FixedSizeAllocator& operator=(const FixedSizeAllocator& rhs) = delete;
 };
-
+#endif

@@ -24,6 +24,10 @@ GameObject::~GameObject()
 		delete m_RenderComponent;
 		m_RenderComponent = nullptr;
 	}
+	if (m_Controller) {
+		delete m_Controller;
+		m_Controller = nullptr;
+}
 }
 
 GameObject*	GameObject::FindGameObject(const std::string& name)
@@ -73,6 +77,8 @@ void GameObject::OnUpdateObject(float dt)
 	{
 		child->OnUpdateObject(dt);
 	}
+	if (m_Controller)
+		m_Controller->updateObject(dt);
 	UpdateTransform();
 }
 
@@ -100,7 +106,7 @@ void GameObject::UpdateTransform()
 	r = QuatGraphics(rot.x(), rot.y(), rot.z(), rot.w());
 	
 	//Update model matrix 
-	m_WorldTransform = r.ToMatrix4() * Mat4Graphics::Translation(p) * m_LocalTransform;
+	m_WorldTransform = Mat4Graphics::Translation(p) * r.ToMatrix4() * m_LocalTransform;
 
 	if (m_Parent)
 		m_WorldTransform = m_Parent->m_WorldTransform * m_WorldTransform;

@@ -1,6 +1,7 @@
 #pragma once
 #include <Math\nclglMath.h>
 #include "PhysicsEngine\PhysicsEngineInstance.h"
+#include <vector>
 
 enum CollisionShape
 {
@@ -30,6 +31,11 @@ public:
 	bool CreateCollisionShape(double radius, double height, CollisionShape shape);
 	//Static Plane collision shape.
 	bool CreateCollisionShape(double distance, const Vec3Physics& normal, bool normalised);
+
+	//Convex Hull collision shape.
+	bool CreateCollisionShape(const btVector3* points, int numPoints);
+	//Compound collision shape.
+	bool CreateCollisionShape(std::vector<btConvexHullShape*> shapes);
 
 	TYPE GetType() const { return m_BodyType; }
 protected:

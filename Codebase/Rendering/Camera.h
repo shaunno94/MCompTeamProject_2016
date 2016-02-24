@@ -15,6 +15,7 @@ _-_-_-_-_-_-_-""  ""
 
 #include "Window.h"
 #include "Math/nclglMath.h"
+#include "GameObject.h"
 
 /// @ingroup Rendering
 /// <summary>
@@ -33,6 +34,14 @@ public:
 		this->yaw		= yaw;
 		this->position	= position;
 	}
+
+	Camera(GameObject* player){
+		this->player = player;
+		this->pitch = 0.0;
+		this->yaw = 0.0;
+		this->position = player->GetWorldTransform().GetTranslation() + player->GetWorldTransform().GetRotation() * Vector3Simple(0, 5, -5);
+	}
+
 
 	~Camera(void){};
 
@@ -61,4 +70,6 @@ protected:
 	float	yaw;
 	float	pitch;
 	Vec3Graphics position;
+	GameObject* player;
+	//ControllerComponent* controller;
 };

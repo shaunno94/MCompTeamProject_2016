@@ -25,8 +25,8 @@ void ChaseState::Update(float dt)
 {
 	State::Update(dt);
 
-	btVector3 direction = m_chaseObject->Physics()->getCenterOfMassPosition() - m_parent->Physics()->getCenterOfMassPosition();
+	btVector3 direction = m_chaseObject->GetPhysicsComponent()->GetPhysicsBody()->getWorldTransform().getOrigin() - m_parent->GetPhysicsComponent()->GetPhysicsBody()->getWorldTransform().getOrigin();
 	direction.normalize();
 
-	m_parent->Physics()->applyCentralForce((direction * 0.5f) * dt);
+	dynamic_cast<RigidPhysicsObject*>(m_parent->GetPhysicsComponent())->GetPhysicsBody()->applyCentralForce((direction * 0.5f) * dt);
 }

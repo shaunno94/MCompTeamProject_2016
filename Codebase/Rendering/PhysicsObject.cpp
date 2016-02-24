@@ -52,6 +52,24 @@ bool PhysicsObject::CreateCollisionShape(double distance, const Vec3Physics& nor
 	return true;
 }
 
+bool PhysicsObject::CreateCollisionShape(std::vector<btConvexHullShape*> shapes)
+{
+	m_ColShape = new btCompoundShape();
+	for (int i = 0; i < shapes.size(); i++) {
+		static_cast<btCompoundShape*>(m_ColShape)->addChildShape(btTransform::getIdentity(), shapes[i]);
+	}
+	return true;
+}
+
+bool PhysicsObject::CreateCollisionShape(const btVector3* points, int numPoints)
+{
+	m_ColShape = new btConvexHullShape();
+	for (int i = 0; i < numPoints; i++) {
+		static_cast<btConvexHullShape*>(m_ColShape)->addPoint(points[i]);
+	}
+	return true;
+}
+
 PhysicsObject::~PhysicsObject()
 {
 	if (m_CollisionObject)

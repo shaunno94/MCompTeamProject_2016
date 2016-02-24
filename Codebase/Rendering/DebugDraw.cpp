@@ -1,10 +1,11 @@
+#ifndef ORBIS
 #include "DebugDraw.h"
 
 DebugDraw* DebugDraw::DebugInstance = nullptr;
 const char* DebugDraw::dFrag = SHADER_DIR"Debug/Fragment.glsl";
 const char* DebugDraw::dVertex = SHADER_DIR"Debug/Vertex.glsl";
-Shader* DebugDraw::debugShader = nullptr;
-vector<btVector3> DebugDraw::lines = vector<btVector3>();
+OGLShader* DebugDraw::debugShader = nullptr;
+std::vector<btVector3> DebugDraw::lines = std::vector<btVector3>();
 GLuint DebugDraw::m_glArray = 0;
 GLuint DebugDraw::m_glBuffer =  0;
 Renderer* DebugDraw::renderContext = nullptr;
@@ -17,7 +18,7 @@ DebugDraw* DebugDraw::Instance()
 		DebugInstance = new DebugDraw();
 		glGenVertexArrays(1, &m_glArray);	
 		glGenBuffers(1, &m_glBuffer);
-		debugShader = new Shader(dVertex, dFrag);
+		debugShader = new OGLShader(dVertex, dFrag);
 
 		glBindVertexArray(m_glArray);
 		glBindBuffer(GL_ARRAY_BUFFER, m_glBuffer);
@@ -60,6 +61,7 @@ void DebugDraw::drawLine(const btVector3& from, const btVector3& to, const btVec
 	glBindVertexArray(0);
 	Material::s_LastMaterialInUse = nullptr;
 }	
+#endif
 
 /*glBindBuffer(GL_ARRAY_BUFFER, m_glBuffer[COLOUR]);
 	glBufferData(GL_ARRAY_BUFFER, sizeof(btVector3), &color, GL_STATIC_DRAW);

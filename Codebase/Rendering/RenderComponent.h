@@ -1,7 +1,11 @@
 #pragma once
 
-#include "Rendering/Material.h"
-#include "Rendering/Mesh.h"
+#include "Rendering\Material.h"
+#ifndef ORBIS
+#include "Rendering\OGLMesh.h"
+#else
+#include "Rendering\PS4Mesh.h"
+#endif
 
 class GameObject;
 

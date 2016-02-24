@@ -1,7 +1,9 @@
+#ifndef ORBIS
 #pragma once
 
 #include "LinearMath/btIDebugDraw.h"
 #include "Renderer.h"
+#include "OGLShader.h"
 
 class DebugDraw : public btIDebugDraw
 {
@@ -23,7 +25,7 @@ private:
 	DebugDraw() {}
 	~DebugDraw();
 
-	static Shader* debugShader;
+	static OGLShader* debugShader;
 	static GLuint m_glArray;
 	static GLuint m_glBuffer;
 	static DebugDraw* DebugInstance;
@@ -31,5 +33,6 @@ private:
 	static const char* dFrag;
 	static Renderer* renderContext;
 	static int mode;
-	static vector<btVector3> lines;
+	static std::vector<btVector3> lines;
 };
+#endif

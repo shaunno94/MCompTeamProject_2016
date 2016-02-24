@@ -1,3 +1,4 @@
+#ifndef ORBIS
 #include "Window.h"
 #include "Input/Mouse.h"
 #include "Input/Keyboard.h"
@@ -39,27 +40,6 @@ Window::Window(std::string title, int sizeX, int sizeY, bool fullScreen)	{
 	fullScreen ? position.y = 0.0f : position.y = 100.0f;
 
 	HINSTANCE hInstance = GetModuleHandle( NULL );
-
-//This creates the console window
-	//AllocConsole();
-
-	//int consoleHandle;	
-	//long stdHandle;
-	//FILE *file;	
-
-	//// redirect stdout
-	//stdHandle		= (long)GetStdHandle(STD_OUTPUT_HANDLE);	
-	//consoleHandle	= _open_osfhandle(stdHandle, _O_TEXT);
-	//file	= _fdopen( consoleHandle, "w" );
-	//*stdout = *file;
-	//setvbuf( stdout, NULL, _IONBF, 0 );
-
-	//// redirect stdin
-	//stdHandle	= (long)GetStdHandle(STD_INPUT_HANDLE);
-	//file		= _fdopen( consoleHandle, "r" );
-	//*stdin = *file;
-	//setvbuf( stdin, NULL, _IONBF, 0 );
-//
 
 	WNDCLASSEX windowClass;
 	ZeroMemory(&windowClass, sizeof(WNDCLASSEX));
@@ -108,7 +88,7 @@ Window::Window(std::string title, int sizeX, int sizeY, bool fullScreen)	{
                         NULL,				// No Menus!
                         hInstance,			// application handle
                         NULL);				// No multiple windows!
-
+	
  	if(!windowHandle) {
 		std::cout << "Window::Window(): Failed to create window!" << std::endl;
 		return;
@@ -120,10 +100,6 @@ Window::Window(std::string title, int sizeX, int sizeY, bool fullScreen)	{
 	if(!mouse) {
 		mouse		= new Mouse(windowHandle);
 	}
-	//if(!timer) {
-		timer		= new DeltaTimer<float>();
-	//}
-	elapsedMS	= timer->Age(1000.0f);
 
 	Window::GetMouse()->SetAbsolutePositionBounds((unsigned int)size.x,(unsigned int)size.y);
 
@@ -131,6 +107,9 @@ Window::Window(std::string title, int sizeX, int sizeY, bool fullScreen)	{
 	GetCursorPos(&pt);
 	ScreenToClient(window->windowHandle, &pt);
 	Window::GetMouse()->SetAbsolutePosition(pt.x,pt.y);
+	
+	Window::GetWindow().LockMouseToWindow(true);
+	Window::GetWindow().ShowOSPointer(false);
 
 	LockMouseToWindow(lockMouse);
 	ShowOSPointer(showMouse);
@@ -165,9 +144,9 @@ void	Window::SetRenderer(OGLRenderer* r)	{
 bool	Window::UpdateWindow() {
 	MSG		msg;
 
-	float diff = timer->Age(1000.0f)-elapsedMS;
+	//float diff = timer->Age(1000.0f)-elapsedMS;
 
-	Window::GetMouse()->UpdateDoubleClick(diff);
+	//Window::GetMouse()->UpdateDoubleClick(diff);
 
 	Window::GetKeyboard()->UpdateHolds();
 	Window::GetMouse()->UpdateHolds();
@@ -176,7 +155,7 @@ bool	Window::UpdateWindow() {
 		CheckMessages(msg); 
 	}
 
-	elapsedMS = timer->Age(1000.0f);
+	//elapsedMS = timer->Age(1000.0f);
 
 	return !forceQuit;
 }
@@ -341,3 +320,4 @@ void	Window::ShowOSPointer(bool show)	{
 		ShowCursor(0);
 	}
 }
+#endif

@@ -32,12 +32,12 @@ void DistanceTrigger::setupTrigger(GameObject& parent, GameObject& objB, float t
 bool DistanceTrigger::HasTriggered()
 {
 	if (m_triggerWhenLessThan) {
-		if ((m_parent->Physics()->getCenterOfMassPosition() - m_objectB->Physics()->getCenterOfMassPosition()).length2() <= (m_triggerDistance * m_triggerDistance)) {
+		if ((m_parent->GetPhysicsComponent()->GetPhysicsBody()->getWorldTransform().getOrigin() - m_objectB->GetPhysicsComponent()->GetPhysicsBody()->getWorldTransform().getOrigin()).length2() <= (m_triggerDistance * m_triggerDistance)) {
 			return true;
 		}
 	}
 	else {
-		if ((m_parent->Physics()->getCenterOfMassPosition() - m_objectB->Physics()->getCenterOfMassPosition()).length2() >= (m_triggerDistance * m_triggerDistance)) {
+		if ((m_parent->GetPhysicsComponent()->GetPhysicsBody()->getWorldTransform().getOrigin() - m_objectB->GetPhysicsComponent()->GetPhysicsBody()->getWorldTransform().getOrigin()).length2() >= (m_triggerDistance * m_triggerDistance)) {
 			return true;
 		}
 	}

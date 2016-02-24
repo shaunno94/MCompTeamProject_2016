@@ -6,37 +6,25 @@ Should be done once per frame! Pass it the msec since
 last frame (default value is for simplicities sake...)
 */
 void Camera::UpdateCamera(float msec)	{
-	float dt = msec * 0.001f;
-	float speed = 15.0f * dt; //1.5m per second
+	if (player){
+		//position = player->GetWorldTransform().GetTranslation() + player->GetWorldTransform().GetRotation() * Vector3Simple(0, 5, -10);
+		position = 
+			Mat4Graphics::Translation(player->GetWorldTransform().GetTranslation()) *
+			Mat4Graphics::Rotation(yaw, Vec3Graphics(0, 1, 0)) *
+			Mat4Graphics::Translation(Vector3Simple(0, 15, 25)) *
+			Mat4Graphics::Rotation(pitch, Vec3Graphics(1, 0, 0)) *
+			Vector3Simple(0, 1, 1);
 
-	//Update the mouse by how much
-	pitch -= (Window::GetMouse()->GetRelativePosition().y);
-	yaw -= (Window::GetMouse()->GetRelativePosition().x);
+		//position.y = 10;
+	}
 
 
-	//Bounds check the pitch, to be between straight up and straight down ;)
-	pitch = min(pitch, 90.0f);
-	pitch = max(pitch, -90.0f);
-
-	if (yaw < 0)
-		yaw += 360.0f;
-	if (yaw > 360.0f)
-		yaw -= 360.0f;
-
-	if (Window::GetKeyboard()->KeyDown(KEYBOARD_W))
-		position += Mat4Graphics::Rotation(yaw, Vec3Graphics(0, 1, 0)) * Vec3Graphics(0, 0, -1) * speed;
-	if (Window::GetKeyboard()->KeyDown(KEYBOARD_S))
-		position -= Mat4Graphics::Rotation(yaw, Vec3Graphics(0, 1, 0)) * Vec3Graphics(0, 0, -1) * speed;
-
-	if (Window::GetKeyboard()->KeyDown(KEYBOARD_A))
-		position += Mat4Graphics::Rotation(yaw, Vec3Graphics(0, 1, 0)) * Vec3Graphics(-1, 0, 0) * speed;
-	if (Window::GetKeyboard()->KeyDown(KEYBOARD_D))
-		position -= Mat4Graphics::Rotation(yaw, Vec3Graphics(0, 1, 0)) * Vec3Graphics(-1, 0, 0) * speed;
-
-	if (Window::GetKeyboard()->KeyDown(KEYBOARD_SHIFT))
-		position.y += speed;
-	if (Window::GetKeyboard()->KeyDown(KEYBOARD_SPACE))
-		position.y -= speed;
+		float dt = msec * 0.001f;
+		float speed = 7.0f * dt; //1.5m per second
+	
+		//Update the mouse by how much
+		player->GetControllerComponent()->getCameraControl(pitch, yaw);
+	
 }
 
 /*
@@ -46,7 +34,12 @@ straight to the shader...it's already an 'inverse camera' matrix.
 Mat4Graphics Camera::BuildViewMatrix()	{
 	//Why do a complicated matrix inversion, when we can just generate the matrix
 	//using the negative values ;). The matrix multiplication order is important!
-	return	Mat4Graphics::Rotation(-pitch, Vec3Graphics(1, 0, 0)) *
-	        Mat4Graphics::Rotation(-yaw, Vec3Graphics(0, 1, 0)) *
-	        Mat4Graphics::Translation(-position);
+
+	/*if (player)
+		return Mat4Graphics::View(position, player->GetWorldTransform().GetTranslation());
+	else*/{
+		return	Mat4Graphics::Rotation(-pitch, Vec3Graphics(1, 0, 0)) *
+			Mat4Graphics::Rotation(-yaw, Vec3Graphics(0, 1, 0)) *
+			Mat4Graphics::Translation(-position);
+	}
 };

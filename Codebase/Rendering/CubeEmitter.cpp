@@ -1,3 +1,4 @@
+#ifndef ORBIS
 #include "ParticleSystem.h"
 #include "CubeEmitter.h"
 #include "./Helpers/RNG.h"
@@ -38,3 +39,4 @@ void CubeEmitter::DebugRender()
 {
 
 }
+#endif

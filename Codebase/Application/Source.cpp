@@ -1,36 +1,56 @@
 #include <cstdio>
-#include "Rendering\Window.h"
 #include "Rendering\Renderer.h"
 #include "PhysicsEngine\PhysicsEngineInstance.h"
 #include "Rendering\ModelLoader.h"
 #include "Rendering\DebugDraw.h"
+#include "Rendering\GameTimer.h"
+#include "Stadium.h"
 #include "Rendering\LightMaterial.h"
 #include "Audio\SoundSystem.h"
 
+// Includes for AI States and Triggers
+#include "AI\StateMachine.h"
+#include "AI\ChaseState.h"
+#include "AI\RunAwayState.h"
+#include "AI\DistanceTrigger.h"
+#include "AI\ShooterAgent.h"
+#include "Rendering\KeyboardController.h"
+
 const float TIME_STEP = 1.0f / 120.0f;
-const unsigned int SUB_STEPS = 2;
+const unsigned int SUB_STEPS = 4;
 
-int main() {
+#ifndef ORBIS
+const unsigned int SCREEN_HEIGHT = 800;
+const unsigned int SCREEN_WIDTH = 1280;
+const string SIMPLESHADER_VERT = SHADER_DIR"textureVertex.glsl";
+const string SIMPLESHADER_FRAG = SHADER_DIR"textureFragment.glsl";
+const string POINTLIGHTSHADER_VERT = SHADER_DIR"2dShadowLightvertex.glsl";
+const string POINTLIGHTSHADER_FRAG = SHADER_DIR"2dShadowLightfragment.glsl";
+#else
+const unsigned int SCREEN_HEIGHT = 1080;
+const unsigned int SCREEN_WIDTH = 1920;
+const string SIMPLESHADER_VERT = SHADER_DIR"textureVertex.sb";
+const string SIMPLESHADER_FRAG = SHADER_DIR"textureFragment.sb";
+const string POINTLIGHTSHADER_VERT = SHADER_DIR"2dShadowLightvertex.sb";
+const string POINTLIGHTSHADER_FRAG = SHADER_DIR"2dShadowLightfragment.sb";
+//System Variables
+unsigned int sceLibcHeapExtendedAlloc = 1;			/* Switch to dynamic allocation */
+size_t sceLibcHeapSize = 512 * 1024 * 1024;			/* Set up heap area upper limit as 256 MiB */
+//int sceUserMainThreadPriority = SCE_KERNEL_DEFAULT_PRIORITY_USER;
+#endif
+
+int main(void) {
 	//-------------------
-	//--- MAIN ENGINE ---
+	//--- MAIN Loop ---
 	//-------------------
 
-	//Initialise the Window
-	if (!Window::Initialise("Game Technologies - Framework Example", 1280, 800, false)) {
-		Window::Destroy();
+	//Initialise Renderer - including the window context if compiling for Windows - PC
+	Renderer renderer("Team Project - 2016", SCREEN_WIDTH, SCREEN_HEIGHT, false);
+	if (!renderer.HasInitialised()) 
+	{
 		return -1;
 	}
-
-	Window::GetWindow().LockMouseToWindow(true);
-	Window::GetWindow().ShowOSPointer(false);
-
-	/*CommonMeshes::InitializeMeshes();
-	NCLDebug::LoadShaders();*/
-
-	Renderer renderer(Window::GetWindow());
-	if (!renderer.HasInitialised()) {
-		return -1;
-	}
+	GameTimer timer;
 
 	//Initialise Bullet physics engine.
 	PhysicsEngineInstance::Instance()->setGravity(btVector3(0, -9.81, 0));
@@ -39,41 +59,42 @@ int main() {
 	SoundSystem::Initialise();
 
 #if DEBUG_DRAW
+#ifndef ORBIS
 	PhysicsEngineInstance::Instance()->setDebugDrawer(DebugDraw::Instance());
 	DebugDraw::Context(&renderer);
+#endif
 #endif
 
 	//Test Scenario - Tardis (cuboid collision shape), floor (plane collision shape), ball (sphere collison shape)
 	Scene* myScene = new Scene();
+	myScene->getCamera()->SetPosition(Vec3Graphics(10, 5, 0));
+
 	//Game objects added to scene are delete by the scene so don't delete twice.
 	GameObject* ball = new GameObject("ball");
-	GameObject* floor = new GameObject("floor");
 	GameObject* light1 = new GameObject("l");
 	GameObject* light2 = new GameObject("l");
-	GameObject* tardis = new GameObject("tar");
 
 	//Physics objects hold collision shape and collision object(body), 
 	//call CreateCollisionShape before CreatePhysicsBody or the object will not be created correctly.
 	//Physics objects will be deleted by the game object.
 	RigidPhysicsObject* ballPhysics = new RigidPhysicsObject();
-	ballPhysics->CreateCollisionShape(1.0);
-	ballPhysics->CreatePhysicsBody(1.0, Vec3Physics(10, 20, 0), QuatPhysics(0, 0, 0, 1), Vec3Physics(1, 1, 1));
+	ballPhysics->CreateCollisionShape(Vec3Physics(5.0, 5.0, 5.0),CUBOID);
+	ballPhysics->CreatePhysicsBody(5.0, Vec3Physics(0, 5, 0), QuatPhysics(0, 0, 0, 1), Vec3Physics(1, 1, 1));
 
 	RigidPhysicsObject* floorPhysics = new RigidPhysicsObject();
 	floorPhysics->CreateCollisionShape(0, Vec3Physics(0, 1, 0), true);
 	floorPhysics->CreatePhysicsBody(0, Vec3Physics(0, -1, 0), QuatPhysics(0, 0, 0, 1));
 
-	RigidPhysicsObject* tardisPhysics = new RigidPhysicsObject();
-	tardisPhysics->CreateCollisionShape(Vec3Physics(1.5f, 2.0f, 1.5f), CUBOID);
-	tardisPhysics->CreatePhysicsBody(0, Vec3Physics(0, 0, 0), QuatPhysics(0, 0, 0, 1));
+#ifndef ORBIS
+	BaseShader* simpleShader = new OGLShader(SIMPLESHADER_VERT, SIMPLESHADER_FRAG);
+	BaseShader* pointlightShader = new OGLShader(POINTLIGHTSHADER_VERT, POINTLIGHTSHADER_FRAG);
+	//BaseShader* pointlightShader = new OGLShader(SHADER_DIR"CubeShadowLightvertex.glsl", SHADER_DIR"CubeShadowLightfragment.glsl");
+#else
+	BaseShader* simpleShader = new PS4Shader(SIMPLESHADER_VERT, SIMPLESHADER_FRAG);
+	BaseShader* pointlightShader = new PS4Shader(POINTLIGHTSHADER_VERT, POINTLIGHTSHADER_FRAG);
+#endif
 
-	Shader* simpleShader = new Shader(SHADER_DIR"textureVertex.glsl", SHADER_DIR"textureFragment.glsl");
-	Shader* pointlightShader = new Shader(SHADER_DIR"pointlightvertex.glsl", SHADER_DIR"pointlightfragment.glsl");
-
-	if (!pointlightShader->IsOperational())
-		return -1;
-
-	if (!simpleShader->IsOperational())
+	if (!pointlightShader->IsOperational() || !simpleShader->IsOperational())
 		return -1;
 
 	LightMaterial* lightMaterial = new LightMaterial(pointlightShader);
@@ -81,41 +102,46 @@ int main() {
 	light1->SetWorldTransform(Mat4Graphics::Translation(Vec3Graphics(0, 2, 2)) *Mat4Graphics::Scale(Vec3Graphics(20, 20, 20)));
 	light1->SetBoundingRadius(20);
 
+	lightMaterial->shadowType = _2D;
 	light2->SetRenderComponent(new RenderComponent(lightMaterial, ModelLoader::LoadMGL(MODEL_DIR"Common/ico.mgl", true)));
-	light2->SetWorldTransform(Mat4Graphics::Translation(Vec3Graphics(0, 40, 0)) *Mat4Graphics::Scale(Vec3Graphics(400, 400, 400)));
-	light2->SetBoundingRadius(400);
-
+	light2->SetWorldTransform(Mat4Graphics::Translation(Vec3Graphics(600, 600, 600)) *Mat4Graphics::Scale(Vec3Graphics(1600, 1600, 1600)));
+	light2->SetBoundingRadius(1600);
 
 	Material* material = new Material(simpleShader);
+	Material* ballMaterial = new Material(simpleShader);
+	Material* netMaterial = new Material(simpleShader);
+	netMaterial->hasTranslucency = true;
+	ballMaterial->Set(ReservedMeshTextures.DIFFUSE.name, Texture::Get(TEXTURE_DIR"checkerboard.tga", true));
 
-	Mesh* floorMesh = Mesh::GenerateQuad(Vec2Graphics(80.0f, 40.0f));
-	Texture* floorTexture = Texture::Get(TEXTURE_DIR"checkerboard.tga", true);
-	floorTexture->SetTextureParams(TextureFlags::REPEATING | TextureFlags::TRILINEAR_FILTERING);
-	floorMesh->SetTexture(floorTexture, ReservedMeshTextures.DIFFUSE.index);
+	// Create Stadium
+	GameObject* stadium = new Stadium(material, netMaterial, "stadium"); 
 
-	floor->SetRenderComponent(new RenderComponent(material, floorMesh));
-	floor->SetPhysicsComponent(floorPhysics);
-	floor->SetLocalTransform(Mat4Graphics::Scale(Vec3Graphics(80, 40, 40)) * Mat4Graphics::Rotation(90.0f, Vec3Graphics(1, 0, 0)));
-	myScene->addGameObject(floor);
-
-	tardis->SetRenderComponent(new RenderComponent(material, ModelLoader::LoadMGL(MODEL_DIR"Tardis/TARDIS.mgl", true)));
-	tardis->SetPhysicsComponent(tardisPhysics);
-	myScene->addGameObject(tardis);
-	myScene->addLightObject(light1);
+	myScene->addGameObject(stadium);
+	//myScene->addLightObject(light1);
 	myScene->addLightObject(light2);
 
-	ball->SetRenderComponent(new RenderComponent(material, ModelLoader::LoadMGL(MODEL_DIR"Common/sphere.mgl", true)));
+	ball->SetRenderComponent(new RenderComponent(ballMaterial, ModelLoader::LoadMGL(MODEL_DIR"Common/cube.mgl", true)));
+	ball->SetLocalTransform(Mat4Graphics::Scale(Vector3Simple(5, 5, 5)));
 	ball->SetPhysicsComponent(ballPhysics);
+	ball->GetPhysicsComponent()->GetPhysicsBody()->setRestitution(btScalar(0.9));
+	ball->GetPhysicsComponent()->GetPhysicsBody()->setFriction(0.5);
+	ball->GetPhysicsComponent()->GetPhysicsBody()->setRollingFriction(0.5);
+	ball->GetPhysicsComponent()->GetPhysicsBody()->setHitFraction(0.5);
+
+	ControllerComponent* cc = new ControllerComponent(ball);
+	myScene->setPlayerController(new KeyboardController(cc));
+
+	myScene->attachCam(ball);
 	myScene->addGameObject(ball);
 
-
 	//-------- SOUND
-
 	//load in a wav file into manager
 	SoundManager::AddSound(AUDIO_DIR"14615__man__canon.wav", "gun");
 	SoundManager::AddSound(AUDIO_DIR"41579__erdie__steps-on-stone01.wav", "walk");
-	//load ogg file
-	SoundManager::AddSound(AUDIO_DIR"139320__votives__arpegthing.ogg", "song");
+	SoundManager::AddSound(AUDIO_DIR"139320__votives__arpegthing.wav", "song");
+
+	//load ogg file (EXPERIMENTAL STREAMING)
+	//SoundManager::AddSound(AUDIO_DIR"139320__votives__arpegthing.ogg", "song");
 
 	//maybe get a handle fro the loaded sounds
 	Sound* gun = SoundManager::GetSound("gun");
@@ -127,27 +153,26 @@ int main() {
 
 	//Add 3D sound
 	SoundEmitter* emitWalk = new SoundEmitter(SoundManager::GetSound("walk"));
-	emitWalk->SetRadius(25.0f);
+	emitWalk->SetRadius(250.0f);
 
 	//add sounds to engine
 	SoundSystem::Instance()->AddSoundEmitter(emitSong);
 	SoundSystem::Instance()->AddSoundEmitter(emitWalk);
-
 	//-------- SOUND
-
-
 
 	renderer.SetCurrentScene(myScene);
 
+#ifndef ORBIS
 	while (Window::GetWindow().UpdateWindow() && !Window::GetKeyboard()->KeyDown(KEYBOARD_ESCAPE))
+#else
+	while (true)
+#endif
 	{
-		float ms = Window::GetWindow().GetTimer()->Get(1000.0f);
+		float ms = timer.GetTimer()->Get(1000.0f);
 		PhysicsEngineInstance::Instance()->stepSimulation(ms, SUB_STEPS, TIME_STEP);
 		renderer.RenderScene(ms);
 
-
 		//-------- SOUND
-
 		// just play a sound
 		if (Window::GetKeyboard()->KeyTriggered(KEYBOARD_L)){
 			SoundMOD mod = SoundMOD();
@@ -156,21 +181,23 @@ int main() {
 	
 			SoundSystem::Instance()->Play(gun, mod);
 		}
-
+		// TODO: SHOULD BE WORLD TRANSFORM! using view as temp
+		// (sound panning a bit off)
 		SoundSystem::Instance()->SetListener(myScene->getCamera()->BuildViewMatrix());
 		SoundSystem::Instance()->Update(ms);
-
-		
-
 		//-------- SOUND
 
-
-
 	}
+
 	//Cleanup
 	PhysicsEngineInstance::Release();
+
+#if DEBUG_DRAW
+#ifndef ORBIS
 	DebugDraw::Release();
-	Window::Destroy();
+#endif
+#endif
+
 	delete myScene;
 	return 0;
 }

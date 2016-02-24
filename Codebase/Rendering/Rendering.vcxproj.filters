@@ -31,21 +31,33 @@
     <Filter Include="Source Files\Physics">
       <UniqueIdentifier>{1f25b0ac-b2f4-4e65-9305-151127f3e397}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\OGL_API">
+      <UniqueIdentifier>{2d2465c5-b0fa-4155-958f-5d0422442e4d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\GNM_API">
+      <UniqueIdentifier>{9dffb490-3b52-451b-8c61-f610c4df677f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\OGL_API">
+      <UniqueIdentifier>{32134d45-b278-4656-99cd-00cbe1b2d7e1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\GNM_API">
+      <UniqueIdentifier>{3de32fb1-e97e-48de-8248-2fb0dc54fdb7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Input">
+      <UniqueIdentifier>{ff28f1fa-cf5a-48bf-8cf4-33f9af1d9157}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Input">
+      <UniqueIdentifier>{356a0ef8-011e-463d-be96-72cda5646e9d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="PS4Shaders">
+      <UniqueIdentifier>{7c1933be-f444-40cc-9968-5a8b90a16558}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Renderer.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="OGLRenderer.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="Mesh.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Shader.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Window.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="constants.h">
@@ -108,21 +120,51 @@
     <ClInclude Include="SoftPhysicsObject.h">
       <Filter>Header Files\Physics</Filter>
     </ClInclude>
+    <ClInclude Include="PS4Shader.h">
+      <Filter>Header Files\GNM_API</Filter>
+    </ClInclude>
+    <ClInclude Include="OGLRenderer.h">
+      <Filter>Header Files\OGL_API</Filter>
+    </ClInclude>
+    <ClInclude Include="OGLShader.h">
+      <Filter>Header Files\OGL_API</Filter>
+    </ClInclude>
+    <ClInclude Include="PS4Renderer.h">
+      <Filter>Header Files\GNM_API</Filter>
+    </ClInclude>
+    <ClInclude Include="Window.h">
+      <Filter>Header Files\OGL_API</Filter>
+    </ClInclude>
+    <ClInclude Include="GameTimer.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="PS4Mesh.h">
+      <Filter>Header Files\GNM_API</Filter>
+    </ClInclude>
+    <ClInclude Include="OGLMesh.h">
+      <Filter>Header Files\OGL_API</Filter>
+    </ClInclude>
+    <ClInclude Include="BaseShader.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Controller.h">
+      <Filter>Header Files\Input</Filter>
+    </ClInclude>
+    <ClInclude Include="ControllerComponent.h">
+      <Filter>Header Files\Input</Filter>
+    </ClInclude>
+    <ClInclude Include="KeyboardController.h">
+      <Filter>Header Files\Input</Filter>
+    </ClInclude>
+    <ClInclude Include="PS4Frame.h">
+      <Filter>Header Files\GNM_API</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Renderer.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="OGLRenderer.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="Mesh.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Shader.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Window.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Camera.cpp">
@@ -176,5 +218,52 @@
     <ClCompile Include="SoftPhysicsObject.cpp">
       <Filter>Source Files\Physics</Filter>
     </ClCompile>
+    <ClCompile Include="PS4Shader.cpp">
+      <Filter>Source Files\GNM_API</Filter>
+    </ClCompile>
+    <ClCompile Include="PS4Renderer.cpp">
+      <Filter>Source Files\GNM_API</Filter>
+    </ClCompile>
+    <ClCompile Include="OGLRenderer.cpp">
+      <Filter>Source Files\OGL_API</Filter>
+    </ClCompile>
+    <ClCompile Include="OGLShader.cpp">
+      <Filter>Source Files\OGL_API</Filter>
+    </ClCompile>
+    <ClCompile Include="Window.cpp">
+      <Filter>Source Files\OGL_API</Filter>
+    </ClCompile>
+    <ClCompile Include="ControllerComponent.cpp">
+      <Filter>Source Files\Input</Filter>
+    </ClCompile>
+    <ClCompile Include="KeyboardController.cpp">
+      <Filter>Source Files\Input</Filter>
+    </ClCompile>
+    <ClCompile Include="PS4Mesh.cpp">
+      <Filter>Source Files\GNM_API</Filter>
+    </ClCompile>
+    <ClCompile Include="OGLMesh.cpp">
+      <Filter>Source Files\OGL_API</Filter>
+    </ClCompile>
+    <ClCompile Include="BaseShader.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="PS4Frame.cpp">
+      <Filter>Source Files\GNM_API</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <OrbisWavePsslc Include="textureVertex.pssl">
+      <Filter>PS4Shaders</Filter>
+    </OrbisWavePsslc>
+    <OrbisWavePsslc Include="textureFragment.pssl">
+      <Filter>PS4Shaders</Filter>
+    </OrbisWavePsslc>
+    <OrbisWavePsslc Include="2dShadowLightvertex.pssl">
+      <Filter>PS4Shaders</Filter>
+    </OrbisWavePsslc>
+    <OrbisWavePsslc Include="2dShadowLightfragment.pssl">
+      <Filter>PS4Shaders</Filter>
+    </OrbisWavePsslc>
   </ItemGroup>
 </Project>
