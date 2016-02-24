@@ -1,20 +1,27 @@
 #include "SoundManager.h"
 
+
 std::map<std::string, Sound*> SoundManager::soundAssets;
 
-void SoundManager::AddSound(std::string name)
+void SoundManager::AddSound(std::string fileName, std::string name)
 {
 	if (!GetSound(name))
 	{
 		Sound* s = new Sound();
 
-		std::string extension = name.substr(name.length() - 3, 3);
+		std::string extension = fileName.substr(fileName.length() - 3, 3);
 
 		if (extension == "wav")
 		{
-			s->LoadFromWAV(name);
+			s->LoadFromWAV(fileName);
 			alGenBuffers(1, &s->buffer);
 			alBufferData(s->buffer, s->GetOALFormat(), s->GetData(), s->GetSize(), (ALsizei)s->GetFrequency());
+		}
+		else if (extension == "ogg") {
+			OggSound* ogg = new OggSound();
+			ogg->LoadFromOgg(fileName);
+
+			s = ogg;
 		}
 		else
 		{

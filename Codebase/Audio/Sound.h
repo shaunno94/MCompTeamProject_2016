@@ -52,6 +52,14 @@ public:
 	{
 		return buffer;
 	}
+	bool IsStreaming()
+	{
+		return streaming;
+	}
+	virtual double StreamData(ALuint buffer, double timeleft)
+	{
+		return 0.0f;
+	}
 
 	ALenum			GetOALFormat();
 	double			GetLength();
@@ -66,9 +74,12 @@ protected:
 	char*			data;
 	ALuint			buffer;
 
+	bool streaming;
+
 	float			freqRate;
 	double			length;
 	unsigned int	bitRate;
 	unsigned int	size;
 	unsigned int	channels;
+
 };

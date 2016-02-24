@@ -5,6 +5,7 @@
 #include "Rendering\ModelLoader.h"
 #include "Rendering\DebugDraw.h"
 #include "Rendering\LightMaterial.h"
+#include "Audio\SoundSystem.h"
 
 const float TIME_STEP = 1.0f / 120.0f;
 const unsigned int SUB_STEPS = 2;
@@ -33,6 +34,9 @@ int main() {
 
 	//Initialise Bullet physics engine.
 	PhysicsEngineInstance::Instance()->setGravity(btVector3(0, -9.81, 0));
+
+	//Init SoundSystem
+	SoundSystem::Initialise();
 
 #if DEBUG_DRAW
 	PhysicsEngineInstance::Instance()->setDebugDrawer(DebugDraw::Instance());
@@ -104,6 +108,35 @@ int main() {
 	ball->SetPhysicsComponent(ballPhysics);
 	myScene->addGameObject(ball);
 
+
+	//-------- SOUND
+
+	//load in a wav file into manager
+	SoundManager::AddSound(AUDIO_DIR"14615__man__canon.wav", "gun");
+	SoundManager::AddSound(AUDIO_DIR"41579__erdie__steps-on-stone01.wav", "walk");
+	//load ogg file
+	SoundManager::AddSound(AUDIO_DIR"139320__votives__arpegthing.ogg", "song");
+
+	//maybe get a handle fro the loaded sounds
+	Sound* gun = SoundManager::GetSound("gun");
+
+	//create new sound entity and attach the sound to it
+	SoundEmitter* emitSong = new SoundEmitter(SoundManager::GetSound("song"));
+	emitSong->SetIsGlobal(true);
+	emitSong->SetVolume(0.25f);
+
+	//Add 3D sound
+	SoundEmitter* emitWalk = new SoundEmitter(SoundManager::GetSound("walk"));
+	emitWalk->SetRadius(25.0f);
+
+	//add sounds to engine
+	SoundSystem::Instance()->AddSoundEmitter(emitSong);
+	SoundSystem::Instance()->AddSoundEmitter(emitWalk);
+
+	//-------- SOUND
+
+
+
 	renderer.SetCurrentScene(myScene);
 
 	while (Window::GetWindow().UpdateWindow() && !Window::GetKeyboard()->KeyDown(KEYBOARD_ESCAPE))
@@ -111,6 +144,28 @@ int main() {
 		float ms = Window::GetWindow().GetTimer()->Get(1000.0f);
 		PhysicsEngineInstance::Instance()->stepSimulation(ms, SUB_STEPS, TIME_STEP);
 		renderer.RenderScene(ms);
+
+
+		//-------- SOUND
+
+		// just play a sound
+		if (Window::GetKeyboard()->KeyTriggered(KEYBOARD_L)){
+			SoundMOD mod = SoundMOD();
+			mod.isGlobal = true;
+			mod.looping = false;
+	
+			SoundSystem::Instance()->Play(gun, mod);
+		}
+
+		SoundSystem::Instance()->SetListener(myScene->getCamera()->BuildViewMatrix());
+		SoundSystem::Instance()->Update(ms);
+
+		
+
+		//-------- SOUND
+
+
+
 	}
 	//Cleanup
 	PhysicsEngineInstance::Release();

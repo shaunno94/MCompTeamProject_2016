@@ -5,35 +5,32 @@
 class SoundSystem
 {
 public:
-	static void Initialise(unsigned int channels = 8)
+	static void Initialise(unsigned int channels = 32)
 	{
 		instance = new SoundSystem(channels);
 	}
-
 	static void Destroy()
 	{
 		delete instance;
 	}
-
-	static SoundSystem* GetSoundSystem()
+	static SoundSystem* Instance()
 	{
 		return instance;
 	}
-
 	void AddSoundEmitter(SoundEmitter* s)
 	{
-		emitters.push_back(s);
+		totalEmitters.push_back(s);
 	}
-	
-	void RemoveSoundEmitter(SoundEmitter* s);
 
-	void ListenerUpdate(const Mat4& transform);
+	void SetListener(const Mat4& transform);
 
 	Mat4 GetListenerTransform() { return listenerTransform; }
 
 	void		Update(float msec);
 
 	void		SetMasterVolume(float value);
+
+	void		Play(Sound* s, SoundMOD modifier);
 
 protected:
 	SoundSystem(unsigned int channels = 32);
@@ -48,10 +45,10 @@ protected:
 
 	OALSource*	GetSource();
 
-
 	std::vector<OALSource*>	sources;
+
 	std::vector<SoundEmitter*>	emitters;
-	std::vector<SoundEmitter*>	frameEmitters;
+	std::vector<SoundEmitter*>	totalEmitters;
 
 	Mat4 listenerTransform; // world transform
 	Vec3 listenerPos; // position

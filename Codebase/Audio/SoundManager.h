@@ -5,11 +5,12 @@
 #include <algorithm>
 
 #include "Sound.h"
+#include "OggSound.h"
 
 class SoundManager
 {
 public:
-	static void AddSound(std::string name);
+	static void AddSound(std::string fileName, std::string name);
 	static Sound* GetSound(std::string name);
 
 	static void DeleteSounds();

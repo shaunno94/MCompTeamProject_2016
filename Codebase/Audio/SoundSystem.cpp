@@ -40,6 +40,10 @@ SoundSystem::SoundSystem(unsigned int channels) {
 }
 
 SoundSystem::~SoundSystem(void)	{
+	for (std::vector<SoundEmitter*>::iterator i = totalEmitters.begin(); i != totalEmitters.end(); ++i) {
+		delete (*i);
+	}
+
 	for (std::vector<OALSource*>::iterator i = sources.begin(); i != sources.end(); ++i) {
 		alDeleteSources(1, &(*i)->source);
 		delete (*i);
@@ -50,20 +54,20 @@ SoundSystem::~SoundSystem(void)	{
 	alcCloseDevice(device);
 }
 
-void SoundSystem::ListenerUpdate(const Mat4& transform)
+void SoundSystem::SetListener(const Mat4& transform)
 {
 	listenerTransform = transform;
-	listenerPos.x = listenerTransform.values[3];
-	listenerPos.y = listenerTransform.values[7];
-	listenerPos.z = listenerTransform.values[11];
+	listenerPos = transform.GetTranslation();
 }
 
 void		SoundSystem::Update(float msec) {
-	UpdateListener();
+	UpdateListener(); // update listener position
 
 	//Update values for every node, whether in range or not
-	for (std::vector<SoundEmitter*>::iterator i = emitters.begin(); i != emitters.end(); ++i) {
-		frameEmitters.push_back((*i));
+	for (std::vector<SoundEmitter*>::iterator i = totalEmitters.begin(); i != totalEmitters.end(); ++i) {
+		if ((*i)->GetIsGlobal()){
+			(*i)->SetPosition(listenerPos);
+		}
 		(*i)->Update(msec);
 	}
 
@@ -83,22 +87,24 @@ void		SoundSystem::Update(float msec) {
 }
 
 void	SoundSystem::CullNodes() {
-	for (std::vector<SoundEmitter*>::iterator i = emitters.begin(); i != emitters.end();) {
+	for (std::vector<SoundEmitter*>::iterator i = totalEmitters.begin(); i != totalEmitters.end();) {
 
 		float length;
 
-		// ADD GLOBAL
+		// distance from listener
 		length = (listenerPos -
 			(*i)->GetPosition()).Length();
 		
 
-		if (length > (*i)->GetRadius() || !(*i)->GetSound() || (*i)->GetTimeLeft() < 0) {
-			(*i)->DetachSource();	//Important!
-			i = emitters.erase(i);
+		if (length < (*i)->GetRadius() && (*i)->GetSound() && (*i)->GetTimeLeft() > 0) {
+			emitters.push_back((*i));
 		}
 		else{
-			++i;
+			(*i)->DetachSource();
 		}
+
+		++i;
+
 	}
 }
 
@@ -131,19 +137,38 @@ void		SoundSystem::SetMasterVolume(float value)	{
 	alListenerf(AL_GAIN, masterVolume);
 }
 
+// FIX THIS SHIT
 void	SoundSystem::UpdateListener() {
 
 	Vec3 dirup[2];
 	//forward
-	dirup[0].x = -listenerTransform.values[2];
-	dirup[0].y = -listenerTransform.values[6];
-	dirup[0].z = -listenerTransform.values[10];
+	dirup[0].x = listenerTransform.values[2];
+	dirup[0].y = listenerTransform.values[6];
+	dirup[0].z = listenerTransform.values[10];
 	//Up
 	dirup[1].x = listenerTransform.values[1];
 	dirup[1].y = listenerTransform.values[5];
 	dirup[1].z = listenerTransform.values[9];
 
+	dirup[0].Normalize();
+	dirup[1].Normalize();
+
 	alListenerfv(AL_POSITION, (float*)&listenerPos);
 	alListenerfv(AL_ORIENTATION, (float*)&dirup);
 	
+}
+
+void	SoundSystem::Play(Sound* s, SoundMOD modifier) {
+	SoundEmitter* n = new SoundEmitter();
+	n->SetSound(s);
+	n->SetPriority(SOUNDPRIORITY_HIGH);
+
+	n->SetVolume(modifier.volume);
+	n->SetRadius(modifier.radius);
+	n->SetPitch(modifier.pitch);
+	n->SetLooping(modifier.looping);
+	n->SetIsGlobal(modifier.isGlobal);
+	n->SetPosition(modifier.position);
+
+	totalEmitters.push_back(n);
 }

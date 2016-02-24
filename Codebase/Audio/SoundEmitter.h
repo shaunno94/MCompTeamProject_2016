@@ -2,6 +2,15 @@
 
 #include "SoundManager.h"
 
+#define NUM_STREAM_BUFFERS 3
+
+// default sound modifiers
+#define SOUND_VOLUME 1.0f
+#define SOUND_RADIUS 500.0f
+#define SOUND_PITCH 1.0f
+#define SOUND_LOOP true
+#define SOUND_GLOBAL false
+
 enum SoundPriority
 {
 	SOUNDPRIORTY_LOW,
@@ -20,6 +29,15 @@ struct OALSource
 		source = src;
 		inUse = false;
 	}
+};
+
+struct SoundMOD {
+	float volume = SOUND_VOLUME;
+	float radius = SOUND_RADIUS;
+	float pitch = SOUND_PITCH;
+	bool looping = SOUND_LOOP;
+	bool isGlobal = SOUND_GLOBAL;
+	Vec3 position = Vec3();
 };
 
 class SoundEmitter
@@ -73,29 +91,34 @@ public:
 		return radius;
 	}
 
+	void SetPitch(float value)
+	{
+		pitch = value;
+	}
+	float GetPitch()
+	{
+		return pitch;
+	}
+	
 	double			GetTimeLeft()
 	{
 		return timeLeft;
 	}
 
+	OALSource*		GetSource()
+	{
+		return oalSource;
+	}
+
+	bool GetIsGlobal() { return isGlobal; }
+	void SetIsGlobal(bool value) { isGlobal = value; }
+
 	Vec3 GetPosition()
 	{
 		return position;
 	}
-
-	void SetPitch(float value)
-	{
-		pitch = value;
-	}
-
-	float GetPitch()
-	{
-		return pitch;
-	}
-
-	OALSource*		GetSource()
-	{
-		return oalSource;
+	void SetPosition(const Vec3& pos) {
+		position = pos;
 	}
 
 	static bool		CompareNodesByPriority(SoundEmitter* a, SoundEmitter* b);
@@ -104,7 +127,6 @@ public:
 	void			DetachSource();
 
 	virtual void	Update(float msec);
-	void SetPosition(const Vec3& pos);
 
 protected:
 	Sound*			sound;
@@ -113,8 +135,13 @@ protected:
 	float			volume;
 	float			radius;
 	float			timeLeft;
-	bool			isLooping;
-
 	float pitch;
+
+	bool			isLooping;
+	bool			isGlobal;
+
+	double streamPos;
+	ALuint streamBuffers[NUM_STREAM_BUFFERS];
+
 	Vec3 position;
 };

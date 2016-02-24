@@ -8,6 +8,7 @@ Sound::Sound()
 	length = 0;
 	data = NULL;
 	buffer = 0;
+	streaming = false;
 }
 
 Sound::~Sound(void)

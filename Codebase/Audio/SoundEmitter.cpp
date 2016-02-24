@@ -14,14 +14,22 @@ SoundEmitter::SoundEmitter(Sound* s)
 void	SoundEmitter::Reset()
 {
 	priority = SOUNDPRIORTY_LOW;
-	pitch = 1.0f;
-	volume = 1.0f;
-	radius = 500.0f;
+	pitch = SOUND_PITCH;
+	volume = SOUND_VOLUME;
+	radius = SOUND_RADIUS;
 	timeLeft = 0.0f;
-	isLooping = true;
+	isLooping = SOUND_LOOP;
 	oalSource = NULL;
 	sound = NULL;
 	position = Vec3();
+
+	streamPos = 0;
+	isGlobal = SOUND_GLOBAL;
+
+	for (unsigned int i = 0; i < NUM_STREAM_BUFFERS; ++i)
+	{
+		streamBuffers[i] = 0;
+	}
 }
 
 SoundEmitter::~SoundEmitter(void)
@@ -41,6 +49,14 @@ void		SoundEmitter::SetSound(Sound* s)
 	if (sound)
 	{
 		timeLeft = sound->GetLength();
+		if (sound->IsStreaming())
+		{
+			alGenBuffers(NUM_STREAM_BUFFERS, streamBuffers);
+		}
+		else
+		{
+			alDeleteBuffers(NUM_STREAM_BUFFERS, streamBuffers);
+		}
 	}
 }
 
@@ -58,10 +74,33 @@ void		SoundEmitter::AttachSource(OALSource* s)
 	alSourceStop(oalSource->source);
 	alSourcef(oalSource->source, AL_MAX_DISTANCE, radius);
 	alSourcef(oalSource->source, AL_REFERENCE_DISTANCE, radius * 0.2f);
-	alSourcei(oalSource->source, AL_BUFFER, sound->GetBuffer());
-	alSourcef(oalSource->source, AL_SEC_OFFSET, (sound->GetLength() / 1000.0) - (timeLeft / 1000.0));
 
-	std::cout << "Attaching! Timeleft: " << (sound->GetLength() / 1000.0) - (timeLeft / 1000.0) << std::endl;
+	if (sound->IsStreaming())
+	{
+		streamPos = timeLeft;
+		int numBuffered = 0;
+		while (numBuffered < NUM_STREAM_BUFFERS)
+		{
+			double streamed = sound->StreamData(streamBuffers[numBuffered], streamPos);
+
+			if (streamed)
+			{
+				streamPos -= streamed;
+				++numBuffered;
+			}
+			else
+			{
+				break;
+			}
+		}
+		alSourceQueueBuffers(oalSource->source, numBuffered, &streamBuffers[0]);
+	}
+	else
+	{
+		alSourcei(oalSource->source, AL_BUFFER, sound->GetBuffer());
+		alSourcef(oalSource->source, AL_SEC_OFFSET, (sound->GetLength() / 1000.0) - (timeLeft / 1000.0));
+	}
+
 	alSourcePlay(oalSource->source);
 }
 
@@ -78,28 +117,69 @@ void		SoundEmitter::DetachSource()
 	alSourceStop(oalSource->source);
 	alSourcei(oalSource->source, AL_BUFFER, 0);
 
-	oalSource->inUse = false;
+	if (sound && sound->IsStreaming())
+	{
+		int numProcessed = 0;
+		ALuint tempBuffer;
+		alGetSourcei(oalSource->source, AL_BUFFERS_PROCESSED, &numProcessed);
+		while (numProcessed--)
+		{
+			alSourceUnqueueBuffers(oalSource->source, 1, &tempBuffer);
+		}
+	}
+
 	oalSource = NULL;
 }
 
 void		SoundEmitter::Update(float msec)
 {
-	timeLeft -= msec;
-	
+	if (sound)
+	{
+		timeLeft -= (msec * pitch);
 
-	while (isLooping && timeLeft < 0.0f) {
-		timeLeft += sound->GetLength();
+		if (isLooping)
+		{
+			while (timeLeft < 0)
+			{
+				timeLeft += sound->GetLength();
+				//streamPos += sound->GetLength();
+			}
+		}
+
+		if (oalSource)
+		{
+			alSourcef(oalSource->source, AL_GAIN, volume);
+			alSourcef(oalSource->source, AL_PITCH, pitch);
+			alSourcef(oalSource->source, AL_MAX_DISTANCE, radius);
+			alSourcef(oalSource->source, AL_REFERENCE_DISTANCE, radius * 0.2f);
+
+			alSourcefv(oalSource->source, AL_POSITION, (float*)&position);
+
+			if (sound->IsStreaming())
+			{
+				int numProcessed;
+				alGetSourcei(oalSource->source, AL_BUFFERS_PROCESSED, &numProcessed);
+				alSourcei(oalSource->source, AL_LOOPING, 0);
+
+				while (numProcessed--/* && streamPos > 0*/)  	//The && prevents clipping at the end of sounds!
+				{
+					ALuint freeBuffer;
+
+					alSourceUnqueueBuffers(oalSource->source, 1, &freeBuffer);
+
+					streamPos -= sound->StreamData(freeBuffer, streamPos);
+					alSourceQueueBuffers(oalSource->source, 1, &freeBuffer);
+
+					if (streamPos < 0 && isLooping)
+					{
+						streamPos += sound->GetLength();
+					}
+				}
+			}
+			else
+			{
+				alSourcei(oalSource->source, AL_LOOPING, isLooping ? 1 : 0);
+			}
+		}
 	}
-
-	if (oalSource) {
-		alSourcef(oalSource->source, AL_LOOPING, isLooping ? 1 : 0);
-		alSourcef(oalSource->source, AL_MAX_DISTANCE, radius);
-		alSourcef(oalSource->source, AL_REFERENCE_DISTANCE, radius*0.2f);
-	}
-}
-
-void SoundEmitter::SetPosition(const Vec3& pos)
-{
-	position = pos;
-	alSourcefv(oalSource->source, AL_POSITION, (float*)&position);
 }

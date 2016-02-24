@@ -48,7 +48,9 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>$(SolutionDir)Dependencies;$(SolutionDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)Dependencies;$(SolutionDir);$(SolutionDir)Dependencies\libvorbis-1.3.2\include\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;_MBCS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
@@ -73,12 +75,14 @@
     </Lib>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="OggSound.h" />
     <ClInclude Include="Sound.h" />
     <ClInclude Include="SoundEmitter.h" />
     <ClInclude Include="SoundManager.h" />
     <ClInclude Include="SoundSystem.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="OggSound.cpp" />
     <ClCompile Include="Sound.cpp" />
     <ClCompile Include="SoundEmitter.cpp" />
     <ClCompile Include="SoundManager.cpp" />
