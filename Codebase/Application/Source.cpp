@@ -11,6 +11,7 @@
 #include "AI\ChaseState.h"
 #include "AI\RunAwayState.h"
 #include "AI\DistanceTrigger.h"
+#include "AI\ShooterAgent.h"
 #include "Rendering\KeyboardController.h"
 
 const float TIME_STEP = 1.0f / 120.0f;
@@ -65,7 +66,6 @@ int main(void) {
 
 	//Game objects added to scene are delete by the scene so don't delete twice.
 	GameObject* ball = new GameObject("ball");
-	GameObject* aiBall = new GameObject("aiBall");
 	GameObject* light1 = new GameObject("l");
 	GameObject* light2 = new GameObject("l");
 
@@ -76,10 +76,6 @@ int main(void) {
 	ballPhysics->CreateCollisionShape(Vec3Physics(5.0, 5.0, 5.0),CUBOID);
 	ballPhysics->CreatePhysicsBody(5.0, Vec3Physics(0, 5, 0), QuatPhysics(0, 0, 0, 1), Vec3Physics(1, 1, 1));
 
-	RigidPhysicsObject* aiBallPhysics = new RigidPhysicsObject();
-	aiBallPhysics->CreateCollisionShape(2.0);
-	aiBallPhysics->CreatePhysicsBody(2.0, Vec3Physics(0.11, 15, 0.5), QuatPhysics(0, 0, 0, 1), Vec3Physics(1, 1, 1));
-	
 	RigidPhysicsObject* floorPhysics = new RigidPhysicsObject();
 	floorPhysics->CreateCollisionShape(0, Vec3Physics(0, 1, 0), true);
 	floorPhysics->CreatePhysicsBody(0, Vec3Physics(0, -1, 0), QuatPhysics(0, 0, 0, 1));
@@ -92,7 +88,7 @@ int main(void) {
 	BaseShader* simpleShader = new PS4Shader(SIMPLESHADER_VERT, SIMPLESHADER_FRAG);
 	BaseShader* pointlightShader = new PS4Shader(POINTLIGHTSHADER_VERT, POINTLIGHTSHADER_FRAG);
 #endif
-
+	
 	if (!pointlightShader->IsOperational() || !simpleShader->IsOperational())
 		return -1;
 
@@ -108,10 +104,12 @@ int main(void) {
 
 	Material* material = new Material(simpleShader);
 	Material* ballMaterial = new Material(simpleShader);
+	Material* netMaterial = new Material(simpleShader);
+	netMaterial->hasTranslucency = true;
 	ballMaterial->Set(ReservedMeshTextures.DIFFUSE.name, Texture::Get(TEXTURE_DIR"checkerboard.tga", true));
 
 	// Create Stadium
-	GameObject* stadium = new Stadium(material, "stadium"); 
+	GameObject* stadium = new Stadium(material, netMaterial, "stadium"); 
 
 	myScene->addGameObject(stadium);
 	//myScene->addLightObject(light1);
@@ -130,47 +128,11 @@ int main(void) {
 
 	myScene->attachCam(ball);
 
-	aiBall->SetRenderComponent(new RenderComponent(ballMaterial, ModelLoader::LoadMGL(MODEL_DIR"Common/sphere.mgl", true)));
-	aiBall->SetLocalTransform(Mat4Graphics::Scale(Vector3Simple(2, 2, 2)) * Mat4Graphics::Translation(Vector3Simple(0, 0, 0)));
-	aiBall->SetPhysicsComponent(aiBallPhysics);
-	aiBall->GetPhysicsComponent()->GetPhysicsBody()->setRestitution(btScalar(0.9));
-	aiBall->GetPhysicsComponent()->GetPhysicsBody()->setFriction(0.5);
-	aiBall->GetPhysicsComponent()->GetPhysicsBody()->setHitFraction(0.5);
-
-	//StateMachine* ballStateMachine = new StateMachine();
-
-	//ChaseState* chase = new ChaseState(*ballStateMachine, *aiBall, *ball);
-	//RunAwayState* run = new RunAwayState(*ballStateMachine, *aiBall, *ball);
-
-
-	//// Chase -> Run trigger 
-	////	Triggered when two objects are less than 5.0f apart
-	//DistanceTrigger* chaseToRun = new DistanceTrigger();
-	//chaseToRun->setupTrigger(*aiBall, *ball, 5.0f, true);
-	//chase->AddTrigger(chaseToRun, "Run");
-
-	//ballStateMachine->AddState("Chase", chase);
-
-
-	//// Run -> Chase trigger 
-	////	Triggered when two objects are greater than 25.0f apart
-	//DistanceTrigger* runToChase = new DistanceTrigger();
-	//runToChase->setupTrigger(*aiBall, *ball, 25.0f, false);
-	//run->AddTrigger(runToChase, "Chase");
-
-	//ballStateMachine->AddState("Run", run);
-
-	//ballStateMachine->ChangeState("Chase");
-
-	//aiBall->SetStateMachine(ballStateMachine);
 
 	myScene->addGameObject(ball);
-	myScene->addGameObject(aiBall);
 
 	renderer.SetCurrentScene(myScene);
 
-	dynamic_cast<RigidPhysicsObject*>(ball->GetPhysicsComponent())->GetPhysicsBody()->setAngularVelocity(btVector3(1, 0, 0));
-	dynamic_cast<RigidPhysicsObject*>(aiBall->GetPhysicsComponent())->GetPhysicsBody()->applyCentralForce(btVector3(10, 0, 0));
 
 #ifndef ORBIS
 	while (Window::GetWindow().UpdateWindow() && !Window::GetKeyboard()->KeyDown(KEYBOARD_ESCAPE))

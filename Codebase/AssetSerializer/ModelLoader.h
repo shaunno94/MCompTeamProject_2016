@@ -3,7 +3,7 @@
 #include <string>
 #include <vector>
 #include <sstream>
-#include "Rendering/Mesh.h"
+#include "Rendering/OGLMesh.h"
 #include "Rendering/constants.h"
 #include <fstream>
 

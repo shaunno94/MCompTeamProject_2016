@@ -7,13 +7,16 @@
 class Stadium : public GameObject
 {
 public:
-	Stadium(Material* material, const std::string& name = "");
+	Stadium(Material* material, Material* wallMaterial, const std::string& name = "");
 	~Stadium();
 
 private:
 	void CreateCollisionWalls();
-	void CreateWall(Vec2Physics start, Vec2Physics end);
+	void CreatePlane(std::vector<btConvexHullShape*> &collectionVector, Vec3Physics start, Vec3Physics end);
 
 	std::vector<btConvexHullShape*> m_collisionWalls;
+
+	Material* m_wallMaterial;
+	Texture* m_netTexture;
 };
 
