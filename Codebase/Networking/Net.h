@@ -9,7 +9,7 @@ typedef ENetAddress NetAddress;
 /// <summary>
 /// Message storage strategy for keeping messages in a stack or overwriting previous unprocessed messages.
 /// </summary>
-enum NetMessageStrategy : unsigned char
+enum NetMessageStrategy
 {
 	NetStackingMessage = 1,
 	NetLatestMessage = 2
@@ -79,19 +79,16 @@ typedef std::vector<std::vector<NetMessage*>> NetSessionMessages;
 class NetSessionMessagesBuffer
 {
 	friend class NetSessionReader;
+	friend class NetSessionWriter;
 public:
-	void AddNetMessage();
-	void Flush();
-
-	void Clear();
-
-protected:
 	NetSessionMessagesBuffer();
 	~NetSessionMessagesBuffer();
 
+protected:
+
 	DeltaTimer<float> m_timer;
 	std::timed_mutex m_mutex;
-	size_t m_writeIndex;
+	unsigned int m_writeIndex;
 	NetSessionMessages m_messageBuffers[2];
 };
 
@@ -110,58 +107,19 @@ private:
 	NetSessionMessagesBuffer* m_buffer;
 };
 
-struct NetMessageBufferServer : public NetSessionMessagesBuffer
-{
-	void AddNetMessage();
-	void GetNetMessage();
 
-protected:
-	//buffer messages using 3 frames for the networking thread to process
-	static const size_t m_messageBufferSize = 3;
-	volatile size_t m_messageBufferReadIndex;
-	std::vector<NetMessage*> m_messageBuffers[m_messageBufferSize];
-};
-
-class NetSession
+class NetSessionWriter
 {
 public:
-	inline bool IsUpdated() const
-	{
-		return m_updated;
-	}
+	NetSessionWriter(NetSessionMessagesBuffer* buffer);
+	~NetSessionWriter();
 
-	std::timed_mutex sendMutex;
-	NetBuffer sendBuffer;
+	void AddNetMessage(NetMessage* message);
 
-protected:
-
-	volatile bool m_updated;
-	//TODO: state for preparing and active for the server
-	int state;
-	//mutex
-	//send()
-	//connection count
-	//my connection index
-	//get connection info
+private:
+	NetSessionMessagesBuffer* m_buffer;
 };
 
-class NetSessionInternal : public NetSession
-{
-public:
-
-	inline void IsUpdated(bool val)
-	{
-		m_updated = val;
-	}
-
-	std::timed_mutex recvMutex;
-
-	NetSessionMessagesBuffer m_outgoingBuffer;
-	NetSessionMessagesBuffer m_incomingBuffer;
-};
-
-
-//Needs removing?
 enum NetConnectionState
 {
 	NetPeerConnecting,
@@ -208,20 +166,84 @@ protected:
 	bool m_initialConnectMade;
 	bool m_ready;
 	std::string m_addressStr;
+	DeltaTimer<float> m_timer;
+};
+
+enum NetSessionState
+{
+	NetSessionInactive = 1,
+	NetSessionActive = 2
+};
+
+class NetSession
+{
+public:
+	inline NetSessionMessagesBuffer* getSendBuffer()
+	{
+		return &m_sendBuffer;
+	}
+	inline NetSessionMessagesBuffer* getRecvBuffer()
+	{
+		return &m_recvBuffer;
+	}
+	inline std::vector<NetConnectionData*>& GetConnections()
+	{
+		return m_players;
+	}
+
+protected:
+	//TODO: state for preparing and active; for the server to check
+	NetSessionState state;
+
+	NetSessionMessagesBuffer m_sendBuffer;
+	NetSessionMessagesBuffer m_recvBuffer;
+
+	std::vector<NetConnectionData*> m_players;
+
+	//mutex
+	//send()
+	//connection count
+	//my connection index
+	//get connection info
 };
 
 
 class NetHost
 {
 	friend class Net;
-
-public:
-	inline NetSession* GetSession() const
-	{
-		return m_session;
-	}
-
 protected:
+
+	class NetConnectionDataInternal : public NetConnectionData
+	{
+	public:
+		/// <summary>
+		/// Creates connection to a server
+		/// </summary>
+		/// <param name="address"></param>
+		NetConnectionDataInternal(const std::string& address) : NetConnectionData(address) {}
+		/// <summary>
+		/// Saves connection from a client
+		/// </summary>
+		NetConnectionDataInternal(ENetPeer* peer) : NetConnectionData(peer) {}
+
+		inline void SetPeer(ENetPeer* peer)
+		{
+			m_peer = peer;
+		}
+		inline void SetInitialConnection(bool val = true)
+		{
+			m_initialConnectMade = val;
+		}
+
+		inline DeltaTimer<float>& GetTimer()
+		{
+			return m_timer;
+		}
+
+	protected:
+		DeltaTimer<float> m_timer;
+	};
+
 	NetHost();
 
 	ENetHost* m_host;

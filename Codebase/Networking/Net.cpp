@@ -60,6 +60,11 @@ NetConnectionState NetConnectionData::GetState() const
 	return NetConnectionState::NetPeerDisconnecting;
 }
 
+NetSessionMessagesBuffer::NetSessionMessagesBuffer()
+{
+	m_writeIndex = 0;
+}
+
 
 NetSessionReader::NetSessionReader(NetSessionMessagesBuffer* buffer)
 {
@@ -70,7 +75,9 @@ NetSessionReader::NetSessionReader(NetSessionMessagesBuffer* buffer)
 NetSessionReader::~NetSessionReader()
 {
 	if (m_result)
-		m_buffer->m_mutex.unlock();
+	{
+		m_result->clear();
+	}
 }
 
 const NetSessionMessages* NetSessionReader::GetMessages()
@@ -78,26 +85,50 @@ const NetSessionMessages* NetSessionReader::GetMessages()
 	if (m_result)
 		return m_result;
 
+
 	if (m_buffer->m_mutex.try_lock())
 	{
-		m_result = &m_buffer->m_messageBuffers[(++(m_buffer->m_writeIndex)) % 2];
+		unsigned int readIndex = m_buffer->m_writeIndex;
+		m_buffer->m_writeIndex = (m_buffer->m_writeIndex + 1) % 2;
+		m_buffer->m_mutex.unlock();
+
+		m_result = &m_buffer->m_messageBuffers[readIndex];
+		m_buffer->m_timer.Get();
 	}
 	else if (m_buffer->m_timer.Peek(1000.0f) > NET_FORCE_READ_SESSION_TIMEOUT)
 	{
 		m_buffer->m_mutex.lock();
-		m_result = &m_buffer->m_messageBuffers[(++(m_buffer->m_writeIndex)) % 2];
+		unsigned int readIndex = m_buffer->m_writeIndex;
+		m_buffer->m_writeIndex = (m_buffer->m_writeIndex + 1) % 2;
+		m_buffer->m_mutex.unlock();
+
+		m_result = &m_buffer->m_messageBuffers[readIndex];
+		m_buffer->m_timer.Get();
 	}
+
+	return m_result;
 }
 
 
-void NetBuffer::AddNetMessage()
+
+NetSessionWriter::NetSessionWriter(NetSessionMessagesBuffer* buffer)
 {
-
+	m_buffer = buffer;
+	m_buffer->m_mutex.lock();
 }
-void NetBuffer::GetNetMessage()
+
+NetSessionWriter::~NetSessionWriter()
 {
-
+	m_buffer->m_mutex.unlock();
 }
+
+
+void NetSessionWriter::AddNetMessage(NetMessage* message)
+{
+	m_buffer->m_messageBuffers[m_buffer->m_writeIndex][0/*player index*/].push_back(message);
+}
+
+
 
 bool Net::Init()
 {
