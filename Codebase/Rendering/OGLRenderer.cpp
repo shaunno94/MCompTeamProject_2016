@@ -348,6 +348,12 @@ void OGLRenderer::SetTextureFlags(unsigned int id, unsigned int flags)
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR_MIPMAP_LINEAR);
 	}
 
+	if ((flags & ANISOTROPIC_FILTERING) == ANISOTROPIC_FILTERING) {
+		GLfloat max_aniso;
+		glGetFloatv(GL_MAX_TEXTURE_MAX_ANISOTROPY_EXT, &max_aniso);
+		glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAX_ANISOTROPY_EXT, max_aniso);
+	}
+
 	glBindTexture(GL_TEXTURE_2D, 0);
 }
 

@@ -68,9 +68,14 @@ public:
 	static Mesh*	GenerateTriangle();
 	//Generates a single white quad, going from -1 to 1 on the x and z axis.
 	static Mesh*	GenerateQuad(Vec2Graphics texCoords = Vec2Graphics(1.0f, 1.0f));
+
+	// Draw quad between 4 vertices (Created for Stadium walls)
+	static Mesh*	GenerateQuad(Vec3Graphics* vertices, Vec2Graphics texCoords = Vec2Graphics(1.0f, 1.0f));
+
 	static Mesh*	GenerateQuadAlt();
 	//Generates a coloured quad, going from -1 to 1 on the x and z axis, with adjustable texture coords.
 	static Mesh*	GenerateQuadTexCoordCol(Vec2Graphics scale, Vec2Graphics texCoord, Vec4Graphics colour); //NX 01/11/2012
+
 
 	//Gets the Mesh's diffuse map. Returns an OpenGL texture 'name'
 	inline Texture*  GetTexture(size_t index) const

@@ -127,7 +127,5 @@ protected:
 	Mat4Graphics				m_WorldTransform;
 	Mat4Graphics				m_LocalTransform;
 
-	StateMachine*				m_StateMachine;
-
 	float m_CamDist; //For ordering of rendering lists.
 };
