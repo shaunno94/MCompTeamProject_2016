@@ -3,11 +3,11 @@
 class GUIOrthoElements
 {
 public:
-	GUIOrthoElements(float z);
+	GUIOrthoElements(float z = 0.0f);
 	virtual ~GUIOrthoElements();
 
-	virtual bool Update(float delta) = 0;
-	virtual void Render() = 0;
+	virtual bool Update(float dt) = 0;
+	virtual void Render(float dt) = 0;
 
 	std::vector<GUIOrthoElements*>& GetChildren()
 	{

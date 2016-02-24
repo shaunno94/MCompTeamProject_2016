@@ -21,12 +21,12 @@ bool GUISystem::HasInitialised()
 	return init;
 }
 
-void GUISystem::AddComponent(GUIOrthoElements* component)
+void GUISystem::AddOrthoElement(GUIOrthoElements* component)
 {
 	m_elements.push_back(component);
 }
 
-void GUISystem::RemoveComponent(GUIOrthoElements* component)
+void GUISystem::AddOrthoElement(GUIOrthoElements* component)
 {
 	for (unsigned int i = 0; i < m_elements.size(); ++i)
 	{
@@ -38,20 +38,13 @@ void GUISystem::RemoveComponent(GUIOrthoElements* component)
 void GUISystem::Update(float delta)
 {
 	for (unsigned int i = 0; i < m_elements.size(); ++i)
-	{
-		if (!m_elements[i]->Update(delta))
-		{
-			delete m_elements[i];
-		}
-	}
+		m_elements[i]->Update(delta);
 }
 
 void GUISystem::Render(float delta)
 {
-	Update(delta);
-
 	for (unsigned int i = 0; i < m_elements.size(); ++i)
-		m_elements[i]->Render();
+		m_elements[i]->Render(delta);
 }
 
 void GUISystem::Shutdown()

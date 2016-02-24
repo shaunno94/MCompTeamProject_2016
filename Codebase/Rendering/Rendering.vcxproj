@@ -202,7 +202,7 @@
     <ClCompile Include="GUIOrthoElements.cpp" />
     <ClCompile Include="GUISystem.cpp" />
     <ClCompile Include="GUIComponent.cpp" />
-    <ClCompile Include="HUD_OrthoElement.cpp" />
+    <ClCompile Include="HUDOrthoElement.cpp" />
     <ClCompile Include="LightMaterial.cpp" />
     <ClCompile Include="Material.cpp" />
     <ClCompile Include="Mesh.cpp" />
@@ -224,7 +224,7 @@
     <ClCompile Include="OGLShader.cpp" />
     <ClCompile Include="BaseShader.cpp" />
     <ClCompile Include="ScoreboardGUI.cpp" />
-    <ClCompile Include="Scoretable_OrthoElementcpp" />
+    <ClCompile Include="ScoretableOrthoElement.cpp" />
     <ClCompile Include="SoftPhysicsObject.cpp" />
     <ClCompile Include="TableBackgroundGUI.cpp" />
     <ClCompile Include="TextInfoGUI.cpp" />

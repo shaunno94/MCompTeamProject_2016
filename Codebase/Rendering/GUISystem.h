@@ -5,10 +5,10 @@ class GUISystem
 public:
 	static bool Initialise();
 	static void Destroy();
-	static GUISystem& GetManager(){ return *guiSystem; };
+	static GUISystem& GetSystem(){ return *guiSystem; };
 
-	void AddComponent(GUIOrthoElements* element);
-	void RemoveComponent(GUIOrthoElements* element);
+	void AddOrthoElement(GUIOrthoElements* element);
+	void RemoveOrthoElement(GUIOrthoElements* element);
 	void Update(float delta);
 	void Render(float delta);
 	void Shutdown();
