@@ -22,7 +22,8 @@ void ControllerComponent::updateObject(float dt){
 		dynamic_cast<RigidPhysicsObject*>(m_parent->GetPhysicsComponent())->GetPhysicsBody()->activate();
 	dynamic_cast<RigidPhysicsObject*>(m_parent->GetPhysicsComponent())->GetPhysicsBody()->applyCentralForce(btVector3(force.x, force.y, force.z) * dt);
 	force.ToZero();
-	dynamic_cast<RigidPhysicsObject*>(m_parent->GetPhysicsComponent())->GetPhysicsBody()->applyTorque(btVector3(force.x, force.y, force.z)*dt);
+	dynamic_cast<RigidPhysicsObject*>(m_parent->GetPhysicsComponent())->GetPhysicsBody()->applyTorque(btVector3(torque.x, torque.y, torque.z)*dt);
+	//dynamic_cast<RigidPhysicsObject*>(m_parent->GetPhysicsComponent())->GetPhysicsBody()->applyCentralImpulse(btVector3(torque.x, torque.y, torque.z)*dt);
 	torque.ToZero();
 }
 
@@ -39,7 +40,7 @@ void ControllerComponent::AddTorque(float x, float y, float z){
 }
 
 Mat4Physics ControllerComponent::getOrientation(){
-	Renderer::GetInstance()->GetCurrentScene()->getCamera();
+	//Renderer::GetInstance()->GetCurrentScene()->getCamera();
 	return m_parent->GetWorldTransform().GetRotation();
 }
 
@@ -56,8 +57,10 @@ void ControllerComponent::getCameraControl(float& pitch, float& yaw){
 	pitch = fmin(pitch, 45.0f);
 	pitch = fmax(pitch, -45.0f);
 
-	if (yaw < 0)
+	yaw = fmin(yaw, 45.0f);
+	yaw = fmax(yaw, -45.0f);
+	/*if (yaw < 0)
 		yaw += 360.0f;
 	if (yaw > 360.0f)
-		yaw -= 360.0f;
+		yaw -= 360.0f;*/
 }

@@ -14,7 +14,7 @@ KeyboardController::~KeyboardController()
 void KeyboardController::CheckInput(){
 	Vec3Physics force(0, 0, 0);
 	Vec3Physics torque(0, 0, 0);
-	Mat4Physics orientation; //= object->getOrientation();
+	Mat4Physics orientation = object->getOrientation();
 	if (Window::GetKeyboard()->KeyDown(KEYBOARD_UP) || Window::GetKeyboard()->KeyDown(KEYBOARD_W))
 	{
 		force += (orientation * Vec3Physics(5, 0, 0));
@@ -25,14 +25,20 @@ void KeyboardController::CheckInput(){
 	}
 	if (Window::GetKeyboard()->KeyDown(KEYBOARD_RIGHT) || Window::GetKeyboard()->KeyDown(KEYBOARD_D))
 	{
-		//torque += (Vec3Physics(0,1000, 0));
-		force += (orientation * Vec3Physics(0, 0, 5));
+		torque += (Vec3Physics(0,10, 0));
+		//force += (orientation * Vec3Physics(0, 0, 5));
 	}
 	if (Window::GetKeyboard()->KeyDown(KEYBOARD_LEFT) || Window::GetKeyboard()->KeyDown(KEYBOARD_A))
 	{
-		//torque += (Vec3Physics(0, -1000, 0));
-		force += (orientation * Vec3Physics(0, 0, -5));
+		torque += (Vec3Physics(0, -10, 0));
+		//force += (orientation * Vec3Physics(0, 0, -5));
 	}
+
+	if (Window::GetKeyboard()->KeyTriggered(KEYBOARD_SPACE))
+	{
+		//torque += (orientation * Vec3Physics(0, 5, 0));
+	}
+
 	object->AddForce(force.x, force.y, force.z);
 	object->AddTorque(torque.x, torque.y, torque.z);
 

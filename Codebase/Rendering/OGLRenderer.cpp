@@ -494,7 +494,7 @@ void OGLRenderer::FillBuffers()
 #if DEBUG_DRAW
 	PhysicsEngineInstance::Instance()->debugDrawWorld();
 #endif
-
+	DrawSky();
 	child->OnRenderScene();
 
 	glUseProgram(0);
@@ -645,4 +645,9 @@ void OGLRenderer::DrawShadow2D(GameObject* light){
 	
 	child->OnUpdateScene(child->frameFrustrum, child->currentScene->getCamera()->GetPosition());
 }
+
+void OGLRenderer::DrawSky(){
+
+}
+
 #endif

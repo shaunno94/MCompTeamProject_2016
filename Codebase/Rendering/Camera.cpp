@@ -11,9 +11,9 @@ void Camera::UpdateCamera(float msec)	{
 		position = 
 			Mat4Graphics::Translation(player->GetWorldTransform().GetTranslation()) *
 			Mat4Graphics::Rotation(yaw, Vec3Graphics(0, 1, 0)) *
-			Mat4Graphics::Translation(Vector3Simple(0, 15, 25)) *
+			Mat4Graphics::Translation(Vector3Simple(25, 15, 0)) *
 			Mat4Graphics::Rotation(pitch, Vec3Graphics(1, 0, 0)) *
-			Vector3Simple(0, 1, 1);
+			Vector3Simple(1, 1, 1);
 
 		//position.y = 10;
 	}

@@ -104,6 +104,7 @@ protected:
 	void DrawShadow(GameObject* light);
 	void DrawShadow2D(GameObject* light);
 	void DrawShadowCube(GameObject* light);
+	void DrawSky();
 
 	GLuint bufferFBO; // FBO for G- Buffer pass
 	GLuint bufferColourTex; // Albedo goes here
