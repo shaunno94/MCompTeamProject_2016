@@ -13,27 +13,30 @@ class NetServer : public NetHost
 {
 	friend class Net;
 public:
-	NetServer();
+	NetServer(unsigned int maxPlayers);
 	~NetServer();
 
 	NetAddress GetIp(); //???
 
 	inline size_t GetConnectionCount() const
 	{
-		return m_pendingConnections.size();
+		return m_connections.size();
 	}
 
-	void AddToSession();
-	void RemoveFromSession();
+	bool AddToSession(NetConnectionData* connection);
+	bool RemoveFromSession(unsigned int id);
 
 	inline NetConnectionData* GetConnection(size_t index) const
 	{
-		return m_pendingConnections[index];
+		return m_connections[index];
 	}
 
-	void AddPeer();
+	inline NetSession* GetSession()
+	{
+		return m_session;
+	}
+	void StartSession();
 
-	NetSession* StartSession();
 	void Disconnect();
 	inline NetServerState GetState()
 	{
@@ -43,19 +46,19 @@ public:
 private:
 
 	void DisconnectService();
-	void Service();
+	void SessionSetupService();
+	void SessionStartService(unsigned int pendingDisconnectionCount);
+	void SessionRunService();
 	void ProcessDisconnections();
 
 	void AddNewConnection(ENetPeer* peer);
 
-	std::vector<NetConnectionDataInternal*> m_pendingConnections;
+	std::vector<NetConnectionDataInternal*> m_connections;
 	std::vector<NetConnectionDataInternal*> m_pendingDisconnections;
 
 	static const size_t s_packetBufferSize = 3;
 	volatile size_t m_packetBufferReadIndex;
 	std::vector<ENetPacket*> m_packets[s_packetBufferSize];
 
-	NetSessionInternal* m_readySession;
-
-	volatile NetServerState m_state;
+	NetServerState m_state;
 };

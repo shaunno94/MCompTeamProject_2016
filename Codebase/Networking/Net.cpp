@@ -12,7 +12,6 @@ NetConnectionData::NetConnectionData(const std::string& address) : m_addressStr(
 {
 	m_peer = nullptr;
 	m_initialConnectMade = false;
-	m_approved = false;
 	m_ready = false;
 }
 
@@ -26,7 +25,6 @@ NetConnectionData::NetConnectionData(ENetPeer* peer)
 
 	m_peer = peer;
 	m_initialConnectMade = true;
-	m_approved = false;
 	m_ready = false;
 }
 NetConnectionData::~NetConnectionData()
@@ -63,6 +61,14 @@ NetConnectionState NetConnectionData::GetState() const
 NetSessionMessagesBuffer::NetSessionMessagesBuffer()
 {
 	m_writeIndex = 0;
+}
+
+
+NetSession::NetSession(unsigned int maxPlayers)
+{
+	m_state = NetSessionInactive;
+	//TODO: add preallocation for the NetSessionMessagesBuffer (fill constructor?) when you have max message type count (per player vector reservation)
+	m_players.reserve(maxPlayers);
 }
 
 
@@ -125,9 +131,8 @@ NetSessionWriter::~NetSessionWriter()
 
 void NetSessionWriter::AddNetMessage(NetMessage* message)
 {
-	m_buffer->m_messageBuffers[m_buffer->m_writeIndex][0/*player index*/].push_back(message);
+	m_buffer->m_messageBuffers[m_buffer->m_writeIndex][0].push_back(message);
 }
-
 
 
 bool Net::Init()
@@ -167,40 +172,12 @@ void Net::Clear()
 	}
 }
 
-NetServer* Net::GetServer()
-{
-	if (!s_NetServer)
-	{
-		s_NetServer = new NetServer();
-		if (!s_NetServer->host)
-		{
-			delete s_NetServer;
-			s_NetServer = nullptr;
-		}
-	}
-	return s_NetServer;
-}
-
-NetClient* Net::GetClient()
-{
-	if (!s_NetClient)
-	{
-		s_NetClient = new NetClient();
-		if (!s_NetClient->host)
-		{
-			delete s_NetClient;
-			s_NetClient = nullptr;
-		}
-	}
-	return s_NetClient;
-}
 
 NetHost::NetHost()
 {
 	m_host = nullptr;
 	m_stopService = false;
-	m_sessionReadFrame = nullptr;
-	m_sessionWriteFrame = nullptr;
+	m_session = nullptr;
 }
 
 

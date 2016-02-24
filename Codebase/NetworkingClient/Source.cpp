@@ -37,19 +37,22 @@ int main()
 		return 1;
 	}
 
-	//wait for approval
-	while (!connection->IsApproved() && connection->GetState() == NetPeerConnected)
-	{}
+	client->Ready();
 
-	//send ready state for the session
-	connection->IsReady(true);
 
-	client->GetSession();
-
-	auto session = client->GetSession();
-
-	while (connection->)
+	NetSession* session = nullptr;
+	while (!session)
 	{
-
+		session = client->GetSession();
+		if (!session)
+		{
+			std::cout << "Session not found, enter int to continue"LINE_SEPARATOR_DEF;
+			int x;
+			std::cin >> x;
+		}
 	}
+	
+	//Do stuff
+
+	delete client;
 }

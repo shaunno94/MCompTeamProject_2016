@@ -9,7 +9,7 @@ typedef ENetAddress NetAddress;
 /// <summary>
 /// Message storage strategy for keeping messages in a stack or overwriting previous unprocessed messages.
 /// </summary>
-enum NetMessageStrategy
+enum NetMessageStrategy : uint32_t
 {
 	NetStackingMessage = 1,
 	NetLatestMessage = 2
@@ -108,6 +108,7 @@ private:
 };
 
 
+//TODO: make a buffered writer that requests a lock and flushes on deconstruction
 class NetSessionWriter
 {
 public:
@@ -166,18 +167,23 @@ protected:
 	bool m_initialConnectMade;
 	bool m_ready;
 	std::string m_addressStr;
-	DeltaTimer<float> m_timer;
 };
 
 enum NetSessionState
 {
-	NetSessionInactive = 1,
-	NetSessionActive = 2
+	NetSessionActive = 1,
+	NetSessionActivating = 2,
+	NetSessionInactive = 3,
 };
 
 class NetSession
 {
+	friend class NetServer;
+	friend class NetClient;
 public:
+
+	NetSession(unsigned int maxPlayers);
+
 	inline NetSessionMessagesBuffer* getSendBuffer()
 	{
 		return &m_sendBuffer;
@@ -190,10 +196,14 @@ public:
 	{
 		return m_players;
 	}
+	inline NetSessionState GetState()
+	{
+		return m_state;
+	}
 
 protected:
 	//TODO: state for preparing and active; for the server to check
-	NetSessionState state;
+	NetSessionState m_state;
 
 	NetSessionMessagesBuffer m_sendBuffer;
 	NetSessionMessagesBuffer m_recvBuffer;
