@@ -11,6 +11,7 @@
 #include "AI\ChaseState.h"
 #include "AI\RunAwayState.h"
 #include "AI\DistanceTrigger.h"
+#include "Rendering\KeyboardController.h"
 
 const float TIME_STEP = 1.0f / 120.0f;
 const unsigned int SUB_STEPS = 4;
@@ -72,8 +73,8 @@ int main(void) {
 	//call CreateCollisionShape before CreatePhysicsBody or the object will not be created correctly.
 	//Physics objects will be deleted by the game object.
 	RigidPhysicsObject* ballPhysics = new RigidPhysicsObject();
-	ballPhysics->CreateCollisionShape(5.0);
-	ballPhysics->CreatePhysicsBody(5.0, Vec3Physics(0, 0, 0), QuatPhysics(0, 0, 0, 1), Vec3Physics(1, 1, 1));
+	ballPhysics->CreateCollisionShape(Vec3Physics(5.0, 5.0, 5.0),CUBOID);
+	ballPhysics->CreatePhysicsBody(5.0, Vec3Physics(0, 5, 0), QuatPhysics(0, 0, 0, 1), Vec3Physics(1, 1, 1));
 
 	RigidPhysicsObject* aiBallPhysics = new RigidPhysicsObject();
 	aiBallPhysics->CreateCollisionShape(2.0);
@@ -91,7 +92,7 @@ int main(void) {
 	BaseShader* simpleShader = new PS4Shader(SIMPLESHADER_VERT, SIMPLESHADER_FRAG);
 	BaseShader* pointlightShader = new PS4Shader(POINTLIGHTSHADER_VERT, POINTLIGHTSHADER_FRAG);
 #endif
-	
+
 	if (!pointlightShader->IsOperational() || !simpleShader->IsOperational())
 		return -1;
 
@@ -100,7 +101,7 @@ int main(void) {
 	light1->SetWorldTransform(Mat4Graphics::Translation(Vec3Graphics(0, 2, 2)) *Mat4Graphics::Scale(Vec3Graphics(20, 20, 20)));
 	light1->SetBoundingRadius(20);
 
-	lightMaterial->shadowType=_2D;
+	lightMaterial->shadowType = _2D;
 	light2->SetRenderComponent(new RenderComponent(lightMaterial, ModelLoader::LoadMGL(MODEL_DIR"Common/ico.mgl", true)));
 	light2->SetWorldTransform(Mat4Graphics::Translation(Vec3Graphics(600, 600, 600)) *Mat4Graphics::Scale(Vec3Graphics(1600, 1600, 1600)));
 	light2->SetBoundingRadius(1600);
@@ -116,12 +117,18 @@ int main(void) {
 	//myScene->addLightObject(light1);
 	myScene->addLightObject(light2);
 
-	ball->SetRenderComponent(new RenderComponent(ballMaterial, ModelLoader::LoadMGL(MODEL_DIR"Common/sphere.mgl", true)));
+	ball->SetRenderComponent(new RenderComponent(ballMaterial, ModelLoader::LoadMGL(MODEL_DIR"Common/cube.mgl", true)));
 	ball->SetLocalTransform(Mat4Graphics::Scale(Vector3Simple(5, 5, 5)));
 	ball->SetPhysicsComponent(ballPhysics);
 	ball->GetPhysicsComponent()->GetPhysicsBody()->setRestitution(btScalar(0.9));
 	ball->GetPhysicsComponent()->GetPhysicsBody()->setFriction(0.5);
+	ball->GetPhysicsComponent()->GetPhysicsBody()->setRollingFriction(0.5);
 	ball->GetPhysicsComponent()->GetPhysicsBody()->setHitFraction(0.5);
+
+	ControllerComponent* cc = new ControllerComponent(ball);
+	myScene->setPlayerController(new KeyboardController(cc));
+
+	myScene->attachCam(ball);
 
 	aiBall->SetRenderComponent(new RenderComponent(ballMaterial, ModelLoader::LoadMGL(MODEL_DIR"Common/sphere.mgl", true)));
 	aiBall->SetLocalTransform(Mat4Graphics::Scale(Vector3Simple(2, 2, 2)) * Mat4Graphics::Translation(Vector3Simple(0, 0, 0)));

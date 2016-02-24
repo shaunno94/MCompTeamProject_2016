@@ -47,6 +47,7 @@ void Renderer::UpdateScene(float msec)
 		//Updates all objects in the scene, sorts lists for rendering
 		frameFrustrum.FromMatrix(projMatrix * viewMatrix);
 		currentScene->UpdateNodeLists(msec, frameFrustrum, currentScene->getCamera()->GetPosition());
+		currentScene->playerController->CheckInput();
 	}
 
 	if (m_UpdateGlobalUniforms)
@@ -82,9 +83,9 @@ void Renderer::RenderScene(float msec)
 	SwapBuffers();
 }
 
-void Renderer::OnUpdateScene(float dt, Frustum& frustum, Vec3Graphics camPos)
+void Renderer::OnUpdateScene(Frustum& frustum, Vec3Graphics camPos)
 {
-	currentScene->UpdateNodeLists(dt, frustum, camPos);
+	currentScene->UpdateFrustumCulling(frustum, camPos);
 }
 
 void Renderer::OnRenderScene()

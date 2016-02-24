@@ -24,6 +24,10 @@ GameObject::~GameObject()
 		delete m_RenderComponent;
 		m_RenderComponent = nullptr;
 	}
+	if (m_Controller) {
+		delete m_Controller;
+		m_Controller = nullptr;
+	}
 }
 
 GameObject*	GameObject::FindGameObject(const std::string& name)
@@ -57,7 +61,7 @@ void GameObject::AddChildObject(GameObject* child)
 
 
 //TODO:: Parent-child relationship needs to be undone for sorted drawing!!
-void GameObject::OnRenderObject()				
+void GameObject::OnRenderObject()
 {
 	for (auto child : m_Children)
 	{
@@ -73,6 +77,8 @@ void GameObject::OnUpdateObject(float dt)
 	{
 		child->OnUpdateObject(dt);
 	}
+	if (m_Controller)
+		m_Controller->updateObject(dt);
 	UpdateTransform();
 }
 
@@ -98,7 +104,7 @@ void GameObject::UpdateTransform()
 	//Convert
 	p = Vec3Graphics(pos.x(), pos.y(), pos.z());
 	r = QuatGraphics(rot.x(), rot.y(), rot.z(), rot.w());
-	
+
 	//Update model matrix 
 	m_WorldTransform = Mat4Graphics::Translation(p) * r.ToMatrix4() * m_LocalTransform;
 

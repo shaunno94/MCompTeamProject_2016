@@ -5,6 +5,7 @@
 #include <sstream>
 #include "Rendering/Mesh.h"
 #include "Rendering/constants.h"
+#include <fstream>
 
 struct ObjVertData
 {
