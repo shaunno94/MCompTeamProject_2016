@@ -29,6 +29,12 @@ public:
 	PS4Shader(const string& vertex, const string& pixel, const string& geometry = "", const string& hull = "", const string& domain = "");
 	~PS4Shader();
 
+	int GetReservedMeshTextureUniformLocation(uint32_t index) const override { return m_ReservedMeshTextureLocations[index]; }
+	int GetReservedMeshColourUniformLocation(uint32_t index) const override { return m_ReservedMeshColourLocations[index]; }
+	bool IsOperational() const override { return operational; }
+	int	GetResourceByName(const std::string &name) const override;
+	int GetModelMatrixLocation() const override { return m_ModelMatrixLocation; }
+
 protected:
 	void GenerateVertexShader(const string&name, bool makeFetch);
 	void GeneratePixelShader(const string&name);
@@ -42,12 +48,7 @@ protected:
 	bool ShaderIsBinary(const string& name);
 	
 	void SubmitShaderSwitch(sce::Gnmx::GnmxGfxContext& cmdList);
-	
-	int	GetResourceByName(const std::string &name) const override;
-	bool IsOperational() const override { return operational; }
-	int GetReservedMeshTextureUniformLocation(size_t index) const override { return m_ReservedMeshTextureLocations[index]; }
 
-protected:
 	void*							fetchShader;
 
 	sce::Shader::Binary::Program	vertexBinary;

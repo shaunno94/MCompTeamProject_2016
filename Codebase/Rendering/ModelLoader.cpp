@@ -109,6 +109,12 @@ Mesh* ReadMeshFromMGL(std::ifstream& in)
 				sstream << c;
 				in.get(c);
 			}
+/*#ifdef ORBIS
+			std::string newFilePath = File::RemoveFileExt(sstream.str());
+			Texture* newTexture = Texture::Get(MODEL_DIR + newFilePath + ".gnf");
+#else
+			Texture* newTexture = Texture::Get(MODEL_DIR + newFilePath);
+#endif*/
 			Texture* newTexture = Texture::Get(MODEL_DIR + sstream.str());
 			newTexture->SetTextureParams(TextureFlags::REPEATING | TextureFlags::TRILINEAR_MIN_MAX_FILTERING);
 

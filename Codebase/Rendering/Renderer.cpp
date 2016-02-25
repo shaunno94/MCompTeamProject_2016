@@ -44,6 +44,7 @@ void Renderer::UpdateScene(float msec)
 	{
 		currentScene->getCamera()->UpdateCamera(msec);
 		viewMatrix = currentScene->getCamera()->BuildViewMatrix();
+		//viewMatrix = viewMatrix * Matrix4Simple::Translation(Vector3Simple(0.1, 0, 0));
 		//Updates all objects in the scene, sorts lists for rendering
 		frameFrustrum.FromMatrix(projMatrix * viewMatrix);
 		currentScene->UpdateNodeLists(msec, frameFrustrum, currentScene->getCamera()->GetPosition());
@@ -59,9 +60,6 @@ void Renderer::UpdateScene(float msec)
 		}
 		//m_UpdateGlobalUniforms = false;
 	}
-	//TODO: This will not work. As each object could have its own shader, the update needs to be called for each game object.
-	//TODO: When we add UBOs this approach will be valid again, so no need to spend a lot of time fixing this issue.
-	UpdateShaderMatrices();
 }
 
 //TODO:: Might need to be seperate from UpdateScene call if you want to update the scene once and draw several times (like for the cube shadow maps)
@@ -70,7 +68,6 @@ void Renderer::RenderScene(float msec)
 	projMatrix = localProjMat;
 	UpdateScene(msec);
 
-	//glUseProgram(currentShader->GetProgram());
 	//Draws all objects attatched to the current scene.
 	if (currentScene)
 	{

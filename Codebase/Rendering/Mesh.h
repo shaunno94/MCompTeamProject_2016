@@ -137,6 +137,8 @@ protected:
 
 	std::vector<Mesh*> m_Children;
 
+	void Clean();
+
 	//Number of vertices for this mesh
 	uint32_t m_NumVertices;
 	//Number of indices for this mesh

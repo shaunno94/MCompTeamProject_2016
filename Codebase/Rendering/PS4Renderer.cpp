@@ -12,16 +12,31 @@ PS4Renderer::PS4Renderer()
 	currentGPUBuffer = 0;
 	currentScreenBuffer = 0;
 	prevScreenBuffer = 0;
+	projMatrix.ToIdentity();
+	viewMatrix.ToIdentity();
 
 	currentScreenBuffer = 0;
+	currentShader = nullptr;
 	currentGFXContext = nullptr;
 
 	InitialiseMemoryAllocators();
 	InitialiseGCMRendering();
 	InitialiseVideoSystem();
-	init = true;
 
-	SwapBuffers();
+	trilinearSampler.init();
+	trilinearSampler.setMipFilterMode(sce::Gnm::kMipFilterModeLinear);
+	trilinearSampler.setXyFilterMode(sce::Gnm::kFilterModeAnisoBilinear, sce::Gnm::kFilterModeAnisoBilinear);
+
+	primitiveSetup.init();
+	primitiveSetup.setCullFace(sce::Gnm::kPrimitiveSetupCullFaceNone);
+	primitiveSetup.setFrontFace(sce::Gnm::kPrimitiveSetupFrontFaceCcw);
+
+	dsc.init();
+	dsc.setDepthControl(sce::Gnm::kDepthControlZWriteEnable, sce::Gnm::kCompareFuncLessEqual);
+	dsc.setDepthEnable(true);
+
+	SwapBuffers();	
+	init = true;
 }
 
 void PS4Renderer::InitialiseVideoSystem()
@@ -112,8 +127,12 @@ void PS4Renderer::SetTextureFlags(const sce::Gnm::Texture*, unsigned int flags)
 }
 
 void PS4Renderer::SetCurrentShader(BaseShader* s)
-{
+{	
+	if (s == currentShader)
+		return;
+
 	currentShader = static_cast<PS4Shader*>(s);
+	currentShader->SubmitShaderSwitch(*currentGFXContext);
 }
 
 void PS4Renderer::FillBuffers()
@@ -121,34 +140,13 @@ void PS4Renderer::FillBuffers()
 	currentFrame->StartFrame();
 
 	currentGFXContext->waitUntilSafeForRendering(videoHandle, currentGPUBuffer);
+	
 	SetRenderBuffer(currentPS4Buffer, true, true, true);
-
-	currentShader->SubmitShaderSwitch(*currentGFXContext);
-
-	//Primitive Setup State
-	sce::Gnm::PrimitiveSetup primitiveSetup;
-	primitiveSetup.init();
-	primitiveSetup.setCullFace(sce::Gnm::kPrimitiveSetupCullFaceNone);
-	primitiveSetup.setFrontFace(sce::Gnm::kPrimitiveSetupFrontFaceCcw);
-	//primitiveSetup.setPolygonMode()
+	
 	currentGFXContext->setPrimitiveSetup(primitiveSetup);
-
-	//Screen Access State
-	sce::Gnm::DepthStencilControl dsc;
-	dsc.init();
-	dsc.setDepthControl(sce::Gnm::kDepthControlZWriteEnable, sce::Gnm::kCompareFuncLessEqual);
-	dsc.setDepthEnable(true);
 	currentGFXContext->setDepthStencilControl(dsc);
 	currentGFXContext->setupScreenViewport(0, 0, currentPS4Buffer->colourTarget.getWidth(), currentPS4Buffer->colourTarget.getHeight(), 0.5f, 0.5f);
-
-	sce::Gnm::Sampler trilinearSampler;
-	trilinearSampler.init();
-	trilinearSampler.setMipFilterMode(sce::Gnm::kMipFilterModeLinear);
-
-	trilinearSampler.setXyFilterMode(sce::Gnm::kFilterModeAnisoBilinear, sce::Gnm::kFilterModeAnisoBilinear);
-
-	//currentGFXContext->setTextures(sce::Gnm::kShaderStagePs, 0, 1, &defaultTexture->GetAPITexture());
-	//currentGFXContext->setSamplers(sce::Gnm::kShaderStagePs, 0, 1, &trilinearSampler);
+	currentGFXContext->setSamplers(sce::Gnm::kShaderStagePs, 0, 1, &trilinearSampler);
 
 	child->OnRenderScene();
 
@@ -171,14 +169,18 @@ void PS4Renderer::CombineBuffers()
 
 }
 
+void PS4Renderer::SetTexture(unsigned int id, textureHandle handle)
+{
+	currentGFXContext->setTextures(sce::Gnm::kShaderStagePs, id, 1, handle);
+}
+
 void PS4Renderer::ClearBuffer(bool colour, bool depth, bool stencil)
 {
 	if (colour) 
 	{
-		Vector4 defaultClearColour(0.1f, 0.1f, 0.1f, 1.0f);
+		Vector4 defaultClearColour(1.0f, 1.0f, 0.0f, 1.0f);
 		sce::Gnmx::Toolkit::SurfaceUtil::clearRenderTarget(*currentGFXContext, &currentPS4Buffer->colourTarget, defaultClearColour);
 	}
-
 	if (depth) 
 	{
 		sce::Gnmx::Toolkit::SurfaceUtil::clearDepthTarget(*currentGFXContext, &currentPS4Buffer->depthTarget, 1.0f);
@@ -198,8 +200,10 @@ void PS4Renderer::SwapBuffers()
 
 void PS4Renderer::SwapCommandBuffer()
 {
-	if (currentGFXContext) {
-		if (currentGFXContext->submit() != sce::Gnm::kSubmissionSuccess) {
+	if (currentGFXContext) 
+	{
+		if (currentGFXContext->submit() != sce::Gnm::kSubmissionSuccess) 
+		{
 			bool a = true;
 		}
 		sce::Gnm::submitDone();
@@ -288,6 +292,158 @@ PS4ScreenBuffer* PS4Renderer::GenerateScreenBuffer(uint width, uint height, bool
 
 void PS4Renderer::SetCullFace(CULL c)
 {
+	primitiveSetup.setCullFace(c == FRONT ? sce::Gnm::kPrimitiveSetupCullFaceFront : sce::Gnm::kPrimitiveSetupCullFaceBack);
+}
 
+void PS4Renderer::UpdateUniform(int location, const Mat4Graphics& mat4)
+{
+	if (location >= 0)
+	{
+		Mat4Graphics* matrix = (Mat4Graphics*)currentGFXContext->allocateFromCommandBuffer(sizeof(Mat4Graphics), sce::Gnm::kEmbeddedDataAlignment4);
+		*matrix = mat4;
+		sce::Gnm::Buffer constantBuffer; 
+		constantBuffer.initAsConstantBuffer(matrix , sizeof(Mat4Graphics));
+		constantBuffer.setResourceMemoryType(sce::Gnm::kResourceMemoryTypeRO);
+
+		currentGFXContext->setConstantBuffers(sce::Gnm::kShaderStageVs, location, 1, &constantBuffer);
+	}
+}
+void PS4Renderer::UpdateUniform(int location, const Mat3Graphics& mat3)
+{
+	if (location >= 0)
+	{
+		Mat3Graphics* matrix = (Mat3Graphics*)currentGFXContext->allocateFromCommandBuffer(sizeof(Mat3Graphics), sce::Gnm::kEmbeddedDataAlignment4);
+		*matrix = mat3;
+		sce::Gnm::Buffer constantBuffer;
+		constantBuffer.initAsConstantBuffer(matrix, sizeof(Mat3Graphics));
+		constantBuffer.setResourceMemoryType(sce::Gnm::kResourceMemoryTypeRO);
+
+		currentGFXContext->setConstantBuffers(sce::Gnm::kShaderStageVs, location, 1, &constantBuffer);
+	}
+}
+void PS4Renderer::UpdateUniform(int location, const Vec4Graphics& vec4)
+{
+	if (location >= 0)
+	{
+		Vec4Graphics* vec = (Vec4Graphics*)currentGFXContext->allocateFromCommandBuffer(sizeof(Vec4Graphics), sce::Gnm::kEmbeddedDataAlignment4);
+		*vec = vec4;
+		sce::Gnm::Buffer constantBuffer;
+		constantBuffer.initAsConstantBuffer(vec, sizeof(Vec4Graphics));
+		constantBuffer.setResourceMemoryType(sce::Gnm::kResourceMemoryTypeRO);
+
+		currentGFXContext->setConstantBuffers(sce::Gnm::kShaderStageVs, location, 1, &constantBuffer);
+	}
+}
+void PS4Renderer::UpdateUniform(int location, const Vec3Graphics& vec3)
+{
+	if (location >= 0)
+	{
+		Vec3Graphics* vec = (Vec3Graphics*)currentGFXContext->allocateFromCommandBuffer(sizeof(Vec3Graphics), sce::Gnm::kEmbeddedDataAlignment4);
+		*vec = vec3;
+		sce::Gnm::Buffer constantBuffer;
+		constantBuffer.initAsConstantBuffer(vec, sizeof(Vec3Graphics));
+		constantBuffer.setResourceMemoryType(sce::Gnm::kResourceMemoryTypeRO);
+
+		currentGFXContext->setConstantBuffers(sce::Gnm::kShaderStageVs, location, 1, &constantBuffer);
+	}
+}
+void PS4Renderer::UpdateUniform(int location, const Vec2Graphics& vec2)
+{
+	if (location >= 0)
+	{
+		Vec2Graphics* vec = (Vec2Graphics*)currentGFXContext->allocateFromCommandBuffer(sizeof(Vec2Graphics), sce::Gnm::kEmbeddedDataAlignment4);
+		*vec = vec2;
+		sce::Gnm::Buffer constantBuffer;
+		constantBuffer.initAsConstantBuffer(vec, sizeof(Vec2Graphics));
+		constantBuffer.setResourceMemoryType(sce::Gnm::kResourceMemoryTypeRO);
+
+		currentGFXContext->setConstantBuffers(sce::Gnm::kShaderStageVs, location, 1, &constantBuffer);
+	}
+}
+void PS4Renderer::UpdateUniform(int location, float f)
+{
+	if (location >= 0)
+	{
+		float* val = (float*)currentGFXContext->allocateFromCommandBuffer(sizeof(float), sce::Gnm::kEmbeddedDataAlignment4);
+		*val = f;
+		sce::Gnm::Buffer constantBuffer;
+		constantBuffer.initAsConstantBuffer(val, sizeof(float));
+		constantBuffer.setResourceMemoryType(sce::Gnm::kResourceMemoryTypeRO);
+
+		currentGFXContext->setConstantBuffers(sce::Gnm::kShaderStageVs, location, 1, &constantBuffer);
+	}
+}
+void PS4Renderer::UpdateUniform(int location, double d)
+{
+	if (location >= 0)
+	{
+		double* val = (double*)currentGFXContext->allocateFromCommandBuffer(sizeof(double), sce::Gnm::kEmbeddedDataAlignment4);
+		*val = d;
+		sce::Gnm::Buffer constantBuffer;
+		constantBuffer.initAsConstantBuffer(val, sizeof(double));
+		constantBuffer.setResourceMemoryType(sce::Gnm::kResourceMemoryTypeRO);
+
+		currentGFXContext->setConstantBuffers(sce::Gnm::kShaderStageVs, location, 1, &constantBuffer);
+	}
+}
+void PS4Renderer::UpdateUniform(int location, int i)
+{
+	if (location >= 0)
+	{
+		int* val = (int*)currentGFXContext->allocateFromCommandBuffer(sizeof(int), sce::Gnm::kEmbeddedDataAlignment4);
+		*val = i;
+		sce::Gnm::Buffer constantBuffer;
+		constantBuffer.initAsConstantBuffer(val, sizeof(int));
+		constantBuffer.setResourceMemoryType(sce::Gnm::kResourceMemoryTypeRO);
+
+		currentGFXContext->setConstantBuffers(sce::Gnm::kShaderStageVs, location, 1, &constantBuffer);
+	}
+}
+void PS4Renderer::UpdateUniform(int location, unsigned int u)
+{
+	if (location >= 0)
+	{
+		unsigned int* val = (unsigned int*)currentGFXContext->allocateFromCommandBuffer(sizeof(unsigned int), sce::Gnm::kEmbeddedDataAlignment4);
+		*val = u;
+		sce::Gnm::Buffer constantBuffer;
+		constantBuffer.initAsConstantBuffer(val, sizeof(unsigned int));
+		constantBuffer.setResourceMemoryType(sce::Gnm::kResourceMemoryTypeRO);
+
+		currentGFXContext->setConstantBuffers(sce::Gnm::kShaderStageVs, location, 1, &constantBuffer);
+	}
+}
+
+void PS4Renderer::UpdateShaderMatrices()
+{
+	if (currentShader)
+	{		
+		int location = -1;
+		//Model Matrix in RenderComponent class.
+		//Texture matrix in material class.	
+		location = currentShader->GetResourceByName("viewMatrix");
+
+		if (location >= 0)
+		{
+			Mat4Graphics* vMat = (Mat4Graphics*)currentGFXContext->allocateFromCommandBuffer(sizeof(Mat4Graphics), sce::Gnm::kEmbeddedDataAlignment4);
+			*vMat = viewMatrix;
+		
+			sce::Gnm::Buffer constantBuffer;
+			constantBuffer.initAsConstantBuffer(vMat, sizeof(Mat4Graphics));
+			constantBuffer.setResourceMemoryType(sce::Gnm::kResourceMemoryTypeRO);
+			currentGFXContext->setConstantBuffers(sce::Gnm::kShaderStageVs, location, 1, &constantBuffer);
+		}
+		
+		location = currentShader->GetResourceByName("projMatrix");
+		if (location >= 0)
+		{
+			Mat4Graphics* pMat = (Mat4Graphics*)currentGFXContext->allocateFromCommandBuffer(sizeof(Mat4Graphics), sce::Gnm::kEmbeddedDataAlignment4);
+			*pMat = projMatrix;
+
+			sce::Gnm::Buffer constantBuffer;
+			constantBuffer.initAsConstantBuffer(pMat, sizeof(Mat4Graphics));
+			constantBuffer.setResourceMemoryType(sce::Gnm::kResourceMemoryTypeRO);
+			currentGFXContext->setConstantBuffers(sce::Gnm::kShaderStageVs, location, 1, &constantBuffer);
+		}
+	}
 }
 #endif

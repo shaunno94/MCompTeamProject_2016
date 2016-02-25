@@ -37,7 +37,6 @@ PS4Shader::PS4Shader(const string& vertex, const string& pixel, const string& ge
 		m_ReservedMeshColourLocations[i] = GetResourceByName(ReservedMeshColours.values[i].name);
 }
 
-
 PS4Shader::~PS4Shader()
 {
 }
@@ -52,8 +51,6 @@ void PS4Shader::GenerateVertexShader(const string&name, bool makeFetch) {
 		if (LoadShaderBinary(name, binData, binSize)) 
 		{
 			vertexBinary.loadFromMemory(binData, binSize);
-
-			//sce::Shader::Binary::Buffer* constantBuffer = vertexBinary.getBufferResourceByName("LOLBUFFER");
 
 			sce::Gnmx::parseShader(&shaderInfo, binData);
 
@@ -75,32 +72,25 @@ void PS4Shader::GenerateVertexShader(const string&name, bool makeFetch) {
 	}
 	else 
 	{
-		string shaderString;
-		if (LoadShaderText(name, shaderString)) 
-		{
-			//shaderString now contains the pssl shader data
-			//MAGIC GOES HERE
-		}
-		else 
-		{
-			std::cout << "Failed to generate vertex shader: " << name << " from raw text. " << std::endl;
-			return;
-		}
+		std::cout << "Vertex Shader is not binary: " << name << std::endl;
+		return;
 	}
 
 	sce::Gnm::registerResource(nullptr, ownerHandle, vertexShader->getBaseAddress(),
 		shaderInfo.m_gpuShaderCodeSize, name.c_str(), sce::Gnm::kResourceTypeShaderBaseAddress, 0);
 
-	sce::Gnmx::generateInputOffsetsCache(&vertexCache, Gnm::kShaderStageVs, vertexShader);
+	sce::Gnmx::generateInputOffsetsCache(&vertexCache, sce::Gnm::kShaderStageVs, vertexShader);
 
-	if (makeFetch) {
+	if (makeFetch) 
+	{
 		GenerateFetchShader(binData);
 	}
 	operational = true;
 	//delete binData;//done with bindata now!
 }
 
-void PS4Shader::GenerateFetchShader(char* binData) {
+void PS4Shader::GenerateFetchShader(char* binData) 
+{
 	fetchShader = garlicAllocator.allocate(sce::Gnmx::Toolkit::calculateMemoryRequiredForVsFetchShader(binData));
 
 	uint32_t shaderModifier;
@@ -147,7 +137,7 @@ void PS4Shader::GeneratePixelShader(const string&name)
 	sce::Gnm::registerResource(nullptr, ownerHandle, vertexShader->getBaseAddress(),
 		shaderInfo.m_gpuShaderCodeSize, name.c_str(), sce::Gnm::kResourceTypeShaderBaseAddress, 0);
 
-	sce::Gnmx::generateInputOffsetsCache(&pixelCache, Gnm::kShaderStagePs, pixelShader);
+	sce::Gnmx::generateInputOffsetsCache(&pixelCache, sce::Gnm::kShaderStagePs, pixelShader);
 	operational = true;
 	//delete binData;
 }
@@ -185,7 +175,7 @@ void PS4Shader::GenerateHullShader(const string& name)
 	sce::Gnm::registerResource(nullptr, ownerHandle, vertexShader->getBaseAddress(),
 		shaderInfo.m_gpuShaderCodeSize, name.c_str(), sce::Gnm::kResourceTypeShaderBaseAddress, 0);
 
-	sce::Gnmx::generateInputOffsetsCache(&hullCache, Gnm::kShaderStageHs, hullShader);
+	sce::Gnmx::generateInputOffsetsCache(&hullCache, sce::Gnm::kShaderStageHs, hullShader);
 	operational = true;
 }
 
@@ -222,7 +212,7 @@ void PS4Shader::GenerateDomainShader(const string& name)
 	sce::Gnm::registerResource(nullptr, ownerHandle, vertexShader->getBaseAddress(),
 		shaderInfo.m_gpuShaderCodeSize, name.c_str(), sce::Gnm::kResourceTypeShaderBaseAddress, 0);
 
-	sce::Gnmx::generateInputOffsetsCache(&domainCache, Gnm::kShaderStageEs, domainShader);
+	sce::Gnmx::generateInputOffsetsCache(&domainCache, sce::Gnm::kShaderStageEs, domainShader);
 	operational = true;
 }
 
@@ -259,7 +249,7 @@ void PS4Shader::GenerateGeometryShader(const string& name)
 	sce::Gnm::registerResource(nullptr, ownerHandle, vertexShader->getBaseAddress(),
 		shaderInfo.m_gpuShaderCodeSize, name.c_str(), sce::Gnm::kResourceTypeShaderBaseAddress, 0);
 
-	sce::Gnmx::generateInputOffsetsCache(&geometryCache, Gnm::kShaderStageGs, geometryShader);
+	sce::Gnmx::generateInputOffsetsCache(&geometryCache, sce::Gnm::kShaderStageGs, geometryShader);
 	operational = true;
 }
 
@@ -305,7 +295,7 @@ void	PS4Shader::SubmitShaderSwitch(sce::Gnmx::GnmxGfxContext& cmdList)
 int	PS4Shader::GetResourceByName(const string &name) const
 {
 	sce::Shader::Binary::Buffer* constantBuffer = vertexBinary.getBufferResourceByName(name.c_str());
-	if (!constantBuffer) 
+	if (!constantBuffer)
 	{
 		return -1;
 	}

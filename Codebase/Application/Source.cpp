@@ -31,7 +31,7 @@ const string POINTLIGHTSHADER_VERT = SHADER_DIR"2dShadowLightvertex.sb";
 const string POINTLIGHTSHADER_FRAG = SHADER_DIR"2dShadowLightfragment.sb";
 //System Variables
 unsigned int sceLibcHeapExtendedAlloc = 1;			/* Switch to dynamic allocation */
-size_t sceLibcHeapSize = 512 * 1024 * 1024;			/* Set up heap area upper limit as 256 MiB */
+size_t sceLibcHeapSize = 512 * 1024 * 1024;			/* Set up heap area upper limit as 512 MiB */
 //int sceUserMainThreadPriority = SCE_KERNEL_DEFAULT_PRIORITY_USER;
 #endif
 
@@ -60,7 +60,7 @@ int main(void) {
 
 	//Test Scenario - Tardis (cuboid collision shape), floor (plane collision shape), ball (sphere collison shape)
 	Scene* myScene = new Scene();
-	myScene->getCamera()->SetPosition(Vec3Graphics(10, 5, 0));
+	myScene->getCamera()->SetPosition(Vec3Graphics(0, 0, 0));
 
 	//Game objects added to scene are delete by the scene so don't delete twice.
 	GameObject* ball = new GameObject("ball");
@@ -86,16 +86,15 @@ int main(void) {
 #ifndef ORBIS
 	BaseShader* simpleShader = new OGLShader(SIMPLESHADER_VERT, SIMPLESHADER_FRAG);
 	BaseShader* pointlightShader = new OGLShader(POINTLIGHTSHADER_VERT, POINTLIGHTSHADER_FRAG);
-	//BaseShader* pointlightShader = new OGLShader(SHADER_DIR"CubeShadowLightvertex.glsl", SHADER_DIR"CubeShadowLightfragment.glsl");
 #else
 	BaseShader* simpleShader = new PS4Shader(SIMPLESHADER_VERT, SIMPLESHADER_FRAG);
-	BaseShader* pointlightShader = new PS4Shader(POINTLIGHTSHADER_VERT, POINTLIGHTSHADER_FRAG);
+	//BaseShader* pointlightShader = new PS4Shader(POINTLIGHTSHADER_VERT, POINTLIGHTSHADER_FRAG);
 #endif
 	
-	if (!pointlightShader->IsOperational() || !simpleShader->IsOperational())
+	if (/*!pointlightShader->IsOperational() ||*/ !simpleShader->IsOperational())
 		return -1;
 
-	LightMaterial* lightMaterial = new LightMaterial(pointlightShader);
+	/*LightMaterial* lightMaterial = new LightMaterial(pointlightShader);
 	light1->SetRenderComponent(new RenderComponent(lightMaterial, ModelLoader::LoadMGL(MODEL_DIR"Common/ico.mgl", true)));
 	light1->SetWorldTransform(Mat4Graphics::Translation(Vec3Graphics(0, 2, 2)) *Mat4Graphics::Scale(Vec3Graphics(20, 20, 20)));
 	light1->SetBoundingRadius(20);
@@ -103,20 +102,20 @@ int main(void) {
 	lightMaterial->shadowType=_2D;
 	light2->SetRenderComponent(new RenderComponent(lightMaterial, ModelLoader::LoadMGL(MODEL_DIR"Common/ico.mgl", true)));
 	light2->SetWorldTransform(Mat4Graphics::Translation(Vec3Graphics(600, 600, 600)) *Mat4Graphics::Scale(Vec3Graphics(1600, 1600, 1600)));
-	light2->SetBoundingRadius(1600);
+	light2->SetBoundingRadius(1600);*/
 
+	/*Material* ballMaterial = new Material(simpleShader);
+	ballMaterial->Set(ReservedMeshTextures.DIFFUSE.name, Texture::Get(TEXTURE_DIR"checkerboard.tga", true));*/
 	Material* material = new Material(simpleShader);
-	Material* ballMaterial = new Material(simpleShader);
-	ballMaterial->Set(ReservedMeshTextures.DIFFUSE.name, Texture::Get(TEXTURE_DIR"checkerboard.tga", true));
-
+	
 	// Create Stadium
-	GameObject* stadium = new Stadium(material, "stadium"); 
+	//GameObject* stadium = new Stadium(material, "stadium"); 
 
-	myScene->addGameObject(stadium);
-	//myScene->addLightObject(light1);
-	myScene->addLightObject(light2);
+	GameObject* test = new GameObject("test");
+	test->SetRenderComponent(new RenderComponent(material, Mesh::GenerateQuad()));
+	myScene->addGameObject(test);
 
-	ball->SetRenderComponent(new RenderComponent(ballMaterial, ModelLoader::LoadMGL(MODEL_DIR"Common/sphere.mgl", true)));
+	/*ball->SetRenderComponent(new RenderComponent(ballMaterial, ModelLoader::LoadMGL(MODEL_DIR"Common/sphere.mgl", true)));
 	ball->SetLocalTransform(Mat4Graphics::Scale(Vector3Simple(5, 5, 5)));
 	ball->SetPhysicsComponent(ballPhysics);
 	ball->GetPhysicsComponent()->GetPhysicsBody()->setRestitution(btScalar(0.9));
@@ -130,40 +129,16 @@ int main(void) {
 	aiBall->GetPhysicsComponent()->GetPhysicsBody()->setFriction(0.5);
 	aiBall->GetPhysicsComponent()->GetPhysicsBody()->setHitFraction(0.5);
 
-	//StateMachine* ballStateMachine = new StateMachine();
-
-	//ChaseState* chase = new ChaseState(*ballStateMachine, *aiBall, *ball);
-	//RunAwayState* run = new RunAwayState(*ballStateMachine, *aiBall, *ball);
-
-
-	//// Chase -> Run trigger 
-	////	Triggered when two objects are less than 5.0f apart
-	//DistanceTrigger* chaseToRun = new DistanceTrigger();
-	//chaseToRun->setupTrigger(*aiBall, *ball, 5.0f, true);
-	//chase->AddTrigger(chaseToRun, "Run");
-
-	//ballStateMachine->AddState("Chase", chase);
-
-
-	//// Run -> Chase trigger 
-	////	Triggered when two objects are greater than 25.0f apart
-	//DistanceTrigger* runToChase = new DistanceTrigger();
-	//runToChase->setupTrigger(*aiBall, *ball, 25.0f, false);
-	//run->AddTrigger(runToChase, "Chase");
-
-	//ballStateMachine->AddState("Run", run);
-
-	//ballStateMachine->ChangeState("Chase");
-
-	//aiBall->SetStateMachine(ballStateMachine);
-
+	myScene->addGameObject(stadium);
+	myScene->addLightObject(light1);
+	myScene->addLightObject(light2);
 	myScene->addGameObject(ball);
-	myScene->addGameObject(aiBall);
+	myScene->addGameObject(aiBall);*/
 
+	/*dynamic_cast<RigidPhysicsObject*>(ball->GetPhysicsComponent())->GetPhysicsBody()->setAngularVelocity(btVector3(1, 0, 0));
+	dynamic_cast<RigidPhysicsObject*>(aiBall->GetPhysicsComponent())->GetPhysicsBody()->applyCentralForce(btVector3(10, 0, 0));*/
+	
 	renderer.SetCurrentScene(myScene);
-
-	dynamic_cast<RigidPhysicsObject*>(ball->GetPhysicsComponent())->GetPhysicsBody()->setAngularVelocity(btVector3(1, 0, 0));
-	dynamic_cast<RigidPhysicsObject*>(aiBall->GetPhysicsComponent())->GetPhysicsBody()->applyCentralForce(btVector3(10, 0, 0));
 
 #ifndef ORBIS
 	while (Window::GetWindow().UpdateWindow() && !Window::GetKeyboard()->KeyDown(KEYBOARD_ESCAPE))

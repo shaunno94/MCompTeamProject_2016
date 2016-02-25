@@ -294,6 +294,12 @@ void OGLRenderer::UpdateUniform(GLint location, unsigned int u)
 	if (location >= 0) glUniform1ui(location, u);
 }
 
+void OGLRenderer::SetTexture(unsigned int id, textureHandle handle)
+{
+	glActiveTexture(GL_TEXTURE0 + id);
+	glBindTexture(GL_TEXTURE_2D, handle);
+}
+
 unsigned int OGLRenderer::TextureMemoryUsage(unsigned int id)
 {
 	int width;
@@ -487,10 +493,8 @@ void OGLRenderer::FillBuffers()
 	glBindFramebuffer(GL_FRAMEBUFFER, bufferFBO);
 	glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
 
-	//SetCurrentShader(sceneShader);
-
-	UpdateShaderMatrices();
-
+	//UpdateShaderMatrices();
+	
 #if DEBUG_DRAW
 	PhysicsEngineInstance::Instance()->debugDrawWorld();
 #endif
@@ -532,7 +536,7 @@ void OGLRenderer::CombineBuffers()
 {
 	glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
 	projMatrix = Mat4Graphics::Orthographic(-1, 1, 1, -1, -1, 1);
-	UpdateShaderMatrices();
+	//UpdateShaderMatrices();
 
 	glActiveTexture(GL_TEXTURE0 + ReservedMeshTextures.DIFFUSE.index);
 	glBindTexture(GL_TEXTURE_2D, bufferColourTex);

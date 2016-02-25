@@ -200,7 +200,7 @@ void Texture::LoadFromFile()
 	tex->height = tex->apiTexture.getHeight();
 	tex->bpp = tex->apiTexture.getDepth();*/
 
-	//textureId->setResourceMemoryType(Gnm::kResourceMemoryTypeRO);
+	//textureId->setResourceMemoryType(sce::Gnm::kResourceMemoryTypeRO);
 	file.close();
 	delete rawContents;
 }
@@ -212,14 +212,8 @@ void Texture::LoadFromFile()
 /// <returns></returns>
 void Texture::Load(unsigned int textureUnit)
 {
-#ifndef ORBIS
-	glActiveTexture(GL_TEXTURE0 + textureUnit);
 	if (!textureId) 
 		LoadFromFile();
-	glBindTexture(GL_TEXTURE_2D, textureId);
-#else
-	if (!textureId) 
-		LoadFromFile();
-	//currentGFXContext->setTextures(Gnm::kShaderStagePs, textureUnit, 1, textureId);
-#endif
+
+	Renderer::GetInstance()->SetTexture(textureUnit, textureId);
 }

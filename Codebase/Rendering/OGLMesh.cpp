@@ -40,9 +40,10 @@ void OGLMesh::Draw(Material* material)
 	}
 	//reserved colours
 	for (unsigned int i = 0; i < ReservedMeshColours.size; ++i)
-		Renderer::UpdateUniform(static_cast<OGLShader*>(material->GetShader())->GetReservedMeshColourUniformLocation(i), GetColour(i));
+		Renderer::GetInstance()->UpdateUniform(static_cast<OGLShader*>(material->GetShader())->GetReservedMeshColourUniformLocation(i), GetColour(i));
+
 	//reserved float
-	Renderer::UpdateUniform(glGetUniformLocation(static_cast<OGLShader*>(material->GetShader())->GetProgram(), "specExponent"), GetSpecExponent());
+	Renderer::GetInstance()->UpdateUniform(glGetUniformLocation(static_cast<OGLShader*>(material->GetShader())->GetProgram(), "specExponent"), GetSpecExponent());
 
 	material->Setup();
 

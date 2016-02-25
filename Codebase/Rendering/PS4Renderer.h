@@ -33,7 +33,6 @@ struct PS4ScreenBuffer
 
 class Renderer;
 class GameObject;
-class Renderer;
 
 class PS4Renderer : public PS4Memory
 {
@@ -41,22 +40,26 @@ public:
 	PS4Renderer();
 	~PS4Renderer();
 
-	void UpdateShaderMatrices(){}
+	void UpdateShaderMatrices();
 	bool HasInitialised() const { return init; }
 	void SetTextureFlags(const sce::Gnm::Texture*, unsigned int flags);
 	void SetCurrentShader(BaseShader* s);
 
-	static void UpdateUniform(int location, const Mat4Graphics& mat4){}
-	static void UpdateUniform(int location, const Mat3Graphics& mat3){}
-	static void UpdateUniform(int location, const Vec4Graphics& vec4){}
-	static void UpdateUniform(int location, const Vec3Graphics& vec3){}
-	static void UpdateUniform(int location, const Vec2Graphics& vec2){}
-	static void UpdateUniform(int location, float f){}
-	static void UpdateUniform(int location, double d){}
-	static void UpdateUniform(int location, int i){}
-	static void UpdateUniform(int location, unsigned int u){}
+	void UpdateUniform(int location, const Mat4Graphics& mat4);
+	void UpdateUniform(int location, const Mat3Graphics& mat3);
+	void UpdateUniform(int location, const Vec4Graphics& vec4);
+	void UpdateUniform(int location, const Vec3Graphics& vec3);
+	void UpdateUniform(int location, const Vec2Graphics& vec2);
+	void UpdateUniform(int location, float f);
+	void UpdateUniform(int location, double d);
+	void UpdateUniform(int location, int i);
+	void UpdateUniform(int location, unsigned int u);
 	
 	unsigned int TextureMemoryUsage(const sce::Gnm::Texture* id){ return 0; }
+	void SetTexture(unsigned int id, textureHandle handle);
+
+	sce::Gnmx::GnmxGfxContext* GetGFXContext() { return currentGFXContext; }
+
 protected:	
 	void FillBuffers();
 	void DrawPointLights();
@@ -68,7 +71,6 @@ protected:
 	
 	Mat4Graphics projMatrix;	//Projection matrix
 	Mat4Graphics viewMatrix;	//View matrix
-	Mat4Graphics textureMatrix;	//Texture matrix
 	
 	static Renderer* child;
 	PS4Shader* currentShader;
@@ -96,6 +98,10 @@ protected:
 	const int _GarlicMemory = (1024 * 1024 * 512);
 	const int _OnionMemory = (1024 * 1024 * 256);
 	sce::Gnmx::Toolkit::StackAllocator	stackAllocators[MEMORYMAX];
+
+	sce::Gnm::Sampler trilinearSampler;
+	sce::Gnm::PrimitiveSetup primitiveSetup;
+	sce::Gnm::DepthStencilControl dsc;
 	
 	bool init = false;
 

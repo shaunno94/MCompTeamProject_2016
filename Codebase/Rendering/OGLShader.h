@@ -54,11 +54,11 @@ public:
 	{
 		return m_ModelMatrixLocation;
 	}
-	inline GLint GetReservedMeshTextureUniformLocation(size_t index) const override
+	inline GLint GetReservedMeshTextureUniformLocation(unsigned int index) const override
 	{
 		return m_ReservedMeshTextureLocations[index];
 	}
-	inline GLint GetReservedMeshColourUniformLocation(size_t index) const
+	inline GLint GetReservedMeshColourUniformLocation(unsigned int index) const override
 	{
 		return m_ReservedMeshColourLocations[index];
 	}
@@ -67,6 +67,8 @@ public:
 	{
 		return glGetUniformLocation(program, name.c_str());
 	}
+
+	int GetModelMatrixLocation() const override { return m_ModelMatrixLocation; }
 
 protected:
 	GLint operational;

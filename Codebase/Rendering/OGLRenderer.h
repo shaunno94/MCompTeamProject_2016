@@ -64,18 +64,19 @@ public:
 	}
 	void SetCurrentShader(BaseShader* s);
 
-	static void UpdateUniform(GLint location, const Mat4Graphics& mat4);
-	static void UpdateUniform(GLint location, const Mat3Graphics& mat3);
-	static void UpdateUniform(GLint location, const Vec4Graphics& vec4);
-	static void UpdateUniform(GLint location, const Vec3Graphics& vec3);
-	static void UpdateUniform(GLint location, const Vec2Graphics& vec2);
-	static void UpdateUniform(GLint location, float f);
-	static void UpdateUniform(GLint location, double d);
-	static void UpdateUniform(GLint location, int i);
-	static void UpdateUniform(GLint location, unsigned int u);
+	void UpdateUniform(GLint location, const Mat4Graphics& mat4);
+	void UpdateUniform(GLint location, const Mat3Graphics& mat3);
+	void UpdateUniform(GLint location, const Vec4Graphics& vec4);
+	void UpdateUniform(GLint location, const Vec3Graphics& vec3);
+	void UpdateUniform(GLint location, const Vec2Graphics& vec2);
+	void UpdateUniform(GLint location, float f);
+	void UpdateUniform(GLint location, double d);
+	void UpdateUniform(GLint location, int i);
+	void UpdateUniform(GLint location, unsigned int u);
 	void UpdateShaderMatrices();
 	void SetTextureFlags(unsigned int id, unsigned int flags);
 	unsigned int TextureMemoryUsage(unsigned int id);
+	void SetTexture(unsigned int id, textureHandle handle);
 
 protected:
 	virtual void	Resize(int x, int y);

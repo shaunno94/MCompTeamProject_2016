@@ -1,7 +1,5 @@
 #include "ExtendedMaterial.h"
 
-#include "Renderer.h"
-
 ExtendedMaterial::ExtendedMaterial(BaseShader* shader, bool hasTranslucency) : Material(shader, hasTranslucency)
 {
 }

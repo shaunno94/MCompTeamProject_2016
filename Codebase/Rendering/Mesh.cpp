@@ -32,6 +32,7 @@ Mesh::Mesh(void)
 	m_Normals = nullptr;
 	m_Tangents = nullptr;
 	m_Indices = nullptr;
+	m_Children.clear();
 }
 
 Mesh::Mesh(uint32_t numVertices, Vec3Graphics* vertices, Vec2Graphics* texCoords, Vec3Graphics* normals, Vec3Graphics* tangents, uint32_t numIndices, uint32_t* indices)
@@ -63,6 +64,7 @@ Mesh::Mesh(uint32_t numVertices, Vec3Graphics* vertices, Vec2Graphics* texCoords
 	m_Normals = normals;
 	m_Tangents = tangents;
 	m_Indices = indices;
+	m_Children.clear();
 }
 
 Mesh::~Mesh(void)
@@ -72,11 +74,25 @@ Mesh::~Mesh(void)
 		if (m_Textures[i])
 			m_Textures[i]->Clear();
 	}
-	delete[] m_Vertices;
-	delete[] m_Indices;
-	delete[] m_TextureCoords;
-	delete[] m_Tangents;
-	delete[] m_Normals;
+	Clean();
+}
+
+void Mesh::Clean()
+{
+	if (m_Vertices)
+		delete[] m_Vertices;
+
+	if (m_Indices)
+		delete[] m_Indices;
+
+	if (m_TextureCoords)
+		delete[] m_TextureCoords;
+
+	if (m_Tangents)
+		delete[] m_Tangents;
+
+	if (m_Normals)
+		delete[] m_Normals;
 }
 
 

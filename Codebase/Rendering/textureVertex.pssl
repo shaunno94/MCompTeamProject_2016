@@ -1,9 +1,14 @@
-ConstantBuffer ShaderConstants
+ConstantBuffer modelMatrix
 {
-	column_major matrix modelMatrix;
-	column_major matrix viewMatrix;
-	column_major matrix projMatrix;
-	column_major matrix textureMatrix;
+	column_major float4x4 modelMatrix;
+};
+ConstantBuffer viewMatrix
+{
+	column_major float4x4 viewMatrix;
+};
+ConstantBuffer projMatrix
+{
+	column_major float4x4 projMatrix;
 };
 
 struct VS_INPUT
@@ -11,6 +16,7 @@ struct VS_INPUT
 	float3 position		: POSITION0;
 	float2 texCoord		: TEXCOORD0;
 	float3 normal		: NORMAL;
+	float3 tangent      : TANGENT;
 };
 
 struct VS_OUTPUT
@@ -32,6 +38,5 @@ VS_OUTPUT main(VS_INPUT Input)
 	Output.normal = normalize(mul(normalMatrix,normalize(Input.normal)));
 
 	Output.texCoord = Input.texCoord;
-
 	return Output;
 }
