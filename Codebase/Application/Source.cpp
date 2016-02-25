@@ -18,6 +18,7 @@ const float TIME_STEP = 1.0f / 120.0f;
 const unsigned int SUB_STEPS = 4;
 
 #ifndef ORBIS
+#include "Rendering\KeyboardController.h"
 const unsigned int SCREEN_HEIGHT = 800;
 const unsigned int SCREEN_WIDTH = 1280;
 const string SIMPLESHADER_VERT = SHADER_DIR"textureVertex.glsl";
@@ -25,6 +26,8 @@ const string SIMPLESHADER_FRAG = SHADER_DIR"textureFragment.glsl";
 const string POINTLIGHTSHADER_VERT = SHADER_DIR"2dShadowLightvertex.glsl";
 const string POINTLIGHTSHADER_FRAG = SHADER_DIR"2dShadowLightfragment.glsl";
 #else
+#include "Input\PS4Input.h"
+#include "Rendering\PS4Controller.h"
 const unsigned int SCREEN_HEIGHT = 1080;
 const unsigned int SCREEN_WIDTH = 1920;
 const string SIMPLESHADER_VERT = SHADER_DIR"textureVertex.sb";
@@ -44,11 +47,14 @@ int main(void) {
 
 	//Initialise Renderer - including the window context if compiling for Windows - PC
 	Renderer renderer("Team Project - 2016", SCREEN_WIDTH, SCREEN_HEIGHT, false);
-	if (!renderer.HasInitialised())
+	if (!renderer.HasInitialised()) 
 	{
 		return -1;
 	}
 	GameTimer timer;
+#ifdef ORBIS
+	PS4Input input = PS4Input();
+#endif
 
 	//Initialise Bullet physics engine.
 	PhysicsEngineInstance::Instance()->setGravity(btVector3(0, -9.81, 0));
@@ -87,7 +93,7 @@ int main(void) {
 	BaseShader* simpleShader = new PS4Shader(SIMPLESHADER_VERT, SIMPLESHADER_FRAG);
 	//BaseShader* pointlightShader = new PS4Shader(POINTLIGHTSHADER_VERT, POINTLIGHTSHADER_FRAG);
 #endif
-
+	
 	if (/*!pointlightShader->IsOperational() ||*/ !simpleShader->IsOperational())
 		return -1;
 
@@ -118,7 +124,7 @@ int main(void) {
 	//myScene->addLightObject(light1);
 	//myScene->addLightObject(light2);
 
-	ball->SetRenderComponent(new RenderComponent(ballMaterial, ModelLoader::LoadMGL(MODEL_DIR"Common/cube.mgl", true)));
+	ball->SetRenderComponent(new RenderComponent(ballMaterial, ModelLoader::LoadMGL(MODEL_DIR"Common/Cube.mgl", true)));
 	ball->SetLocalTransform(Mat4Graphics::Scale(Vector3Simple(5, 5, 5)));
 	ball->SetPhysicsComponent(ballPhysics);
 	ball->GetPhysicsComponent()->GetPhysicsBody()->setRestitution(btScalar(0.9));
@@ -129,7 +135,10 @@ int main(void) {
 	ControllerComponent* cc = new ControllerComponent(ball);
 #ifndef ORBIS
 	myScene->setPlayerController(new KeyboardController(cc));
+#else
+	myScene->setPlayerController(new PS4Controller(cc));
 #endif
+
 	myScene->attachCam(ball);
 	//myScene->addGameObject(ball);
 
@@ -142,6 +151,9 @@ int main(void) {
 	while (true)
 #endif
 	{
+#ifdef ORBIS
+		input.Poll();
+#endif
 		float ms = timer.GetTimer()->Get(1000.0f);
 		PhysicsEngineInstance::Instance()->stepSimulation(ms, SUB_STEPS, TIME_STEP);
 		renderer.RenderScene(ms);

@@ -13,6 +13,7 @@
 #pragma comment(lib, "glew-1.13.0/lib/Release/Win32/glew32s.lib")
 
 #include "LightMaterial.h"
+#include "CubeMaterial.h"
 #include <vector>
 
 //#define OPENGL_DEBUGGING
@@ -100,11 +101,12 @@ protected:
 	void FillBuffers(); //G- Buffer Fill Render Pass
 	void DrawPointLights(); // Lighting Render Pass
 	void CombineBuffers(); // Combination Render Pass
-	void initFBO();
+	bool initFBO();
 	void GenerateScreenTexture(GLuint & into, bool depth = false);
 	void DrawShadow(GameObject* light);
 	void DrawShadow2D(GameObject* light);
 	void DrawShadowCube(GameObject* light);
+	void DrawSky();
 
 	GLuint bufferFBO; // FBO for G- Buffer pass
 	GLuint bufferColourTex; // Albedo goes here
@@ -114,6 +116,9 @@ protected:
 	GLuint pointLightFBO; // FBO for lighting pass
 	GLuint lightEmissiveTex; // Store emissive lighting
 	GLuint lightSpecularTex; // Store specular lighting
+	
+	GLuint skyBoxTex; // skybo texture
+	GameObject* skyQuad;
 
 	GLuint shadowFBO;
 	GLuint cubeShadowFBO;
