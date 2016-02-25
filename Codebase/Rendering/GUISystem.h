@@ -1,16 +1,16 @@
-#include "GUIOrthoElements.h"
+#include "GUIComponent.h"
 
 class GUISystem
 {
 public:
 	static bool Initialise();
 	static void Destroy();
-	static GUISystem& GetSystem(){ return *guiSystem; };
+	static GUISystem& GetInstance(){ return *guiSystem; };
 
-	void AddOrthoElement(GUIOrthoElements* element);
-	void RemoveOrthoElement(GUIOrthoElements* element);
-	void Update(float delta);
-	void Render(float delta);
+	void AddComponent(GUIComponent* element);
+	void RemoveComponent(GUIComponent* element);
+	void Update();
+	void Render();
 	void Shutdown();
 
 	bool HasInitialised();
@@ -22,6 +22,6 @@ protected:
 private:
 	GUISystem();
 	~GUISystem(void);
-	std::vector<GUIOrthoElements*> m_elements;
+	std::vector<GUIComponent*> m_elements;
 
 };

@@ -180,32 +180,26 @@
     <ClInclude Include="GUISystem.h">
       <Filter>Header Files\UI</Filter>
     </ClInclude>
-    <ClInclude Include="GUIOrthoElements.h">
-      <Filter>Header Files\UI</Filter>
-    </ClInclude>
-    <ClInclude Include="GUIComponent.h">
-      <Filter>Header Files\UI</Filter>
-    </ClInclude>
-    <ClInclude Include="HUDOrthoElement.h">
-      <Filter>Header Files\UI</Filter>
-    </ClInclude>
-    <ClInclude Include="ScoreTableOrthoElement.h">
-      <Filter>Header Files\UI</Filter>
-    </ClInclude>
-    <ClInclude Include="EventTextGUI.h">
-      <Filter>Header Files\UI\HUD_GUI</Filter>
-    </ClInclude>
     <ClInclude Include="NitroGUI.h">
       <Filter>Header Files\UI\HUD_GUI</Filter>
     </ClInclude>
-    <ClInclude Include="ScoreboardGUI.h">
+    <ClInclude Include="TextInfoGUI.h">
+      <Filter>Header Files\UI\Scoretable_GUI</Filter>
+    </ClInclude>
+    <ClInclude Include="EventTextGUI.h">
       <Filter>Header Files\UI\HUD_GUI</Filter>
     </ClInclude>
     <ClInclude Include="TableBackgroundGUI.h">
       <Filter>Header Files\UI\Scoretable_GUI</Filter>
     </ClInclude>
-    <ClInclude Include="TextInfoGUI.h">
+    <ClInclude Include="ScoretableGUI.h">
       <Filter>Header Files\UI\Scoretable_GUI</Filter>
+    </ClInclude>
+    <ClInclude Include="GUIComponent.h">
+      <Filter>Header Files\UI</Filter>
+    </ClInclude>
+    <ClInclude Include="ScoreboardGUIComponent.h">
+      <Filter>Header Files\UI\HUD_GUI</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -302,32 +296,26 @@
     <ClCompile Include="GUISystem.cpp">
       <Filter>Source Files\UI</Filter>
     </ClCompile>
-    <ClCompile Include="GUIOrthoElements.cpp">
-      <Filter>Source Files\UI</Filter>
-    </ClCompile>
-    <ClCompile Include="GUIComponent.cpp">
-      <Filter>Source Files\UI</Filter>
-    </ClCompile>
-    <ClCompile Include="EventTextGUI.cpp">
-      <Filter>Source Files\UI\HUD_GUI</Filter>
-    </ClCompile>
     <ClCompile Include="NitroGUI.cpp">
       <Filter>Source Files\UI\HUD_GUI</Filter>
     </ClCompile>
-    <ClCompile Include="ScoreboardGUI.cpp">
+    <ClCompile Include="EventTextGUI.cpp">
       <Filter>Source Files\UI\HUD_GUI</Filter>
     </ClCompile>
     <ClCompile Include="TableBackgroundGUI.cpp">
       <Filter>Source Files\UI\Scoretable_GUI</Filter>
     </ClCompile>
+    <ClCompile Include="ScoretableGUI.cpp">
+      <Filter>Source Files\UI\Scoretable_GUI</Filter>
+    </ClCompile>
     <ClCompile Include="TextInfoGUI.cpp">
       <Filter>Source Files\UI\Scoretable_GUI</Filter>
     </ClCompile>
-    <ClCompile Include="HUDOrthoElement.cpp">
+    <ClCompile Include="GUIComponent.cpp">
       <Filter>Source Files\UI</Filter>
     </ClCompile>
-    <ClCompile Include="ScoretableOrthoElement.cpp">
-      <Filter>Source Files\UI</Filter>
+    <ClCompile Include="ScoreboardGUIComponent.cpp">
+      <Filter>Source Files\UI\HUD_GUI</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

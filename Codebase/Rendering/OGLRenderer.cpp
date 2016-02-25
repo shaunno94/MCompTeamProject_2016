@@ -534,7 +534,7 @@ void OGLRenderer::DrawPointLights()
 	glUseProgram(0);
 }
 
-void OGLRenderer::CombineBuffers() 
+void OGLRenderer::CombineBuffers()
 {
 	glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
 	projMatrix = Mat4Graphics::Orthographic(-1, 1, 1, -1, -1, 1);

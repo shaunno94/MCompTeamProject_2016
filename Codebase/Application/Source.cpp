@@ -5,6 +5,8 @@
 #include "Rendering\DebugDraw.h"
 #include "Rendering\GameTimer.h"
 #include "Stadium.h"
+#include "Rendering\GUISystem.h"
+#include "Rendering\ScoreboardGUIComponent.h"
 
 // Includes for AI States and Triggers
 #include "AI\StateMachine.h"
@@ -24,6 +26,7 @@ const string SIMPLESHADER_VERT = SHADER_DIR"textureVertex.glsl";
 const string SIMPLESHADER_FRAG = SHADER_DIR"textureFragment.glsl";
 const string POINTLIGHTSHADER_VERT = SHADER_DIR"2dShadowLightvertex.glsl";
 const string POINTLIGHTSHADER_FRAG = SHADER_DIR"2dShadowLightfragment.glsl";
+const string GUI_VERT = SHADER_DIR"combineVert.glsl";
 #else
 const unsigned int SCREEN_HEIGHT = 1080;
 const unsigned int SCREEN_WIDTH = 1920;
@@ -49,6 +52,12 @@ int main(void) {
 		return -1;
 	}
 	GameTimer timer;
+	
+	GUISystem::Initialise();	
+	if (!GUISystem::GetInstance().HasInitialised())
+	{
+		return -1;
+	}
 
 	//Initialise Bullet physics engine.
 	PhysicsEngineInstance::Instance()->setGravity(btVector3(0, -9.81, 0));
@@ -69,6 +78,7 @@ int main(void) {
 	GameObject* light1 = new GameObject("l");
 	GameObject* light2 = new GameObject("l");
 
+
 	//Physics objects hold collision shape and collision object(body), 
 	//call CreateCollisionShape before CreatePhysicsBody or the object will not be created correctly.
 	//Physics objects will be deleted by the game object.
@@ -83,6 +93,7 @@ int main(void) {
 #ifndef ORBIS
 	BaseShader* simpleShader = new OGLShader(SIMPLESHADER_VERT, SIMPLESHADER_FRAG);
 	BaseShader* pointlightShader = new OGLShader(POINTLIGHTSHADER_VERT, POINTLIGHTSHADER_FRAG);
+	BaseShader* orthoShader = new OGLShader(GUI_VERT, SIMPLESHADER_FRAG);
 	//BaseShader* pointlightShader = new OGLShader(SHADER_DIR"CubeShadowLightvertex.glsl", SHADER_DIR"CubeShadowLightfragment.glsl");
 #else
 	BaseShader* simpleShader = new PS4Shader(SIMPLESHADER_VERT, SIMPLESHADER_FRAG);
@@ -104,8 +115,9 @@ int main(void) {
 
 	Material* material = new Material(simpleShader);
 	Material* ballMaterial = new Material(simpleShader);
-	Material* netMaterial = new Material(simpleShader);
-	netMaterial->hasTranslucency = true;
+	Material* netMaterial = new Material(simpleShader, true);
+	Material* guiMaterial = new Material(orthoShader);
+
 	ballMaterial->Set(ReservedMeshTextures.DIFFUSE.name, Texture::Get(TEXTURE_DIR"checkerboard.tga", true));
 
 	// Create Stadium
@@ -125,6 +137,8 @@ int main(void) {
 
 	ControllerComponent* cc = new ControllerComponent(ball);
 	myScene->setPlayerController(new KeyboardController(cc));
+
+	GUISystem::GetInstance().AddComponent(new ScoreboardGUIComponent(guiMaterial,Texture::Get(TEXTURE_DIR"blue3.png"),0.0));
 
 	myScene->attachCam(ball);
 
