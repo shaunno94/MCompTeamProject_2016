@@ -14,17 +14,12 @@ void Camera::UpdateCamera(float msec)	{
 			Mat4Graphics::Translation(Vector3Simple(0, 15, 25)) *
 			Mat4Graphics::Rotation(pitch, Vec3Graphics(1, 0, 0)) *
 			Vector3Simple(0, 1, 1);
-
-		//position.y = 10;
 	}
-
-
 		float dt = msec * 0.001f;
 		float speed = 7.0f * dt; //1.5m per second
 	
 		//Update the mouse by how much
 		player->GetControllerComponent()->getCameraControl(pitch, yaw);
-	
 }
 
 /*

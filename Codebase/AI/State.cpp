@@ -14,7 +14,7 @@ m_childStates(new stateMapping())
 State::~State()
 {
 	if (m_childStates->size() != 0) {
-		for (stateMapping::iterator it = m_childStates->begin();
+		for (auto it = m_childStates->begin();
 			it != m_childStates->end();
 			it++)
 		{
@@ -36,7 +36,7 @@ void State::Update(float dt)
 {	
 	if (m_childStates->size() != 0)
 	{
-		(*m_childStates)[m_activeChildState]->Update(dt);
+		(*m_childStates)[&m_activeChildState]->Update(dt);
 	}
 	CheckTriggers();
 }
@@ -53,13 +53,13 @@ bool State::CheckTriggers()
 	return false;
 }
 
-void State::AddChildState(std::string stateName, State* childState)
+void State::AddChildState(const std::string& stateName, State* childState)
 {
-	if (m_childStates->find(stateName) == m_childStates->end())
-		(*m_childStates)[stateName] = childState;
+	if (m_childStates->find(&stateName) == m_childStates->end())
+		(*m_childStates)[&stateName] = childState;
 }
 
-void State::AddTrigger(Trigger* trigger , std::string destState)
+void State::AddTrigger(Trigger* trigger , const std::string& destState)
 {
 	m_triggers.push_back(new triggerPair(trigger, destState));
 }

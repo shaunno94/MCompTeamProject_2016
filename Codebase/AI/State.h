@@ -15,15 +15,15 @@ public:
 	virtual void Start() = 0;
 	virtual void Update(float dt);
 
-	void AddChildState(std::string stateName, State* childState);
-	void AddTrigger(Trigger* trigger, std::string destState);
+	void AddChildState(const std::string& stateName, State* childState);
+	void AddTrigger(Trigger* trigger, const std::string& destState);
 	
 protected:
 
 	bool CheckTriggers();
 
 	typedef std::pair<Trigger*, std::string> triggerPair;
-	typedef std::map<std::string, State*> stateMapping;
+	typedef std::map<const std::string*, State*> stateMapping;
 
 	stateMapping* m_childStates;
 	std::string	m_activeChildState;

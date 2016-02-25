@@ -33,7 +33,7 @@ const string POINTLIGHTSHADER_VERT = SHADER_DIR"2dShadowLightvertex.sb";
 const string POINTLIGHTSHADER_FRAG = SHADER_DIR"2dShadowLightfragment.sb";
 //System Variables
 unsigned int sceLibcHeapExtendedAlloc = 1;			/* Switch to dynamic allocation */
-size_t sceLibcHeapSize = 512 * 1024 * 1024;			/* Set up heap area upper limit as 512 MiB */
+size_t sceLibcHeapSize = 512 * 1024 * 1024;			/* Set up heap area upper limit as 256 MiB */
 //int sceUserMainThreadPriority = SCE_KERNEL_DEFAULT_PRIORITY_USER;
 #endif
 
@@ -44,7 +44,7 @@ int main(void) {
 
 	//Initialise Renderer - including the window context if compiling for Windows - PC
 	Renderer renderer("Team Project - 2016", SCREEN_WIDTH, SCREEN_HEIGHT, false);
-	if (!renderer.HasInitialised()) 
+	if (!renderer.HasInitialised())
 	{
 		return -1;
 	}
@@ -60,9 +60,8 @@ int main(void) {
 #endif
 #endif
 
-	//Test Scenario - Tardis (cuboid collision shape), floor (plane collision shape), ball (sphere collison shape)
 	Scene* myScene = new Scene();
-	myScene->getCamera()->SetPosition(Vec3Graphics(0, 0, 0));
+	myScene->getCamera()->SetPosition(Vec3Graphics(10, 5, 0));
 
 	//Game objects added to scene are delete by the scene so don't delete twice.
 	GameObject* ball = new GameObject("ball");
@@ -73,8 +72,8 @@ int main(void) {
 	//call CreateCollisionShape before CreatePhysicsBody or the object will not be created correctly.
 	//Physics objects will be deleted by the game object.
 	RigidPhysicsObject* ballPhysics = new RigidPhysicsObject();
-	ballPhysics->CreateCollisionShape(Vec3Physics(5.0, 5.0, 5.0),CUBOID);
-	ballPhysics->CreatePhysicsBody(5.0, Vec3Physics(0, 5, 0), QuatPhysics(0, 0, 0, 1), Vec3Physics(1, 1, 1));
+	ballPhysics->CreateCollisionShape(Vec3Physics(5.0, 5.0, 5.0), CUBOID);
+	ballPhysics->CreatePhysicsBody(0.0, Vec3Physics(0, 5, 0), QuatPhysics(0, 0, 0, 1), Vec3Physics(1, 1, 1));
 
 	RigidPhysicsObject* floorPhysics = new RigidPhysicsObject();
 	floorPhysics->CreateCollisionShape(0, Vec3Physics(0, 1, 0), true);
@@ -83,11 +82,12 @@ int main(void) {
 #ifndef ORBIS
 	BaseShader* simpleShader = new OGLShader(SIMPLESHADER_VERT, SIMPLESHADER_FRAG);
 	BaseShader* pointlightShader = new OGLShader(POINTLIGHTSHADER_VERT, POINTLIGHTSHADER_FRAG);
+	//BaseShader* pointlightShader = new OGLShader(SHADER_DIR"CubeShadowLightvertex.glsl", SHADER_DIR"CubeShadowLightfragment.glsl");
 #else
 	BaseShader* simpleShader = new PS4Shader(SIMPLESHADER_VERT, SIMPLESHADER_FRAG);
 	//BaseShader* pointlightShader = new PS4Shader(POINTLIGHTSHADER_VERT, POINTLIGHTSHADER_FRAG);
 #endif
-	
+
 	if (/*!pointlightShader->IsOperational() ||*/ !simpleShader->IsOperational())
 		return -1;
 
@@ -101,20 +101,22 @@ int main(void) {
 	light2->SetWorldTransform(Mat4Graphics::Translation(Vec3Graphics(600, 600, 600)) *Mat4Graphics::Scale(Vec3Graphics(1600, 1600, 1600)));
 	light2->SetBoundingRadius(1600);*/
 
-	/*Material* ballMaterial = new Material(simpleShader);
-	ballMaterial->Set(ReservedMeshTextures.DIFFUSE.name, Texture::Get(TEXTURE_DIR"checkerboard.tga", true));*/
 	Material* material = new Material(simpleShader);
 	Material* ballMaterial = new Material(simpleShader);
-	Material* netMaterial = new Material(simpleShader);
-	netMaterial->hasTranslucency = true;
+	//Material* netMaterial = new Material(simpleShader);
+	//netMaterial->hasTranslucency = true;
 	ballMaterial->Set(ReservedMeshTextures.DIFFUSE.name, Texture::Get(TEXTURE_DIR"checkerboard.tga", true));
 
 	// Create Stadium
-	GameObject* stadium = new Stadium(material, netMaterial, "stadium"); 
+	//GameObject* stadium = new Stadium(material, netMaterial, "stadium");
 
-	GameObject* test = new GameObject("test");
+	/*GameObject* test = new GameObject("test");
 	test->SetRenderComponent(new RenderComponent(material, Mesh::GenerateQuad()));
-	myScene->addGameObject(test);
+	myScene->addGameObject(test);*/
+
+	//myScene->addGameObject(stadium);
+	//myScene->addLightObject(light1);
+	//myScene->addLightObject(light2);
 
 	ball->SetRenderComponent(new RenderComponent(ballMaterial, ModelLoader::LoadMGL(MODEL_DIR"Common/cube.mgl", true)));
 	ball->SetLocalTransform(Mat4Graphics::Scale(Vector3Simple(5, 5, 5)));
@@ -125,12 +127,11 @@ int main(void) {
 	ball->GetPhysicsComponent()->GetPhysicsBody()->setHitFraction(0.5);
 
 	ControllerComponent* cc = new ControllerComponent(ball);
+#ifndef ORBIS
 	myScene->setPlayerController(new KeyboardController(cc));
-
+#endif
 	myScene->attachCam(ball);
-
-
-	myScene->addGameObject(ball);
+	//myScene->addGameObject(ball);
 
 	renderer.SetCurrentScene(myScene);
 

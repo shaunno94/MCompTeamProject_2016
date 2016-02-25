@@ -95,7 +95,6 @@ void Mesh::Clean()
 		delete[] m_Normals;
 }
 
-
 Mesh* Mesh::GenerateQuad(Vec2Graphics texCoords)
 {
 #ifndef ORBIS
@@ -147,7 +146,7 @@ Mesh* Mesh::GenerateQuad(Vec3Graphics* vertices, Vec2Graphics texCoords /* = Vec
 	m->SetPrimitiveType(TRIANGLE_STRIP);
 
 	m->m_Vertices = new Vec3Graphics[m->m_NumVertices];
-	m->m_Indices = new size_t[m->m_NumIndices];
+	m->m_Indices = new uint32_t[m->m_NumIndices];
 	m->m_TextureCoords = new Vec2Graphics[m->m_NumVertices];
 	m->m_Normals = new Vec3Graphics[m->m_NumVertices];
 	m->m_Tangents = new Vec3Graphics[m->m_NumVertices];

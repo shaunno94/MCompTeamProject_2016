@@ -33,6 +33,7 @@ struct PS4ScreenBuffer
 
 class Renderer;
 class GameObject;
+class PS4Mesh;
 
 class PS4Renderer : public PS4Memory
 {
@@ -102,7 +103,8 @@ protected:
 	sce::Gnm::Sampler trilinearSampler;
 	sce::Gnm::PrimitiveSetup primitiveSetup;
 	sce::Gnm::DepthStencilControl dsc;
-	
+	PS4Mesh* mesh;
+	PS4Shader* shader;
 	bool init = false;
 
 private:

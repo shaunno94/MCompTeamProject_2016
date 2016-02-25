@@ -35,6 +35,9 @@ PS4Renderer::PS4Renderer()
 	dsc.setDepthControl(sce::Gnm::kDepthControlZWriteEnable, sce::Gnm::kCompareFuncLessEqual);
 	dsc.setDepthEnable(true);
 
+	mesh = static_cast<PS4Mesh*>(Mesh::GenerateQuad());
+	shader = new PS4Shader(SHADER_DIR"textureVertex.sb", SHADER_DIR"textureFragment.sb");
+
 	SwapBuffers();	
 	init = true;
 }
@@ -140,7 +143,9 @@ void PS4Renderer::FillBuffers()
 	currentFrame->StartFrame();
 
 	currentGFXContext->waitUntilSafeForRendering(videoHandle, currentGPUBuffer);
-	
+
+	//shader->SubmitShaderSwitch(*currentGFXContext);
+
 	SetRenderBuffer(currentPS4Buffer, true, true, true);
 	
 	currentGFXContext->setPrimitiveSetup(primitiveSetup);
@@ -149,6 +154,11 @@ void PS4Renderer::FillBuffers()
 	currentGFXContext->setSamplers(sce::Gnm::kShaderStagePs, 0, 1, &trilinearSampler);
 
 	child->OnRenderScene();
+
+	//UpdateShaderMatrices();
+	//UpdateUniform(shader->GetModelMatrixLocation(), Matrix4Simple::Translation(Vector3Simple(0, 0, 0)));
+	//mesh->Draw(nullptr);
+
 
 	currentFrame->EndFrame();
 	framesSubmitted++;

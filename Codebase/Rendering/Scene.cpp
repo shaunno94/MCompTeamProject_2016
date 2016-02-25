@@ -45,12 +45,10 @@ void Scene::UpdateNodeLists(float dt, Frustum& frustum, Vec3Graphics camPos)
 	for (unsigned int i = 0; i < transparentObjects.size(); ++i)
 	{
 		transparentObjects[i]->OnUpdateObject(dt);
-
 	}
 	for (unsigned int i = 0; i < opaqueObjects.size(); ++i)
 	{
 		opaqueObjects[i]->OnUpdateObject(dt);
-
 	}
 
 	UpdateFrustumCulling(frustum, camPos);
@@ -63,8 +61,7 @@ void Scene::UpdateNodeLists(float dt, Frustum& frustum, Vec3Graphics camPos)
 void Scene::UpdateFrustumCulling(Frustum& frustum, Vec3Graphics camPos){
 	Vec3Graphics pos, dir;
 	for (unsigned int i = 0; i < transparentObjects.size(); ++i)
-	{
-		
+	{		
 		if (!frustum.InsideFrustum(transparentObjects[i]))
 		{
 			transparentObjects[i]->m_RenderComponent->disabled = true;
