@@ -159,6 +159,9 @@
     <ClInclude Include="PS4Frame.h">
       <Filter>Header Files\GNM_API</Filter>
     </ClInclude>
+    <ClInclude Include="CubeMaterial.h">
+      <Filter>Header Files\Material</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Renderer.cpp">
@@ -250,6 +253,9 @@
     </ClCompile>
     <ClCompile Include="PS4Frame.cpp">
       <Filter>Source Files\GNM_API</Filter>
+    </ClCompile>
+    <ClCompile Include="CubeMaterial.cpp">
+      <Filter>Source Files\Material</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

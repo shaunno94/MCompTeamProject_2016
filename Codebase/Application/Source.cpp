@@ -115,7 +115,7 @@ int main(void) {
 	//myScene->addLightObject(light1);
 	myScene->addLightObject(light2);
 
-	ball->SetRenderComponent(new RenderComponent(ballMaterial, ModelLoader::LoadMGL(MODEL_DIR"Common/cube.mgl", true)));
+	ball->SetRenderComponent(new RenderComponent(ballMaterial, ModelLoader::LoadMGL(MODEL_DIR"Common/sphere.mgl", true)));
 	ball->SetLocalTransform(Mat4Graphics::Scale(Vector3Simple(5, 5, 5)));
 	ball->SetPhysicsComponent(ballPhysics);
 	ball->GetPhysicsComponent()->GetPhysicsBody()->setRestitution(btScalar(0.9));

@@ -44,7 +44,7 @@ Mesh::Mesh(uint32_t numVertices, Vec3Graphics* vertices, Vec2Graphics* texCoords
 		t = nullptr;
 	}
 	for (auto& c : m_Colours)
-	{
+{
 		c = Vec3Graphics::ZEROS;
 	}
 
@@ -292,6 +292,8 @@ void Mesh::GenerateTangents()
 
 	if (!m_Tangents)
 		m_Tangents = new Vec3Graphics[m_NumVertices];
+	else
+		return;
 	for (unsigned int i = 0; i < m_NumVertices; ++i)
 		m_Tangents[i] = Vec3Graphics();
 
