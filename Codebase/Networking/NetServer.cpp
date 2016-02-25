@@ -15,7 +15,7 @@ NetServer::NetServer(unsigned int maxPlayers)
 	address.port = NET_SERVICE_PORT;
 	m_host = enet_host_create(
 	           &address /* the address to bind the server host to */,
-	           NET_SERVICE_MAX_CONNECTION      /* allow up to x clients and/or outgoing connections */,
+			   maxPlayers      /* allow up to x clients and/or outgoing connections */,
 	           2      /* allow up to 2 channels to be used, 0 and 1 */,
 	           0      /* assume any amount of incoming bandwidth */,
 	           0      /* assume any amount of outgoing bandwidth */
@@ -28,6 +28,8 @@ NetServer::NetServer(unsigned int maxPlayers)
 	m_state = NetServerActive;
 
 	m_session = new NetSession(maxPlayers);
+
+	m_threadHandle = std::move(std::async(std::launch::async, &NetServer::SessionSetupService, this));
 }
 
 NetServer::~NetServer()
@@ -284,11 +286,13 @@ void NetServer::StartSession()
 
 void NetServer::AddNewConnection(ENetPeer* peer)
 {
+	NetConnectionDataInternal* connection = new NetConnectionDataInternal(peer);
 	PROMPT_NET(
-	  "A new client connected from " << peer->address.host << ":" << peer->address.port << "."LINE_SEPARATOR_DEF
+		"A new client connected from " << connection->GetAddressStr() << " ."LINE_SEPARATOR_DEF
 	);
+	//TODO
 	/* Store any relevant client information here. */
 	peer->data = new std::string("TestName");
-	m_connections.push_back(new NetConnectionDataInternal(peer));
+	m_connections.push_back(connection);
 }
 

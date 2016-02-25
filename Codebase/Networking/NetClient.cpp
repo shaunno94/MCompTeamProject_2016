@@ -51,27 +51,19 @@ void NetClient::ConnectToServerService()
 	/* Wait up to NET_CONNECTION_TIMEOUT milliseconds for the connection attempt to succeed. */
 	if (enet_host_service(m_host, &event, NET_CONNECTION_TIMEOUT) > 0 && event.type == ENET_EVENT_TYPE_CONNECT)
 	{
-		PROMPT_NET(
-		  (
-		    "Connection to the server %s succeeded."LINE_SEPARATOR_DEF,
-		    m_connection->GetAddressStr().c_str()
-		  )
-		);
+		PROMPT_NET("Connection to the server " << m_connection->GetAddressStr().c_str() << " succeeded."LINE_SEPARATOR_DEF);
 		//TODO: Store any relevant client information here.
 		event.peer->data = new std::string("TestName");
 		//TODO: get your player index from here?
 		//event.data
+
+		m_threadHandle = std::move(std::async(std::launch::async, &NetClient::Service, this));
 	}
 	else
 	{
 		enet_peer_reset(m_connection->GetPeer());
 
-		PROMPT_NET(
-		  (
-		    "Connection to the server %s failed."LINE_SEPARATOR_DEF,
-		    m_connection->GetAddressStr().c_str()
-		  )
-		);
+		PROMPT_NET("Connection to the server " << m_connection->GetAddressStr().c_str() << " failed."LINE_SEPARATOR_DEF);
 	}
 }
 
@@ -120,7 +112,7 @@ void NetClient::DisconnectFromServerService()
 		switch (event.type)
 		{
 		case ENET_EVENT_TYPE_DISCONNECT:
-			PROMPT_NET(("Disconnection from %s succeeded."LINE_SEPARATOR_DEF, m_connection->GetAddressStr().c_str()));
+			PROMPT_NET("Disconnection from " << m_connection->GetAddressStr().c_str() << " succeeded."LINE_SEPARATOR_DEF);
 			DisconnectionCleanup();
 			return;
 		case ENET_EVENT_TYPE_RECEIVE:
@@ -129,7 +121,7 @@ void NetClient::DisconnectFromServerService()
 		}
 	}
 
-	PROMPT_NET(("Forcing disconnection from %s after timeout."LINE_SEPARATOR_DEF, m_connection->GetAddressStr().c_str()));
+	PROMPT_NET("Forcing disconnection from " << m_connection->GetAddressStr().c_str() << " after timeout."LINE_SEPARATOR_DEF);
 	DisconnectionCleanup();
 }
 
@@ -151,7 +143,7 @@ void NetClient::DisconnectFromServer()
 	if (!m_connection)
 		return;
 
-	PROMPT_NET(("Disconnecting from the server %s."LINE_SEPARATOR_DEF, m_connection->GetAddressStr().c_str()));
+	PROMPT_NET("Disconnecting from the server " << m_connection->GetAddressStr().c_str() << "."LINE_SEPARATOR_DEF );
 	m_stopService = true;
 
 	//wait for service to finish
@@ -179,10 +171,10 @@ void NetClient::Service()
 			{
 			case ENET_EVENT_TYPE_RECEIVE:
 				PROMPT_NET(
-				  "A packet of length %u was received from %s on channel %u."LINE_SEPARATOR_DEF,
-				  event.packet->dataLength
-				  event.peer->data,
-				  event.channelID
+				  "A packet of length " << event.packet->dataLength <<
+				  " was received from " << event.peer->data <<
+				  " on channel " << event.channelID <<
+				  "."LINE_SEPARATOR_DEF
 				);
 				//TODO: process packet
 				//event.packet -> data
@@ -195,7 +187,7 @@ void NetClient::Service()
 					enet_peer_reset(event.peer);
 				break;
 			case ENET_EVENT_TYPE_DISCONNECT:
-				PROMPT_NET("%s disconnected."LINE_SEPARATOR_DEF, (std::string*)event.peer->data);
+				PROMPT_NET((std::string*)event.peer->data << " disconnected."LINE_SEPARATOR_DEF);
 				/* Reset the peer's client information. */
 				DisconnectionCleanup();
 				return;

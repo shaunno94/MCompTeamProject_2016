@@ -17,6 +17,7 @@ int main()
 
 	//try to connect to an address
 	client->ConnectToServer(addressStr);
+
 	//get back connection handle
 	auto connection = client->GetConnection();
 
