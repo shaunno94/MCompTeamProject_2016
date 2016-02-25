@@ -4,7 +4,7 @@
 uniform sampler2D depthTex ;
 uniform sampler2D normTex ;
 
-uniform samplerCubeShadow shadowTex;
+uniform samplerCubeShadow shadowTexCube;
 uniform mat4 lightProj;
 
 uniform vec2 pixelSize ;
@@ -51,10 +51,10 @@ void main ( void ) {
 	float depth = (lclip.z / lclip.w) * 0.5 + 0.5;
 
 	incident.x *= -1.0f;
-	float shadow = texture(shadowTex, vec4(incident, depth));
+	float shadow = texture(shadowTexCube, vec4(incident, depth));
 	
-	lambert *= shadow ;
-	sFactor *= shadow;
+	lambert *= texture(shadowTexCube, vec4(incident, depth)) ;
+	//sFactor *= shadow;
 	
 	gl_FragColor [0] = vec4 ( lightColour . xyz * lambert * atten , 1.0);
 	gl_FragColor [1] = vec4 ( lightColour . xyz * sFactor * atten *0.33 ,1.0);

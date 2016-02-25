@@ -13,7 +13,7 @@ int main()
 	std::cin >> filepath;
 
 	filepath = MODEL_DIR + filepath;
-	string newFilepath = File::RemoveFileExt(filepath) + ".mgl";
+	std::string newFilepath = File::RemoveFileExt(filepath) + ".mgl";
 
 	Mesh* mesh = ModelLoader::LoadOBJ(filepath, false);
 	if (!mesh->GetTangents())

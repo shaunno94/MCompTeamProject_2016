@@ -38,7 +38,6 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "LinearMath", "BulletPhysics
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "PhysicsEngine", "PhysicsEngine\PhysicsEngine.vcxproj", "{2CC601E3-E95D-4C55-B786-474F898780F5}"
 	ProjectSection(ProjectDependencies) = postProject
-		{84F8E699-7DC9-4E84-9677-C38FB5F2BF2F} = {84F8E699-7DC9-4E84-9677-C38FB5F2BF2F}
 		{ADCFED9A-E56E-E440-B14B-8DF86A36F142} = {ADCFED9A-E56E-E440-B14B-8DF86A36F142}
 	EndProjectSection
 EndProject

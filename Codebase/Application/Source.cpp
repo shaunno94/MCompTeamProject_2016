@@ -11,6 +11,8 @@
 #include "AI\ChaseState.h"
 #include "AI\RunAwayState.h"
 #include "AI\DistanceTrigger.h"
+#include "AI\ShooterAgent.h"
+#include "Rendering\KeyboardController.h"
 
 const float TIME_STEP = 1.0f / 120.0f;
 const unsigned int SUB_STEPS = 4;
@@ -64,7 +66,6 @@ int main(void) {
 
 	//Game objects added to scene are delete by the scene so don't delete twice.
 	GameObject* ball = new GameObject("ball");
-	GameObject* aiBall = new GameObject("aiBall");
 	GameObject* light1 = new GameObject("l");
 	GameObject* light2 = new GameObject("l");
 
@@ -72,13 +73,9 @@ int main(void) {
 	//call CreateCollisionShape before CreatePhysicsBody or the object will not be created correctly.
 	//Physics objects will be deleted by the game object.
 	RigidPhysicsObject* ballPhysics = new RigidPhysicsObject();
-	ballPhysics->CreateCollisionShape(5.0);
-	ballPhysics->CreatePhysicsBody(5.0, Vec3Physics(0, 0, 0), QuatPhysics(0, 0, 0, 1), Vec3Physics(1, 1, 1));
+	ballPhysics->CreateCollisionShape(Vec3Physics(5.0, 5.0, 5.0),CUBOID);
+	ballPhysics->CreatePhysicsBody(5.0, Vec3Physics(0, 5, 0), QuatPhysics(0, 0, 0, 1), Vec3Physics(1, 1, 1));
 
-	RigidPhysicsObject* aiBallPhysics = new RigidPhysicsObject();
-	aiBallPhysics->CreateCollisionShape(2.0);
-	aiBallPhysics->CreatePhysicsBody(2.0, Vec3Physics(0.11, 15, 0.5), QuatPhysics(0, 0, 0, 1), Vec3Physics(1, 1, 1));
-	
 	RigidPhysicsObject* floorPhysics = new RigidPhysicsObject();
 	floorPhysics->CreateCollisionShape(0, Vec3Physics(0, 1, 0), true);
 	floorPhysics->CreatePhysicsBody(0, Vec3Physics(0, -1, 0), QuatPhysics(0, 0, 0, 1));
@@ -99,7 +96,7 @@ int main(void) {
 	light1->SetWorldTransform(Mat4Graphics::Translation(Vec3Graphics(0, 2, 2)) *Mat4Graphics::Scale(Vec3Graphics(20, 20, 20)));
 	light1->SetBoundingRadius(20);
 
-	lightMaterial->shadowType=_2D;
+	lightMaterial->shadowType = _2D;
 	light2->SetRenderComponent(new RenderComponent(lightMaterial, ModelLoader::LoadMGL(MODEL_DIR"Common/ico.mgl", true)));
 	light2->SetWorldTransform(Mat4Graphics::Translation(Vec3Graphics(600, 600, 600)) *Mat4Graphics::Scale(Vec3Graphics(1600, 1600, 1600)));
 	light2->SetBoundingRadius(1600);*/
@@ -107,38 +104,36 @@ int main(void) {
 	/*Material* ballMaterial = new Material(simpleShader);
 	ballMaterial->Set(ReservedMeshTextures.DIFFUSE.name, Texture::Get(TEXTURE_DIR"checkerboard.tga", true));*/
 	Material* material = new Material(simpleShader);
-	
+	Material* ballMaterial = new Material(simpleShader);
+	Material* netMaterial = new Material(simpleShader);
+	netMaterial->hasTranslucency = true;
+	ballMaterial->Set(ReservedMeshTextures.DIFFUSE.name, Texture::Get(TEXTURE_DIR"checkerboard.tga", true));
+
 	// Create Stadium
-	//GameObject* stadium = new Stadium(material, "stadium"); 
+	GameObject* stadium = new Stadium(material, netMaterial, "stadium"); 
 
 	GameObject* test = new GameObject("test");
 	test->SetRenderComponent(new RenderComponent(material, Mesh::GenerateQuad()));
 	myScene->addGameObject(test);
 
-	/*ball->SetRenderComponent(new RenderComponent(ballMaterial, ModelLoader::LoadMGL(MODEL_DIR"Common/sphere.mgl", true)));
+	ball->SetRenderComponent(new RenderComponent(ballMaterial, ModelLoader::LoadMGL(MODEL_DIR"Common/cube.mgl", true)));
 	ball->SetLocalTransform(Mat4Graphics::Scale(Vector3Simple(5, 5, 5)));
 	ball->SetPhysicsComponent(ballPhysics);
 	ball->GetPhysicsComponent()->GetPhysicsBody()->setRestitution(btScalar(0.9));
 	ball->GetPhysicsComponent()->GetPhysicsBody()->setFriction(0.5);
+	ball->GetPhysicsComponent()->GetPhysicsBody()->setRollingFriction(0.5);
 	ball->GetPhysicsComponent()->GetPhysicsBody()->setHitFraction(0.5);
 
-	aiBall->SetRenderComponent(new RenderComponent(ballMaterial, ModelLoader::LoadMGL(MODEL_DIR"Common/sphere.mgl", true)));
-	aiBall->SetLocalTransform(Mat4Graphics::Scale(Vector3Simple(2, 2, 2)) * Mat4Graphics::Translation(Vector3Simple(0, 0, 0)));
-	aiBall->SetPhysicsComponent(aiBallPhysics);
-	aiBall->GetPhysicsComponent()->GetPhysicsBody()->setRestitution(btScalar(0.9));
-	aiBall->GetPhysicsComponent()->GetPhysicsBody()->setFriction(0.5);
-	aiBall->GetPhysicsComponent()->GetPhysicsBody()->setHitFraction(0.5);
+	ControllerComponent* cc = new ControllerComponent(ball);
+	myScene->setPlayerController(new KeyboardController(cc));
 
-	myScene->addGameObject(stadium);
-	myScene->addLightObject(light1);
-	myScene->addLightObject(light2);
+	myScene->attachCam(ball);
+
+
 	myScene->addGameObject(ball);
-	myScene->addGameObject(aiBall);*/
 
-	/*dynamic_cast<RigidPhysicsObject*>(ball->GetPhysicsComponent())->GetPhysicsBody()->setAngularVelocity(btVector3(1, 0, 0));
-	dynamic_cast<RigidPhysicsObject*>(aiBall->GetPhysicsComponent())->GetPhysicsBody()->applyCentralForce(btVector3(10, 0, 0));*/
-	
 	renderer.SetCurrentScene(myScene);
+
 
 #ifndef ORBIS
 	while (Window::GetWindow().UpdateWindow() && !Window::GetKeyboard()->KeyDown(KEYBOARD_ESCAPE))

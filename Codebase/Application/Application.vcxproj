@@ -91,13 +91,12 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>NOMINMAX;ORBIS;_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>NOMINMAX;ORBIS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <AdditionalIncludeDirectories>$(SCE_ORBIS_SAMPLE_DIR)\;$(IncludePath);..\BulletPhysics\src;$(SolutionDir);$(SolutionDir)Dependencies;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <RuntimeTypeInfo>true</RuntimeTypeInfo>
       <CppExceptions>true</CppExceptions>
       <Warnings>WarningsOff</Warnings>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <InlinedScopes>true</InlinedScopes>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
@@ -150,6 +149,9 @@
     <ClCompile Include="Stadium.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\AI\AI.vcxproj">
+      <Project>{ea8b500e-59fa-4a79-8398-08f85f821cc7}</Project>
+    </ProjectReference>
     <ProjectReference Include="..\BulletPhysics\build3\vs2010\BulletCollision.vcxproj">
       <Project>{40ea9fb9-b6a7-0546-bb80-77339701554e}</Project>
     </ProjectReference>
