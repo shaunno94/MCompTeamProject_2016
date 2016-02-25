@@ -27,6 +27,9 @@
     <ClInclude Include="PS4Input.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="InputBase.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Keyboard.cpp">
@@ -36,6 +39,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="PS4Input.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="InputBase.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

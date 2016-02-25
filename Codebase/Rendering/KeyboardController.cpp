@@ -1,3 +1,4 @@
+#ifndef ORBIS
 #include "KeyboardController.h"
 
 
@@ -46,3 +47,4 @@ void KeyboardController::CheckInput(){
 	float yaw = (Window::GetMouse()->GetRelativePosition().x);
 	object->setCameraControl(pitch, yaw);
 }
+#endif

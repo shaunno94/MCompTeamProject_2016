@@ -12,12 +12,13 @@
 #include "AI\RunAwayState.h"
 #include "AI\DistanceTrigger.h"
 #include "AI\ShooterAgent.h"
-#include "Rendering\KeyboardController.h"
+
 
 const float TIME_STEP = 1.0f / 120.0f;
 const unsigned int SUB_STEPS = 4;
 
 #ifndef ORBIS
+#include "Rendering\KeyboardController.h"
 const unsigned int SCREEN_HEIGHT = 800;
 const unsigned int SCREEN_WIDTH = 1280;
 const string SIMPLESHADER_VERT = SHADER_DIR"textureVertex.glsl";
@@ -25,6 +26,8 @@ const string SIMPLESHADER_FRAG = SHADER_DIR"textureFragment.glsl";
 const string POINTLIGHTSHADER_VERT = SHADER_DIR"2dShadowLightvertex.glsl";
 const string POINTLIGHTSHADER_FRAG = SHADER_DIR"2dShadowLightfragment.glsl";
 #else
+#include "Input\PS4Input.h"
+#include "Rendering\PS4Controller.h"
 const unsigned int SCREEN_HEIGHT = 1080;
 const unsigned int SCREEN_WIDTH = 1920;
 const string SIMPLESHADER_VERT = SHADER_DIR"textureVertex.sb";
@@ -49,6 +52,9 @@ int main(void) {
 		return -1;
 	}
 	GameTimer timer;
+#ifdef ORBIS
+	PS4Input input = PS4Input();
+#endif
 
 	//Initialise Bullet physics engine.
 	PhysicsEngineInstance::Instance()->setGravity(btVector3(0, -9.81, 0));
@@ -124,7 +130,11 @@ int main(void) {
 	ball->GetPhysicsComponent()->GetPhysicsBody()->setHitFraction(0.5);
 
 	ControllerComponent* cc = new ControllerComponent(ball);
+#ifndef ORBIS
 	myScene->setPlayerController(new KeyboardController(cc));
+#else
+	myScene->setPlayerController(new PS4Controller(cc));
+#endif
 
 	myScene->attachCam(ball);
 
@@ -140,6 +150,9 @@ int main(void) {
 	while (true)
 #endif
 	{
+#ifdef ORBIS
+		input.Poll();
+#endif
 		float ms = timer.GetTimer()->Get(1000.0f);
 		PhysicsEngineInstance::Instance()->stepSimulation(ms, SUB_STEPS, TIME_STEP);
 		renderer.RenderScene(ms);
