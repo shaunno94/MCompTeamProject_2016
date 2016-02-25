@@ -126,10 +126,11 @@ static const struct ReservedOtherTexturesStruct
 			ShaderUniformInfo SPECULAR;
 			ShaderUniformInfo SHADOW_2D;
 			ShaderUniformInfo SHADOW_CUBE;
+			ShaderUniformInfo CUBE;
 		};
-		ShaderUniformInfo values[6];
+		ShaderUniformInfo values[7];
 };
-	static const size_t size = 6;
+	static const size_t size = 7;
 
 } ReservedOtherTextures =
 {
@@ -138,7 +139,8 @@ static const struct ReservedOtherTexturesStruct
 	reservedMeshTextureCounter++, "emissiveTex",
 	reservedMeshTextureCounter++, "specularTex",
 	reservedMeshTextureCounter++, "shadowTex",
-	reservedMeshTextureCounter++, "shadowTexCube"
+	reservedMeshTextureCounter++, "shadowTexCube",
+	reservedMeshTextureCounter++, "cubeTex"
 };
 
 /// <summary>

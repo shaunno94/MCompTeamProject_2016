@@ -69,7 +69,7 @@ Mesh* Mesh::GenerateQuad(Vec2Graphics texCoords)
 #endif
 	
 	m->m_NumVertices = 4;
-	m->m_NumIndices = 6;
+	m->m_NumIndices = 4;
 	m->SetPrimitiveType(TRIANGLE_STRIP);
 
 	m->m_Vertices = new Vec3Graphics[m->m_NumVertices];
@@ -178,6 +178,8 @@ void Mesh::GenerateNormals()
 {
 	if (!m_Normals)
 		m_Normals = new Vec3Graphics[m_NumVertices];
+	else
+		return;
 	for (unsigned int i = 0; i < m_NumVertices; ++i)
 		m_Normals[i] = Vec3Graphics();
 
@@ -226,6 +228,8 @@ void Mesh::GenerateTangents()
 
 	if (!m_Tangents)
 		m_Tangents = new Vec3Graphics[m_NumVertices];
+	else
+		return;
 	for (unsigned int i = 0; i < m_NumVertices; ++i)
 		m_Tangents[i] = Vec3Graphics();
 

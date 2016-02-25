@@ -153,6 +153,7 @@
     <ClInclude Include="Controller.h" />
     <ClInclude Include="ControllerComponent.h" />
     <ClInclude Include="CubeEmitter.h" />
+    <ClInclude Include="CubeMaterial.h" />
     <ClInclude Include="DebugDraw.h" />
     <ClInclude Include="ExtendedMaterial.h" />
     <ClInclude Include="Frustum.h" />
@@ -187,6 +188,7 @@
   <ItemGroup>
     <ClCompile Include="Camera.cpp" />
     <ClCompile Include="ControllerComponent.cpp" />
+    <ClCompile Include="CubeMaterial.cpp" />
     <ClCompile Include="DebugDraw.cpp" />
     <ClCompile Include="CubeEmitter.cpp" />
     <ClCompile Include="ExtendedMaterial.cpp" />
