@@ -3,10 +3,8 @@
 #include <cassert>
 #include "Helpers/common.h"
 #include <utility>
+#include <iostream>
 
-bool Net::s_Initialized = false;
-NetServer* Net::s_NetServer = nullptr;
-NetClient* Net::s_NetClient = nullptr;
 
 NetConnectionData::NetConnectionData(const std::string& address) : m_addressStr(address)
 {
@@ -135,13 +133,15 @@ void NetSessionWriter::AddNetMessage(NetMessage* message)
 }
 
 
-bool Net::Init()
+bool Network::s_Initialized = false;
+
+bool Network::Init()
 {
 	if (!s_Initialized)
 	{
 		if (enet_initialize() == 0)
 		{
-			atexit(Net::Clear);
+			atexit(Network::Clear);
 			s_Initialized = true;
 		}
 		else
@@ -153,23 +153,12 @@ bool Net::Init()
 }
 
 
-void Net::Clear()
+void Network::Clear()
 {
 	if (s_Initialized)
 		enet_deinitialize();
 
 	s_Initialized = false;
-
-	if (s_NetServer)
-	{
-		delete s_NetServer;
-		s_NetServer = nullptr;
-	}
-	if (s_NetClient)
-	{
-		delete s_NetClient;
-		s_NetClient = nullptr;
-	}
 }
 
 
@@ -179,6 +168,53 @@ NetHost::NetHost()
 	m_stopService = false;
 	m_session = nullptr;
 }
+
+std::string NetHost::GetAddressStr()
+{
+	PIP_ADAPTER_INFO pAdapterInfo = nullptr;
+	ULONG ulOutBufLen = 1;
+
+	GetAdaptersInfo(pAdapterInfo, &ulOutBufLen);
+	pAdapterInfo = (PIP_ADAPTER_INFO) new char[ulOutBufLen];
+	GetAdaptersInfo(pAdapterInfo, &ulOutBufLen);
+
+	PIP_ADAPTER_INFO pCurrentAdapterInfo = pAdapterInfo;
+	while (pCurrentAdapterInfo)
+	{
+
+		printf("\tComboIndex: \t%d\n", pCurrentAdapterInfo->ComboIndex);
+		printf("\tAdapter Name: \t%s\n", pCurrentAdapterInfo->AdapterName);
+		printf("\tAdapter Desc: \t%s\n", pCurrentAdapterInfo->Description);
+		printf("\tAdapter Addr: \t");
+		for (int i = 0; i < pCurrentAdapterInfo->AddressLength; i++)
+		{
+			if (i == (pCurrentAdapterInfo->AddressLength - 1))
+				printf("%.2X\n", (int)pCurrentAdapterInfo->Address[i]);
+			else
+				printf("%.2X-", (int)pCurrentAdapterInfo->Address[i]);
+		}
+
+		printf("\tIP Address: \t%s\n",
+			pCurrentAdapterInfo->IpAddressList.IpAddress.String);
+		printf("\tIP Mask: \t%s\n", pCurrentAdapterInfo->IpAddressList.IpMask.String);
+
+		printf("\tGateway: \t%s\n", pCurrentAdapterInfo->GatewayList.IpAddress.String);
+		printf("\t***\n");
+
+		pCurrentAdapterInfo = pCurrentAdapterInfo->Next;
+	}
+
+	delete pAdapterInfo;
+
+	static const size_t CONNECTION_NAME_MAX_LENGTH = 64;
+	char buffer[CONNECTION_NAME_MAX_LENGTH];
+
+	if (enet_address_get_host_ip(&(m_host->address), buffer, CONNECTION_NAME_MAX_LENGTH))
+		buffer[0] = 0;
+
+	return std::string(buffer);
+}
+
 
 
 //server

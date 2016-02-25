@@ -5,7 +5,7 @@
 int main()
 {
 	//Initialize the networking settings
-	Net::Init();
+	Network::Init();
 
 	//create client instance
 	NetClient* client = new NetClient();

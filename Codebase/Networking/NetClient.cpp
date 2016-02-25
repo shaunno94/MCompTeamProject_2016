@@ -52,8 +52,10 @@ void NetClient::ConnectToServerService()
 	if (enet_host_service(m_host, &event, NET_CONNECTION_TIMEOUT) > 0 && event.type == ENET_EVENT_TYPE_CONNECT)
 	{
 		PROMPT_NET(
-		  "Connection to the server %s succeeded."LINE_SEPARATOR_DEF,
-		  m_connection->addressStr
+		  (
+		    "Connection to the server %s succeeded."LINE_SEPARATOR_DEF,
+		    m_connection->GetAddressStr().c_str()
+		  )
 		);
 		//TODO: Store any relevant client information here.
 		event.peer->data = new std::string("TestName");
@@ -63,12 +65,24 @@ void NetClient::ConnectToServerService()
 	else
 	{
 		enet_peer_reset(m_connection->GetPeer());
+
 		PROMPT_NET(
-		  "Connection to the server %s failed."LINE_SEPARATOR_DEF,
-		  m_connection->addressStr
+		  (
+		    "Connection to the server %s failed."LINE_SEPARATOR_DEF,
+		    m_connection->GetAddressStr().c_str()
+		  )
 		);
 	}
 }
+
+
+
+NetSession* NetClient::GetSession()
+{
+	//TODO
+	return nullptr;
+}
+
 
 void NetClient::DisconnectionCleanup()
 {
@@ -106,7 +120,7 @@ void NetClient::DisconnectFromServerService()
 		switch (event.type)
 		{
 		case ENET_EVENT_TYPE_DISCONNECT:
-			PROMPT_NET("Disconnection from %s succeeded."LINE_SEPARATOR_DEF, m_connection->addressStr);
+			PROMPT_NET(("Disconnection from %s succeeded."LINE_SEPARATOR_DEF, m_connection->GetAddressStr().c_str()));
 			DisconnectionCleanup();
 			return;
 		case ENET_EVENT_TYPE_RECEIVE:
@@ -115,7 +129,7 @@ void NetClient::DisconnectFromServerService()
 		}
 	}
 
-	PROMPT_NET("Forcing disconnection from %s after timeout."LINE_SEPARATOR_DEF, m_connection->addressStr);
+	PROMPT_NET(("Forcing disconnection from %s after timeout."LINE_SEPARATOR_DEF, m_connection->GetAddressStr().c_str()));
 	DisconnectionCleanup();
 }
 
@@ -137,7 +151,7 @@ void NetClient::DisconnectFromServer()
 	if (!m_connection)
 		return;
 
-	PROMPT_NET("Disconnecting from the server %s."LINE_SEPARATOR_DEF, m_connection->addressStr);
+	PROMPT_NET(("Disconnecting from the server %s."LINE_SEPARATOR_DEF, m_connection->GetAddressStr().c_str()));
 	m_stopService = true;
 
 	//wait for service to finish

@@ -4,7 +4,6 @@
 
 class NetClient : public NetHost
 {
-	friend class Net;
 public:
 	void ConnectToServer(const std::string& address);
 	void DisconnectFromServer();

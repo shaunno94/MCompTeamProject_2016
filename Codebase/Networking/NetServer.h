@@ -11,7 +11,6 @@ enum NetServerState
 
 class NetServer : public NetHost
 {
-	friend class Net;
 public:
 	NetServer(unsigned int maxPlayers);
 	~NetServer();

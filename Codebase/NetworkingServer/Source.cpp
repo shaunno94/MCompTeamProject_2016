@@ -3,16 +3,19 @@
 #include <iostream>
 #include "Helpers/common.h"
 
+
 int main()
 {
+
 	//Initialize the networking settings
-	Net::Init();
+	Network::Init();
 
 	//create client instance
 	NetServer* server = new NetServer(5);
 
-	unsigned int input = 1;
+	std::cout << "My address: " << server->GetAddressStr() << LINE_SEPARATOR_STR;
 
+	unsigned int input = 1;
 	while (input != 0)
 	{
 		size_t size = server->GetConnectionCount();
@@ -35,7 +38,7 @@ int main()
 				std::cout << connection->GetAddressStr() << LINE_SEPARATOR_STR;
 		}
 
-		std::cout << "0 to continue other numbers to include connections";
+		std::cout << "0 to continue other numbers to include connections"LINE_SEPARATOR_DEF;
 		std::cin >> input;
 
 		if (input <= size && input > 0)

@@ -3,6 +3,15 @@
 #include <mutex>
 #include "Helpers/DeltaTimer.h"
 #include <future>
+#include <iostream>
+
+#pragma comment(lib, "ws2_32.lib")
+#pragma comment(lib, "winmm.lib")
+
+
+#include <iphlpapi.h>
+#pragma comment(lib, "IPHLPAPI.lib")
+
 
 typedef ENetAddress NetAddress;
 
@@ -24,7 +33,7 @@ enum NetMessageStrategy : uint32_t
 #endif
 
 #if _DEBUG
-#define PROMPT_NET(message) printf(message)
+#define PROMPT_NET(message) do { std::cerr << message; } while (0)
 #else
 #define PROMPT_NET() ((void)0)
 #endif
@@ -82,7 +91,6 @@ class NetSessionMessagesBuffer
 	friend class NetSessionWriter;
 public:
 	NetSessionMessagesBuffer();
-	~NetSessionMessagesBuffer();
 
 protected:
 
@@ -220,7 +228,9 @@ protected:
 
 class NetHost
 {
-	friend class Net;
+public:
+	std::string GetAddressStr();
+
 protected:
 
 	class NetConnectionDataInternal : public NetConnectionData
@@ -272,23 +282,15 @@ protected:
 #define NET_SERVICE_PORT 1234
 #define NET_SERVICE_MAX_CONNECTION 32
 
-static class Net
+
+class Network
 {
 public:
 	static bool Init();
-
-	static NetServer* GetServer();
-	static NetClient* GetClient();
-
-private:
-	inline Net() {};
-
 	static bool s_Initialized;
 	static void Clear();
-
-	static NetServer* s_NetServer;
-	static NetClient* s_NetClient;
 };
+
 
 
 //message types:

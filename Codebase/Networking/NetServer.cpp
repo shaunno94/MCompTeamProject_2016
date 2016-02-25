@@ -62,6 +62,7 @@ bool NetServer::AddToSession(NetConnectionData* connection)
 		m_connections.erase(position);
 		m_session->m_players.push_back(connection);
 	}
+	return true;
 }
 
 bool NetServer::RemoveFromSession(unsigned int id)
@@ -77,6 +78,7 @@ bool NetServer::RemoveFromSession(unsigned int id)
 		m_pendingDisconnections.push_back((NetConnectionDataInternal*)*player);
 		m_session->m_players.erase(player);
 	}
+	return true;
 }
 
 void NetServer::DisconnectService()
@@ -84,7 +86,7 @@ void NetServer::DisconnectService()
 	if (m_state == NetServerOffline)
 		return;
 
-	m_state == NetServerDisconnecting;
+	m_state = NetServerDisconnecting;
 
 	for (auto connection : m_connections)
 	{
@@ -123,8 +125,8 @@ void NetServer::DisconnectService()
 	}
 	m_pendingDisconnections.clear();
 
-	
-	m_state == NetServerOffline;
+
+	m_state = NetServerOffline;
 }
 
 void NetServer::Disconnect()
@@ -154,11 +156,11 @@ void NetServer::SessionSetupService()
 			{
 			case ENET_EVENT_TYPE_RECEIVE:
 				PROMPT_NET(
-					"A packet of length %u was received from %s on channel %u."LINE_SEPARATOR_DEF,
-					event.packet->dataLength
-					event.peer->data,
-					event.channelID
-					);
+				  "A packet of length " << event.packet->dataLength <<
+				  " was received from " << event.peer->data <<
+				  " on channel " << event.channelID <<
+				  "."LINE_SEPARATOR_DEF
+				);
 				//event.packet -> data
 				/* Clean up the packet now that we're done using it. */
 				enet_packet_destroy(event.packet);
@@ -223,10 +225,10 @@ void NetServer::SessionRunService()
 			{
 			case ENET_EVENT_TYPE_RECEIVE:
 				PROMPT_NET(
-				  "A packet of length %u was received from %s on channel %u."LINE_SEPARATOR_DEF,
-				  event.packet->dataLength
-				  event.peer->data,
-				  event.channelID
+				  "A packet of length " << event.packet->dataLength <<
+				  " was received from " << event.peer->data <<
+				  " on channel " << event.channelID <<
+				  "."LINE_SEPARATOR_DEF
 				);
 				//event.packet -> data
 				/* Clean up the packet now that we're done using it. */
@@ -282,12 +284,8 @@ void NetServer::StartSession()
 
 void NetServer::AddNewConnection(ENetPeer* peer)
 {
-	//TODO: abort new connections mid session
-
 	PROMPT_NET(
-	  "A new client connected from %x:%u."LINE_SEPARATOR_DEF,
-	  event.peer->address.host,
-	  event.peer->address.port
+	  "A new client connected from " << peer->address.host << ":" << peer->address.port << "."LINE_SEPARATOR_DEF
 	);
 	/* Store any relevant client information here. */
 	peer->data = new std::string("TestName");
