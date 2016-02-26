@@ -1,6 +1,6 @@
 #pragma once
 #include "Material.h"
-enum shadowType{ _NONE, _2D, _CUBE };
+enum shadowType { _NONE, _2D, _CUBE };
 
 class LightMaterial : public Material
 {
@@ -12,7 +12,7 @@ protected:
 	std::vector<std::pair<int, float>> m_uniformFloats;
 	std::vector<std::pair<int, int>> m_uniformInts;
 
-	
+
 
 public:
 	LightMaterial(BaseShader* shader, bool hasTranslucency = false);

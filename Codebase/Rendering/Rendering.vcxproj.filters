@@ -329,4 +329,9 @@
       <Filter>PS4Shaders</Filter>
     </OrbisWavePsslc>
   </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="Rendering.rc">
+      <Filter>Resource Files</Filter>
+    </ResourceCompile>
+  </ItemGroup>
 </Project>
