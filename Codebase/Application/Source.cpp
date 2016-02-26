@@ -72,6 +72,7 @@ int main(void) {
 
 	//Game objects added to scene are delete by the scene so don't delete twice.
 	GameObject* ball = new GameObject("ball");
+	GameObject* ball2 = new GameObject("ball2");
 	GameObject* light1 = new GameObject("l");
 	GameObject* light2 = new GameObject("l");
 
@@ -80,7 +81,11 @@ int main(void) {
 	//Physics objects will be deleted by the game object.
 	RigidPhysicsObject* ballPhysics = new RigidPhysicsObject();
 	ballPhysics->CreateCollisionShape(Vec3Physics(5.0, 5.0, 5.0),CUBOID);
-	ballPhysics->CreatePhysicsBody(5.0, Vec3Physics(0, 5, 0), QuatPhysics(0, 0, 0, 1), Vec3Physics(1, 1, 1));
+	ballPhysics->CreatePhysicsBody(5.0, Vec3Physics(10, 5, 0), QuatPhysics(0, 0, 0, 1), Vec3Physics(1, 1, 1));
+
+	RigidPhysicsObject* ball2Physics = new RigidPhysicsObject();
+	ball2Physics->CreateCollisionShape(5.0);
+	ball2Physics->CreatePhysicsBody(5.0, Vec3Physics(0, 5, 0), QuatPhysics(0, 0, 0, 1), Vec3Physics(1, 1, 1));
 
 	RigidPhysicsObject* floorPhysics = new RigidPhysicsObject();
 	floorPhysics->CreateCollisionShape(0, Vec3Physics(0, 1, 0), true);
@@ -129,6 +134,14 @@ int main(void) {
 	ball->GetPhysicsComponent()->GetPhysicsBody()->setRollingFriction(0.5);
 	ball->GetPhysicsComponent()->GetPhysicsBody()->setHitFraction(0.5);
 
+	ball2->SetRenderComponent(new RenderComponent(ballMaterial, ModelLoader::LoadMGL(MODEL_DIR"Common/sphere.mgl", true)));
+	ball2->SetLocalTransform(Mat4Graphics::Scale(Vector3Simple(5, 5, 5)));
+	ball2->SetPhysicsComponent(ball2Physics);
+	ball2->GetPhysicsComponent()->GetPhysicsBody()->setRestitution(btScalar(0.9));
+	ball2->GetPhysicsComponent()->GetPhysicsBody()->setFriction(0.5);
+	ball2->GetPhysicsComponent()->GetPhysicsBody()->setRollingFriction(0.5);
+	ball2->GetPhysicsComponent()->GetPhysicsBody()->setHitFraction(0.5);
+
 	ControllerComponent* cc = new ControllerComponent(ball);
 #ifndef ORBIS
 	myScene->setPlayerController(new KeyboardController(cc));
@@ -140,6 +153,7 @@ int main(void) {
 
 
 	myScene->addGameObject(ball);
+	myScene->addGameObject(ball2);
 
 	renderer.SetCurrentScene(myScene);
 
