@@ -74,7 +74,7 @@ int main(void) {
 	ControllerManager* myControllers = new LocalControlManager;
 
 	//Game objects added to scene are delete by the scene so don't delete twice.
-	GameObject* ball = new GameObject("ball");
+	GameObject* player = new GameObject("player");
 	GameObject* ball2 = new GameObject("ball2");
 	GameObject* light1 = new GameObject("l");
 	GameObject* light2 = new GameObject("l");
@@ -82,13 +82,13 @@ int main(void) {
 	//Physics objects hold collision shape and collision object(body), 
 	//call CreateCollisionShape before CreatePhysicsBody or the object will not be created correctly.
 	//Physics objects will be deleted by the game object.
-	RigidPhysicsObject* ballPhysics = new RigidPhysicsObject();
-	ballPhysics->CreateCollisionShape(Vec3Physics(5.0, 5.0, 5.0),CUBOID);
-	ballPhysics->CreatePhysicsBody(5.0, Vec3Physics(10, 5, 0), QuatPhysics(0, 0, 0, 1), Vec3Physics(1, 1, 1));
+	RigidPhysicsObject* playerPhysics = new RigidPhysicsObject();
+	playerPhysics->CreateCollisionShape(Vec3Physics(5.0, 2.5, 5.0),CUBOID);
+	playerPhysics->CreatePhysicsBody(8.0, Vec3Physics(10, 5, 0), QuatPhysics(0, 0, 0, 1), Vec3Physics(1, 1, 1));
 
 	RigidPhysicsObject* ball2Physics = new RigidPhysicsObject();
-	ball2Physics->CreateCollisionShape(5.0);
-	ball2Physics->CreatePhysicsBody(5.0, Vec3Physics(0, 5, 0), QuatPhysics(0, 0, 0, 1), Vec3Physics(1, 1, 1));
+	ball2Physics->CreateCollisionShape(7.0);
+	ball2Physics->CreatePhysicsBody(2.0, Vec3Physics(0, 3, 0), QuatPhysics(0, 0, 0, 1), Vec3Physics(1, 1, 1));
 	
 	RigidPhysicsObject* floorPhysics = new RigidPhysicsObject();
 	floorPhysics->CreateCollisionShape(0, Vec3Physics(0, 1, 0), true);
@@ -108,12 +108,12 @@ int main(void) {
 
 	LightMaterial* lightMaterial = new LightMaterial(pointlightShader);
 	light1->SetRenderComponent(new RenderComponent(lightMaterial, ModelLoader::LoadMGL(MODEL_DIR"Common/ico.mgl", true)));
-	light1->SetWorldTransform(Mat4Graphics::Translation(Vec3Graphics(0, 2, 2)) *Mat4Graphics::Scale(Vec3Graphics(20, 20, 20)));
+	light1->SetWorldTransform(Mat4Graphics::Translation(Vec3Graphics(0, 2, 0.3f)) *Mat4Graphics::Scale(Vec3Graphics(20, 20, 20)));
 	light1->SetBoundingRadius(20);
 
 	lightMaterial->shadowType = _2D;
 	light2->SetRenderComponent(new RenderComponent(lightMaterial, ModelLoader::LoadMGL(MODEL_DIR"Common/ico.mgl", true)));
-	light2->SetWorldTransform(Mat4Graphics::Translation(Vec3Graphics(600, 600, 600)) *Mat4Graphics::Scale(Vec3Graphics(1600, 1600, 1600)));
+	light2->SetWorldTransform(Mat4Graphics::Translation(Vec3Graphics(400, 600, 400)) *Mat4Graphics::Scale(Vec3Graphics(1600, 1600, 1600)));
 	light2->SetBoundingRadius(1600);
 
 	Material* material = new Material(simpleShader);
@@ -129,32 +129,35 @@ int main(void) {
 	//myScene->addLightObject(light1);
 	myScene->addLightObject(light2);
 
-	ball->SetRenderComponent(new RenderComponent(ballMaterial, ModelLoader::LoadMGL(MODEL_DIR"Common/Cube.mgl", true)));
-	ball->SetLocalTransform(Mat4Graphics::Scale(Vector3Simple(5, 5, 5)));
-	ball->SetPhysicsComponent(ballPhysics);
-	ball->GetPhysicsComponent()->GetPhysicsBody()->setRestitution(btScalar(0.9));
-	ball->GetPhysicsComponent()->GetPhysicsBody()->setFriction(0.5);
-	ball->GetPhysicsComponent()->GetPhysicsBody()->setRollingFriction(0.5);
-	ball->GetPhysicsComponent()->GetPhysicsBody()->setHitFraction(0.5);
+
+
+	player->SetRenderComponent(new RenderComponent(ballMaterial, ModelLoader::LoadMGL(MODEL_DIR"Common/cube.mgl", true)));
+	player->SetLocalTransform(Mat4Graphics::Scale(Vector3Simple(5, 2.5f, 5)));
+	player->SetPhysicsComponent(playerPhysics);
+	player->GetPhysicsComponent()->GetPhysicsBody()->setRestitution(btScalar(0.9));
+	player->GetPhysicsComponent()->GetPhysicsBody()->setFriction(0.5);
+	player->GetPhysicsComponent()->GetPhysicsBody()->setRollingFriction(0.5);
+	player->GetPhysicsComponent()->GetPhysicsBody()->setHitFraction(0.5);
 
 	ball2->SetRenderComponent(new RenderComponent(ballMaterial, ModelLoader::LoadMGL(MODEL_DIR"Common/sphere.mgl", true)));
-	ball2->SetLocalTransform(Mat4Graphics::Scale(Vector3Simple(5, 5, 5)));
+	ball2->SetLocalTransform(Mat4Graphics::Scale(Vector3Simple(7, 7, 7)));
 	ball2->SetPhysicsComponent(ball2Physics);
 	ball2->GetPhysicsComponent()->GetPhysicsBody()->setRestitution(btScalar(0.9));
 	ball2->GetPhysicsComponent()->GetPhysicsBody()->setFriction(0.5);
 	ball2->GetPhysicsComponent()->GetPhysicsBody()->setRollingFriction(0.5);
 	ball2->GetPhysicsComponent()->GetPhysicsBody()->setHitFraction(0.5);
 
-	ControllerComponent* cc = new ControllerComponent(ball);
+	ControllerComponent* cc = new ControllerComponent(player);
 #ifndef ORBIS
-	myControllers->setProducer(ball);
+	myControllers->setProducer(player);
 #else
 	myScene->setPlayerController(new PS4Controller(cc));
 #endif
 
-	myScene->attachCam(ball);
+	myScene->attachCam(player);
 
-	myScene->addGameObject(ball);
+
+	myScene->addGameObject(player);
 	myScene->addGameObject(ball2);
 
 	renderer.SetCurrentScene(myScene);
