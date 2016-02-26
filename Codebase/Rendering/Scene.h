@@ -18,6 +18,7 @@ public:
 	Scene();
 	~Scene();
 
+	GameObject* findGameObject(const std::string& objectName);
 	GameObject* getOpaqueObject(unsigned int i) { return opaqueObjects[i]; }
 
 	GameObject* getTransparentObject(unsigned int i){ return transparentObjects[i]; }

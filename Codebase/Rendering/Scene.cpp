@@ -25,6 +25,22 @@ Scene::~Scene()
 	opaqueObjects.clear();
 }
 
+GameObject* Scene::findGameObject(const std::string& objectName)
+{
+	for (auto obj : opaqueObjects) {
+		if (obj->m_Name == objectName) {
+			return obj;
+		}
+	}
+	for (auto obj : transparentObjects) {
+		if (obj->m_Name == objectName) {
+			return obj;
+		}
+	}
+	return nullptr;
+
+}
+
 //Recursively add objects to node lists for rendering - check for transparency
 void Scene::addGameObject(GameObject* obj)
 {

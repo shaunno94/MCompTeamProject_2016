@@ -7,14 +7,6 @@
 #include "Rendering\LocalControlManager.h"
 #include "Stadium.h"
 
-// Includes for AI States and Triggers
-#include "AI\StateMachine.h"
-#include "AI\ChaseState.h"
-#include "AI\RunAwayState.h"
-#include "AI\DistanceTrigger.h"
-#include "AI\ShooterAgent.h"
-
-
 const float TIME_STEP = 1.0f / 120.0f;
 const unsigned int SUB_STEPS = 4;
 
@@ -75,9 +67,11 @@ int main(void) {
 
 	//Game objects added to scene are delete by the scene so don't delete twice.
 	GameObject* player = new GameObject("player");
-	GameObject* ball2 = new GameObject("ball2");
+	GameObject* ball = new GameObject("ball");
 	GameObject* light1 = new GameObject("l");
 	GameObject* light2 = new GameObject("l");
+
+	GameObject* ai1 = new GameObject("ai1");
 
 	//Physics objects hold collision shape and collision object(body), 
 	//call CreateCollisionShape before CreatePhysicsBody or the object will not be created correctly.
@@ -86,9 +80,13 @@ int main(void) {
 	playerPhysics->CreateCollisionShape(Vec3Physics(5.0, 2.5, 5.0),CUBOID);
 	playerPhysics->CreatePhysicsBody(8.0, Vec3Physics(10, 5, 0), QuatPhysics(0, 0, 0, 1), Vec3Physics(1, 1, 1));
 
-	RigidPhysicsObject* ball2Physics = new RigidPhysicsObject();
-	ball2Physics->CreateCollisionShape(7.0);
-	ball2Physics->CreatePhysicsBody(2.0, Vec3Physics(0, 3, 0), QuatPhysics(0, 0, 0, 1), Vec3Physics(1, 1, 1));
+	RigidPhysicsObject* aiPhysics = new RigidPhysicsObject();
+	aiPhysics->CreateCollisionShape(Vec3Physics(5.0, 2.5, 5.0), CUBOID);
+	aiPhysics->CreatePhysicsBody(8.0, Vec3Physics(30, 5, 10), QuatPhysics(0, 0, 0, 1), Vec3Physics(1, 1, 1));
+
+	RigidPhysicsObject* ballPhysics = new RigidPhysicsObject();
+	ballPhysics->CreateCollisionShape(7.0);
+	ballPhysics->CreatePhysicsBody(2.0, Vec3Physics(0, 3, 0), QuatPhysics(0, 0, 0, 1), Vec3Physics(1, 1, 1));
 	
 	RigidPhysicsObject* floorPhysics = new RigidPhysicsObject();
 	floorPhysics->CreateCollisionShape(0, Vec3Physics(0, 1, 0), true);
@@ -129,8 +127,6 @@ int main(void) {
 	//myScene->addLightObject(light1);
 	myScene->addLightObject(light2);
 
-
-
 	player->SetRenderComponent(new RenderComponent(ballMaterial, ModelLoader::LoadMGL(MODEL_DIR"Common/cube.mgl", true)));
 	player->SetLocalTransform(Mat4Graphics::Scale(Vector3Simple(5, 2.5f, 5)));
 	player->SetPhysicsComponent(playerPhysics);
@@ -139,13 +135,21 @@ int main(void) {
 	player->GetPhysicsComponent()->GetPhysicsBody()->setRollingFriction(0.5);
 	player->GetPhysicsComponent()->GetPhysicsBody()->setHitFraction(0.5);
 
-	ball2->SetRenderComponent(new RenderComponent(ballMaterial, ModelLoader::LoadMGL(MODEL_DIR"Common/sphere.mgl", true)));
-	ball2->SetLocalTransform(Mat4Graphics::Scale(Vector3Simple(7, 7, 7)));
-	ball2->SetPhysicsComponent(ball2Physics);
-	ball2->GetPhysicsComponent()->GetPhysicsBody()->setRestitution(btScalar(0.9));
-	ball2->GetPhysicsComponent()->GetPhysicsBody()->setFriction(0.5);
-	ball2->GetPhysicsComponent()->GetPhysicsBody()->setRollingFriction(0.5);
-	ball2->GetPhysicsComponent()->GetPhysicsBody()->setHitFraction(0.5);
+	ball->SetRenderComponent(new RenderComponent(ballMaterial, ModelLoader::LoadMGL(MODEL_DIR"Common/sphere.mgl", true)));
+	ball->SetLocalTransform(Mat4Graphics::Scale(Vector3Simple(7, 7, 7)));
+	ball->SetPhysicsComponent(ballPhysics);
+	ball->GetPhysicsComponent()->GetPhysicsBody()->setRestitution(btScalar(0.9));
+	ball->GetPhysicsComponent()->GetPhysicsBody()->setFriction(0.5);
+	ball->GetPhysicsComponent()->GetPhysicsBody()->setRollingFriction(0.5);
+	ball->GetPhysicsComponent()->GetPhysicsBody()->setHitFraction(0.5);
+
+	ai1->SetRenderComponent(new RenderComponent(ballMaterial, ModelLoader::LoadMGL(MODEL_DIR"Common/cube.mgl", true)));
+	ai1->SetLocalTransform(Mat4Graphics::Scale(Vector3Simple(5, 2.5f, 5)));
+	ai1->SetPhysicsComponent(aiPhysics);
+	ai1->GetPhysicsComponent()->GetPhysicsBody()->setRestitution(btScalar(0.9));
+	ai1->GetPhysicsComponent()->GetPhysicsBody()->setFriction(0.5);
+	ai1->GetPhysicsComponent()->GetPhysicsBody()->setRollingFriction(0.5);
+	ai1->GetPhysicsComponent()->GetPhysicsBody()->setHitFraction(0.5);
 
 	ControllerComponent* cc = new ControllerComponent(player);
 #ifndef ORBIS
@@ -158,9 +162,14 @@ int main(void) {
 
 
 	myScene->addGameObject(player);
-	myScene->addGameObject(ball2);
+	myScene->addGameObject(ball);
+	myScene->addGameObject(ai1);
 
 	renderer.SetCurrentScene(myScene);
+
+	myControllers->setActor(ai1, 0);
+
+
 
 
 #ifndef ORBIS
