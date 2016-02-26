@@ -1,5 +1,6 @@
 #pragma once
 #include "ControllerManager.h"
+#include "KeyboardController.h"
 class LocalControlManager :
 	public ControllerManager
 {

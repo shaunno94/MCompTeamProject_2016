@@ -169,10 +169,10 @@
       <Filter>Header Files\Input</Filter>
     </ClInclude>
     <ClInclude Include="ControllerManager.h">
-      <Filter>Header Files</Filter>
+      <Filter>Header Files\Input</Filter>
     </ClInclude>
     <ClInclude Include="LocalControlManager.h">
-      <Filter>Header Files</Filter>
+      <Filter>Header Files\Input</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -273,10 +273,10 @@
       <Filter>Source Files\Input</Filter>
     </ClCompile>
     <ClCompile Include="ControllerManager.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Source Files\Input</Filter>
     </ClCompile>
     <ClCompile Include="LocalControlManager.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Source Files\Input</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

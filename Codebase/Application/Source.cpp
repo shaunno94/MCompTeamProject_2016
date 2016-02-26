@@ -4,7 +4,7 @@
 #include "Rendering\ModelLoader.h"
 #include "Rendering\DebugDraw.h"
 #include "Rendering\GameTimer.h"
-#include "Rendering\ControllerManager.h"
+#include "Rendering\LocalControlManager.h"
 #include "Stadium.h"
 
 // Includes for AI States and Triggers
@@ -71,7 +71,7 @@ int main(void) {
 	Scene* myScene = new Scene();
 	myScene->getCamera()->SetPosition(Vec3Graphics(10, 5, 0)); //no effect anymore
 
-	ControllerManager* myControllers = new ControllerManager;
+	ControllerManager* myControllers = new LocalControlManager;
 
 	//Game objects added to scene are delete by the scene so don't delete twice.
 	GameObject* ball = new GameObject("ball");

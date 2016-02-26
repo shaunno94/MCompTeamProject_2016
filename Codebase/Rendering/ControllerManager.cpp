@@ -11,5 +11,8 @@ ControllerManager::~ControllerManager()
 }
 
 void ControllerManager::update(float ms){
-	//currentScene->playerController->CheckInput();
+	for (auto ctrl : controllers)
+	{
+		ctrl->CheckInput();
+	}
 }
