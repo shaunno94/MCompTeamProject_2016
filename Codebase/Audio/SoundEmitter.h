@@ -120,6 +120,9 @@ public:
 	void SetPosition(const Vec3& pos) {
 		position = pos;
 	}
+	void SetVelocity(const Vec3& vel) {
+		velocity = vel;
+	}
 
 	static bool		CompareNodesByPriority(SoundEmitter* a, SoundEmitter* b);
 
@@ -144,4 +147,5 @@ protected:
 	ALuint streamBuffers[NUM_STREAM_BUFFERS];
 
 	Vec3 position;
+	Vec3 velocity;
 };

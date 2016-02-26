@@ -54,7 +54,7 @@ SoundSystem::~SoundSystem(void)	{
 	alcCloseDevice(device);
 }
 
-void SoundSystem::SetListener(const Mat4& transform)
+void SoundSystem::SetListenerMatrix(const Mat4& transform)
 {
 	listenerTransform = transform;
 	listenerPos = transform.GetTranslation();
@@ -154,6 +154,7 @@ void	SoundSystem::UpdateListener() {
 	dirup[1].Normalize();
 
 	alListenerfv(AL_POSITION, (float*)&listenerPos);
+	alListenerfv(AL_VELOCITY, (float*)&listenerVel);
 	alListenerfv(AL_ORIENTATION, (float*)&dirup);
 	
 }

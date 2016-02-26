@@ -22,7 +22,10 @@ public:
 		totalEmitters.push_back(s);
 	}
 
-	void SetListener(const Mat4& transform);
+	void SetListenerMatrix(const Mat4& transform);
+	void SetListenerVelocity(const Vec3& vel) {
+		listenerVel = vel;
+	}
 
 	Mat4 GetListenerTransform() { return listenerTransform; }
 
@@ -50,8 +53,9 @@ protected:
 	std::vector<SoundEmitter*>	emitters;
 	std::vector<SoundEmitter*>	totalEmitters;
 
-	Mat4 listenerTransform; // world transform
-	Vec3 listenerPos; // position
+	Mat4 listenerTransform = Mat4(); // world transform
+	Vec3 listenerPos = Vec3(); // position
+	Vec3 listenerVel = Vec3(); // velocity
 
 	ALCcontext*			context;
 	ALCdevice*			device;

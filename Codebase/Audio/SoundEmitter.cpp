@@ -21,7 +21,9 @@ void	SoundEmitter::Reset()
 	isLooping = SOUND_LOOP;
 	oalSource = NULL;
 	sound = NULL;
+
 	position = Vec3();
+	velocity = Vec3();
 
 	streamPos = 0;
 	isGlobal = SOUND_GLOBAL;
@@ -154,6 +156,8 @@ void		SoundEmitter::Update(float msec)
 			alSourcef(oalSource->source, AL_REFERENCE_DISTANCE, radius * 0.2f);
 
 			alSourcefv(oalSource->source, AL_POSITION, (float*)&position);
+			alSourcefv(oalSource->source, AL_VELOCITY, (float*)&velocity);
+			alSourcefv(oalSource->source, AL_DIRECTION, (float*)&(velocity.Normalize()));
 
 			if (sound->IsStreaming())
 			{

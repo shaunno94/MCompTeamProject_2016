@@ -149,11 +149,11 @@ int main(void) {
 	//create new sound entity and attach the sound to it
 	SoundEmitter* emitSong = new SoundEmitter(SoundManager::GetSound("song"));
 	emitSong->SetIsGlobal(true);
-	emitSong->SetVolume(0.25f);
+	emitSong->SetVolume(0.05f);
 
 	//Add 3D sound
 	SoundEmitter* emitWalk = new SoundEmitter(SoundManager::GetSound("walk"));
-	emitWalk->SetRadius(250.0f);
+	emitWalk->SetRadius(150.0f);
 
 	//add sounds to engine
 	SoundSystem::Instance()->AddSoundEmitter(emitSong);
@@ -178,12 +178,25 @@ int main(void) {
 			SoundMOD mod = SoundMOD();
 			mod.isGlobal = true;
 			mod.looping = false;
+			mod.volume = 0.5f;
 	
 			SoundSystem::Instance()->Play(gun, mod);
 		}
+
+		// just play a sound
+		if (Window::GetKeyboard()->KeyTriggered(KEYBOARD_K)){
+			SoundMOD mod = SoundMOD();
+			mod.isGlobal = true;
+			mod.looping = false;
+			mod.volume = 0.5f;
+			mod.pitch = 1.75f;
+
+			SoundSystem::Instance()->Play(gun, mod);
+		}
+
 		// TODO: SHOULD BE WORLD TRANSFORM! using view as temp
 		// (sound panning a bit off)
-		SoundSystem::Instance()->SetListener(myScene->getCamera()->BuildViewMatrix());
+		SoundSystem::Instance()->SetListenerMatrix(ball->GetWorldTransform());
 		SoundSystem::Instance()->Update(ms);
 		//-------- SOUND
 
