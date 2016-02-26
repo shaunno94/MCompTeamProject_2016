@@ -44,11 +44,10 @@ void Renderer::UpdateScene(float msec)
 	{
 		currentScene->getCamera()->UpdateCamera(msec);
 		viewMatrix = currentScene->getCamera()->BuildViewMatrix();
-		//viewMatrix = viewMatrix * Matrix4Simple::Translation(Vector3Simple(0.1, 0, 0));
 		//Updates all objects in the scene, sorts lists for rendering
 		frameFrustrum.FromMatrix(projMatrix * viewMatrix);
 		currentScene->UpdateNodeLists(msec, frameFrustrum, currentScene->getCamera()->GetPosition());
-		//currentScene->playerController->CheckInput();
+		currentScene->playerController->CheckInput();
 	}
 
 	if (m_UpdateGlobalUniforms)

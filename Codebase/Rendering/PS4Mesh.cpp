@@ -6,7 +6,8 @@
 PS4Mesh::PS4Mesh(uint32_t numVertices, Vec3Graphics* vertices, Vec2Graphics* texCoords, Vec3Graphics* normals, Vec3Graphics* tangents, uint32_t numIndices, uint32_t* indices)
 : Mesh(numVertices, vertices, texCoords, normals, tangents, numIndices, indices)
 {
-	primitiveType = sce::Gnm::PrimitiveType::kPrimitiveTypeTriStrip;
+	//primitiveType = sce::Gnm::PrimitiveType::kPrimitiveTypeTriStrip;
+	primitiveType = sce::Gnm::PrimitiveType::kPrimitiveTypeTriList;
 	indexType = sce::Gnm::IndexSize::kIndexSize32;
 	indexBuffer = nullptr;
 	vertexBuffer = nullptr;
@@ -24,7 +25,8 @@ PS4Mesh::PS4Mesh()
 	attributeCount = 0;
 	vertexDataSize = 0;
 	indexDataSize = 0;
-	primitiveType = sce::Gnm::PrimitiveType::kPrimitiveTypeTriStrip;
+	primitiveType = sce::Gnm::PrimitiveType::kPrimitiveTypeTriList;
+	//primitiveType = sce::Gnm::PrimitiveType::kPrimitiveTypeTriStrip;
 	indexType = sce::Gnm::IndexSize::kIndexSize32;
 }
 
@@ -49,6 +51,8 @@ void PS4Mesh::SetPrimitiveType(pType type)
 
 void PS4Mesh::BufferData() 
 {
+	//primitiveType = sce::Gnm::PrimitiveType::kPrimitiveTypePolygon;
+	//indexType = sce::Gnm::IndexSize::kIndexSize32;
 	vertexDataSize = m_NumVertices * sizeof(MeshVertex);
 	indexDataSize = m_NumIndices * sizeof(uint32_t);
 
@@ -64,14 +68,14 @@ void PS4Mesh::BufferData()
 		memcpy(&vertexBuffer[i].textureCoord, &m_TextureCoords[i], sizeof(float) * 2);
 
 		if (m_Normals)
-			memcpy(&vertexBuffer[i].normal, &m_Normals[i], sizeof(float)* 3);
-		else
-			memset(&vertexBuffer[i].normal, 0, sizeof(float)* 3);
+			memcpy(&vertexBuffer[i].normal, &m_Normals[i], sizeof(float) * 3);
+		/*else
+			memset(&vertexBuffer[i].normal, 0, sizeof(float)* 3);*/
 		
 		if (m_Tangents)
 			memcpy(&vertexBuffer[i].tangent, &m_Tangents[i], sizeof(float) * 3);
-		else
-			memset(&vertexBuffer[i].tangent, 0, sizeof(float) * 3);
+		/*else
+			memset(&vertexBuffer[i].tangent, 0, sizeof(float) * 3);*/
 	}
 
 	for (unsigned int i = 0; i < m_NumIndices; ++i) 
@@ -102,21 +106,20 @@ void PS4Mesh::InitAttributeBuffer(sce::Gnm::Buffer& buffer, sce::Gnm::DataFormat
 void PS4Mesh::Draw(Material* material)
 {
 	//reserved textures
-	//for (unsigned int i = 0; i < ReservedMeshTextures.size; ++i)
-	//{
-	//	if (m_Textures[i])
-	//		m_Textures[i]->Load(i);
-	//}
+	for (unsigned int i = 0; i < ReservedMeshTextures.size; ++i)
+	{
+		if (m_Textures[i])
+			m_Textures[i]->Load(i);
+	}
 	//reserved colours
-	//for (unsigned int i = 0; i < ReservedMeshColours.size; ++i)
-	//	Renderer::GetInstance()->UpdateUniform(material->GetShader()->GetReservedMeshColourUniformLocation(i), GetColour(i));
-	//
-	////reserved float
-	//Renderer::GetInstance()->UpdateUniform(material->GetShader()->GetResourceByName("specExponent"), GetSpecExponent()); 
+	for (unsigned int i = 0; i < ReservedMeshColours.size; ++i)
+		Renderer::GetInstance()->UpdateUniform(material->GetShader()->GetReservedMeshColourUniformLocation(i), GetColour(i));
+	
+	//reserved float
+	Renderer::GetInstance()->UpdateUniform(material->GetShader()->GetResourceByName("specExponent"), GetSpecExponent()); 
 	material->Setup();
 
 	SubmitDraw(*Renderer::GetInstance()->GetGFXContext(), sce::Gnm::ShaderStage::kShaderStageVs);
-
 	for (auto child : m_Children)
 		child->Draw(material);
 }

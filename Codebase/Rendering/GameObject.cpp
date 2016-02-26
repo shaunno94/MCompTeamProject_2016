@@ -8,6 +8,7 @@ GameObject::GameObject(const std::string& name)
 	m_RenderComponent = nullptr;
 	m_BoundingRadius = 1.0f;
 	m_CamDist = 0.0f;
+	m_Controller = nullptr;
 
 	m_LocalTransform.ToIdentity();
 	m_WorldTransform.ToIdentity();

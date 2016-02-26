@@ -41,7 +41,7 @@ enum TextureFlags
 #ifndef ORBIS
 typedef unsigned int textureHandle;
 #else
-typedef const sce::Gnm::Texture* textureHandle;
+typedef sce::Gnm::Texture textureHandle;
 #endif
 
 /// @ingroup Rendering
@@ -86,8 +86,10 @@ public:
 	/// <returns>GPU texture id.</returns>
 	inline textureHandle GetTextureId()
 	{
-		if (!textureId) LoadFromFile();
-			return textureId;
+		if (!textureLoaded)
+			LoadFromFile();
+		
+		return textureId;
 	}
 	/// <summary>
 	/// File path of the texture.
@@ -163,5 +165,6 @@ protected:
 	size_t textureCopyIndex;
 	std::string filePath;
 	unsigned int m_referenceCount;
+	bool textureLoaded = false;
 };
 

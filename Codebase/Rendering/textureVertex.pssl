@@ -1,14 +1,14 @@
 ConstantBuffer modelMatrix
 {
-	column_major float4x4 modelMatrix;
+	column_major matrix modelMatrix;
 };
 ConstantBuffer viewMatrix
 {
-	column_major float4x4 viewMatrix;
+	column_major matrix viewMatrix;
 };
 ConstantBuffer projMatrix
 {
-	column_major float4x4 projMatrix;
+	column_major matrix projMatrix;
 };
 
 struct VS_INPUT
@@ -30,7 +30,7 @@ VS_OUTPUT main(VS_INPUT Input)
 {
 	VS_OUTPUT Output;
 
-	float4x4 MVP = projMatrix * viewMatrix * modelMatrix;
+	float4x4 MVP = mul(mul(projMatrix, viewMatrix), modelMatrix);
 	Output.position = mul(MVP, float4(Input.position.xyz, 1.0));
 
 	float3x3 model3 = float3x3(modelMatrix);

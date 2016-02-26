@@ -43,7 +43,7 @@ public:
 
 	void UpdateShaderMatrices();
 	bool HasInitialised() const { return init; }
-	void SetTextureFlags(const sce::Gnm::Texture*, unsigned int flags);
+	void SetTextureFlags(textureHandle&, unsigned int flags);
 	void SetCurrentShader(BaseShader* s);
 
 	void UpdateUniform(int location, const Mat4Graphics& mat4);
@@ -56,8 +56,8 @@ public:
 	void UpdateUniform(int location, int i);
 	void UpdateUniform(int location, unsigned int u);
 	
-	unsigned int TextureMemoryUsage(const sce::Gnm::Texture* id){ return 0; }
-	void SetTexture(unsigned int id, textureHandle handle);
+	unsigned int TextureMemoryUsage(sce::Gnm::Texture id){ return 0; }
+	void SetTexture(unsigned int id, textureHandle& handle);
 
 	sce::Gnmx::GnmxGfxContext* GetGFXContext() { return currentGFXContext; }
 

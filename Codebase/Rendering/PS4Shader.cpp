@@ -41,7 +41,8 @@ PS4Shader::~PS4Shader()
 {
 }
 
-void PS4Shader::GenerateVertexShader(const string&name, bool makeFetch) {
+void PS4Shader::GenerateVertexShader(const string&name, bool makeFetch) 
+{
 	char*	binData = nullptr;	//resulting compiled shader bytes
 	int		binSize = 0;
 	sce::Gnmx::ShaderInfo shaderInfo;
@@ -295,10 +296,15 @@ void	PS4Shader::SubmitShaderSwitch(sce::Gnmx::GnmxGfxContext& cmdList)
 int	PS4Shader::GetResourceByName(const string &name) const
 {
 	sce::Shader::Binary::Buffer* constantBuffer = vertexBinary.getBufferResourceByName(name.c_str());
-	if (!constantBuffer)
+	sce::Shader::Binary::Buffer* constantBufferA = pixelBinary.getBufferResourceByName(name.c_str());
+	if (constantBuffer)
 	{
-		return -1;
+		return constantBuffer->m_resourceIndex;
 	}
-	return constantBuffer->m_resourceIndex;
+	else if (constantBufferA)
+	{
+		return constantBufferA->m_resourceIndex;
+	}
+	return -1;
 }
 #endif

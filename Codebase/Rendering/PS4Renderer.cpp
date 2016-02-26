@@ -35,7 +35,7 @@ PS4Renderer::PS4Renderer()
 	dsc.setDepthControl(sce::Gnm::kDepthControlZWriteEnable, sce::Gnm::kCompareFuncLessEqual);
 	dsc.setDepthEnable(true);
 
-	mesh = static_cast<PS4Mesh*>(Mesh::GenerateQuad());
+	mesh = static_cast<PS4Mesh*>(Mesh::GenerateTriangle());
 	shader = new PS4Shader(SHADER_DIR"textureVertex.sb", SHADER_DIR"textureFragment.sb");
 
 	SwapBuffers();	
@@ -124,17 +124,16 @@ PS4Renderer::~PS4Renderer()
 	DestroyMemoryAllocators();
 }
 
-void PS4Renderer::SetTextureFlags(const sce::Gnm::Texture*, unsigned int flags)
+void PS4Renderer::SetTextureFlags(textureHandle&, unsigned int flags)
 {
 
 }
 
 void PS4Renderer::SetCurrentShader(BaseShader* s)
 {	
-	if (s == currentShader)
-		return;
+	if (s != currentShader)
+		currentShader = static_cast<PS4Shader*>(s);
 
-	currentShader = static_cast<PS4Shader*>(s);
 	currentShader->SubmitShaderSwitch(*currentGFXContext);
 }
 
@@ -143,22 +142,14 @@ void PS4Renderer::FillBuffers()
 	currentFrame->StartFrame();
 
 	currentGFXContext->waitUntilSafeForRendering(videoHandle, currentGPUBuffer);
-
-	//shader->SubmitShaderSwitch(*currentGFXContext);
-
 	SetRenderBuffer(currentPS4Buffer, true, true, true);
-	
+		
 	currentGFXContext->setPrimitiveSetup(primitiveSetup);
 	currentGFXContext->setDepthStencilControl(dsc);
 	currentGFXContext->setupScreenViewport(0, 0, currentPS4Buffer->colourTarget.getWidth(), currentPS4Buffer->colourTarget.getHeight(), 0.5f, 0.5f);
 	currentGFXContext->setSamplers(sce::Gnm::kShaderStagePs, 0, 1, &trilinearSampler);
 
 	child->OnRenderScene();
-
-	//UpdateShaderMatrices();
-	//UpdateUniform(shader->GetModelMatrixLocation(), Matrix4Simple::Translation(Vector3Simple(0, 0, 0)));
-	//mesh->Draw(nullptr);
-
 
 	currentFrame->EndFrame();
 	framesSubmitted++;
@@ -179,9 +170,17 @@ void PS4Renderer::CombineBuffers()
 
 }
 
-void PS4Renderer::SetTexture(unsigned int id, textureHandle handle)
+void PS4Renderer::SetTexture(unsigned int id, textureHandle& handle)
 {
-	currentGFXContext->setTextures(sce::Gnm::kShaderStagePs, id, 1, handle);
+	/*unsigned int* val = (unsigned int*)currentGFXContext->allocateFromCommandBuffer(sizeof(unsigned int), sce::Gnm::kEmbeddedDataAlignment4);
+	*val = id;
+	sce::Gnm::Buffer constantBuffer;
+	constantBuffer.initAsConstantBuffer(val, sizeof(unsigned int));
+	constantBuffer.setResourceMemoryType(sce::Gnm::kResourceMemoryTypeRO);
+	
+	currentGFXContext->setConstantBuffers(sce::Gnm::kShaderStagePs, 0, 1, &constantBuffer);*/
+	int test= currentShader->GetResourceByName("diffuseTex");
+	currentGFXContext->setTextures(sce::Gnm::kShaderStagePs, 0, 1, &handle);
 }
 
 void PS4Renderer::ClearBuffer(bool colour, bool depth, bool stencil)
@@ -212,10 +211,7 @@ void PS4Renderer::SwapCommandBuffer()
 {
 	if (currentGFXContext) 
 	{
-		if (currentGFXContext->submit() != sce::Gnm::kSubmissionSuccess) 
-		{
-			bool a = true;
-		}
+		currentGFXContext->submit();
 		sce::Gnm::submitDone();
 	}
 

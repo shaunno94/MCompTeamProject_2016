@@ -1,8 +1,8 @@
-/*SamplerState samp0 : register(s0);
-ConstantBuffer diffuseTex
-{
+SamplerState samp0 : register(s0);
+//ConstantBuffer diffuseTex
+//{
 	Texture2D diffuseTex : register(t0);
-};*/
+//};
 
 struct VS_OUTPUT
 {

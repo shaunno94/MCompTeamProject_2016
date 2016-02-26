@@ -95,8 +95,9 @@ void Texture::ClearAll()
 
 void Texture::SetTextureParams(unsigned int flags)
 {
-	if (!textureId) 
+	if (!textureLoaded)
 		LoadFromFile();
+
 	Renderer::GetInstance()->SetTextureFlags(textureId, flags);
 }
 
@@ -112,7 +113,6 @@ void Texture::MeasureMemoryUsageSubtract(textureHandle textureId)
 
 Texture::Texture(const std::string& filepath, size_t index, bool preload) : filePath(filepath)
 {
-	textureId = 0;
 	textureCopyIndex = index;
 	m_referenceCount = 1;
 	if (preload) LoadFromFile();
@@ -120,19 +120,15 @@ Texture::Texture(const std::string& filepath, size_t index, bool preload) : file
 
 Texture::~Texture()
 {
-	if(textureId)
-	{
 #ifdef _DEBUG
 		MeasureMemoryUsageSubtract(textureId);
 #endif
 #ifndef ORBIS
 		glDeleteTextures(1, &textureId);
 		textureId = 0;
-#else
-		delete textureId;
 #endif
-	}
 }
+
 #ifndef ORBIS
 void Texture::LoadFromFile()
 {
@@ -166,6 +162,7 @@ void Texture::LoadFromFile()
 		//std::cout << "SOIL loading error: '" << SOIL_last_result() << "' (" << filePath << ")";
 		throw std::ios_base::failure(message.str());
 	}
+	textureLoaded = true;
 }
 #else
 void Texture::LoadFromFile()
@@ -194,15 +191,15 @@ void Texture::LoadFromFile()
 	file.seekg(getTexturePixelsByteOffset(contentsDesc, 0), ios::cur); //fast forward in the file a bit
 	file.read((char*)pixelsAddr, dataParams.m_size);
 
-	textureId = patchTextures(contentsDesc, 0, 1, &pixelsAddr);
-
+	textureId = *patchTextures(contentsDesc, 0, 1, &pixelsAddr);
 	/*tex->width = tex->apiTexture.getWidth();
 	tex->height = tex->apiTexture.getHeight();
 	tex->bpp = tex->apiTexture.getDepth();*/
 
-	//textureId->setResourceMemoryType(sce::Gnm::kResourceMemoryTypeRO);
+	textureId.setResourceMemoryType(sce::Gnm::kResourceMemoryTypeRO);
 	file.close();
 	delete rawContents;
+	textureLoaded = true;
 }
 #endif
 
@@ -212,7 +209,7 @@ void Texture::LoadFromFile()
 /// <returns></returns>
 void Texture::Load(unsigned int textureUnit)
 {
-	if (!textureId) 
+	if (!textureLoaded) 
 		LoadFromFile();
 
 	Renderer::GetInstance()->SetTexture(textureUnit, textureId);

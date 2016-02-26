@@ -15,10 +15,10 @@ enum AxisIndex
 
 enum ButtonIndex
 {
-	TRIANGLE = 0,
-	CROSS = 1,
-	DPAD = 2,
-	SQUARE = 3,
+	BTN_TRIANGLE = 0,
+	BTN_CROSS = 1,
+	BTN_CIRCLE = 2,
+	BTN_SQUARE = 3,
 	L2 = 4,
 	R2 = 5,
 	L1 = 6,

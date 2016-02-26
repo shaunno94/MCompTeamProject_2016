@@ -20,7 +20,7 @@ void PS4Controller::CheckInput(){
 	force.z = PS4Input::getPS4Input()->GetAxis(LEFTSTICK).y * 5;
 	
 
-	if (PS4Input::getPS4Input()->GetButton(CROSS))
+	if (PS4Input::getPS4Input()->GetButton(BTN_CROSS))
 	{
 		//torque += (orientation * Vec3Physics(0, 5, 0));
 	}

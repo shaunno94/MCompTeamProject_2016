@@ -45,7 +45,7 @@ Mesh::Mesh(uint32_t numVertices, Vec3Graphics* vertices, Vec2Graphics* texCoords
 		t = nullptr;
 	}
 	for (auto& c : m_Colours)
-{
+	{
 		c = Vec3Graphics::ZEROS;
 	}
 
@@ -93,6 +93,41 @@ void Mesh::Clean()
 
 	if (m_Normals)
 		delete[] m_Normals;
+}
+
+Mesh* Mesh::GenerateTriangle() {
+#ifndef ORBIS
+	Mesh* mesh = new OGLMesh();
+#else
+	Mesh* mesh = new PS4Mesh();
+#endif
+
+	mesh->m_NumVertices = 3;
+	mesh->m_NumIndices = 3;
+	mesh->SetPrimitiveType(TRIANGLE_STRIP);
+
+	mesh->m_Vertices = new Vec3Graphics[mesh->m_NumVertices];
+	mesh->m_TextureCoords = new Vec2Graphics[mesh->m_NumVertices];
+	mesh->m_Normals = new Vec3Graphics[mesh->m_NumVertices];
+	mesh->m_Tangents = new Vec3Graphics[mesh->m_NumVertices];
+	mesh->m_Indices = new uint32_t[mesh->m_NumVertices];
+
+	mesh->m_Vertices[0] = Vec3Graphics(0.0f, 0.5f, 0.0f);
+	mesh->m_Vertices[1] = Vec3Graphics(0.5f, -0.5f, 0.0f);
+	mesh->m_Vertices[2] = Vec3Graphics(-0.5f, -0.5f, 0.0f);
+
+	mesh->m_TextureCoords[0] = Vec2Graphics(0.5f, 0.0f);
+	mesh->m_TextureCoords[1] = Vec2Graphics(1.0f, 1.0f);
+	mesh->m_TextureCoords[2] = Vec2Graphics(0.0f, 1.0f);
+
+	for (int i = 0; i < mesh->m_NumVertices; ++i) {
+		mesh->m_Normals[i] = Vec3Graphics(0, 0, 1);
+		mesh->m_Tangents[i] = Vec3Graphics(1, 0, 0);
+		mesh->m_Indices[i] = i;
+	}
+
+	mesh->BufferData();
+	return mesh;
 }
 
 Mesh* Mesh::GenerateQuad(Vec2Graphics texCoords)

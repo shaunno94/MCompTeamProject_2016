@@ -79,7 +79,7 @@ int main(void) {
 	//Physics objects will be deleted by the game object.
 	RigidPhysicsObject* ballPhysics = new RigidPhysicsObject();
 	ballPhysics->CreateCollisionShape(Vec3Physics(5.0, 5.0, 5.0), CUBOID);
-	ballPhysics->CreatePhysicsBody(0.0, Vec3Physics(0, 5, 0), QuatPhysics(0, 0, 0, 1), Vec3Physics(1, 1, 1));
+	ballPhysics->CreatePhysicsBody(5.0, Vec3Physics(0, 5, 0), QuatPhysics(0, 0, 0, 1), Vec3Physics(1, 1, 1));
 
 	RigidPhysicsObject* floorPhysics = new RigidPhysicsObject();
 	floorPhysics->CreateCollisionShape(0, Vec3Physics(0, 1, 0), true);
@@ -109,16 +109,12 @@ int main(void) {
 
 	Material* material = new Material(simpleShader);
 	Material* ballMaterial = new Material(simpleShader);
-	//Material* netMaterial = new Material(simpleShader);
-	//netMaterial->hasTranslucency = true;
-	ballMaterial->Set(ReservedMeshTextures.DIFFUSE.name, Texture::Get(TEXTURE_DIR"checkerboard.tga", true));
+	Material* netMaterial = new Material(simpleShader);
+	netMaterial->hasTranslucency = true;
+	ballMaterial->Set(ReservedMeshTextures.DIFFUSE.name, Texture::Get(TEXTURE_DIR"checkerboard.gnf", true));
 
 	// Create Stadium
 	//GameObject* stadium = new Stadium(material, netMaterial, "stadium");
-
-	/*GameObject* test = new GameObject("test");
-	test->SetRenderComponent(new RenderComponent(material, Mesh::GenerateQuad()));
-	myScene->addGameObject(test);*/
 
 	//myScene->addGameObject(stadium);
 	//myScene->addLightObject(light1);
@@ -140,10 +136,9 @@ int main(void) {
 #endif
 
 	myScene->attachCam(ball);
-	//myScene->addGameObject(ball);
+	myScene->addGameObject(ball);
 
 	renderer.SetCurrentScene(myScene);
-
 
 #ifndef ORBIS
 	while (Window::GetWindow().UpdateWindow() && !Window::GetKeyboard()->KeyDown(KEYBOARD_ESCAPE))
