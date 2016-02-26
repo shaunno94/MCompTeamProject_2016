@@ -4,7 +4,7 @@
 Scene::Scene()
 {
 	cam = new Camera(0.0f, 0.0f, Vec3Graphics(0, 0, 0));
-	playerController = NULL;
+
 }
 
 
@@ -19,8 +19,8 @@ Scene::~Scene()
 		delete obj;
 	}
 	delete cam;
-	if (playerController)
-		delete playerController;
+	/*if (playerController)
+		delete playerController;*/
 	transparentObjects.clear();
 	opaqueObjects.clear();
 }

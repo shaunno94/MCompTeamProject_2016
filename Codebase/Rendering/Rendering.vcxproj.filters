@@ -168,6 +168,12 @@
     <ClInclude Include="PS4Controller.h">
       <Filter>Header Files\Input</Filter>
     </ClInclude>
+    <ClInclude Include="ControllerManager.h">
+      <Filter>Header Files\Input</Filter>
+    </ClInclude>
+    <ClInclude Include="LocalControlManager.h">
+      <Filter>Header Files\Input</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Renderer.cpp">
@@ -264,6 +270,12 @@
       <Filter>Source Files\Material</Filter>
     </ClCompile>
     <ClCompile Include="PS4Controller.cpp">
+      <Filter>Source Files\Input</Filter>
+    </ClCompile>
+    <ClCompile Include="ControllerManager.cpp">
+      <Filter>Source Files\Input</Filter>
+    </ClCompile>
+    <ClCompile Include="LocalControlManager.cpp">
       <Filter>Source Files\Input</Filter>
     </ClCompile>
   </ItemGroup>

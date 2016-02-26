@@ -4,6 +4,7 @@
 #include "Rendering\ModelLoader.h"
 #include "Rendering\DebugDraw.h"
 #include "Rendering\GameTimer.h"
+#include "Rendering\LocalControlManager.h"
 #include "Stadium.h"
 
 // Includes for AI States and Triggers
@@ -68,7 +69,9 @@ int main(void) {
 
 	//Test Scenario - Tardis (cuboid collision shape), floor (plane collision shape), ball (sphere collison shape)
 	Scene* myScene = new Scene();
-	myScene->getCamera()->SetPosition(Vec3Graphics(10, 5, 0));
+	myScene->getCamera()->SetPosition(Vec3Graphics(10, 5, 0)); //no effect anymore
+
+	ControllerManager* myControllers = new LocalControlManager;
 
 	//Game objects added to scene are delete by the scene so don't delete twice.
 	GameObject* ball = new GameObject("ball");
@@ -126,9 +129,7 @@ int main(void) {
 	//myScene->addLightObject(light1);
 	myScene->addLightObject(light2);
 
-
-
-	ball->SetRenderComponent(new RenderComponent(ballMaterial, ModelLoader::LoadMGL(MODEL_DIR"Common/sphere.mgl", true)));
+	ball->SetRenderComponent(new RenderComponent(ballMaterial, ModelLoader::LoadMGL(MODEL_DIR"Common/Cube.mgl", true)));
 	ball->SetLocalTransform(Mat4Graphics::Scale(Vector3Simple(5, 5, 5)));
 	ball->SetPhysicsComponent(ballPhysics);
 	ball->GetPhysicsComponent()->GetPhysicsBody()->setRestitution(btScalar(0.9));
@@ -146,13 +147,12 @@ int main(void) {
 
 	ControllerComponent* cc = new ControllerComponent(ball);
 #ifndef ORBIS
-	myScene->setPlayerController(new KeyboardController(cc));
+	myControllers->setController(ball);
 #else
 	myScene->setPlayerController(new PS4Controller(cc));
 #endif
 
 	myScene->attachCam(ball);
-
 
 	myScene->addGameObject(ball);
 	myScene->addGameObject(ball2);
@@ -171,6 +171,7 @@ int main(void) {
 #endif
 		float ms = timer.GetTimer()->Get(1000.0f);
 		PhysicsEngineInstance::Instance()->stepSimulation(ms, SUB_STEPS, TIME_STEP);
+		myControllers->update(ms);
 		renderer.RenderScene(ms);
 	}
 
