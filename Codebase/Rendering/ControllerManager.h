@@ -8,7 +8,8 @@ public:
 	ControllerManager();
 	~ControllerManager();
 
-	virtual void setController(GameObject* g) = 0;
+	virtual void setProducer(GameObject* g) = 0;
+	virtual void setActor(GameObject* g) = 0;
 	void update(float ms);
 protected:
 	std::vector<Controller*> controllers;

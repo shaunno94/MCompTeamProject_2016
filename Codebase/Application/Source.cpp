@@ -147,7 +147,7 @@ int main(void) {
 
 	ControllerComponent* cc = new ControllerComponent(ball);
 #ifndef ORBIS
-	myControllers->setController(ball);
+	myControllers->setProducer(ball);
 #else
 	myScene->setPlayerController(new PS4Controller(cc));
 #endif

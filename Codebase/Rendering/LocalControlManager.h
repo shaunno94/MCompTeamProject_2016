@@ -7,6 +7,7 @@ class LocalControlManager :
 public:
 	LocalControlManager();
 	~LocalControlManager();
-	virtual void setController(GameObject* g);
+	virtual void setProducer(GameObject* g);
+	virtual void setActor(GameObject* g);
 };
 
