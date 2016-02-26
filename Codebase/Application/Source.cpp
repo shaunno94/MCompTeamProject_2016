@@ -97,7 +97,7 @@ int main(void) {
 	light1->SetWorldTransform(Mat4Graphics::Translation(Vec3Graphics(0, 2, 2)) *Mat4Graphics::Scale(Vec3Graphics(20, 20, 20)));
 	light1->SetBoundingRadius(20);
 
-	lightMaterial->shadowType=_2D;
+	lightMaterial->shadowType = _2D;
 	light2->SetRenderComponent(new RenderComponent(lightMaterial, ModelLoader::LoadMGL(MODEL_DIR"Common/ico.mgl", true)));
 	light2->SetWorldTransform(Mat4Graphics::Translation(Vec3Graphics(600, 600, 600)) *Mat4Graphics::Scale(Vec3Graphics(1600, 1600, 1600)));
 	light2->SetBoundingRadius(1600);
@@ -114,8 +114,6 @@ int main(void) {
 	myScene->addGameObject(stadium);
 	//myScene->addLightObject(light1);
 	myScene->addLightObject(light2);
-
-
 
 	ball->SetRenderComponent(new RenderComponent(ballMaterial, ModelLoader::LoadMGL(MODEL_DIR"Common/sphere.mgl", true)));
 	ball->SetLocalTransform(Mat4Graphics::Scale(Vector3Simple(5, 5, 5)));
