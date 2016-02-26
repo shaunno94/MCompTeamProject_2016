@@ -4,6 +4,11 @@
 #include "RunAwayState.h"
 #include "DistanceTrigger.h"
 
+enum AIStates {
+	CHASE,
+	RUN_AWAY
+};
+
 class ShooterAgent : public AIAgent
 {
 public:
