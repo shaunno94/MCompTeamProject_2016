@@ -311,9 +311,6 @@
     <ClCompile Include="TextInfoGUI.cpp">
       <Filter>Source Files\UI\Scoretable_GUI</Filter>
     </ClCompile>
-    <ClCompile Include="GUIComponent.cpp">
-      <Filter>Source Files\UI</Filter>
-    </ClCompile>
     <ClCompile Include="ScoreboardGUIComponent.cpp">
       <Filter>Source Files\UI\HUD_GUI</Filter>
     </ClCompile>

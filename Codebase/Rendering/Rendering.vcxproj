@@ -229,7 +229,6 @@
     <ClCompile Include="BaseShader.cpp" />
     <ClCompile Include="ScoreboardGUIComponent.cpp" />
     <ClCompile Include="ScoretableGUI.cpp" />
-    <ClCompile Include="GUIComponent.cpp" />
     <ClCompile Include="SoftPhysicsObject.cpp" />
     <ClCompile Include="TableBackgroundGUI.cpp" />
     <ClCompile Include="TextInfoGUI.cpp" />
