@@ -112,7 +112,7 @@ OGLRenderer::OGLRenderer(std::string title, int sizeX, int sizeY, bool fullScree
 	{
 		WGL_CONTEXT_MAJOR_VERSION_ARB, major,	//TODO: Maybe lock this to 3? We might actually get an OpenGL 4.x context...
 		WGL_CONTEXT_MINOR_VERSION_ARB, minor,
-		WGL_CONTEXT_FLAGS_ARB, WGL_CONTEXT_FORWARD_COMPATIBLE_BIT_ARB, 
+		WGL_CONTEXT_FLAGS_ARB, WGL_CONTEXT_FORWARD_COMPATIBLE_BIT_ARB,
 		WGL_CONTEXT_PROFILE_MASK_ARB, WGL_CONTEXT_CORE_PROFILE_BIT_ARB,		//We want everything OpenGL 3.2 provides...
 		0
 	};
@@ -148,7 +148,7 @@ OGLRenderer::OGLRenderer(std::string title, int sizeX, int sizeY, bool fullScree
 	currentShader = nullptr;							//0 is the 'null' object name for shader programs...
 
 	Window::GetWindow().SetRenderer(this);					//Tell our window about the new renderer! (Which will in turn resize the renderer window to fit...)	
-	
+
 	RECT clientRect, windowRect;
 	if (GetClientRect(windowHandle, &clientRect) && GetWindowRect(windowHandle, &windowRect))
 	{
@@ -163,8 +163,8 @@ OGLRenderer::OGLRenderer(std::string title, int sizeX, int sizeY, bool fullScree
 	glEnable(GL_BLEND);
 	glDepthFunc(GL_LEQUAL);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-	initFBO();
-	init = true;
+	if (initFBO())
+		init = true;
 }
 
 /*
@@ -237,7 +237,7 @@ void OGLRenderer::UpdateShaderMatrices()
 		//Model Matrix in RenderComponent class.
 		//Texture matrix in material class.
 		glUniformMatrix4fv(glGetUniformLocation(currentShader->GetProgram(), "viewMatrix"), 1, false, (float*)&viewMatrix);
-		glUniformMatrix4fv(glGetUniformLocation(currentShader->GetProgram(), "projMatrix"), 1, false, (float*)&projMatrix);	
+		glUniformMatrix4fv(glGetUniformLocation(currentShader->GetProgram(), "projMatrix"), 1, false, (float*)&projMatrix);
 	}
 }
 
@@ -357,7 +357,7 @@ void OGLRenderer::SetTextureFlags(unsigned int id, unsigned int flags)
 	glBindTexture(GL_TEXTURE_2D, 0);
 }
 
-void OGLRenderer::initFBO()
+bool OGLRenderer::initFBO()
 {
 	glGenFramebuffers(1, &bufferFBO);
 	glGenFramebuffers(1, &pointLightFBO);
@@ -461,11 +461,32 @@ void OGLRenderer::initFBO()
 	up[4] = Vec3Graphics(0, 1, 0);
 	up[5] = Vec3Graphics(0, 1, 0);
 
+	//skybox setup
+	skyBoxTex = SOIL_load_OGL_cubemap(
+		TEXTURE_DIR"grouse_posx.jpg",
+		TEXTURE_DIR"grouse_negx.jpg",
+		TEXTURE_DIR"grouse_posy.jpg",
+		TEXTURE_DIR"grouse_negy.jpg",
+		TEXTURE_DIR"grouse_posz.jpg",
+		TEXTURE_DIR"grouse_negz.jpg",
+		SOIL_LOAD_RGB, SOIL_CREATE_NEW_ID, 0);
+	skyQuad = new GameObject();
+	skyQuad->SetRenderComponent(new RenderComponent(new CubeMaterial(new OGLShader(SHADER_DIR"skyboxVertex.glsl", SHADER_DIR"skyboxfragment.glsl")), OGLMesh::GenerateQuad()));
+	if (!skyQuad->GetRenderComponent()->m_Material->GetShader()->IsOperational())
+		return false;
+	((CubeMaterial*)skyQuad->GetRenderComponent()->m_Material)->Set(ReservedOtherTextures.CUBE.name, (int)ReservedOtherTextures.CUBE.index);
+
+
 	//quad for final render
 	quad = new GameObject();
 	quad->SetRenderComponent(new RenderComponent(new LightMaterial(new OGLShader(SHADER_DIR"combinevert.glsl", SHADER_DIR"combinefrag.glsl")), OGLMesh::GenerateQuad()));
 	((LightMaterial*)quad->GetRenderComponent()->m_Material)->Set(ReservedOtherTextures.EMISSIVE.name, (int)ReservedOtherTextures.EMISSIVE.index);
 	((LightMaterial*)quad->GetRenderComponent()->m_Material)->Set(ReservedOtherTextures.SPECULAR.name, (int)ReservedOtherTextures.SPECULAR.index);
+
+	if (!quad->GetRenderComponent()->m_Material->GetShader()->IsOperational())
+		return false;
+
+	return true;
 }
 
 void OGLRenderer::GenerateScreenTexture(GLuint& into, bool depth)
@@ -496,11 +517,11 @@ void OGLRenderer::FillBuffers()
 	//SetCurrentShader(sceneShader);
 
 	UpdateShaderMatrices();
-
+	DrawSky();
+	
 #if DEBUG_DRAW
 	PhysicsEngineInstance::Instance()->debugDrawWorld();
 #endif
-
 	child->OnRenderScene();
 
 	glUseProgram(0);
@@ -522,7 +543,7 @@ void OGLRenderer::DrawPointLights()
 
 	glActiveTexture(GL_TEXTURE0 + ReservedOtherTextures.NORMALS.index);
 	glBindTexture(GL_TEXTURE_2D, bufferNormalTex);
-	
+
 	child->OnRenderLights();
 
 	glCullFace(GL_BACK);
@@ -534,7 +555,7 @@ void OGLRenderer::DrawPointLights()
 	glUseProgram(0);
 }
 
-void OGLRenderer::CombineBuffers() 
+void OGLRenderer::CombineBuffers()
 {
 	glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
 	projMatrix = Mat4Graphics::Orthographic(-1, 1, 1, -1, -1, 1);
@@ -598,11 +619,11 @@ void OGLRenderer::DrawShadowCube(GameObject* light){
 	glUseProgram(0);
 	glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE);
 	glViewport(0, 0, width, height);
-	
+
 	//((LightMaterial*)light->GetRenderComponent()->m_Material)->Set("lightProj", Mat4Graphics::Perspective(1, 15000, 1, 90));
 
 	glBindFramebuffer(GL_FRAMEBUFFER, pointLightFBO);
-	
+
 	glActiveTexture(GL_TEXTURE0 + ReservedOtherTextures.SHADOW_CUBE.index);
 	glBindTexture(GL_TEXTURE_CUBE_MAP, shadowTexCube);
 	glActiveTexture(GL_TEXTURE0);
@@ -648,7 +669,22 @@ void OGLRenderer::DrawShadow2D(GameObject* light){
 
 	projMatrix = child->localProjMat;
 	//viewMatrix = currentScene->getCamera()->BuildViewMatrix();
-	
+
 	child->OnUpdateScene(child->frameFrustrum, child->currentScene->getCamera()->GetPosition());
 }
+
+void OGLRenderer::DrawSky(){
+	glDepthMask(GL_FALSE);
+
+	glActiveTexture(GL_TEXTURE0 + ReservedOtherTextures.CUBE.index);
+	glBindTexture(GL_TEXTURE_CUBE_MAP, skyBoxTex);
+	glActiveTexture(GL_TEXTURE0);
+
+	skyQuad->GetRenderComponent()->Draw();
+
+	glUseProgram(0);
+	glDepthMask(GL_TRUE);
+	projMatrix = child->localProjMat;
+}
+
 #endif

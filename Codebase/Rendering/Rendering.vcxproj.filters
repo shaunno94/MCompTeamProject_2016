@@ -159,6 +159,15 @@
     <ClInclude Include="PS4Frame.h">
       <Filter>Header Files\GNM_API</Filter>
     </ClInclude>
+    <ClInclude Include="CubeMaterial.h">
+      <Filter>Header Files\Material</Filter>
+    </ClInclude>
+    <ClInclude Include="resource.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="PS4Controller.h">
+      <Filter>Header Files\Input</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Renderer.cpp">
@@ -251,6 +260,12 @@
     <ClCompile Include="PS4Frame.cpp">
       <Filter>Source Files\GNM_API</Filter>
     </ClCompile>
+    <ClCompile Include="CubeMaterial.cpp">
+      <Filter>Source Files\Material</Filter>
+    </ClCompile>
+    <ClCompile Include="PS4Controller.cpp">
+      <Filter>Source Files\Input</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <OrbisWavePsslc Include="textureVertex.pssl">
@@ -265,5 +280,10 @@
     <OrbisWavePsslc Include="2dShadowLightfragment.pssl">
       <Filter>PS4Shaders</Filter>
     </OrbisWavePsslc>
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="Rendering.rc">
+      <Filter>Resource Files</Filter>
+    </ResourceCompile>
   </ItemGroup>
 </Project>

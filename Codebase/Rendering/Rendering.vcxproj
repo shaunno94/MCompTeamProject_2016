@@ -157,6 +157,7 @@
     <ClInclude Include="Controller.h" />
     <ClInclude Include="ControllerComponent.h" />
     <ClInclude Include="CubeEmitter.h" />
+    <ClInclude Include="CubeMaterial.h" />
     <ClInclude Include="DebugDraw.h" />
     <ClInclude Include="ExtendedMaterial.h" />
     <ClInclude Include="Frustum.h" />
@@ -174,12 +175,14 @@
     <ClInclude Include="ParticleManager.h" />
     <ClInclude Include="ParticleSystem.h" />
     <ClInclude Include="PhysicsObject.h" />
+    <ClInclude Include="PS4Controller.h" />
     <ClInclude Include="PS4Frame.h" />
     <ClInclude Include="PS4Mesh.h" />
     <ClInclude Include="PS4Renderer.h" />
     <ClInclude Include="PS4Shader.h" />
     <ClInclude Include="RenderComponent.h" />
     <ClInclude Include="Renderer.h" />
+    <ClInclude Include="resource.h" />
     <ClInclude Include="RigidPhysicsObject.h" />
     <ClInclude Include="Scene.h" />
     <ClInclude Include="OGLShader.h" />
@@ -191,6 +194,7 @@
   <ItemGroup>
     <ClCompile Include="Camera.cpp" />
     <ClCompile Include="ControllerComponent.cpp" />
+    <ClCompile Include="CubeMaterial.cpp" />
     <ClCompile Include="DebugDraw.cpp" />
     <ClCompile Include="CubeEmitter.cpp" />
     <ClCompile Include="ExtendedMaterial.cpp" />
@@ -206,6 +210,7 @@
     <ClCompile Include="ParticleManager.cpp" />
     <ClCompile Include="ParticleSystem.cpp" />
     <ClCompile Include="PhysicsObject.cpp" />
+    <ClCompile Include="PS4Controller.cpp" />
     <ClCompile Include="PS4Frame.cpp" />
     <ClCompile Include="PS4Mesh.cpp" />
     <ClCompile Include="PS4Renderer.cpp" />
@@ -278,6 +283,9 @@
       <Profile Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">sce_vs_vs_orbis</Profile>
       <OutputFileName Condition="'$(Configuration)|$(Platform)'=='Debug|ORBIS'">$(SolutionDir)\Application\Assets\PS4Shaders\%(FileName).sb</OutputFileName>
     </OrbisWavePsslc>
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="Rendering.rc" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

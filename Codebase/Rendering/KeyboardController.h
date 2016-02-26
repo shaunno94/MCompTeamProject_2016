@@ -1,3 +1,4 @@
+#ifndef ORBIS
 #pragma once
 #include "Controller.h"
 #include "Window.h"
@@ -10,4 +11,4 @@ public:
 	~KeyboardController();
 	virtual void CheckInput();
 };
-
+#endif

@@ -9,5 +9,5 @@ in Vertex {
 out vec4 gl_FragColor ;
 
 void main ( void ) {
-	gl_FragColor = texture ( cubeTex , normalize ( IN . normal ));
+	gl_FragColor = texture ( cubeTex , normalize ( IN.normal ));
 }

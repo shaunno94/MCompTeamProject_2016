@@ -14,12 +14,13 @@
 #include "AI\RunAwayState.h"
 #include "AI\DistanceTrigger.h"
 #include "AI\ShooterAgent.h"
-#include "Rendering\KeyboardController.h"
+
 
 const float TIME_STEP = 1.0f / 120.0f;
 const unsigned int SUB_STEPS = 4;
 
 #ifndef ORBIS
+#include "Rendering\KeyboardController.h"
 const unsigned int SCREEN_HEIGHT = 800;
 const unsigned int SCREEN_WIDTH = 1280;
 const string SIMPLESHADER_VERT = SHADER_DIR"textureVertex.glsl";
@@ -27,6 +28,8 @@ const string SIMPLESHADER_FRAG = SHADER_DIR"textureFragment.glsl";
 const string POINTLIGHTSHADER_VERT = SHADER_DIR"2dShadowLightvertex.glsl";
 const string POINTLIGHTSHADER_FRAG = SHADER_DIR"2dShadowLightfragment.glsl";
 #else
+#include "Input\PS4Input.h"
+#include "Rendering\PS4Controller.h"
 const unsigned int SCREEN_HEIGHT = 1080;
 const unsigned int SCREEN_WIDTH = 1920;
 const string SIMPLESHADER_VERT = SHADER_DIR"textureVertex.sb";
@@ -51,6 +54,9 @@ int main(void) {
 		return -1;
 	}
 	GameTimer timer;
+#ifdef ORBIS
+	PS4Input input = PS4Input();
+#endif
 
 	//Initialise Bullet physics engine.
 	PhysicsEngineInstance::Instance()->setGravity(btVector3(0, -9.81, 0));
@@ -71,6 +77,7 @@ int main(void) {
 
 	//Game objects added to scene are delete by the scene so don't delete twice.
 	GameObject* ball = new GameObject("ball");
+	GameObject* ball2 = new GameObject("ball2");
 	GameObject* light1 = new GameObject("l");
 	GameObject* light2 = new GameObject("l");
 
@@ -79,7 +86,11 @@ int main(void) {
 	//Physics objects will be deleted by the game object.
 	RigidPhysicsObject* ballPhysics = new RigidPhysicsObject();
 	ballPhysics->CreateCollisionShape(Vec3Physics(5.0, 5.0, 5.0),CUBOID);
-	ballPhysics->CreatePhysicsBody(5.0, Vec3Physics(0, 5, 0), QuatPhysics(0, 0, 0, 1), Vec3Physics(1, 1, 1));
+	ballPhysics->CreatePhysicsBody(5.0, Vec3Physics(10, 5, 0), QuatPhysics(0, 0, 0, 1), Vec3Physics(1, 1, 1));
+
+	RigidPhysicsObject* ball2Physics = new RigidPhysicsObject();
+	ball2Physics->CreateCollisionShape(5.0);
+	ball2Physics->CreatePhysicsBody(5.0, Vec3Physics(0, 5, 0), QuatPhysics(0, 0, 0, 1), Vec3Physics(1, 1, 1));
 
 	RigidPhysicsObject* floorPhysics = new RigidPhysicsObject();
 	floorPhysics->CreateCollisionShape(0, Vec3Physics(0, 1, 0), true);
@@ -93,7 +104,7 @@ int main(void) {
 	BaseShader* simpleShader = new PS4Shader(SIMPLESHADER_VERT, SIMPLESHADER_FRAG);
 	BaseShader* pointlightShader = new PS4Shader(POINTLIGHTSHADER_VERT, POINTLIGHTSHADER_FRAG);
 #endif
-
+	
 	if (!pointlightShader->IsOperational() || !simpleShader->IsOperational())
 		return -1;
 
@@ -120,7 +131,7 @@ int main(void) {
 	//myScene->addLightObject(light1);
 	myScene->addLightObject(light2);
 
-	ball->SetRenderComponent(new RenderComponent(ballMaterial, ModelLoader::LoadMGL(MODEL_DIR"Common/cube.mgl", true)));
+	ball->SetRenderComponent(new RenderComponent(ballMaterial, ModelLoader::LoadMGL(MODEL_DIR"Common/Cube.mgl", true)));
 	ball->SetLocalTransform(Mat4Graphics::Scale(Vector3Simple(5, 5, 5)));
 	ball->SetPhysicsComponent(ballPhysics);
 	ball->GetPhysicsComponent()->GetPhysicsBody()->setRestitution(btScalar(0.9));
@@ -128,8 +139,20 @@ int main(void) {
 	ball->GetPhysicsComponent()->GetPhysicsBody()->setRollingFriction(0.5);
 	ball->GetPhysicsComponent()->GetPhysicsBody()->setHitFraction(0.5);
 
+	ball2->SetRenderComponent(new RenderComponent(ballMaterial, ModelLoader::LoadMGL(MODEL_DIR"Common/sphere.mgl", true)));
+	ball2->SetLocalTransform(Mat4Graphics::Scale(Vector3Simple(5, 5, 5)));
+	ball2->SetPhysicsComponent(ball2Physics);
+	ball2->GetPhysicsComponent()->GetPhysicsBody()->setRestitution(btScalar(0.9));
+	ball2->GetPhysicsComponent()->GetPhysicsBody()->setFriction(0.5);
+	ball2->GetPhysicsComponent()->GetPhysicsBody()->setRollingFriction(0.5);
+	ball2->GetPhysicsComponent()->GetPhysicsBody()->setHitFraction(0.5);
+
 	ControllerComponent* cc = new ControllerComponent(ball);
+#ifndef ORBIS
 	myScene->setPlayerController(new KeyboardController(cc));
+#else
+	myScene->setPlayerController(new PS4Controller(cc));
+#endif
 
 	myScene->attachCam(ball);
 	myScene->addGameObject(ball);
@@ -143,6 +166,8 @@ int main(void) {
 	//load ogg file (EXPERIMENTAL STREAMING)
 	//SoundManager::AddSound(AUDIO_DIR"139320__votives__arpegthing.ogg", "song");
 
+	myScene->addGameObject(ball);
+	myScene->addGameObject(ball2);
 	//maybe get a handle fro the loaded sounds
 	Sound* gun = SoundManager::GetSound("gun");
 
@@ -168,6 +193,9 @@ int main(void) {
 	while (true)
 #endif
 	{
+#ifdef ORBIS
+		input.Poll();
+#endif
 		float ms = timer.GetTimer()->Get(1000.0f);
 		PhysicsEngineInstance::Instance()->stepSimulation(ms, SUB_STEPS, TIME_STEP);
 		renderer.RenderScene(ms);
