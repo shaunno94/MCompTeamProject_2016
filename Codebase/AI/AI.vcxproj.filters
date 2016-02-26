@@ -25,6 +25,12 @@
     <Filter Include="Source Files\States">
       <UniqueIdentifier>{60fb3f8e-ca5a-462e-bcab-7fd25982bc15}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\Agents">
+      <UniqueIdentifier>{33f0fd73-2979-4c17-99e7-abbd94ed3c4f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Agents">
+      <UniqueIdentifier>{4b40532b-29d8-4acf-8d9c-af05f5abda23}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="State.cpp">
@@ -45,6 +51,12 @@
     <ClCompile Include="DistanceTrigger.cpp">
       <Filter>Source Files\Triggers</Filter>
     </ClCompile>
+    <ClCompile Include="ShooterAgent.cpp">
+      <Filter>Source Files\Agents</Filter>
+    </ClCompile>
+    <ClCompile Include="AIAgent.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="State.h">
@@ -64,6 +76,12 @@
     </ClInclude>
     <ClInclude Include="DistanceTrigger.h">
       <Filter>Header Files\Triggers</Filter>
+    </ClInclude>
+    <ClInclude Include="ShooterAgent.h">
+      <Filter>Header Files\Agents</Filter>
+    </ClInclude>
+    <ClInclude Include="AIAgent.h">
+      <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

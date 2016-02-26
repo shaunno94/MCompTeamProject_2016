@@ -2,6 +2,9 @@
 #include "Helpers/File.h"
 #include <unordered_map>
 #include "Rendering/constants.h"
+#include <iosfwd>
+#include <fstream>
+#include <ostream>
 
 Mesh* ModelLoader::LoadOBJ(const std::string& filePath, bool bufferData)
 {
@@ -441,7 +444,7 @@ Mesh* ModelLoader::CreateMesh(ObjMeshData* obj, std::unordered_map<std::string, 
 {
 	size_t numVertices = obj->objVertexList.size();
 
-	Mesh* mesh = new Mesh();
+	OGLMesh* mesh = new OGLMesh();
 	mesh->m_NumVertices = numVertices;
 	mesh->m_Vertices = new Vec3Graphics[numVertices];
 	mesh->m_Normals = new Vec3Graphics[numVertices];

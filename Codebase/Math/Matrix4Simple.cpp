@@ -29,10 +29,10 @@ Matrix4Simple::Matrix4Simple(const Matrix3Simple& mat) {
 	values[3] = values[7] = values[12] = values[13] = values[14] = 0.0f;
 	values[15] = 1.0f;
 }
-
+/*
 Matrix4Simple::Matrix4Simple(const Matrix4Intrinsics& mat) {
 	memcpy(&values[0], &mat.values[0], sizeof(Matrix4Intrinsics));
-}
+}*/
 
 Matrix4Simple Matrix4Simple::GetRotation() const {
 	Matrix4Simple result;
@@ -62,9 +62,9 @@ Matrix4Simple Matrix4Simple::GetTransposedRotation() const {
 }
 
 
-Matrix4Simple Matrix4Simple::operator*(const Matrix4Intrinsics& v) const {
+/*Matrix4Simple Matrix4Simple::operator*(const Matrix4Intrinsics& v) const {
 	return *this * Matrix4Simple(v.values);
-};
+};*/
 
 
 Matrix4Simple Matrix4Simple::Perspective(float znear, float zfar, float aspect, float fov) {
@@ -241,4 +241,137 @@ Matrix4Simple& Matrix4Simple::Transpose() {
 
 	*this = temp;
 	return *this;
+}
+
+//http://stackoverflow.com/questions/1148309/inverting-a-4x4-matrix
+Matrix4Simple Matrix4Simple::Inverse(Matrix4Simple& a)
+{
+	Matrix4Simple m;
+	double det;
+	int i;
+
+	m.values[0] = a.values[5] * a.values[10] * a.values[15] -
+		a.values[5] * a.values[11] * a.values[14] -
+		a.values[9] * a.values[6] * a.values[15] +
+		a.values[9] * a.values[7] * a.values[14] +
+		a.values[13] * a.values[6] * a.values[11] -
+		a.values[13] * a.values[7] * a.values[10];
+
+	m.values[4] = -a.values[4] * a.values[10] * a.values[15] +
+		a.values[4] * a.values[11] * a.values[14] +
+		a.values[8] * a.values[6] * a.values[15] -
+		a.values[8] * a.values[7] * a.values[14] -
+		a.values[12] * a.values[6] * a.values[11] +
+		a.values[12] * a.values[7] * a.values[10];
+
+	m.values[8] = a.values[4] * a.values[9] * a.values[15] -
+		a.values[4] * a.values[11] * a.values[13] -
+		a.values[8] * a.values[5] * a.values[15] +
+		a.values[8] * a.values[7] * a.values[13] +
+		a.values[12] * a.values[5] * a.values[11] -
+		a.values[12] * a.values[7] * a.values[9];
+
+	m.values[12] = -a.values[4] * a.values[9] * a.values[14] +
+		a.values[4] * a.values[10] * a.values[13] +
+		a.values[8] * a.values[5] * a.values[14] -
+		a.values[8] * a.values[6] * a.values[13] -
+		a.values[12] * a.values[5] * a.values[10] +
+		a.values[12] * a.values[6] * a.values[9];
+
+	m.values[1] = -a.values[1] * a.values[10] * a.values[15] +
+		a.values[1] * a.values[11] * a.values[14] +
+		a.values[9] * a.values[2] * a.values[15] -
+		a.values[9] * a.values[3] * a.values[14] -
+		a.values[13] * a.values[2] * a.values[11] +
+		a.values[13] * a.values[3] * a.values[10];
+
+	m.values[5] = a.values[0] * a.values[10] * a.values[15] -
+		a.values[0] * a.values[11] * a.values[14] -
+		a.values[8] * a.values[2] * a.values[15] +
+		a.values[8] * a.values[3] * a.values[14] +
+		a.values[12] * a.values[2] * a.values[11] -
+		a.values[12] * a.values[3] * a.values[10];
+
+	m.values[9] = -a.values[0] * a.values[9] * a.values[15] +
+		a.values[0] * a.values[11] * a.values[13] +
+		a.values[8] * a.values[1] * a.values[15] -
+		a.values[8] * a.values[3] * a.values[13] -
+		a.values[12] * a.values[1] * a.values[11] +
+		a.values[12] * a.values[3] * a.values[9];
+
+	m.values[13] = a.values[0] * a.values[9] * a.values[14] -
+		a.values[0] * a.values[10] * a.values[13] -
+		a.values[8] * a.values[1] * a.values[14] +
+		a.values[8] * a.values[2] * a.values[13] +
+		a.values[12] * a.values[1] * a.values[10] -
+		a.values[12] * a.values[2] * a.values[9];
+
+	m.values[2] = a.values[1] * a.values[6] * a.values[15] -
+		a.values[1] * a.values[7] * a.values[14] -
+		a.values[5] * a.values[2] * a.values[15] +
+		a.values[5] * a.values[3] * a.values[14] +
+		a.values[13] * a.values[2] * a.values[7] -
+		a.values[13] * a.values[3] * a.values[6];
+
+	m.values[6] = -a.values[0] * a.values[6] * a.values[15] +
+		a.values[0] * a.values[7] * a.values[14] +
+		a.values[4] * a.values[2] * a.values[15] -
+		a.values[4] * a.values[3] * a.values[14] -
+		a.values[12] * a.values[2] * a.values[7] +
+		a.values[12] * a.values[3] * a.values[6];
+
+	m.values[10] = a.values[0] * a.values[5] * a.values[15] -
+		a.values[0] * a.values[7] * a.values[13] -
+		a.values[4] * a.values[1] * a.values[15] +
+		a.values[4] * a.values[3] * a.values[13] +
+		a.values[12] * a.values[1] * a.values[7] -
+		a.values[12] * a.values[3] * a.values[5];
+
+	m.values[14] = -a.values[0] * a.values[5] * a.values[14] +
+		a.values[0] * a.values[6] * a.values[13] +
+		a.values[4] * a.values[1] * a.values[14] -
+		a.values[4] * a.values[2] * a.values[13] -
+		a.values[12] * a.values[1] * a.values[6] +
+		a.values[12] * a.values[2] * a.values[5];
+
+	m.values[3] = -a.values[1] * a.values[6] * a.values[11] +
+		a.values[1] * a.values[7] * a.values[10] +
+		a.values[5] * a.values[2] * a.values[11] -
+		a.values[5] * a.values[3] * a.values[10] -
+		a.values[9] * a.values[2] * a.values[7] +
+		a.values[9] * a.values[3] * a.values[6];
+
+	m.values[7] = a.values[0] * a.values[6] * a.values[11] -
+		a.values[0] * a.values[7] * a.values[10] -
+		a.values[4] * a.values[2] * a.values[11] +
+		a.values[4] * a.values[3] * a.values[10] +
+		a.values[8] * a.values[2] * a.values[7] -
+		a.values[8] * a.values[3] * a.values[6];
+
+	m.values[11] = -a.values[0] * a.values[5] * a.values[11] +
+		a.values[0] * a.values[7] * a.values[9] +
+		a.values[4] * a.values[1] * a.values[11] -
+		a.values[4] * a.values[3] * a.values[9] -
+		a.values[8] * a.values[1] * a.values[7] +
+		a.values[8] * a.values[3] * a.values[5];
+
+	m.values[15] = a.values[0] * a.values[5] * a.values[10] -
+		a.values[0] * a.values[6] * a.values[9] -
+		a.values[4] * a.values[1] * a.values[10] +
+		a.values[4] * a.values[2] * a.values[9] +
+		a.values[8] * a.values[1] * a.values[6] -
+		a.values[8] * a.values[2] * a.values[5];
+
+	det = a.values[0] * m.values[0] + a.values[1] * m.values[4] + a.values[2] * m.values[8] + a.values[3] * m.values[12];
+
+	if (det == 0)
+		return m.ToIdentity();
+
+	det = (1.0 / det);
+
+	for (i = 0; i < 16; i++)
+	{
+		m.values[i] = (m.values[i] * det);
+	}
+	return m;
 }

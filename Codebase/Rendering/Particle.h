@@ -1,3 +1,4 @@
+#ifndef ORBIS
 #pragma once
 
 struct Particle
@@ -22,3 +23,4 @@ struct Particle
 	float m_Size;
 	float m_Age;
 };
+#endif

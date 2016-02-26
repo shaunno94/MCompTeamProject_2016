@@ -1,0 +1,15 @@
+SamplerState samp0 : register(s0);
+Texture2D diffuseTex : register(t0);
+
+struct VS_OUTPUT
+{
+	float4 position		: S_POSITION;
+	float2 texCoord		: TEXCOORD0;
+	float3 normal		: TEXCOORD1;
+};
+
+float4 main(VS_OUTPUT In) : S_TARGET_OUTPUT
+{
+	return diffuseTex.Sample(samp0, In.texCoord);
+	//return float4 = float4(In.normal.xyz * 0.5 + 0.5, 1.0); //Need to find out how to output to multiple targets
+}

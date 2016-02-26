@@ -17,7 +17,6 @@ Description:Creates and handles the Window, including the initialisation of the 
 #include "OGLRenderer.h"
 #include "Input/Keyboard.h"
 #include "Input/Mouse.h"
-#include "Helpers/DeltaTimer.h"
 
 #define WIN32_LEAN_AND_MEAN
 #define VC_EXTRALEAN
@@ -51,8 +50,6 @@ public:
 	static Keyboard*	GetKeyboard()	{return keyboard;}
 	static Mouse*		GetMouse()		{return mouse;}
 
-	DeltaTimer<float>*   GetTimer()		{return timer;}
-
 protected:	
 	static bool Initialise(std::string title = "OpenGL Framework", int sizeX = 800, int sizeY = 600, bool fullScreen = false);
 	static void Destroy();
@@ -66,8 +63,6 @@ protected:
 	static Keyboard*	keyboard;
 	static Mouse*		mouse;
 
-	DeltaTimer<float>*	timer;
-
 	OGLRenderer*		renderer;
 
 	bool				forceQuit;
@@ -78,8 +73,6 @@ protected:
 
 	Vec2				position;
 	Vec2				size;
-
-	float				elapsedMS;
 
 	bool				mouseLeftWindow;
 

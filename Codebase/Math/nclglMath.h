@@ -41,7 +41,7 @@
 //#define Mat4Physics Matrix4Simple
 
 
-typedef QuaternionSimple Quat;
+typedef QuaternionSimple Quaternion;
 typedef QuaternionSimple QuatGraphics;
 typedef QuaternionSimple QuatPhysics;
 

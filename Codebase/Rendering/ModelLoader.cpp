@@ -13,15 +13,14 @@ inline void ReadFromMGL(std::ifstream& in, T& val)
 	in.read((char*)&val, sizeof(T));
 }
 
-
 Mesh* ReadMeshFromMGL(std::ifstream& in)
 {
-	size_t numVertices;
+	uint32_t numVertices;
 	ReadFromMGL(in, numVertices);
 	Vec3Graphics* vertices = new Vec3Graphics[numVertices];
 	// Vertices
 #if MGL_LOAD_FAST_EXPERIMENTAL == 0
-	for (size_t i = 0; i < numVertices; ++i)
+	for (uint32_t i = 0; i < numVertices; ++i)
 		ReadFromMGL(in, vertices[i]);
 #else
 	in.read((char*)vertices, sizeof(Vec3Graphics) * numVertices);
@@ -35,7 +34,7 @@ Mesh* ReadMeshFromMGL(std::ifstream& in)
 	{
 		texCoords = new Vec2Graphics[numVertices];
 #if MGL_LOAD_FAST_EXPERIMENTAL == 0
-		for (size_t i = 0; i < numVertices; ++i)
+		for (uint32_t i = 0; i < numVertices; ++i)
 			ReadFromMGL(in, texCoords[i]);
 #else
 		in.read((char*)texCoords, sizeof(Vec2Graphics) * numVertices);
@@ -50,7 +49,7 @@ Mesh* ReadMeshFromMGL(std::ifstream& in)
 	{
 		normals = new Vec3Graphics[numVertices];
 #if MGL_LOAD_FAST_EXPERIMENTAL == 0
-		for (size_t i = 0; i < numVertices; ++i)
+		for (uint32_t i = 0; i < numVertices; ++i)
 			ReadFromMGL(in, normals[i]);
 #else
 		in.read((char*)normals, sizeof(Vec3Graphics) * numVertices);
@@ -65,36 +64,41 @@ Mesh* ReadMeshFromMGL(std::ifstream& in)
 	{
 		tangents = new Vec3Graphics[numVertices];
 #if MGL_LOAD_FAST_EXPERIMENTAL == 0
-		for (size_t i = 0; i < numVertices; ++i)
+		for (uint32_t i = 0; i < numVertices; ++i)
 			ReadFromMGL(in, tangents[i]);
 #else
 		in.read((char*)tangents, sizeof(Vec3Graphics) * numVertices);
 #endif
 	}
 
-	size_t* indices = nullptr;
-	size_t numIndices;
+	uint32_t* indices = nullptr;
+	uint32_t numIndices;
 	ReadFromMGL(in, numIndices);
 	// Indices
 	if (numIndices)
 	{
-		indices = new size_t[numIndices];
+		indices = new uint32_t[numIndices];
 #if MGL_LOAD_FAST_EXPERIMENTAL == 0
-		for (size_t i = 0; i < numIndices; ++i)
+		for (uint32_t i = 0; i < numIndices; ++i)
 			ReadFromMGL(in, indices[i]);
 #else
-		in.read((char*)indices, sizeof(size_t) * numIndices);
+		in.read((char*)indices, sizeof(uint32_t)* numIndices);
 #endif
 	}
 
-	Mesh* mesh = new Mesh(numVertices, vertices, texCoords, normals, tangents, numIndices, indices);
+#ifndef ORBIS
+	Mesh* mesh = new OGLMesh(numVertices, vertices, texCoords, normals, tangents, numIndices, indices);
+#else
+	Mesh* mesh = new PS4Mesh(numVertices, vertices, texCoords, normals, tangents, numIndices, indices);
+#endif
+	
 	MeshMtlData mtlData;
 	memset(&mtlData, 0, sizeof(MeshMtlData));
 
 	//MTL data
 	std::stringstream sstream;
 	//read textures
-	for (size_t i = 0; i < ReservedMeshTextures.size; ++i)
+	for (uint32_t i = 0; i < ReservedMeshTextures.size; ++i)
 	{
 		char c;
 		in.get(c);
@@ -115,7 +119,7 @@ Mesh* ReadMeshFromMGL(std::ifstream& in)
 	}
 
 #if MGL_LOAD_FAST_EXPERIMENTAL == 0
-	for (size_t i = 0; i < ReservedMeshColours.size; ++i)
+	for (uint32_t i = 0; i < ReservedMeshColours.size; ++i)
 		ReadFromMGL(in, mtlData.colours[i]);
 #else
 	in.read((char*)mtlData.colours, sizeof(Vec3Graphics) * ReservedMeshColours.size);
@@ -125,15 +129,14 @@ Mesh* ReadMeshFromMGL(std::ifstream& in)
 
 	mesh->SetMtlData(mtlData);
 
-
-	size_t numChildren;
+	uint32_t numChildren;
 	ReadFromMGL(in, numChildren);
 
-	for (size_t i = 0; i < numChildren; ++i)
+	for (uint32_t i = 0; i < numChildren; ++i)
 		mesh->AddChild(ReadMeshFromMGL(in));
 
 	// Clean
-	for (size_t i = 0; i < ReservedMeshTextures.size; ++i)
+	for (uint32_t i = 0; i < ReservedMeshTextures.size; ++i)
 		if (mtlData.textureMaps[i])
 			mtlData.textureMaps[i]->Clear();
 
@@ -150,6 +153,7 @@ Mesh* ModelLoader::LoadMGL(const std::string& filePath, bool bufferData)
 		throw "Not matching version";
 
 	Mesh* result = ReadMeshFromMGL(file);
+
 	if (bufferData)
 		result->BufferData();
 

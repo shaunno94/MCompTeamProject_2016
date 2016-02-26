@@ -13,6 +13,7 @@
 #pragma comment(lib, "glew-1.13.0/lib/Release/Win32/glew32s.lib")
 
 #include "LightMaterial.h"
+#include "CubeMaterial.h"
 #include <vector>
 
 //#define OPENGL_DEBUGGING
@@ -58,12 +59,11 @@ public:
 
 	bool			HasInitialised() const;
 
-
-	OGLShader*			GetCurrentShader() const
+	OGLShader*	GetCurrentShader() const
 	{
 		return currentShader;
 	}
-	void			SetCurrentShader(OGLShader* s);
+	void SetCurrentShader(BaseShader* s);
 
 	static void UpdateUniform(GLint location, const Mat4Graphics& mat4);
 	static void UpdateUniform(GLint location, const Mat3Graphics& mat3);
@@ -75,6 +75,8 @@ public:
 	static void UpdateUniform(GLint location, int i);
 	static void UpdateUniform(GLint location, unsigned int u);
 	void UpdateShaderMatrices();
+	void SetTextureFlags(unsigned int id, unsigned int flags);
+	unsigned int TextureMemoryUsage(unsigned int id);
 
 protected:
 	virtual void	Resize(int x, int y);
@@ -98,8 +100,12 @@ protected:
 	void FillBuffers(); //G- Buffer Fill Render Pass
 	void DrawPointLights(); // Lighting Render Pass
 	void CombineBuffers(); // Combination Render Pass
-	void initFBO();
+	bool initFBO();
 	void GenerateScreenTexture(GLuint & into, bool depth = false);
+	void DrawShadow(GameObject* light);
+	void DrawShadow2D(GameObject* light);
+	void DrawShadowCube(GameObject* light);
+	void DrawSky();
 
 	GLuint bufferFBO; // FBO for G- Buffer pass
 	GLuint bufferColourTex; // Albedo goes here
@@ -109,6 +115,18 @@ protected:
 	GLuint pointLightFBO; // FBO for lighting pass
 	GLuint lightEmissiveTex; // Store emissive lighting
 	GLuint lightSpecularTex; // Store specular lighting
+	
+	GLuint skyBoxTex; // skybo texture
+	GameObject* skyQuad;
+
+	GLuint shadowFBO;
+	GLuint cubeShadowFBO;
+	GLuint shadowTex2D; //stores depths for shadow calulations
+	GLuint shadowTexCube; //stores depths for shadow calulations
+
+	Vec3Graphics directions[6];//TODO - should be constants
+	Vec3Graphics up[6];
+
 	GameObject* quad;
 	static Renderer* child;
 };

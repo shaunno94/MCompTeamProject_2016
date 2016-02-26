@@ -11,7 +11,8 @@ bool SoftPhysicsObject::CreatePhysicsBody(double mass, const Vec3Physics& positi
 	if (!m_ColShape)
 		return false;
 
-	m_ColShape->calculateLocalInertia(mass, btVector3(inertia.x, inertia.y, inertia.z));
+	btVector3 btInertia = btVector3(inertia.x, inertia.y, inertia.z);
+	m_ColShape->calculateLocalInertia(mass, btInertia);
 
 	m_SoftBodyInfo = new btSoftBodyWorldInfo();
 	m_CollisionObject = new btSoftBody(m_SoftBodyInfo);

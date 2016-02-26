@@ -2,7 +2,7 @@
 
 #include "Renderer.h"
 
-ExtendedMaterial::ExtendedMaterial(OGLShader* shader, bool hasTranslucency) : Material(shader, hasTranslucency)
+ExtendedMaterial::ExtendedMaterial(BaseShader* shader, bool hasTranslucency) : Material(shader, hasTranslucency)
 {
 }
 

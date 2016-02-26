@@ -1,3 +1,4 @@
+#ifndef ORBIS
 #include "ParticleManager.h"
 
 ParticleManager* ParticleManager::particleManager;
@@ -58,3 +59,4 @@ void ParticleManager::Shutdown()
 {
 	m_Systems.clear();
 }
+#endif
