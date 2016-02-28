@@ -21,7 +21,7 @@ class Vector3Simple	{
 	inline Vector3Simple() { ToZero(); }
 	inline Vector3Simple(float x, float y, float z) : x(x), y(y), z(z) { }
 
-	Vector3Simple(const Vector3_1Intrinsics& vec);
+	//Vector3Simple(const Vector3_1Intrinsics& vec);
 
 	float x;
 	float y;

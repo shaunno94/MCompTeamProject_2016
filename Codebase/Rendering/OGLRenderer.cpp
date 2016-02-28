@@ -17,6 +17,7 @@ _-_-_-_-_-_-_-""  ""
 #include "Helpers/degrees.h"
 #include "constants.h"
 #include "Renderer.h"
+#include "OGLShader.h"
 
 /*
 Creates an OpenGL 3.2 CORE PROFILE rendering context. Sets itself
@@ -37,7 +38,6 @@ OGLRenderer::OGLRenderer(std::string title, int sizeX, int sizeY, bool fullScree
 			return;
 		}
 	}
-
 
 	HWND windowHandle = Window::GetWindow().GetHandle();
 
@@ -108,12 +108,11 @@ OGLRenderer::OGLRenderer(std::string title, int sizeX, int sizeY, bool fullScree
 		return;
 	}
 	//We do support OGL 3! Let's set it up...
-
 	int attribs[] =
 	{
 		WGL_CONTEXT_MAJOR_VERSION_ARB, major,	//TODO: Maybe lock this to 3? We might actually get an OpenGL 4.x context...
 		WGL_CONTEXT_MINOR_VERSION_ARB, minor,
-		WGL_CONTEXT_FLAGS_ARB, WGL_CONTEXT_FORWARD_COMPATIBLE_BIT_ARB, 
+		WGL_CONTEXT_FLAGS_ARB, WGL_CONTEXT_FORWARD_COMPATIBLE_BIT_ARB,
 		WGL_CONTEXT_PROFILE_MASK_ARB, WGL_CONTEXT_CORE_PROFILE_BIT_ARB,		//We want everything OpenGL 3.2 provides...
 		0
 	};
@@ -142,20 +141,30 @@ OGLRenderer::OGLRenderer(std::string title, int sizeX, int sizeY, bool fullScree
 		std::cout << "OGLRenderer::OGLRenderer(): Cannot initialise GLEW!" << std::endl;	//It's all gone wrong!
 		return;
 	}
+
 	//If we get this far, everything's going well!
 	glClearColor(0.2f, 0.2f, 0.2f, 1.0f);			//When we clear the screen, we want it to be dark grey
 
-	currentShader = 0;							//0 is the 'null' object name for shader programs...
+	currentShader = nullptr;							//0 is the 'null' object name for shader programs...
 
-	Window::GetWindow().SetRenderer(this);					//Tell our window about the new renderer! (Which will in turn resize the renderer window to fit...)
+	Window::GetWindow().SetRenderer(this);					//Tell our window about the new renderer! (Which will in turn resize the renderer window to fit...)	
+
+	RECT clientRect, windowRect;
+	if (GetClientRect(windowHandle, &clientRect) && GetWindowRect(windowHandle, &windowRect))
+	{
+		int widthDiff = (windowRect.right - windowRect.left) - (clientRect.right - clientRect.left);
+		int heightDiff = (windowRect.bottom - windowRect.top) - (clientRect.bottom - clientRect.top);
+		Resize(int(width + widthDiff), int(height + heightDiff));
+	}
+
 	glEnable(GL_DEPTH_TEST);
 	glEnable(GL_DEPTH_CLAMP);
 	glEnable(GL_CULL_FACE);
 	glEnable(GL_BLEND);
 	glDepthFunc(GL_LEQUAL);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-	initFBO();
-	init = true;
+	if (initFBO())
+		init = true;
 }
 
 /*
@@ -163,6 +172,7 @@ Destructor. Deletes the default shader, and the OpenGL rendering context.
 */
 OGLRenderer::~OGLRenderer(void)
 {
+	delete quad;
 	glDeleteTextures(1, &bufferColourTex);
 	glDeleteTextures(1, &bufferNormalTex);
 	glDeleteTextures(1, &bufferDepthTex);
@@ -224,21 +234,19 @@ void OGLRenderer::UpdateShaderMatrices()
 {
 	if (currentShader)
 	{
-		//part of the RenderComponent now
-		//glUniformMatrix4fv(glGetUniformLocation(currentShader->GetProgram(), "modelMatrix"), 1, false, (float*)&modelMatrix);
+		//Model Matrix in RenderComponent class.
+		//Texture matrix in material class.
 		glUniformMatrix4fv(glGetUniformLocation(currentShader->GetProgram(), "viewMatrix"), 1, false, (float*)&viewMatrix);
 		glUniformMatrix4fv(glGetUniformLocation(currentShader->GetProgram(), "projMatrix"), 1, false, (float*)&projMatrix);
-		//part of the material now
-		//glUniformMatrix4fv(glGetUniformLocation(currentShader->GetProgram(), "textureMatrix"), 1, false, (float*)&textureMatrix);
 	}
 }
 
 
-void OGLRenderer::SetCurrentShader(OGLShader* s)
+void OGLRenderer::SetCurrentShader(BaseShader* s)
 {
-	currentShader = s;
+	currentShader = static_cast<OGLShader*>(s);
 
-	glUseProgram(s->GetProgram());
+	glUseProgram(currentShader->GetProgram());
 }
 
 void OGLRenderer::SetTextureRepeating(GLuint target, bool repeating)
@@ -286,10 +294,75 @@ void OGLRenderer::UpdateUniform(GLint location, unsigned int u)
 	if (location >= 0) glUniform1ui(location, u);
 }
 
-void OGLRenderer::initFBO()
+unsigned int OGLRenderer::TextureMemoryUsage(unsigned int id)
+{
+	int width;
+	int height;
+	int r, g, b, a;
+
+	glBindTexture(GL_TEXTURE_2D, id);
+
+	glGetTexLevelParameteriv(GL_TEXTURE_2D, 0, GL_TEXTURE_RED_SIZE, &r);
+	glGetTexLevelParameteriv(GL_TEXTURE_2D, 0, GL_TEXTURE_GREEN_SIZE, &g);
+	glGetTexLevelParameteriv(GL_TEXTURE_2D, 0, GL_TEXTURE_BLUE_SIZE, &b);
+	glGetTexLevelParameteriv(GL_TEXTURE_2D, 0, GL_TEXTURE_ALPHA_SIZE, &a);
+	glGetTexLevelParameteriv(GL_TEXTURE_2D, 0, GL_TEXTURE_WIDTH, &width);
+	glGetTexLevelParameteriv(GL_TEXTURE_2D, 0, GL_TEXTURE_HEIGHT, &height);
+
+	glBindTexture(GL_TEXTURE_2D, 0);
+	return (width * height * ((r + g + b + a) / 8.0f));
+}
+
+void OGLRenderer::SetTextureFlags(unsigned int id, unsigned int flags)
+{
+	glBindTexture(GL_TEXTURE_2D, GLuint(id));
+
+	// Repeat/Clamp options
+	if ((flags & REPEATING) == REPEATING) {
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+	}
+	else if ((flags & CLAMPING) == CLAMPING) {
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP);
+	}
+
+	// Filtering options
+	if ((flags & NEAREST_NEIGHBOUR_MIN_FILTERING) == NEAREST_NEIGHBOUR_MIN_FILTERING) {
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+	}
+	else if ((flags & BILINEAR_MIN_FILTERING) == BILINEAR_MIN_FILTERING) {
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	}
+	else if ((flags & TRILINEAR_MIN_FILTERING) == TRILINEAR_MIN_FILTERING) {
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+	}
+
+	if ((flags & NEAREST_NEIGHBOUR_MAX_FILTERING) == NEAREST_NEIGHBOUR_MAX_FILTERING) {
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+	}
+	else if ((flags & BILINEAR_MAX_FILTERING) == BILINEAR_MAX_FILTERING) {
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	}
+	else if ((flags & TRILINEAR_MAX_FILTERING) == TRILINEAR_MAX_FILTERING) {
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+	}
+
+	if ((flags & ANISOTROPIC_FILTERING) == ANISOTROPIC_FILTERING) {
+		GLfloat max_aniso;
+		glGetFloatv(GL_MAX_TEXTURE_MAX_ANISOTROPY_EXT, &max_aniso);
+		glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAX_ANISOTROPY_EXT, max_aniso);
+	}
+
+	glBindTexture(GL_TEXTURE_2D, 0);
+}
+
+bool OGLRenderer::initFBO()
 {
 	glGenFramebuffers(1, &bufferFBO);
 	glGenFramebuffers(1, &pointLightFBO);
+	glGenFramebuffers(1, &shadowFBO);
+	glGenFramebuffers(1, &cubeShadowFBO);
 
 	GLenum buffers[2];
 	buffers[0] = GL_COLOR_ATTACHMENT0;
@@ -325,15 +398,95 @@ void OGLRenderer::initFBO()
 		throw "!GL_FRAMEBUFFER_COMPLETE";
 	}
 
+	//Generate Shadow Texture
+	glGenTextures(1, &shadowTex2D);
+	glBindTexture(GL_TEXTURE_2D, shadowTex2D);
+	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT,
+		SHADOWSIZE, SHADOWSIZE, 0, GL_DEPTH_COMPONENT, GL_FLOAT, NULL);
+
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_COMPARE_MODE, GL_COMPARE_R_TO_TEXTURE);
+
+	glBindTexture(GL_TEXTURE_2D, 0);
+
+	//Cube shadow Texture
+	glGenTextures(1, &shadowTexCube);
+	glBindTexture(GL_TEXTURE_CUBE_MAP, shadowTexCube);
+	glTexParameterf(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+	glTexParameterf(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+
+	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_COMPARE_MODE, GL_COMPARE_R_TO_TEXTURE);
+	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_COMPARE_FUNC, GL_LEQUAL);
+	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_DEPTH_TEXTURE_MODE, GL_LUMINANCE);
+	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+
+	for (size_t i = 0; i < 6; ++i) {
+		glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, GL_DEPTH_COMPONENT,
+			SHADOWSIZE, SHADOWSIZE, 0, GL_DEPTH_COMPONENT, GL_FLOAT, NULL);
+	}
+	glEnable(GL_TEXTURE_CUBE_MAP);
+	glBindTexture(GL_TEXTURE_CUBE_MAP, 0);
+
+	//attach to shadow FBO
+	glBindFramebuffer(GL_FRAMEBUFFER, shadowFBO);
+	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, shadowTex2D, 0);
+	glDrawBuffer(GL_NONE);
+
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 	glEnable(GL_DEPTH_TEST);
 	glEnable(GL_CULL_FACE);
 	glEnable(GL_BLEND);
 
+	//attach to cube shadow FBO
+	glBindFramebuffer(GL_FRAMEBUFFER, cubeShadowFBO);
+	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_CUBE_MAP_POSITIVE_X, shadowTexCube, 0);
+	glDrawBuffer(GL_NONE);
+	glBindFramebuffer(GL_FRAMEBUFFER, 0);
+
+	//cube helpers
+	directions[0] = Vec3Graphics(1, 0, 0);
+	directions[1] = Vec3Graphics(-1, 0, 0);
+	directions[2] = Vec3Graphics(0, -1, 0);
+	directions[3] = Vec3Graphics(0, 1, 0);
+	directions[4] = Vec3Graphics(0, 0, -1);
+	directions[5] = Vec3Graphics(0, 0, 1);
+	up[0] = Vec3Graphics(0, 1, 0);
+	up[1] = Vec3Graphics(0, 1, 0);
+	up[2] = Vec3Graphics(0, 0, -1);
+	up[3] = Vec3Graphics(0, 0, -1);
+	up[4] = Vec3Graphics(0, 1, 0);
+	up[5] = Vec3Graphics(0, 1, 0);
+
+	//skybox setup
+	skyBoxTex = SOIL_load_OGL_cubemap(
+		TEXTURE_DIR"grouse_posx.jpg",
+		TEXTURE_DIR"grouse_negx.jpg",
+		TEXTURE_DIR"grouse_posy.jpg",
+		TEXTURE_DIR"grouse_negy.jpg",
+		TEXTURE_DIR"grouse_posz.jpg",
+		TEXTURE_DIR"grouse_negz.jpg",
+		SOIL_LOAD_RGB, SOIL_CREATE_NEW_ID, 0);
+	skyQuad = new GameObject();
+	skyQuad->SetRenderComponent(new RenderComponent(new CubeMaterial(new OGLShader(SHADER_DIR"skyboxVertex.glsl", SHADER_DIR"skyboxfragment.glsl")), OGLMesh::GenerateQuad()));
+	if (!skyQuad->GetRenderComponent()->m_Material->GetShader()->IsOperational())
+		return false;
+	((CubeMaterial*)skyQuad->GetRenderComponent()->m_Material)->Set(ReservedOtherTextures.CUBE.name, (int)ReservedOtherTextures.CUBE.index);
+
+
+	//quad for final render
 	quad = new GameObject();
-	quad->SetRenderComponent(new RenderComponent(new LightMaterial(new OGLShader(SHADER_DIR"combinevert.glsl", SHADER_DIR"combinefrag.glsl")), Mesh::GenerateQuad()));
+	quad->SetRenderComponent(new RenderComponent(new LightMaterial(new OGLShader(SHADER_DIR"combinevert.glsl", SHADER_DIR"combinefrag.glsl")), OGLMesh::GenerateQuad()));
 	((LightMaterial*)quad->GetRenderComponent()->m_Material)->Set(ReservedOtherTextures.EMISSIVE.name, (int)ReservedOtherTextures.EMISSIVE.index);
 	((LightMaterial*)quad->GetRenderComponent()->m_Material)->Set(ReservedOtherTextures.SPECULAR.name, (int)ReservedOtherTextures.SPECULAR.index);
+
+	if (!quad->GetRenderComponent()->m_Material->GetShader()->IsOperational())
+		return false;
+
+	return true;
 }
 
 void OGLRenderer::GenerateScreenTexture(GLuint& into, bool depth)
@@ -364,11 +517,11 @@ void OGLRenderer::FillBuffers()
 	//SetCurrentShader(sceneShader);
 
 	UpdateShaderMatrices();
-
+	DrawSky();
+	
 #if DEBUG_DRAW
 	PhysicsEngineInstance::Instance()->debugDrawWorld();
 #endif
-
 	child->OnRenderScene();
 
 	glUseProgram(0);
@@ -390,7 +543,7 @@ void OGLRenderer::DrawPointLights()
 
 	glActiveTexture(GL_TEXTURE0 + ReservedOtherTextures.NORMALS.index);
 	glBindTexture(GL_TEXTURE_2D, bufferNormalTex);
-	
+
 	child->OnRenderLights();
 
 	glCullFace(GL_BACK);
@@ -402,7 +555,7 @@ void OGLRenderer::DrawPointLights()
 	glUseProgram(0);
 }
 
-void OGLRenderer::CombineBuffers() 
+void OGLRenderer::CombineBuffers()
 {
 	glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
 	projMatrix = Mat4Graphics::Orthographic(-1, 1, 1, -1, -1, 1);
@@ -420,4 +573,118 @@ void OGLRenderer::CombineBuffers()
 
 	glUseProgram(0);
 }
+
+void OGLRenderer::DrawShadow(GameObject* light){
+	LightMaterial* lm = (LightMaterial*)(light->GetRenderComponent()->m_Material);
+	switch (lm->shadowType)
+	{
+	case _NONE:
+	default:
+		break;
+	case _2D:
+		DrawShadow2D(light);
+		break;
+	case _CUBE:
+		DrawShadowCube(light);
+		break;
+	}
+}
+
+void OGLRenderer::DrawShadowCube(GameObject* light){
+	glBindFramebuffer(GL_FRAMEBUFFER, cubeShadowFBO);
+
+	glViewport(0, 0, SHADOWSIZE, SHADOWSIZE);
+
+	glColorMask(GL_FALSE, GL_FALSE, GL_FALSE, GL_FALSE);
+
+	projMatrix = Mat4Graphics::Perspective(1, 15000, 1, 90);
+	glClearColor(1.0f, 0.0f, 1.0f, 1.0f);
+
+	Vec3Graphics pos = light->GetWorldTransform().GetTranslation();
+	for (size_t i = 0; i < 6; ++i) {
+		glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT,
+			GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, shadowTexCube, 0);
+		glClear(GL_DEPTH_BUFFER_BIT);
+
+		viewMatrix = Mat4Graphics::View(pos, pos + directions[i], up[i]); //modify;
+
+		//textureMatrix = biasMatrix *(projMatrix * viewMatrix);
+
+		UpdateShaderMatrices();
+
+		glDisable(GL_CULL_FACE);
+		child->OnRenderScene();
+		glEnable(GL_CULL_FACE);
+	}
+	glUseProgram(0);
+	glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE);
+	glViewport(0, 0, width, height);
+
+	//((LightMaterial*)light->GetRenderComponent()->m_Material)->Set("lightProj", Mat4Graphics::Perspective(1, 15000, 1, 90));
+
+	glBindFramebuffer(GL_FRAMEBUFFER, pointLightFBO);
+
+	glActiveTexture(GL_TEXTURE0 + ReservedOtherTextures.SHADOW_CUBE.index);
+	glBindTexture(GL_TEXTURE_CUBE_MAP, shadowTexCube);
+	glActiveTexture(GL_TEXTURE0);
+
+	projMatrix = child->localProjMat;
+	viewMatrix = child->currentScene->getCamera()->BuildViewMatrix();
+	child->OnUpdateScene(child->frameFrustrum, child->currentScene->getCamera()->GetPosition());
+}
+
+
+void OGLRenderer::DrawShadow2D(GameObject* light){
+	glBindFramebuffer(GL_FRAMEBUFFER, shadowFBO);
+	projMatrix = Mat4Graphics::Perspective(50.0f, 15000.0f, 1.0f, 45.0f);
+	glClear(GL_DEPTH_BUFFER_BIT);
+
+	glViewport(0, 0, SHADOWSIZE, SHADOWSIZE);
+
+	glColorMask(GL_FALSE, GL_FALSE, GL_FALSE, GL_FALSE);
+
+	//TODO override shader
+	//SetCurrentShader ( shadowShader );
+	viewMatrix = Mat4Graphics::View(light->GetWorldTransform().GetTranslation(), Vec3Graphics(0, 0, 0));
+	((LightMaterial*)light->GetRenderComponent()->m_Material)->shadowBias = biasMatrix *(projMatrix*viewMatrix);
+
+	//draw game objects
+	child->lightFrustrum.FromMatrix(projMatrix * viewMatrix);
+	child->OnUpdateScene(child->lightFrustrum, light->GetWorldTransform().GetTranslation());
+
+	glDisable(GL_CULL_FACE);
+	child->OnRenderScene();
+	glEnable(GL_CULL_FACE);
+
+	glUseProgram(0);
+	glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE);
+	glViewport(0, 0, width, height);
+
+	glBindFramebuffer(GL_FRAMEBUFFER, pointLightFBO);
+	viewMatrix = child->currentScene->getCamera()->BuildViewMatrix();
+
+	glActiveTexture(GL_TEXTURE0 + ReservedOtherTextures.SHADOW_2D.index);
+	glBindTexture(GL_TEXTURE_2D, shadowTex2D);
+	glActiveTexture(GL_TEXTURE0);
+
+	projMatrix = child->localProjMat;
+	//viewMatrix = currentScene->getCamera()->BuildViewMatrix();
+
+	child->OnUpdateScene(child->frameFrustrum, child->currentScene->getCamera()->GetPosition());
+}
+
+void OGLRenderer::DrawSky(){
+	glDepthMask(GL_FALSE);
+
+	glActiveTexture(GL_TEXTURE0 + ReservedOtherTextures.CUBE.index);
+	glBindTexture(GL_TEXTURE_CUBE_MAP, skyBoxTex);
+	glActiveTexture(GL_TEXTURE0);
+
+	skyQuad->GetRenderComponent()->Draw();
+
+	glUseProgram(0);
+	glDepthMask(GL_TRUE);
+	projMatrix = child->localProjMat;
+}
+
 #endif

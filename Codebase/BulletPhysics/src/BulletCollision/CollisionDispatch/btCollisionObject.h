@@ -319,7 +319,7 @@ public:
 
 
 	///reserved for Bullet internal usage
-	int	getInternalType() const
+	inline int	getInternalType() const
 	{
 		return m_internalType;
 	}

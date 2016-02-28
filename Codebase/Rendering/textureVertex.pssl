@@ -1,0 +1,37 @@
+ConstantBuffer ShaderConstants
+{
+	column_major matrix modelMatrix;
+	column_major matrix viewMatrix;
+	column_major matrix projMatrix;
+	column_major matrix textureMatrix;
+};
+
+struct VS_INPUT
+{
+	float3 position		: POSITION0;
+	float2 texCoord		: TEXCOORD0;
+	float3 normal		: NORMAL;
+};
+
+struct VS_OUTPUT
+{
+	float4 position		: S_POSITION;
+	float2 texCoord		: TEXCOORD0;
+	float3 normal		: NORMAL;
+};
+
+VS_OUTPUT main(VS_INPUT Input)
+{
+	VS_OUTPUT Output;
+
+	float4x4 MVP = projMatrix * viewMatrix * modelMatrix;
+	Output.position = mul(MVP, float4(Input.position.xyz, 1.0));
+
+	float3x3 model3 = float3x3(modelMatrix);
+	float3x3 normalMatrix = (transpose(model3)); //need to do inverse on CPU
+	Output.normal = normalize(mul(normalMatrix,normalize(Input.normal)));
+
+	Output.texCoord = Input.texCoord;
+
+	return Output;
+}

@@ -17,8 +17,7 @@ struct ParticleFilterCallback : public btOverlapFilterCallback
 };
 
 class PhysicsEngineInstance
-{
-	
+{	
 public:
 	//Provide global access to the only instance of this class
 	static btSoftRigidDynamicsWorld* Instance()
@@ -27,7 +26,7 @@ public:
 		{
 			std::lock_guard<std::mutex> lock(m_mConstructed);		//Lock is required here though, to prevent multiple threads initialising multiple instances of the class when it turns out it has not been initialised yet
 			if (!m_pInstance) //Check to see if a previous thread has already initialised an instance in the time it took to acquire a lock.
-			{
+			{		
 				//Broadphase collision object - Dynamic tree AABB
 				bf = new btDbvtBroadphase();
 
@@ -77,7 +76,6 @@ protected:
 	//Only allow the class to be created and destroyed by itself
 	PhysicsEngineInstance() {}
 	~PhysicsEngineInstance() {}
-
 
 private:
 

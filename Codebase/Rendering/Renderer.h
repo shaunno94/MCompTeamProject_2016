@@ -1,6 +1,6 @@
 #pragma once
 #include "Scene.h"
-#define DEBUG_DRAW 1
+#define DEBUG_DRAW 0
 /// @ingroup Rendering
 /// <summary>
 /// Non-platform specific functionality for rendering a <see cref="Scene"/>.
@@ -17,8 +17,9 @@ class Renderer : public PS4Renderer
 	friend class PS4Renderer;
 #endif
 public:
-	static Renderer* GetInstance() { return s_renderer; }	
+	static Renderer* GetInstance() { return s_renderer; }
 	void SetCurrentScene(Scene* s) { currentScene = s; }
+	Scene* GetCurrentScene() { return currentScene; }
 
 	Renderer(std::string title, int sizeX, int sizeY, bool fullScreen);
 	virtual ~Renderer(void);
@@ -27,11 +28,12 @@ public:
 	void UpdateScene(float msec);
 
 protected:
-	void OnUpdateScene();
+	void OnUpdateScene(Frustum& frustum, Vec3Graphics camPos);
 	void OnRenderScene();
 	void OnRenderLights();
 
 	Frustum frameFrustrum;
+	Frustum lightFrustrum;
 	static Renderer* s_renderer;
 	void updateGlobalUniforms(Material* material);
 
@@ -39,5 +41,6 @@ protected:
 	float aspectRatio;
 	Mat4Graphics localProjMat;
 	float windowHeight, windowWidth;
+	Vec2Graphics pixelPitch;
 	Scene* currentScene;
 };

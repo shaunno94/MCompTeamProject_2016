@@ -1,4 +1,5 @@
 #pragma once
+#ifndef ORBIS
 #include "Math/nclglMath.h"
 #include "Camera.h"
 #include "Particle.h"
@@ -47,3 +48,4 @@ private:
 	Renderer*				renderer;
 
 };
+#endif

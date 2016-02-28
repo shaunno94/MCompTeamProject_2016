@@ -2,32 +2,29 @@
 
 Renderer* Renderer::s_renderer = nullptr;
 
-Renderer::Renderer(std::string title, int sizeX, int sizeY, bool fullScreen) : OGLRenderer(title, sizeX, sizeY, fullScreen)
+Renderer::Renderer(std::string title, int sizeX, int sizeY, bool fullScreen) :
+#ifndef ORBIS 
+OGLRenderer(title, sizeX, sizeY, fullScreen)
+#else
+PS4Renderer()
+#endif
 {
 	m_UpdateGlobalUniforms = true;
-
 	currentShader = nullptr;
 	//TODO: change SHADERDIR to SHADER_DIR
-	/*currentShader = new Shader(SHADER_DIR"basicVertex.glsl", SHADER_DIR"colourFragment.glsl");
 
-	/*if (!currentShader->IsOperational())
-	{
-		return;
-	}*/
-	aspectRatio = float(width) / float(height);
+	aspectRatio = float(sizeX) / float(sizeY);
+	pixelPitch = Vec2Graphics(1.0f / float(sizeX), 1.0f / float(sizeY));
 	localProjMat = Mat4Graphics::Perspective(1.0f, 15000.0f, aspectRatio, 45.0f);
 
 	currentScene = nullptr;
-	init = true;
+
 	if (!s_renderer)
 		s_renderer = this;
 	child = this;
 }
 
-Renderer::~Renderer(void)
-{
-	delete quad;
-}
+Renderer::~Renderer(void) {}
 
 void Renderer::updateGlobalUniforms(Material* material)
 {
@@ -36,7 +33,7 @@ void Renderer::updateGlobalUniforms(Material* material)
 	{
 		Vec3Graphics camPos = currentScene->getCamera()->GetPosition();
 		auto test = lightMat->Set("cameraPos", camPos);
-		lightMat->Set("pixelSize", Vec2Graphics(1.0f / width, 1.0f / height));
+		lightMat->Set("pixelSize", pixelPitch);
 		int i = 0;
 	}
 }
@@ -49,7 +46,8 @@ void Renderer::UpdateScene(float msec)
 		viewMatrix = currentScene->getCamera()->BuildViewMatrix();
 		//Updates all objects in the scene, sorts lists for rendering
 		frameFrustrum.FromMatrix(projMatrix * viewMatrix);
-		currentScene->UpdateNodeLists(msec, frameFrustrum);
+		currentScene->UpdateNodeLists(msec, frameFrustrum, currentScene->getCamera()->GetPosition());
+		currentScene->playerController->CheckInput();
 	}
 
 	if (m_UpdateGlobalUniforms)
@@ -85,9 +83,9 @@ void Renderer::RenderScene(float msec)
 	SwapBuffers();
 }
 
-void Renderer::OnUpdateScene()
+void Renderer::OnUpdateScene(Frustum& frustum, Vec3Graphics camPos)
 {
-
+	currentScene->UpdateFrustumCulling(frustum, camPos);
 }
 
 void Renderer::OnRenderScene()
@@ -103,9 +101,13 @@ void Renderer::OnRenderLights()
 	for (unsigned int i = 0; i < currentScene->getNumLightObjects(); ++i)
 	{
 		GameObject* light = currentScene->getLightObject(i);
-		((LightMaterial*)light->GetRenderComponent()->m_Material)->Set("lightPos", light->GetWorldTransform().GetTranslation());
-		((LightMaterial*)light->GetRenderComponent()->m_Material)->Set("lightRadius", light->GetBoundingRadius());
-		((LightMaterial*)light->GetRenderComponent()->m_Material)->Set("lightColour", Vec4Graphics(1, 1, 1, 1));
+		DrawShadow(light);
+		LightMaterial* lm = (LightMaterial*)light->GetRenderComponent()->m_Material;
+		lm->Set("lightPos", light->GetWorldTransform().GetTranslation());
+		lm->Set("lightRadius", light->GetBoundingRadius());
+		lm->Set("lightColour", Vec4Graphics(1, 0.7, 0.5, 1));
+		lm->Set("cameraPos", currentScene->getCamera()->GetPosition());
+		lm->Set("shadowBias", lm->shadowBias);
 
 		UpdateShaderMatrices();
 

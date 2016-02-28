@@ -35,7 +35,7 @@ public:
 		m_maxElements(maxElements)
 	{
 		m_pool = (unsigned char*) btAlignedAlloc( static_cast<unsigned int>(m_elemSize*m_maxElements),16);
-
+		
 		unsigned char* p = m_pool;
         m_firstFree = p;
         m_freeCount = m_maxElements;

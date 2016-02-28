@@ -22,14 +22,14 @@ _-_-_-_-_-_-_-""  ""
 
 class Vector3Simple;
 class Matrix3Simple;
-class Matrix4Intrinsics;
+//class Matrix4Intrinsics;
 
 class Matrix4Simple	{
  public:
 	inline Matrix4Simple() { ToIdentity(); }
 	inline Matrix4Simple(const float (&elements)[16]) { memcpy(values, elements, 16 * sizeof(float)); }
 	Matrix4Simple(const Matrix3Simple& mat);
-	Matrix4Simple(const Matrix4Intrinsics& mat);
+	//Matrix4Simple(const Matrix4Intrinsics& mat);
 
 	float	values[16];
 
@@ -119,10 +119,10 @@ class Matrix4Simple	{
 
 
 
-	Matrix4Simple operator*(const Matrix4Intrinsics& v) const;
+	//Matrix4Simple operator*(const Matrix4Intrinsics& v) const;
 
-	static const float Matrix4Simple::EMPTY_DATA[16];
-	static const float Matrix4Simple::IDENTITY_DATA[16];
+	static const float EMPTY_DATA[16];
+	static const float IDENTITY_DATA[16];
 	static const Matrix4Simple EMPTY;
 	static const Matrix4Simple IDENTITY;
 
@@ -158,6 +158,8 @@ class Matrix4Simple	{
 	static Matrix4Simple View(const Vector3Simple& from, const Vector3Simple& lookingAt, const Vector3Simple up = Vector3Simple(0,1,0));
 
 	Matrix4Simple& Transpose();
+
+	static Matrix4Simple Inverse(Matrix4Simple& a);
 
 
 	//Handy string output for the matrix. Can get a bit messy, but better than nothing!

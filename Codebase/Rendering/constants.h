@@ -12,6 +12,9 @@
 #define SHADER_TES 4
 #define SHADER_MAX_STAGE_COUNT 5
 
+//size of shadow textures, TODO - smaller?
+#define SHADOWSIZE 4096
+
 //A handy enumerator, to determine which member of the bufferObject array
 //holds which data
 /// @ingroup Rendering
@@ -30,16 +33,30 @@ enum MeshBuffer
 
 #ifdef _DEBUG
 //In debug, the expectation is applications will be run from visual studio (starting directory being the project)
+#ifndef ORBIS
 #define SHADER_DIR	"../Assets/Shaders/"
 #define MODEL_DIR	"../Assets/Models/"
 #define TEXTURE_DIR  "../Assets/Textures/"
 #define AUDIO_DIR	"../Assets/AUDIO/"
 #else
+#define SHADER_DIR	"/app0/Assets/PS4Shaders/"
+#define MODEL_DIR	"/app0/Assets/Models/"
+#define TEXTURE_DIR  "/app0/Assets/Textures/"
+#define AUDIO_DIR	"/app0/Assets/AUDIO/"
+#endif
+#else
+#ifndef ORBIS
 //In release, the expectation is applications will be run from the .exe files (starting directory being the .exe location)
 #define SHADER_DIR	"Assets/Shaders/"
 #define MODEL_DIR	"Assets/Models/"
 #define TEXTURE_DIR  "Assets/Textures/"
 #define AUDIO_DIR	"Assets/AUDIO/"
+#else
+#define SHADER_DIR "/app0/Assets/PS4Shaders/"
+#define MODEL_DIR	"/app0/Assets/Models/"
+#define TEXTURE_DIR  "/app0/Assets/Textures/"
+#define AUDIO_DIR	"/app0/Assets/AUDIO/"
+#endif
 #endif
 
 /// <summary>
@@ -47,14 +64,14 @@ enum MeshBuffer
 /// </summary>
 struct ShaderUniformInfo
 {
-	unsigned int index;
+	unsigned char index;
 	char* name;
 };
 
 /// <summary>
 /// Internal counter for easily setting ReservedMeshTexturesStruct indices.
 /// </summary>
-static size_t reservedMeshTextureCounter = 0;
+static unsigned char reservedMeshTextureCounter = 0;
 
 /// <summary>
 /// A static constant structure for representing a collection of reserved Mesh Texture uniforms.
@@ -109,7 +126,6 @@ ReservedMeshTextures =
 	reservedMeshTextureCounter++, "bumpTex"
 };
 
-//TODO - remove?? no
 static const struct ReservedOtherTexturesStruct
 {
 	const union
@@ -120,23 +136,29 @@ static const struct ReservedOtherTexturesStruct
 			ShaderUniformInfo NORMALS;
 			ShaderUniformInfo EMISSIVE;
 			ShaderUniformInfo SPECULAR;
+			ShaderUniformInfo SHADOW_2D;
+			ShaderUniformInfo SHADOW_CUBE;
+			ShaderUniformInfo CUBE;
 		};
-		ShaderUniformInfo values[2];
+		ShaderUniformInfo values[7];
 };
-	static const size_t size = 2;
+	static const size_t size = 7;
 
 } ReservedOtherTextures =
 {
 	reservedMeshTextureCounter++, "depthTex",
 	reservedMeshTextureCounter++, "normTex",
 	reservedMeshTextureCounter++, "emissiveTex",
-	reservedMeshTextureCounter++, "specularTex"
+	reservedMeshTextureCounter++, "specularTex",
+	reservedMeshTextureCounter++, "shadowTex",
+	reservedMeshTextureCounter++, "shadowTexCube",
+	reservedMeshTextureCounter++, "cubeTex"
 };
 
 /// <summary>
 /// Internal counter for easily setting ReservedMeshTexturesStruct indices.
 /// </summary>
-static size_t reservedMeshColourCounter = 0;
+static unsigned char reservedMeshColourCounter = 0;
 
 /// <summary>
 /// A static constant structure for representing a collection of reserved Mesh colour uniforms.

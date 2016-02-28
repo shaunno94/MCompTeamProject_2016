@@ -1,3 +1,4 @@
+#ifndef ORBIS
 #include "ParticleSystem.h"
 
 ParticleSystem::ParticleSystem(ParticleEmitter* emitter, const std::string& texturePath,
@@ -19,7 +20,7 @@ ParticleSystem::ParticleSystem(ParticleEmitter* emitter, const std::string& text
 ParticleSystem::~ParticleSystem()
 {
 
-}
+	}
 
 bool ParticleSystem::LoadTexture(const std::string& texturePath)
 {
@@ -114,7 +115,7 @@ bool ParticleSystem::Update(float delta)
 	BuildVertexBuffer();
 
 	return true;
-
+	
 }
 
 
@@ -134,7 +135,8 @@ void ParticleSystem::Render()
 
 	glDrawArrays(GL_LINE_LOOP, 0, m_NumParticles);
 
-	
+
 	glUseProgram(0);
 
 }
+#endif

@@ -2,7 +2,6 @@
 
 #include "Material.h"
 
-
 class ExtendedMaterial : public Material
 {
 protected:
@@ -15,7 +14,7 @@ protected:
 	std::vector<std::pair<int, int>> m_uniformInts;
 
 public:
-	ExtendedMaterial(OGLShader* shader, bool hasTranslucency = false);
+	ExtendedMaterial(BaseShader* shader, bool hasTranslucency = false);
 	~ExtendedMaterial();
 
 	virtual void Setup() override;
