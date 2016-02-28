@@ -1,10 +1,11 @@
+#pragma once
 #include "Math\nclglMath.h"
 #include "Rendering\GameObject.h"
 
 class ParticleData : public GameObject
 {
 public:
-	ParticleData(){}
+	ParticleData(){};
 	ParticleData(int maxCount);
 	~ParticleData() { }
 

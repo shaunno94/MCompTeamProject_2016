@@ -64,6 +64,7 @@ int main() {
 
 	OGLShader* simpleShader = new OGLShader(SHADER_DIR"textureVertex.glsl", SHADER_DIR"textureFragment.glsl");
 	OGLShader* pointlightShader = new OGLShader(SHADER_DIR"pointlightvertex.glsl", SHADER_DIR"pointlightfragment.glsl");
+	OGLShader* orthoShader = new OGLShader(SHADER_DIR"combineVert.glsl", SHADER_DIR"sceneFragment.glsl");
 
 	if (!pointlightShader->IsOperational())
 		return -1;

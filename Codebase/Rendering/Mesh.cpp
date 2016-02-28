@@ -306,6 +306,42 @@ Mesh* Mesh::GenerateQuad(Vec2Graphics texCoords /* = Vec2Graphics(1.0f, 1.0f) */
 	return m;
 }
 
+Mesh* Mesh::GenerateQuad(Vec3Graphics* vertices, Vec2Graphics texCoords /* = Vec2Graphics(1.0f, 1.0f) */)
+{
+	Mesh* m = new Mesh();
+
+	m->m_NumVertices = 4;
+	m->m_NumIndices = 4;
+	m->type = GL_TRIANGLE_STRIP;
+
+	m->m_Vertices = new Vec3Graphics[m->m_NumVertices];
+	m->m_Indices = new size_t[m->m_NumIndices];
+	m->m_TextureCoords = new Vec2Graphics[m->m_NumVertices];
+	m->m_Normals = new Vec3Graphics[m->m_NumVertices];
+	m->m_Tangents = new Vec3Graphics[m->m_NumVertices];
+
+	m->m_Vertices[0] = vertices[0];
+	m->m_Vertices[1] = vertices[1];
+	m->m_Vertices[2] = vertices[3];
+	m->m_Vertices[3] = vertices[2];
+
+	m->m_TextureCoords[0] = Vec2Graphics(0.0f, texCoords.y);
+	m->m_TextureCoords[1] = Vec2Graphics(0.0f, 0.0f);
+	m->m_TextureCoords[2] = Vec2Graphics(texCoords.x, texCoords.y);
+	m->m_TextureCoords[3] = Vec2Graphics(texCoords.x, 0.0f);
+
+	Vec3Graphics normal = (vertices[1] - vertices[0]).Cross(vertices[2] - vertices[0]);
+
+	for (int i = 0; i < m->m_NumIndices; ++i)
+	{
+		m->m_Normals[i] = normal;
+		m->m_Tangents[i] = normal.Cross(normal);
+		m->m_Indices[i] = i;
+	}
+	m->BufferData();
+	return m;
+}
+
 
 Mesh* Mesh::GenerateQuadAlt()
 {
