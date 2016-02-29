@@ -47,7 +47,7 @@ void GUISystem::Render()
 		m_elements[i]->GetRenderComponent()->Draw();
 }
 
-void GUISystem::Shutdown()
+void GUISystem::Destroy()
 {
-	m_elements.clear();
+	guiSystem->m_elements.clear();
 }

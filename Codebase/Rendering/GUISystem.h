@@ -11,7 +11,6 @@ public:
 	void RemoveComponent(GUIComponent* element);
 	void Update();
 	void Render();
-	void Shutdown();
 
 	bool HasInitialised();
 

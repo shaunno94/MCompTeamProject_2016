@@ -188,6 +188,7 @@ int main(void) {
 
 	//Cleanup
 	PhysicsEngineInstance::Release();
+	GUISystem::Destroy();
 
 #if DEBUG_DRAW
 #ifndef ORBIS

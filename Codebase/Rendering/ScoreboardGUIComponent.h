@@ -6,7 +6,7 @@ class ScoreboardGUIComponent : public GUIComponent
 {
 public:
 	ScoreboardGUIComponent(Material* material, Texture* texture, float z, const std::string& name = "");
-	virtual ~ScoreboardGUIComponent(){};
+	virtual ~ScoreboardGUIComponent();
 
 	virtual void Update();
 	virtual void Render();
