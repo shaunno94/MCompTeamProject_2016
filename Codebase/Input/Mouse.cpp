@@ -165,9 +165,6 @@ Vec2 Mouse::GetAbsolutePosition()	{
 	return absolutePosition;
 }
 
-/*
-Returns how much the mouse has moved by since the last frame.
-*/
 void Mouse::SetAbsolutePositionBounds(unsigned int maxX, unsigned int maxY)	{
 	absolutePositionBounds.x = (float)maxX;
 	absolutePositionBounds.y = (float)maxY;	

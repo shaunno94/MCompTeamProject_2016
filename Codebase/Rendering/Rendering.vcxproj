@@ -152,10 +152,12 @@
     </Lib>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="AIControllerComponent.h" />
     <ClInclude Include="Camera.h" />
     <ClInclude Include="constants.h" />
     <ClInclude Include="Controller.h" />
     <ClInclude Include="ControllerComponent.h" />
+    <ClInclude Include="ControllerManager.h" />
     <ClInclude Include="CubeEmitter.h" />
     <ClInclude Include="CubeMaterial.h" />
     <ClInclude Include="DebugDraw.h" />
@@ -165,6 +167,7 @@
     <ClInclude Include="GameTimer.h" />
     <ClInclude Include="KeyboardController.h" />
     <ClInclude Include="LightMaterial.h" />
+    <ClInclude Include="LocalControlManager.h" />
     <ClInclude Include="Material.h" />
     <ClInclude Include="Mesh.h" />
     <ClInclude Include="ModelLoader.h" />
@@ -192,8 +195,10 @@
     <ClInclude Include="Window.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="AIControllerComponent.cpp" />
     <ClCompile Include="Camera.cpp" />
     <ClCompile Include="ControllerComponent.cpp" />
+    <ClCompile Include="ControllerManager.cpp" />
     <ClCompile Include="CubeMaterial.cpp" />
     <ClCompile Include="DebugDraw.cpp" />
     <ClCompile Include="CubeEmitter.cpp" />
@@ -202,6 +207,7 @@
     <ClCompile Include="GameObject.cpp" />
     <ClCompile Include="KeyboardController.cpp" />
     <ClCompile Include="LightMaterial.cpp" />
+    <ClCompile Include="LocalControlManager.cpp" />
     <ClCompile Include="Material.cpp" />
     <ClCompile Include="Mesh.cpp" />
     <ClCompile Include="ModelLoader.cpp" />

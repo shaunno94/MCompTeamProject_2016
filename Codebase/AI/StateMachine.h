@@ -1,6 +1,6 @@
 #pragma once
-#include <map>
 #include "State.h"
+#include <unordered_map>
 
 class StateMachine
 {
@@ -12,9 +12,9 @@ public:
 	void Update(float dt);
 
 	// Add new State to the state machine
-	void AddState(std::string stateName, State* state);
+	void AddState(unsigned int, State* state);
 	// Change currently active state - true if success
-	bool ChangeState(std::string stateName);
+	bool ChangeState(unsigned int stateName);
 
 	State* GetCurrentState()
 	{
@@ -23,7 +23,7 @@ public:
 
 protected:
 
-	typedef std::map<std::string, State*> stateMapping;
+	typedef std::unordered_map<unsigned int, State*> stateMapping;
 	stateMapping* m_stateMap;
 	State* activeState;
 

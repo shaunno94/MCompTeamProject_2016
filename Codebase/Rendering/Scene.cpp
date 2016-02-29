@@ -4,7 +4,7 @@
 Scene::Scene()
 {
 	cam = new Camera(0.0f, 0.0f, Vec3Graphics(0, 0, 0));
-	playerController = NULL;
+
 }
 
 
@@ -19,10 +19,26 @@ Scene::~Scene()
 		delete obj;		
 	}
 	delete cam;
-	if (playerController)
-		delete playerController;
+	/*if (playerController)
+		delete playerController;*/
 	transparentObjects.clear();
 	opaqueObjects.clear();
+}
+
+GameObject* Scene::findGameObject(const std::string& objectName)
+{
+	for (auto obj : opaqueObjects) {
+		if (obj->m_Name == objectName) {
+			return obj;
+		}
+	}
+	for (auto obj : transparentObjects) {
+		if (obj->m_Name == objectName) {
+			return obj;
+		}
+	}
+	return nullptr;
+
 }
 
 //Recursively add objects to node lists for rendering - check for transparency

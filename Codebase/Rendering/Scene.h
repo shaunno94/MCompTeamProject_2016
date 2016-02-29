@@ -2,7 +2,6 @@
 #include "GameObject.h"
 #include <vector>
 #include "Camera.h"
-#include "Controller.h"
 #include "Helpers\collections.h"
 #include "Frustum.h"
 
@@ -19,6 +18,7 @@ public:
 	Scene();
 	~Scene();
 
+	GameObject* findGameObject(const std::string& objectName);
 	GameObject* getOpaqueObject(unsigned int i) { return opaqueObjects[i]; }
 
 	GameObject* getTransparentObject(unsigned int i){ return transparentObjects[i]; }
@@ -31,11 +31,10 @@ public:
 
 	Camera* getCamera(){ return cam; }
 
-	void setPlayerController(Controller* c){ playerController = c; }
+	//attaches the camera to a game object
 	void attachCam(GameObject* player){
 		if (cam)
 			delete cam;
-
 		cam = new Camera(player);
 	}
 	void addGameObject(GameObject* obj);
@@ -56,6 +55,5 @@ private:
 	std::vector<GameObject*> opaqueObjects;
 	std::vector<GameObject*> lightObjects;
 	Camera* cam;
-	Controller* playerController;
 };
 

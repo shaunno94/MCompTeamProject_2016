@@ -53,13 +53,13 @@ bool State::CheckTriggers()
 	return false;
 }
 
-void State::AddChildState(std::string stateName, State* childState)
+void State::AddChildState(unsigned int stateName, State* childState)
 {
 	if (m_childStates->find(stateName) == m_childStates->end())
 		(*m_childStates)[stateName] = childState;
 }
 
-void State::AddTrigger(Trigger* trigger , std::string destState)
+void State::AddTrigger(Trigger* trigger , unsigned int destState)
 {
 	m_triggers.push_back(new triggerPair(trigger, destState));
 }

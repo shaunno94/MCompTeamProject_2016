@@ -18,8 +18,9 @@ ControllerComponent::~ControllerComponent()
 }
 
 void ControllerComponent::updateObject(float dt){
-	if (force.Length() > 0.0000001 || torque.Length() > 0.0000001)
+	if (force.LengthSq() > 0.0000001 || torque.LengthSq() > 0.0000001)
 		dynamic_cast<RigidPhysicsObject*>(m_parent->GetPhysicsComponent())->GetPhysicsBody()->activate();
+
 	dynamic_cast<RigidPhysicsObject*>(m_parent->GetPhysicsComponent())->GetPhysicsBody()->applyCentralForce(btVector3(force.x, force.y, force.z) * dt);
 	force.ToZero();
 	dynamic_cast<RigidPhysicsObject*>(m_parent->GetPhysicsComponent())->GetPhysicsBody()->applyTorque(btVector3(torque.x, torque.y, torque.z)*dt);
@@ -40,8 +41,8 @@ void ControllerComponent::AddTorque(float x, float y, float z){
 }
 
 Mat4Physics ControllerComponent::getOrientation(){
-	//Renderer::GetInstance()->GetCurrentScene()->getCamera();
-	return m_parent->GetWorldTransform().GetRotation();
+	return Mat4Physics::Rotation(Renderer::GetInstance()->GetCurrentScene()->getCamera()->GetYaw() + 90, Vec3Physics(0, 1, 0));
+	//return m_parent->GetWorldTransform().GetRotation();
 }
 
 void ControllerComponent::setCameraControl(float pitch, float yaw){

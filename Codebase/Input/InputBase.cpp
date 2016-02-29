@@ -1,4 +1,3 @@
-#ifdef ORBIS
 #include "InputBase.h"
 
 
@@ -42,4 +41,17 @@ bool	InputBase::GetButtonDown(unsigned int i) {
 	}
 	return buttons[i] > 0.5f ? true : false;
 }
-#endif
+
+bool	InputBase::GetButtonTriggered(unsigned int i) {
+	if (i > MAX_BUTTONS) {
+		return false;
+	}
+	return (GetButtonDown(i) && !GetButtonHeld(i));
+}
+
+bool	InputBase::GetButtonHeld(unsigned int i) {
+	if (i > MAX_BUTTONS) {
+		return false;
+	}
+	return buttonsHeld[i] > 0.5f ? true : false;
+}
