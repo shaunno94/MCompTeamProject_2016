@@ -158,31 +158,43 @@ int main(void) {
 	myScene->addGameObject(ball);
 
 	//-------- SOUND
+	enum SoundNames {
+		GUN,
+		WALK,
+		SONG
+	};
+
 	//load in a wav file into manager
-	SoundManager::AddSound(AUDIO_DIR"14615__man__canon.wav", "gun");
-	SoundManager::AddSound(AUDIO_DIR"41579__erdie__steps-on-stone01.wav", "walk");
-	SoundManager::AddSound(AUDIO_DIR"139320__votives__arpegthing.wav", "song");
+	SoundManager::AddSound(AUDIO_DIR"14615__man__canon.wav", GUN);
+	SoundManager::AddSound(AUDIO_DIR"41579__erdie__steps-on-stone01.wav", WALK);
+	SoundManager::AddSound(AUDIO_DIR"139320__votives__arpegthing.wav", SONG);
 
 	//load ogg file (EXPERIMENTAL STREAMING)
 	//SoundManager::AddSound(AUDIO_DIR"139320__votives__arpegthing.ogg", "song");
 
-	myScene->addGameObject(ball);
 	myScene->addGameObject(ball2);
 	//maybe get a handle fro the loaded sounds
-	Sound* gun = SoundManager::GetSound("gun");
+	Sound* gun = SoundManager::GetSound(GUN);
 
 	//create new sound entity and attach the sound to it
-	SoundEmitter* emitSong = new SoundEmitter(SoundManager::GetSound("song"));
+	SoundEmitter* emitSong = new SoundEmitter(SoundManager::GetSound(SONG));
 	emitSong->SetIsGlobal(true);
-	emitSong->SetVolume(0.05f);
+	emitSong->SetVolume(0.15f);
+	emitSong->SetPriority(SOUNDPRIORITY_ALWAYS);
 
 	//Add 3D sound
-	SoundEmitter* emitWalk = new SoundEmitter(SoundManager::GetSound("walk"));
+	SoundEmitter* emitWalk = new SoundEmitter(SoundManager::GetSound(WALK));
 	emitWalk->SetRadius(150.0f);
 
 	//add sounds to engine
 	SoundSystem::Instance()->AddSoundEmitter(emitSong);
 	SoundSystem::Instance()->AddSoundEmitter(emitWalk);
+
+	//modify sound values
+	SoundMOD mod = SoundMOD();
+	mod.isGlobal = true;
+	mod.looping = false;
+	mod.volume = 0.25f;
 	//-------- SOUND
 
 	renderer.SetCurrentScene(myScene);
@@ -203,20 +215,13 @@ int main(void) {
 		//-------- SOUND
 		// just play a sound
 		if (Window::GetKeyboard()->KeyTriggered(KEYBOARD_L)){
-			SoundMOD mod = SoundMOD();
-			mod.isGlobal = true;
-			mod.looping = false;
-			mod.volume = 0.5f;
-	
+			mod.pitch = 1.0f;
+
 			SoundSystem::Instance()->Play(gun, mod);
 		}
 
-		// just play a sound
+		// same sound but higher pitch
 		if (Window::GetKeyboard()->KeyTriggered(KEYBOARD_K)){
-			SoundMOD mod = SoundMOD();
-			mod.isGlobal = true;
-			mod.looping = false;
-			mod.volume = 0.5f;
 			mod.pitch = 1.75f;
 
 			SoundSystem::Instance()->Play(gun, mod);
@@ -232,6 +237,7 @@ int main(void) {
 
 	//Cleanup
 	PhysicsEngineInstance::Release();
+	SoundSystem::Release();
 
 #if DEBUG_DRAW
 #ifndef ORBIS

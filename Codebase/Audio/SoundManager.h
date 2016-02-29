@@ -10,13 +10,13 @@
 class SoundManager
 {
 public:
-	static void AddSound(std::string fileName, std::string name);
-	static Sound* GetSound(std::string name);
+	static void AddSound(std::string fileName, unsigned int id);
+	static Sound* GetSound(unsigned int id);
 
 	static void DeleteSounds();
 protected:
 	SoundManager() {}
 	~SoundManager() {}
 
-	static std::map<std::string, Sound*> soundAssets;
+	static std::map<unsigned int, Sound*> soundAssets;
 };

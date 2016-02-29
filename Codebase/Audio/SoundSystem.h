@@ -5,11 +5,12 @@
 class SoundSystem
 {
 public:
+	// singleton methods
 	static void Initialise(unsigned int channels = 32)
 	{
 		instance = new SoundSystem(channels);
 	}
-	static void Destroy()
+	static void Release()
 	{
 		delete instance;
 	}
@@ -17,6 +18,8 @@ public:
 	{
 		return instance;
 	}
+
+	//
 	void AddSoundEmitter(SoundEmitter* s)
 	{
 		totalEmitters.push_back(s);
@@ -41,8 +44,7 @@ protected:
 
 	void		UpdateListener();
 
-	void		DetachSources(std::vector<SoundEmitter*>::iterator from, std::vector<SoundEmitter*>::iterator to);
-	void		AttachSources(std::vector<SoundEmitter*>::iterator from, std::vector<SoundEmitter*>::iterator to);
+	void AttachSources(int numSources);
 
 	void		CullNodes();
 

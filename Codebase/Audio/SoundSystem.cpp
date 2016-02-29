@@ -17,11 +17,14 @@ SoundSystem::SoundSystem(unsigned int channels) {
 
 	std::cout << "SoundSystem created with device: " << alcGetString(device, ALC_DEVICE_SPECIFIER) << std::endl;	//Outputs used OAL device!
 
+	// create context
 	context = alcCreateContext(device, NULL);
 	alcMakeContextCurrent(context);
 
+	// sounds dont get too loud when close
 	alDistanceModel(AL_LINEAR_DISTANCE_CLAMPED);
 
+	// generate sources per channel
 	for (unsigned int i = 0; i < channels; ++i) {
 		ALuint source;
 
@@ -40,13 +43,13 @@ SoundSystem::SoundSystem(unsigned int channels) {
 }
 
 SoundSystem::~SoundSystem(void)	{
-	for (std::vector<SoundEmitter*>::iterator i = totalEmitters.begin(); i != totalEmitters.end(); ++i) {
-		delete (*i);
+	for (auto emitter : totalEmitters) {
+		delete emitter;
 	}
 
-	for (std::vector<OALSource*>::iterator i = sources.begin(); i != sources.end(); ++i) {
-		alDeleteSources(1, &(*i)->source);
-		delete (*i);
+	for (auto src : sources) {
+		alDeleteSources(1, &src->source);
+		delete src;
 	}
 
 	alcMakeContextCurrent(NULL);
@@ -64,67 +67,76 @@ void		SoundSystem::Update(float msec) {
 	UpdateListener(); // update listener position
 
 	//Update values for every node, whether in range or not
-	for (std::vector<SoundEmitter*>::iterator i = totalEmitters.begin(); i != totalEmitters.end(); ++i) {
-		if ((*i)->GetIsGlobal()){
-			(*i)->SetPosition(listenerPos);
+	for (auto emitter : totalEmitters) {
+		if (emitter->GetIsGlobal()){
+			emitter->SetPosition(listenerPos);
 		}
-		(*i)->Update(msec);
+		emitter->Update(msec);
 	}
 
 	CullNodes();	//First off, remove nodes that are too far away
 
-	if (emitters.size() > sources.size()) {
-		std::sort(emitters.begin(), emitters.end(), SoundEmitter::CompareNodesByPriority);	//Then sort by priority
-
-		DetachSources(emitters.begin() + (sources.size() + 1), emitters.end());		//Detach sources from nodes that won't be covered this frame
-		AttachSources(emitters.begin(), emitters.begin() + (sources.size()));	//And attach sources to nodes that WILL be covered this frame
-	}
-	else{
-		AttachSources(emitters.begin(), emitters.end());//And attach sources to nodes that WILL be covered this frame
-	}
+	std::sort(totalEmitters.begin(), totalEmitters.end(), SoundEmitter::CompareNodesByPriority);	//Then sort by priority
+	AttachSources(sources.size());
 
 	emitters.clear();	//We're done for the frame! empty the emitters list
 }
 
 void	SoundSystem::CullNodes() {
-	for (std::vector<SoundEmitter*>::iterator i = totalEmitters.begin(); i != totalEmitters.end();) {
+	std::vector<SoundEmitter*>	tempEMT;
+
+	int size = 0;
+	int sizeMax = sources.size(); // max allowed emitters
+
+	for (auto emt : totalEmitters) {
 
 		float length;
 
 		// distance from listener
 		length = (listenerPos -
-			(*i)->GetPosition()).Length();
+			emt->GetPosition()).Length();
 		
+		// if emitter should play
+		if (length < emt->GetRadius() && 
+			emt->GetSound() &&
+			emt->GetTimeLeft() > 0 &&
+			size < sizeMax) {
 
-		if (length < (*i)->GetRadius() && (*i)->GetSound() && (*i)->GetTimeLeft() > 0) {
-			emitters.push_back((*i));
-		}
+			emitters.push_back(emt);
+			tempEMT.push_back(emt);
+			size++;
+		} 
 		else{
-			(*i)->DetachSource();
+			emt->DetachSource();
+			if (!emt->GetIsSingle()) {
+				tempEMT.push_back(emt);
+			}
+			else {
+				delete emt; // delete single instances
+			}
 		}
 
-		++i;
-
+		if (size >= sizeMax) {
+			break;
+		}
 	}
+
+	totalEmitters = tempEMT;
+	std::cout << "SIZE:: " << totalEmitters.size() << std::endl;
+
 }
 
-void	SoundSystem::DetachSources(std::vector<SoundEmitter*>::iterator from, std::vector<SoundEmitter*>::iterator to) {
-	for (std::vector<SoundEmitter*>::iterator i = from; i != to; ++i) {
-		(*i)->DetachSource();
-	}
-}
-
-void	SoundSystem::AttachSources(std::vector<SoundEmitter*>::iterator from, std::vector<SoundEmitter*>::iterator to) {
-	for (std::vector<SoundEmitter*>::iterator i = from; i != to; ++i) {
-		if (!(*i)->GetSource()) {	//Don't attach a new source if we already have one!
-			(*i)->AttachSource(GetSource());
+void SoundSystem::AttachSources(int numSources) {
+	for (auto emt : emitters) {
+		if (!emt->GetSource()) {	//Don't attach a new source if we already have one!
+			emt->AttachSource(GetSource());
 		}
 	}
 }
 
 OALSource*	SoundSystem::GetSource() {
-	for (std::vector<OALSource*>::iterator i = sources.begin(); i != sources.end(); ++i) {
-		OALSource*s = *i;
+	for (auto src : sources) {
+		OALSource* s = src;
 		if (!s->inUse) {
 			return s;
 		}
@@ -156,14 +168,14 @@ void	SoundSystem::UpdateListener() {
 	alListenerfv(AL_POSITION, (float*)&listenerPos);
 	alListenerfv(AL_VELOCITY, (float*)&listenerVel);
 	alListenerfv(AL_ORIENTATION, (float*)&dirup);
-	
 }
 
 void	SoundSystem::Play(Sound* s, SoundMOD modifier) {
 	SoundEmitter* n = new SoundEmitter();
 	n->SetSound(s);
-	n->SetPriority(SOUNDPRIORITY_HIGH);
+	n->setIsSingle(true);
 
+	n->SetPriority(modifier.priority);
 	n->SetVolume(modifier.volume);
 	n->SetRadius(modifier.radius);
 	n->SetPitch(modifier.pitch);

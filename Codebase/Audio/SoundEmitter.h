@@ -37,6 +37,8 @@ struct SoundMOD {
 	float pitch = SOUND_PITCH;
 	bool looping = SOUND_LOOP;
 	bool isGlobal = SOUND_GLOBAL;
+	SoundPriority priority = SOUNDPRIORITY_HIGH;
+
 	Vec3 position = Vec3();
 };
 
@@ -47,46 +49,46 @@ public:
 	SoundEmitter(Sound* s);
 	~SoundEmitter(void);
 
-	void			Reset();
+	void Reset();
 
-	void			SetSound(Sound* s);
-	Sound*			GetSound()
+	void SetSound(Sound* s);
+	Sound* GetSound()
 	{
 		return sound;
 	}
 
-	void			SetPriority(SoundPriority p)
+	void SetPriority(SoundPriority p)
 	{
 		priority = p;
 	}
-	SoundPriority	GetPriority()
+	SoundPriority GetPriority() const 
 	{
 		return priority;
 	}
 
-	void			SetVolume(float value)
+	void SetVolume(float value)
 	{
 		volume = value;
 	}
-	float			GetVolume()
+	float GetVolume() const 
 	{
 		return volume;
 	}
 
-	void			SetLooping(bool state)
+	void SetLooping(bool state)
 	{
 		isLooping = state;
 	}
-	bool			GetLooping()
+	bool GetLooping() const 
 	{
 		return isLooping;
 	}
 
-	void			SetRadius(float value)
+	void SetRadius(float value)
 	{
 		radius = value;
 	}
-	float			GetRadius()
+	float GetRadius() const 
 	{
 		return radius;
 	}
@@ -95,33 +97,37 @@ public:
 	{
 		pitch = value;
 	}
-	float GetPitch()
+	float GetPitch() const 
 	{
 		return pitch;
 	}
+
+	void SetIsGlobal(bool value) { isGlobal = value; }
+	bool GetIsGlobal() const { return isGlobal; }
 	
-	double			GetTimeLeft()
+	void SetPosition(const Vec3& pos) {
+		position = pos;
+	}
+	Vec3 GetPosition() const 
+	{
+		return position;
+	}
+
+	void setIsSingle(bool state) { isSingle = state; }
+	bool GetIsSingle() const { return isSingle; }
+	
+	void SetVelocity(const Vec3& vel) {
+		velocity = vel;
+	}
+
+	double GetTimeLeft()
 	{
 		return timeLeft;
 	}
 
-	OALSource*		GetSource()
+	OALSource* GetSource()
 	{
 		return oalSource;
-	}
-
-	bool GetIsGlobal() { return isGlobal; }
-	void SetIsGlobal(bool value) { isGlobal = value; }
-
-	Vec3 GetPosition()
-	{
-		return position;
-	}
-	void SetPosition(const Vec3& pos) {
-		position = pos;
-	}
-	void SetVelocity(const Vec3& vel) {
-		velocity = vel;
 	}
 
 	static bool		CompareNodesByPriority(SoundEmitter* a, SoundEmitter* b);
@@ -140,6 +146,7 @@ protected:
 	float			timeLeft;
 	float pitch;
 
+	bool isSingle;
 	bool			isLooping;
 	bool			isGlobal;
 

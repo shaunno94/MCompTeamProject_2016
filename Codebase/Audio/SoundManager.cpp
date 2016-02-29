@@ -1,11 +1,11 @@
 #include "SoundManager.h"
 
 
-std::map<std::string, Sound*> SoundManager::soundAssets;
+std::map<unsigned int, Sound*> SoundManager::soundAssets;
 
-void SoundManager::AddSound(std::string fileName, std::string name)
+void SoundManager::AddSound(std::string fileName, unsigned int id)
 {
-	if (!GetSound(name))
+	if (!GetSound(id))
 	{
 		Sound* s = new Sound();
 
@@ -27,19 +27,19 @@ void SoundManager::AddSound(std::string fileName, std::string name)
 		{
 			std::cout << "Invalid extension " << extension << "!" << std::endl;
 		}
-		soundAssets.insert(std::make_pair(name, s));
+		soundAssets.insert(std::make_pair(id, s));
 	}
 }
 
-Sound* SoundManager::GetSound(std::string name)
+Sound* SoundManager::GetSound(unsigned int id)
 {
-	std::map<std::string, Sound*>::iterator s = soundAssets.find(name);
+	std::map<unsigned int, Sound*>::iterator s = soundAssets.find(id);
 	return (s != soundAssets.end() ? s->second : NULL);
 }
 
 void SoundManager::DeleteSounds()
 {
-	for (std::map<std::string, Sound*>::iterator i = soundAssets.begin(); i != soundAssets.end(); ++i)
+	for (std::map<unsigned int, Sound*>::iterator i = soundAssets.begin(); i != soundAssets.end(); ++i)
 	{
 		delete i->second;
 	}

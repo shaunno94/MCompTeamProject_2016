@@ -21,13 +21,16 @@ void	SoundEmitter::Reset()
 	isLooping = SOUND_LOOP;
 	oalSource = NULL;
 	sound = NULL;
+	isGlobal = SOUND_GLOBAL;
 
+	isSingle = false;
+
+	// for 3D and doppler
 	position = Vec3();
 	velocity = Vec3();
 
+	// for streaming
 	streamPos = 0;
-	isGlobal = SOUND_GLOBAL;
-
 	for (unsigned int i = 0; i < NUM_STREAM_BUFFERS; ++i)
 	{
 		streamBuffers[i] = 0;
@@ -157,7 +160,6 @@ void		SoundEmitter::Update(float msec)
 
 			alSourcefv(oalSource->source, AL_POSITION, (float*)&position);
 			alSourcefv(oalSource->source, AL_VELOCITY, (float*)&velocity);
-			alSourcefv(oalSource->source, AL_DIRECTION, (float*)&(velocity.Normalize()));
 
 			if (sound->IsStreaming())
 			{

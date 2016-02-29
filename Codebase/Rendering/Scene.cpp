@@ -14,9 +14,9 @@ Scene::~Scene()
 	{
 		delete obj;
 	}
-	for (auto obj : opaqueObjects)
+	for (auto &obj : opaqueObjects)
 	{
-		delete obj;
+		delete obj;		
 	}
 	delete cam;
 	if (playerController)
