@@ -114,9 +114,9 @@ int main(void) {
 	ballMaterial->Set(ReservedMeshTextures.DIFFUSE.name, Texture::Get(TEXTURE_DIR"checkerboard.gnf", true));
 
 	// Create Stadium
-	//GameObject* stadium = new Stadium(material, netMaterial, "stadium");
+	GameObject* stadium = new Stadium(material, netMaterial, "stadium");
 
-	//myScene->addGameObject(stadium);
+	myScene->addGameObject(stadium);
 	//myScene->addLightObject(light1);
 	//myScene->addLightObject(light2);
 
