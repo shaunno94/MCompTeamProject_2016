@@ -21,19 +21,19 @@ const unsigned int SUB_STEPS = 4;
 #include "Rendering\KeyboardController.h"
 const unsigned int SCREEN_HEIGHT = 800;
 const unsigned int SCREEN_WIDTH = 1280;
-const string SIMPLESHADER_VERT = SHADER_DIR"textureVertex.glsl";
-const string SIMPLESHADER_FRAG = SHADER_DIR"textureFragment.glsl";
-const string POINTLIGHTSHADER_VERT = SHADER_DIR"2dShadowLightvertex.glsl";
-const string POINTLIGHTSHADER_FRAG = SHADER_DIR"2dShadowLightfragment.glsl";
+const std::string SIMPLESHADER_VERT = SHADER_DIR"textureVertex.glsl";
+const std::string SIMPLESHADER_FRAG = SHADER_DIR"textureFragment.glsl";
+const std::string POINTLIGHTSHADER_VERT = SHADER_DIR"2dShadowLightvertex.glsl";
+const std::string POINTLIGHTSHADER_FRAG = SHADER_DIR"2dShadowLightfragment.glsl";
 #else
 #include "Input\PS4Input.h"
 #include "Rendering\PS4Controller.h"
 const unsigned int SCREEN_HEIGHT = 1080;
 const unsigned int SCREEN_WIDTH = 1920;
-const string SIMPLESHADER_VERT = SHADER_DIR"textureVertex.sb";
-const string SIMPLESHADER_FRAG = SHADER_DIR"textureFragment.sb";
-const string POINTLIGHTSHADER_VERT = SHADER_DIR"2dShadowLightvertex.sb";
-const string POINTLIGHTSHADER_FRAG = SHADER_DIR"2dShadowLightfragment.sb";
+const std::string SIMPLESHADER_VERT = SHADER_DIR"textureVertex.sb";
+const std::string SIMPLESHADER_FRAG = SHADER_DIR"textureFragment.sb";
+const std::string POINTLIGHTSHADER_VERT = SHADER_DIR"2dShadowLightvertex.sb";
+const std::string POINTLIGHTSHADER_FRAG = SHADER_DIR"2dShadowLightfragment.sb";
 //System Variables
 unsigned int sceLibcHeapExtendedAlloc = 1;			/* Switch to dynamic allocation */
 size_t sceLibcHeapSize = 512 * 1024 * 1024;			/* Set up heap area upper limit as 256 MiB */
@@ -116,7 +116,7 @@ int main(void) {
 	// Create Stadium
 	GameObject* stadium = new Stadium(material, netMaterial, "stadium");
 
-	myScene->addGameObject(stadium);
+	//myScene->addGameObject(stadium);
 	//myScene->addLightObject(light1);
 	//myScene->addLightObject(light2);
 

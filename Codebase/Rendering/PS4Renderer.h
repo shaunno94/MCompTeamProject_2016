@@ -46,18 +46,18 @@ public:
 	void SetTextureFlags(textureHandle&, unsigned int flags);
 	void SetCurrentShader(BaseShader* s);
 
-	void UpdateUniform(int location, const Mat4Graphics& mat4);
-	void UpdateUniform(int location, const Mat3Graphics& mat3);
-	void UpdateUniform(int location, const Vec4Graphics& vec4);
-	void UpdateUniform(int location, const Vec3Graphics& vec3);
-	void UpdateUniform(int location, const Vec2Graphics& vec2);
-	void UpdateUniform(int location, float f);
-	void UpdateUniform(int location, double d);
-	void UpdateUniform(int location, int i);
-	void UpdateUniform(int location, unsigned int u);
+	void UpdateUniform(const shaderResourceLocation& location, const Mat4Graphics& mat4);
+	void UpdateUniform(const shaderResourceLocation& location, const Mat3Graphics& mat3);
+	void UpdateUniform(const shaderResourceLocation& location, const Vec4Graphics& vec4);
+	void UpdateUniform(const shaderResourceLocation& location, const Vec3Graphics& vec3);
+	void UpdateUniform(const shaderResourceLocation& location, const Vec2Graphics& vec2);
+	void UpdateUniform(const shaderResourceLocation& location, float f);
+	void UpdateUniform(const shaderResourceLocation& location, double d);
+	void UpdateUniform(const shaderResourceLocation& location, int i);
+	void UpdateUniform(const shaderResourceLocation& location, unsigned int u);
 	
 	unsigned int TextureMemoryUsage(sce::Gnm::Texture id){ return 0; }
-	void SetTexture(unsigned int id, textureHandle& handle);
+	void SetTexture(const shaderResourceLocation& location, textureHandle& handle);
 
 	sce::Gnmx::GnmxGfxContext* GetGFXContext() { return currentGFXContext; }
 

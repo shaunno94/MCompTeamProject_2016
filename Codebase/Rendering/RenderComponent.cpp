@@ -24,9 +24,6 @@ void RenderComponent::Draw()
 
 	//model matrix
 	Renderer::GetInstance()->UpdateUniform(m_Material->GetShader()->GetModelMatrixLocation(), m_GameObject->GetWorldTransform());
-	//reset reserved mesh texture uniforms to use the right texture unit
-	for (int i = 0; i < ReservedMeshTextures.size; ++i)
-		Renderer::GetInstance()->UpdateUniform(m_Material->GetShader()->GetReservedMeshTextureUniformLocation(i), i);
 	
 	m_Mesh->Draw(m_Material);	
 }

@@ -32,6 +32,10 @@ OGLMesh::~OGLMesh(void)
 
 void OGLMesh::Draw(Material* material)
 {
+	//reset reserved mesh texture uniforms to use the right texture unit
+	for (int i = 0; i < ReservedMeshTextures.size; ++i)
+		Renderer::GetInstance()->UpdateUniform(m_Material->GetShader()->GetReservedMeshTextureUniformLocation(i), i);
+
 	//reserved textures
 	for (unsigned int i = 0; i < ReservedMeshTextures.size; ++i)
 	{

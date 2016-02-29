@@ -294,9 +294,9 @@ void OGLRenderer::UpdateUniform(GLint location, unsigned int u)
 	if (location >= 0) glUniform1ui(location, u);
 }
 
-void OGLRenderer::SetTexture(unsigned int id, textureHandle handle)
+void OGLRenderer::SetTexture(const shaderResourceLocation& id, textureHandle handle)
 {
-	glActiveTexture(GL_TEXTURE0 + id);
+	glActiveTexture(GL_TEXTURE0 + id.id);
 	glBindTexture(GL_TEXTURE_2D, handle);
 }
 

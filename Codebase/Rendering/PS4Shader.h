@@ -6,9 +6,6 @@
 #include <vector>
 #include "BaseShader.h"
 
-using std::vector;
-using std::string;
-
 //enum class PS4ShaderType {
 //	VERTEX,
 //	VERTEXCOPY,
@@ -26,26 +23,25 @@ class PS4Shader : public PS4Memory, public BaseShader
 {
 	friend class PS4Renderer;
 public:
-	PS4Shader(const string& vertex, const string& pixel, const string& geometry = "", const string& hull = "", const string& domain = "");
+	PS4Shader(const std::string& vertex, const std::string& pixel, const std::string& geometry = "", const std::string& hull = "", const std::string& domain = "");
 	~PS4Shader();
 
-	int GetReservedMeshTextureUniformLocation(uint32_t index) const override { return m_ReservedMeshTextureLocations[index]; }
-	int GetReservedMeshColourUniformLocation(uint32_t index) const override { return m_ReservedMeshColourLocations[index]; }
+	shaderResourceLocation GetReservedMeshTextureUniformLocation(uint32_t index) const override { return m_ReservedMeshTextureLocations[index]; }
+	shaderResourceLocation GetReservedMeshColourUniformLocation(uint32_t index) const override { return m_ReservedMeshColourLocations[index]; }
 	bool IsOperational() const override { return operational; }
-	int	GetResourceByName(const std::string &name) const override;
-	int GetModelMatrixLocation() const override { return m_ModelMatrixLocation; }
+	shaderResourceLocation	GetResourceByName(const std::string &name) const override;
+	shaderResourceLocation GetModelMatrixLocation() const override { return m_ModelMatrixLocation; }
 
 protected:
-	void GenerateVertexShader(const string&name, bool makeFetch);
-	void GeneratePixelShader(const string&name);
-	void GenerateHullShader(const string& name);
-	void GenerateDomainShader(const string& name);
-	void GenerateGeometryShader(const string& name);
+	void GenerateVertexShader(const std::string&name, bool makeFetch);
+	void GeneratePixelShader(const std::string&name);
+	void GenerateHullShader(const std::string& name);
+	void GenerateDomainShader(const std::string& name);
+	void GenerateGeometryShader(const std::string& name);
 	void GenerateFetchShader(char* binData);
 	
-	bool LoadShaderText(const string &name, string&into);
-	bool LoadShaderBinary(const string &name, char*& into, int& dataSize);
-	bool ShaderIsBinary(const string& name);
+	bool LoadShaderBinary(const std::string &name, char*& into, int& dataSize);
+	bool ShaderIsBinary(const std::string& name);
 	
 	void SubmitShaderSwitch(sce::Gnmx::GnmxGfxContext& cmdList);
 
@@ -74,8 +70,8 @@ protected:
 	//PS4PipelineType pipelineType;
 	bool operational = false;
 
-	int m_ModelMatrixLocation;
-	int m_ReservedMeshTextureLocations[ReservedMeshTextures.size];
-	int m_ReservedMeshColourLocations[ReservedMeshColours.size];
+	shaderResourceLocation m_ModelMatrixLocation;
+	shaderResourceLocation m_ReservedMeshTextureLocations[ReservedMeshTextures.size];
+	shaderResourceLocation m_ReservedMeshColourLocations[ReservedMeshColours.size];
 };
 #endif

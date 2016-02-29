@@ -63,7 +63,7 @@ public:
 		return m_ReservedMeshColourLocations[index];
 	}
 
-	int GetResourceByName(const std::string& name) const override
+	shaderResourceLocation GetResourceByName(const std::string& name) const override
 	{
 		return glGetUniformLocation(program, name.c_str());
 	}

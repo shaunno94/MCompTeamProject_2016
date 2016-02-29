@@ -207,7 +207,7 @@ void Texture::LoadFromFile()
 /// Loads a texture to it's texture unit for use in shaders
 /// </summary>
 /// <returns></returns>
-void Texture::Load(unsigned int textureUnit)
+void Texture::Load(const shaderResourceLocation& textureUnit)
 {
 	if (!textureLoaded) 
 		LoadFromFile();

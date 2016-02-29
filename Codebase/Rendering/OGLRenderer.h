@@ -77,7 +77,7 @@ public:
 	void UpdateShaderMatrices();
 	void SetTextureFlags(unsigned int id, unsigned int flags);
 	unsigned int TextureMemoryUsage(unsigned int id);
-	void SetTexture(unsigned int id, textureHandle handle);
+	void SetTexture(const shaderResourceLocation& id, textureHandle handle);
 
 protected:
 	virtual void	Resize(int x, int y);

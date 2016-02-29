@@ -108,8 +108,10 @@ void PS4Mesh::Draw(Material* material)
 	//reserved textures
 	for (unsigned int i = 0; i < ReservedMeshTextures.size; ++i)
 	{
+		shaderResourceLocation slot;
+		slot.id = i;
 		if (m_Textures[i])
-			m_Textures[i]->Load(i);
+			m_Textures[i]->Load(slot);
 	}
 	//reserved colours
 	for (unsigned int i = 0; i < ReservedMeshColours.size; ++i)

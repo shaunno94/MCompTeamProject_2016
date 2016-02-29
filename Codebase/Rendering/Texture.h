@@ -15,6 +15,7 @@
 #include <unordered_map>
 #include <vector>
 #include "Helpers/common.h"
+#include "BaseShader.h"
 
 #include <type_traits>
 
@@ -67,7 +68,7 @@ public:
 	/// If this texture is not loaded onto the GPU, the <see cref="Texture::LoadFromFile"/> will be called automatically.
 	/// </remarks>
 	/// <param name="textureUnit">GPU texture unit.</param>
-	void Load(unsigned int textureUnit);
+	void Load(const shaderResourceLocation& textureUnit);
 
 	/// <summary>
 	/// Loads the managed texture from file.
