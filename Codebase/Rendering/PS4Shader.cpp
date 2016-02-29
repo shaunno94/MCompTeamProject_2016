@@ -305,7 +305,7 @@ shaderResourceLocation	PS4Shader::GetResourceByName(const std::string& name) con
 	}
 	else if (constantBufferA)
 	{
-		result.id = constantBuffer->m_resourceIndex;
+		result.id = constantBufferA->m_resourceIndex;
 		result.stage = sce::Gnm::ShaderStage::kShaderStagePs;
 		return result;
 	}
