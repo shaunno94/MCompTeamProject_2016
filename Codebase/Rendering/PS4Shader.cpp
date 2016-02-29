@@ -297,6 +297,7 @@ int	PS4Shader::GetResourceByName(const string &name) const
 {
 	sce::Shader::Binary::Buffer* constantBuffer = vertexBinary.getBufferResourceByName(name.c_str());
 	sce::Shader::Binary::Buffer* constantBufferA = pixelBinary.getBufferResourceByName(name.c_str());
+
 	if (constantBuffer)
 	{
 		return constantBuffer->m_resourceIndex;

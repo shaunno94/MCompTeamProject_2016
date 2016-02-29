@@ -172,14 +172,6 @@ void PS4Renderer::CombineBuffers()
 
 void PS4Renderer::SetTexture(unsigned int id, textureHandle& handle)
 {
-	/*unsigned int* val = (unsigned int*)currentGFXContext->allocateFromCommandBuffer(sizeof(unsigned int), sce::Gnm::kEmbeddedDataAlignment4);
-	*val = id;
-	sce::Gnm::Buffer constantBuffer;
-	constantBuffer.initAsConstantBuffer(val, sizeof(unsigned int));
-	constantBuffer.setResourceMemoryType(sce::Gnm::kResourceMemoryTypeRO);
-	
-	currentGFXContext->setConstantBuffers(sce::Gnm::kShaderStagePs, 0, 1, &constantBuffer);*/
-	int test= currentShader->GetResourceByName("diffuseTex");
 	currentGFXContext->setTextures(sce::Gnm::kShaderStagePs, 0, 1, &handle);
 }
 
@@ -449,6 +441,8 @@ void PS4Renderer::UpdateShaderMatrices()
 			constantBuffer.initAsConstantBuffer(pMat, sizeof(Mat4Graphics));
 			constantBuffer.setResourceMemoryType(sce::Gnm::kResourceMemoryTypeRO);
 			currentGFXContext->setConstantBuffers(sce::Gnm::kShaderStageVs, location, 1, &constantBuffer);
+
+			//currentGFXContext->setConstantBuffers(sce::Gnm::kShaderStagePs, 0, 1, &constantBuffer);
 		}
 	}
 }

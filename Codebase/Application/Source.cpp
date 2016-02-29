@@ -116,7 +116,7 @@ int main(void) {
 	// Create Stadium
 	GameObject* stadium = new Stadium(material, netMaterial, "stadium");
 
-	myScene->addGameObject(stadium);
+	//myScene->addGameObject(stadium);
 	//myScene->addLightObject(light1);
 	//myScene->addLightObject(light2);
 

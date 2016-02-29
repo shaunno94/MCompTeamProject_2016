@@ -25,7 +25,7 @@ void Material::Setup()
 	for(auto it = m_uniformTextures.begin(); it != m_uniformTextures.end(); ++it)
 	{
 		it->second->Load(textureUnit);
-		Renderer::GetInstance()->UpdateUniform(it->first, textureUnit++);
+		//Renderer::GetInstance()->UpdateUniform(it->first, textureUnit++);
 	}
 
 	//s_LastMaterialInUse = this;
