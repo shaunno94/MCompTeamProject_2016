@@ -21,33 +21,35 @@ bool GUISystem::HasInitialised()
 	return init;
 }
 
-void GUISystem::AddComponent(GUIComponent* component)
+void GUISystem::AddOrthoComponent(OrthoComponent* component)
 {
-	m_elements.push_back(component);
+	m_component.push_back(component);
 }
 
-void GUISystem::RemoveComponent(GUIComponent* component)
+void GUISystem::RemoveOrthoComponent(OrthoComponent* component)
 {
-	for (unsigned int i = 0; i < m_elements.size(); ++i)
+	for (unsigned int i = 0; i < m_component.size(); ++i)
 	{
-		if (m_elements[i] == component)
-			m_elements.erase(m_elements.begin());
+		if (m_component[i] == component)
+			m_component.erase(m_component.begin());
 	}
 }
 
 void GUISystem::Update()
 {
-	for (unsigned int i = 0; i < m_elements.size(); ++i)
-		m_elements[i]->Update();
+	for (unsigned int i = 0; i < m_component.size(); ++i)
+		m_component[i]->Update();
 }
 
 void GUISystem::Render()
 {
-	for (unsigned int i = 0; i < m_elements.size(); ++i)
-		m_elements[i]->GetRenderComponent()->Draw();
+	std::sort(m_component.begin(), m_component.end());
+
+	for (unsigned int i = 0; i < m_component.size(); ++i)
+		m_component[i]->Render();
 }
 
 void GUISystem::Destroy()
 {
-	guiSystem->m_elements.clear();
+	guiSystem->m_component.clear();
 }

@@ -210,6 +210,21 @@
     <ClInclude Include="AIControllerComponent.h">
       <Filter>Header Files\Input</Filter>
     </ClInclude>
+    <ClInclude Include="CubeMaterial.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="PS4Controller.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="resource.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="OrthoComponent.h">
+      <Filter>Header Files\UI</Filter>
+    </ClInclude>
+    <ClInclude Include="OGLTextMesh.h">
+      <Filter>Header Files\OGL_API</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Renderer.cpp">
@@ -331,6 +346,18 @@
     </ClCompile>
     <ClCompile Include="AIControllerComponent.cpp">
       <Filter>Source Files\Input</Filter>
+    </ClCompile>
+    <ClCompile Include="CubeMaterial.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="PS4Controller.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="OrthoComponent.cpp">
+      <Filter>Source Files\UI</Filter>
+    </ClCompile>
+    <ClCompile Include="OGLTextMesh.cpp">
+      <Filter>Source Files\OGL_API</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

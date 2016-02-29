@@ -1,4 +1,4 @@
-#include "GUIComponent.h"
+#include "OrthoComponent.h"
 
 class GUISystem
 {
@@ -7,8 +7,8 @@ public:
 	static void Destroy();
 	static GUISystem& GetInstance(){ return *guiSystem; };
 
-	void AddComponent(GUIComponent* element);
-	void RemoveComponent(GUIComponent* element);
+	void AddOrthoComponent(OrthoComponent* component);
+	void RemoveOrthoComponent(OrthoComponent* component);
 	void Update();
 	void Render();
 
@@ -21,6 +21,6 @@ protected:
 private:
 	GUISystem();
 	~GUISystem(void);
-	std::vector<GUIComponent*> m_elements;
+	std::vector<OrthoComponent*> m_component;
 
 };

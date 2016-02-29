@@ -58,5 +58,10 @@ void ScoreboardGUIComponent::Update(int scoreA, int scoreB, int timeRem)
 void ScoreboardGUIComponent::Render()
 {
 	Update();
+	for (auto child : m_Children)
+	{
+		child->Render();
+	}
+
 	this->GetRenderComponent()->Draw();
 }

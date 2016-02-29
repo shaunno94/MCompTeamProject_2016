@@ -146,6 +146,7 @@ int main(void) {
 	player->GetPhysicsComponent()->GetPhysicsBody()->setRollingFriction(0.5);
 	player->GetPhysicsComponent()->GetPhysicsBody()->setHitFraction(0.5);
 
+
 	ball->SetRenderComponent(new RenderComponent(ballMaterial, ModelLoader::LoadMGL(MODEL_DIR"Common/sphere.mgl", true)));
 	ball->SetLocalTransform(Mat4Graphics::Scale(Vector3Simple(7, 7, 7)));
 	ball->SetPhysicsComponent(ballPhysics);
@@ -169,9 +170,15 @@ int main(void) {
 	myScene->setPlayerController(new PS4Controller(cc));
 #endif
 
-	GUISystem::GetInstance().AddComponent(new ScoreboardGUIComponent(guiMaterial,Texture::Get(TEXTURE_DIR"blue3.png"),0.0));
+	//Define Orthographic Component
+	OrthoComponent* hudUI = new OrthoComponent(1.0f);
+	//Add child GUI components, while defining materials, texture, and depth
+	hudUI->AddGUIComponent(new ScoreboardGUIComponent(guiMaterial, Texture::Get(TEXTURE_DIR"blue3.png"), 1.0));
 
-	myScene->attachCam(ball);
+	//Add Orthographic component to GUISystem
+	GUISystem::GetInstance().AddOrthoComponent(hudUI);
+
+	myScene->attachCam(player);
 
 
 	myScene->addGameObject(player);
@@ -202,6 +209,7 @@ int main(void) {
 
 	//Cleanup
 	PhysicsEngineInstance::Release();
+	//Destroys all GUI on the scene
 	GUISystem::Destroy();
 
 #if DEBUG_DRAW
