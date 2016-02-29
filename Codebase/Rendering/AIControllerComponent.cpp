@@ -1,56 +1,56 @@
 #include "AIControllerComponent.h"
-#include "AI\ChaseState.h"
 #include "Renderer.h"
-#include "AI\RunAwayState.h"
 #include "AI\DistanceTrigger.h"
+#include "AI\PositionState.h"
+#include "AI\ShootState.h"
 
-enum AITypes {
+enum AITypes
+{
 	SHOOTER = 0,
 	GOALKEEPER = 1,
 	AGGRESSIVE = 2
 };
 
-enum AIStates {
-	CHASE,
-	RUN_AWAY
+enum AIStates
+{
+	POSITION,
+	SHOOT
 };
 
 AIControllerComponent::AIControllerComponent(GameObject* parent, unsigned int type) :
-ControllerComponent(parent)
+	ControllerComponent(parent)
 {
 
-	
 	GameObject* ball = Renderer::GetInstance()->GetCurrentScene()->findGameObject("ball");
 
 	switch (type)
 	{
 	case SHOOTER:
 	{
-					m_StateMachine = new StateMachine();
-					ChaseState* chase = new ChaseState(*m_StateMachine, *m_parent, *ball);
-					RunAwayState* run = new RunAwayState(*m_StateMachine, *m_parent, *ball);
+		m_StateMachine = new StateMachine();
+
+		// Create States
+		PositionState* position = new PositionState(*m_StateMachine, *m_parent, *ball);
+		m_StateMachine->AddState(POSITION, position);
+
+		ShootState* shoot = new ShootState(*m_StateMachine, *m_parent, *ball);
+		m_StateMachine->AddState(SHOOT, shoot);
+
+		// Create Triggers
+		DistanceTrigger* positionToShoot = new DistanceTrigger();
+		positionToShoot->setupTrigger(*m_parent, *ball, 11.0f, true);
+		position->AddTrigger(positionToShoot, SHOOT);
 
 
-					// Chase -> Run trigger 
-					//	Triggered when two objects are less than 5.0f apart
-					DistanceTrigger* chaseToRun = new DistanceTrigger();
-					chaseToRun->setupTrigger(*m_parent, *ball, 25.0f, true);
-					chase->AddTrigger(chaseToRun, RUN_AWAY);
+		DistanceTrigger* shootToPosition = new DistanceTrigger();
+		shootToPosition->setupTrigger(*m_parent, *ball, 15.0f, false);
+		shoot->AddTrigger(shootToPosition, POSITION);
 
-					m_StateMachine->AddState(CHASE, chase);
+		// Set active state
+		m_StateMachine->ChangeState(POSITION);
 
-
-					// Run -> Chase trigger 
-					//	Triggered when two objects are greater than 25.0f apart
-					DistanceTrigger* runToChase = new DistanceTrigger();
-					runToChase->setupTrigger(*m_parent, *ball, 65.0f, false);
-					run->AddTrigger(runToChase, CHASE);
-
-					m_StateMachine->AddState(RUN_AWAY, run);
-
-					m_StateMachine->ChangeState(CHASE);
 	}
-		break;
+	break;
 	case GOALKEEPER:
 		break;
 	case AGGRESSIVE:

@@ -33,14 +33,46 @@ size_t sceLibcHeapSize = 512 * 1024 * 1024;			/* Set up heap area upper limit as
 //int sceUserMainThreadPriority = SCE_KERNEL_DEFAULT_PRIORITY_USER;
 #endif
 
-int main(void) {
+struct GoalBallCollisionFilter : public btOverlapFilterCallback
+{
+
+public:
+
+	int m_ballID = 0;
+	int m_goal1ID = 0;
+	int m_goal2ID = 0;
+
+	virtual bool needBroadphaseCollision(btBroadphaseProxy* proxy0, btBroadphaseProxy* proxy1) const override
+	{
+		if ((proxy0->getUid() == m_ballID && proxy1->getUid() == m_goal1ID) ||
+		    (proxy1->getUid() == m_ballID && proxy0->getUid() == m_goal1ID))
+		{
+			//TODO: Increment goals for team 1
+			int ifojwe = 8;
+
+			//TODO: Reset Scene
+		}
+		else if((proxy0->getUid() == m_ballID && proxy1->getUid() == m_goal2ID) ||
+			(proxy1->getUid() == m_ballID && proxy0->getUid() == m_goal2ID))
+		{
+			//TODO: Increment goals for team 2
+			int ifojwe = 8;
+
+			//TODO: Reset Scene
+		}
+		return true;
+	}
+};
+
+int main(void)
+{
 	//-------------------
 	//--- MAIN Loop ---
 	//-------------------
 
 	//Initialise Renderer - including the window context if compiling for Windows - PC
 	Renderer renderer("Team Project - 2016", SCREEN_WIDTH, SCREEN_HEIGHT, false);
-	if (!renderer.HasInitialised()) 
+	if (!renderer.HasInitialised())
 	{
 		return -1;
 	}
@@ -59,6 +91,8 @@ int main(void) {
 #endif
 #endif
 
+
+
 	//Test Scenario - Tardis (cuboid collision shape), floor (plane collision shape), ball (sphere collison shape)
 	Scene* myScene = new Scene();
 	myScene->getCamera()->SetPosition(Vec3Graphics(10, 5, 0)); //no effect anymore
@@ -72,22 +106,37 @@ int main(void) {
 	GameObject* light2 = new GameObject("l");
 
 	GameObject* ai1 = new GameObject("ai1");
+	GameObject* ai2 = new GameObject("ai2");
+	GameObject* ai3 = new GameObject("ai3");
 
-	//Physics objects hold collision shape and collision object(body), 
+	//Physics objects hold collision shape and collision object(body),
 	//call CreateCollisionShape before CreatePhysicsBody or the object will not be created correctly.
 	//Physics objects will be deleted by the game object.
 	RigidPhysicsObject* playerPhysics = new RigidPhysicsObject();
 	playerPhysics->CreateCollisionShape(Vec3Physics(5.0, 2.5, 5.0),CUBOID);
 	playerPhysics->CreatePhysicsBody(8.0, Vec3Physics(10, 5, 0), QuatPhysics(0, 0, 0, 1), Vec3Physics(1, 1, 1));
 
-	RigidPhysicsObject* aiPhysics = new RigidPhysicsObject();
-	aiPhysics->CreateCollisionShape(Vec3Physics(5.0, 2.5, 5.0), CUBOID);
-	aiPhysics->CreatePhysicsBody(8.0, Vec3Physics(30, 5, 10), QuatPhysics(0, 0, 0, 1), Vec3Physics(1, 1, 1));
+
+
+	RigidPhysicsObject* ai1Physics = new RigidPhysicsObject();
+	ai1Physics->CreateCollisionShape(Vec3Physics(5.0, 2.5, 5.0), CUBOID);
+	ai1Physics->CreatePhysicsBody(8.0, Vec3Physics(-150, 5, 50), QuatPhysics(0, 0, 0, 1), Vec3Physics(1, 1, 1));
+
+	RigidPhysicsObject* ai2Physics = new RigidPhysicsObject();
+	ai2Physics->CreateCollisionShape(Vec3Physics(5.0, 2.5, 5.0), CUBOID);
+	ai2Physics->CreatePhysicsBody(8.0, Vec3Physics(-250, 5, 0), QuatPhysics(0, 0, 0, 1), Vec3Physics(1, 1, 1));
+
+	RigidPhysicsObject* ai3Physics = new RigidPhysicsObject();
+	ai3Physics->CreateCollisionShape(Vec3Physics(5.0, 2.5, 5.0), CUBOID);
+	ai3Physics->CreatePhysicsBody(8.0, Vec3Physics(-200, 5, -50), QuatPhysics(0, 0, 0, 1), Vec3Physics(1, 1, 1));
+
+
 
 	RigidPhysicsObject* ballPhysics = new RigidPhysicsObject();
 	ballPhysics->CreateCollisionShape(7.0);
 	ballPhysics->CreatePhysicsBody(2.0, Vec3Physics(0, 3, 0), QuatPhysics(0, 0, 0, 1), Vec3Physics(1, 1, 1));
-	
+	int ballID = ballPhysics->GetPhysicsBody()->getBroadphaseProxy()->getUid();
+
 	RigidPhysicsObject* floorPhysics = new RigidPhysicsObject();
 	floorPhysics->CreateCollisionShape(0, Vec3Physics(0, 1, 0), true);
 	floorPhysics->CreatePhysicsBody(0, Vec3Physics(0, -1, 0), QuatPhysics(0, 0, 0, 1));
@@ -100,7 +149,7 @@ int main(void) {
 	BaseShader* simpleShader = new PS4Shader(SIMPLESHADER_VERT, SIMPLESHADER_FRAG);
 	BaseShader* pointlightShader = new PS4Shader(POINTLIGHTSHADER_VERT, POINTLIGHTSHADER_FRAG);
 #endif
-	
+
 	if (!pointlightShader->IsOperational() || !simpleShader->IsOperational())
 		return -1;
 
@@ -120,8 +169,10 @@ int main(void) {
 	netMaterial->hasTranslucency = true;
 	ballMaterial->Set(ReservedMeshTextures.DIFFUSE.name, Texture::Get(TEXTURE_DIR"checkerboard.tga", true));
 
+	renderer.SetCurrentScene(myScene);
+
 	// Create Stadium
-	GameObject* stadium = new Stadium(material, netMaterial, "stadium"); 
+	GameObject* stadium = new Stadium(material, netMaterial, "stadium");
 
 	myScene->addGameObject(stadium);
 	//myScene->addLightObject(light1);
@@ -145,11 +196,53 @@ int main(void) {
 
 	ai1->SetRenderComponent(new RenderComponent(ballMaterial, ModelLoader::LoadMGL(MODEL_DIR"Common/cube.mgl", true)));
 	ai1->SetLocalTransform(Mat4Graphics::Scale(Vector3Simple(5, 2.5f, 5)));
-	ai1->SetPhysicsComponent(aiPhysics);
+	ai1->SetPhysicsComponent(ai1Physics);
 	ai1->GetPhysicsComponent()->GetPhysicsBody()->setRestitution(btScalar(0.9));
 	ai1->GetPhysicsComponent()->GetPhysicsBody()->setFriction(0.5);
 	ai1->GetPhysicsComponent()->GetPhysicsBody()->setRollingFriction(0.5);
 	ai1->GetPhysicsComponent()->GetPhysicsBody()->setHitFraction(0.5);
+
+	ai2->SetRenderComponent(new RenderComponent(ballMaterial, ModelLoader::LoadMGL(MODEL_DIR"Common/cube.mgl", true)));
+	ai2->SetLocalTransform(Mat4Graphics::Scale(Vector3Simple(5, 2.5f, 5)));
+	ai2->SetPhysicsComponent(ai2Physics);
+	ai2->GetPhysicsComponent()->GetPhysicsBody()->setRestitution(btScalar(0.9));
+	ai2->GetPhysicsComponent()->GetPhysicsBody()->setFriction(0.5);
+	ai2->GetPhysicsComponent()->GetPhysicsBody()->setRollingFriction(0.5);
+	ai2->GetPhysicsComponent()->GetPhysicsBody()->setHitFraction(0.5);
+
+	ai3->SetRenderComponent(new RenderComponent(ballMaterial, ModelLoader::LoadMGL(MODEL_DIR"Common/cube.mgl", true)));
+	ai3->SetLocalTransform(Mat4Graphics::Scale(Vector3Simple(5, 2.5f, 5)));
+	ai3->SetPhysicsComponent(ai3Physics);
+	ai3->GetPhysicsComponent()->GetPhysicsBody()->setRestitution(btScalar(0.9));
+	ai3->GetPhysicsComponent()->GetPhysicsBody()->setFriction(0.5);
+	ai3->GetPhysicsComponent()->GetPhysicsBody()->setRollingFriction(0.5);
+	ai3->GetPhysicsComponent()->GetPhysicsBody()->setHitFraction(0.5);
+
+	RigidPhysicsObject* goalBox = new RigidPhysicsObject();
+	goalBox->CreateCollisionShape(Vec3Physics(7.0, 15.0, 29.0), CUBOID);
+	goalBox->CreatePhysicsBody(0.0, Vec3Physics(268, 17, 0), QuatPhysics(0, 0, 0, 1), Vec3Physics(1, 1, 1), true);
+	int goal1ID = goalBox->GetPhysicsBody()->getBroadphaseProxy()->getUid();
+
+	RigidPhysicsObject* goalBox2 = new RigidPhysicsObject();
+	goalBox2->CreateCollisionShape(Vec3Physics(7.0, 15.0, 29.0), CUBOID);
+	goalBox2->CreatePhysicsBody(0.0, Vec3Physics(-268, 17, 0), QuatPhysics(0, 0, 0, 1), Vec3Physics(1, 1, 1), true);
+	int goal2ID = goalBox2->GetPhysicsBody()->getBroadphaseProxy()->getUid();
+
+	GameObject* goal1 = new GameObject("goal1");
+	goal1->SetPhysicsComponent(goalBox);
+
+	GameObject* goal2 = new GameObject("goal2");
+	goal2->SetPhysicsComponent(goalBox2);
+
+
+	GoalBallCollisionFilter filter;
+	filter.m_ballID = ballID;
+	filter.m_goal1ID = goal1ID;
+	filter.m_goal2ID = goal2ID;
+
+	PhysicsEngineInstance::Instance()->getPairCache()->setOverlapFilterCallback(&filter);
+
+	myScene->addGameObject(goal1);
 
 	ControllerComponent* cc = new ControllerComponent(player);
 #ifndef ORBIS
@@ -160,14 +253,16 @@ int main(void) {
 
 	myScene->attachCam(player);
 
-
 	myScene->addGameObject(player);
 	myScene->addGameObject(ball);
 	myScene->addGameObject(ai1);
+	//myScene->addGameObject(ai2);
+	//myScene->addGameObject(ai3);
 
-	renderer.SetCurrentScene(myScene);
 
 	myControllers->setActor(ai1, 0);
+	//myControllers->setActor(ai2, 0);
+	//myControllers->setActor(ai3, 0);
 
 
 

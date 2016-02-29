@@ -172,6 +172,8 @@
     <ClCompile Include="DistanceTrigger.cpp" />
     <ClCompile Include="RunAwayState.cpp" />
     <ClCompile Include="ShooterAgent.cpp" />
+    <ClCompile Include="PositionState.cpp" />
+    <ClCompile Include="ShootState.cpp" />
     <ClCompile Include="State.cpp" />
     <ClCompile Include="StateMachine.cpp" />
     <ClCompile Include="Trigger.cpp" />
@@ -182,6 +184,8 @@
     <ClInclude Include="DistanceTrigger.h" />
     <ClInclude Include="RunAwayState.h" />
     <ClInclude Include="ShooterAgent.h" />
+    <ClInclude Include="PositionState.h" />
+    <ClInclude Include="ShootState.h" />
     <ClInclude Include="State.h" />
     <ClInclude Include="StateMachine.h" />
     <ClInclude Include="Trigger.h" />

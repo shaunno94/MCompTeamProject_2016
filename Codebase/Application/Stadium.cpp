@@ -1,5 +1,6 @@
 #include "Stadium.h"
 #include <vector>
+#include "Rendering\Renderer.h"
 
 Stadium::Stadium(Material* material, Material* wallMaterial, const std::string& name /*= ""*/) :
 GameObject(name),
@@ -95,8 +96,6 @@ void Stadium::CreatePlane(std::vector<btConvexHullShape*> &collectionVector, Vec
 	wall->SetRenderComponent(new RenderComponent(m_wallMaterial, mesh));
 	//wall->SetWorldTransform(Mat4Graphics::Translation(Vector3Simple(start.x, start.y, start.z)) * Mat4Graphics::Scale(difference));
 	this->AddChildObject(wall);
-
-
 
 	btConvexHullShape* newShape = new btConvexHullShape();
 
