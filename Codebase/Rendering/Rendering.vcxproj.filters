@@ -201,6 +201,15 @@
     <ClInclude Include="ScoreboardGUIComponent.h">
       <Filter>Header Files\UI\HUD_GUI</Filter>
     </ClInclude>
+    <ClInclude Include="ControllerManager.h">
+      <Filter>Header Files\Input</Filter>
+    </ClInclude>
+    <ClInclude Include="LocalControlManager.h">
+      <Filter>Header Files\Input</Filter>
+    </ClInclude>
+    <ClInclude Include="AIControllerComponent.h">
+      <Filter>Header Files\Input</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Renderer.cpp">
@@ -313,6 +322,15 @@
     </ClCompile>
     <ClCompile Include="ScoreboardGUIComponent.cpp">
       <Filter>Source Files\UI\HUD_GUI</Filter>
+    </ClCompile>
+    <ClCompile Include="ControllerManager.cpp">
+      <Filter>Source Files\Input</Filter>
+    </ClCompile>
+    <ClCompile Include="LocalControlManager.cpp">
+      <Filter>Source Files\Input</Filter>
+    </ClCompile>
+    <ClCompile Include="AIControllerComponent.cpp">
+      <Filter>Source Files\Input</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

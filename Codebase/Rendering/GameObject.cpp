@@ -79,6 +79,7 @@ void GameObject::OnUpdateObject(float dt)
 	}
 	if (m_Controller)
 		m_Controller->updateObject(dt);
+
 	UpdateTransform();
 }
 

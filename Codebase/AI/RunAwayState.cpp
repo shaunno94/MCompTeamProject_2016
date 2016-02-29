@@ -24,6 +24,7 @@ void RunAwayState::Update(float dt)
 
 	btVector3 direction = m_parent->GetPhysicsComponent()->GetPhysicsBody()->getWorldTransform().getOrigin() - m_runFromObject->GetPhysicsComponent()->GetPhysicsBody()->getWorldTransform().getOrigin();
 	direction.normalize();
+	direction *= 10.0f;
 
-	dynamic_cast<RigidPhysicsObject*>(m_parent->GetPhysicsComponent())->GetPhysicsBody()->applyCentralForce((direction * 0.5f) * dt);
+	m_parent->GetControllerComponent()->AddForce(direction.x(), 0.0f, direction.z());
 }
