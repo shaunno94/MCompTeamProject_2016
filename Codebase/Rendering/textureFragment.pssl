@@ -1,8 +1,6 @@
-SamplerState samp0 : register(s0);
-ConstantBuffer diffuseTex
-{
-	Texture2D diffuseTex : register(t0);
-};
+
+SamplerState samp0;
+Texture2D diffuseTex;
 
 struct VS_OUTPUT
 {
@@ -13,7 +11,6 @@ struct VS_OUTPUT
 
 float4 main(VS_OUTPUT In) : S_TARGET_OUTPUT
 {
-	//return diffuseTex.Sample(samp0, In.texCoord);     
-	return float4(1.0, 0.0, 0.0, 1.0);
+	return diffuseTex.Sample(samp0, In.texCoord.xy);    
 	//return float4 = float4(In.normal.xyz * 0.5 + 0.5, 1.0); //Need to find out how to output to multiple targets
 }

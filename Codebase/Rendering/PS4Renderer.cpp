@@ -38,7 +38,7 @@ PS4Renderer::PS4Renderer()
 	mesh = static_cast<PS4Mesh*>(Mesh::GenerateTriangle());
 	shader = new PS4Shader(SHADER_DIR"textureVertex.sb", SHADER_DIR"textureFragment.sb");
 
-	SwapBuffers();
+	SwapBuffers();	
 	init = true;
 }
 
@@ -46,7 +46,7 @@ void PS4Renderer::InitialiseVideoSystem()
 {
 	screenBuffers = new PS4ScreenBuffer*[_bufferCount];
 
-	for (int i = 0; i < _bufferCount; ++i)
+	for (int i = 0; i < _bufferCount; ++i) 
 	{
 		screenBuffers[i] = GenerateScreenBuffer(1920, 1080);
 	}
@@ -56,16 +56,16 @@ void PS4Renderer::InitialiseVideoSystem()
 
 	SceVideoOutBufferAttribute attribute;
 	sceVideoOutSetBufferAttribute(&attribute,
-	                              SCE_VIDEO_OUT_PIXEL_FORMAT_B8_G8_R8_A8_SRGB,
-	                              SCE_VIDEO_OUT_TILING_MODE_TILE,
-	                              SCE_VIDEO_OUT_ASPECT_RATIO_16_9,
-	                              screenBuffers[0]->colourTarget.getWidth(),
-	                              screenBuffers[0]->colourTarget.getHeight(),
-	                              screenBuffers[0]->colourTarget.getPitch());
+		SCE_VIDEO_OUT_PIXEL_FORMAT_B8_G8_R8_A8_SRGB,
+		SCE_VIDEO_OUT_TILING_MODE_TILE,
+		SCE_VIDEO_OUT_ASPECT_RATIO_16_9,
+		screenBuffers[0]->colourTarget.getWidth(),
+		screenBuffers[0]->colourTarget.getHeight(),
+		screenBuffers[0]->colourTarget.getPitch());
 
 	void* bufferAddresses[_bufferCount];
 
-	for (int i = 0; i < _bufferCount; ++i)
+	for (int i = 0; i < _bufferCount; ++i) 
 	{
 		bufferAddresses[i] = screenBuffers[i]->colourTarget.getBaseAddress();
 	}
@@ -96,20 +96,20 @@ void PS4Renderer::InitialiseMemoryAllocators()
 	sce::Gnm::registerOwner(&ownerHandle, "PS4Renderer");
 }
 
-void PS4Renderer::DestroyMemoryAllocators()
+void PS4Renderer::DestroyMemoryAllocators() 
 {
 	//stackAllocators[GARLIC].deinit();
 	//stackAllocators[ONION].deinit();
 }
 
-void	PS4Renderer::DestroyGCMRendering()
+void	PS4Renderer::DestroyGCMRendering() 
 {
 	//onionAllocator.release(frames);
 }
 
-void	PS4Renderer::DestroyVideoSystem()
+void	PS4Renderer::DestroyVideoSystem() 
 {
-	for (int i = 0; i < _bufferCount; ++i)
+	for (int i = 0; i < _bufferCount; ++i) 
 	{
 		delete screenBuffers[i];
 	}
@@ -130,7 +130,7 @@ void PS4Renderer::SetTextureFlags(textureHandle&, unsigned int flags)
 }
 
 void PS4Renderer::SetCurrentShader(BaseShader* s)
-{
+{	
 	if (s != currentShader)
 		currentShader = static_cast<PS4Shader*>(s);
 
@@ -143,7 +143,7 @@ void PS4Renderer::FillBuffers()
 
 	currentGFXContext->waitUntilSafeForRendering(videoHandle, currentGPUBuffer);
 	SetRenderBuffer(currentPS4Buffer, true, true, true);
-
+		
 	currentGFXContext->setPrimitiveSetup(primitiveSetup);
 	currentGFXContext->setDepthStencilControl(dsc);
 	currentGFXContext->setupScreenViewport(0, 0, currentPS4Buffer->colourTarget.getWidth(), currentPS4Buffer->colourTarget.getHeight(), 0.5f, 0.5f);
@@ -173,31 +173,22 @@ void PS4Renderer::CombineBuffers()
 //TODO:fix id here
 void PS4Renderer::SetTexture(const shaderResourceLocation& location, textureHandle& handle)
 {
-	/*unsigned int* val = (unsigned int*)currentGFXContext->allocateFromCommandBuffer(sizeof(unsigned int), sce::Gnm::kEmbeddedDataAlignment4);
-	*val = id;
-	sce::Gnm::Buffer constantBuffer;
-	constantBuffer.initAsConstantBuffer(val, sizeof(unsigned int));
-	constantBuffer.setResourceMemoryType(sce::Gnm::kResourceMemoryTypeRO);
-
-	currentGFXContext->setConstantBuffers(sce::Gnm::kShaderStagePs, 0, 1, &constantBuffer);*/
-	shaderResourceLocation test = currentShader->GetResourceByName("diffuseTex");
-
 	currentGFXContext->setTextures(sce::Gnm::kShaderStagePs, 0, 1, &handle);
 }
 
 void PS4Renderer::ClearBuffer(bool colour, bool depth, bool stencil)
 {
-	if (colour)
+	if (colour) 
 	{
 		Vector4 defaultClearColour(1.0f, 1.0f, 0.0f, 1.0f);
 		sce::Gnmx::Toolkit::SurfaceUtil::clearRenderTarget(*currentGFXContext, &currentPS4Buffer->colourTarget, defaultClearColour);
 	}
-	if (depth)
+	if (depth) 
 	{
 		sce::Gnmx::Toolkit::SurfaceUtil::clearDepthTarget(*currentGFXContext, &currentPS4Buffer->depthTarget, 1.0f);
 	}
 
-	if (stencil && currentPS4Buffer->depthTarget.getStencilReadAddress())
+	if (stencil && currentPS4Buffer->depthTarget.getStencilReadAddress()) 
 	{
 		sce::Gnmx::Toolkit::SurfaceUtil::clearStencilTarget(*currentGFXContext, &currentPS4Buffer->depthTarget, 0);
 	}
@@ -211,7 +202,7 @@ void PS4Renderer::SwapBuffers()
 
 void PS4Renderer::SwapCommandBuffer()
 {
-	if (currentGFXContext)
+	if (currentGFXContext) 
 	{
 		currentGFXContext->submit();
 		sce::Gnm::submitDone();
@@ -228,7 +219,7 @@ void PS4Renderer::SwapScreenBuffer()
 	prevScreenBuffer = currentScreenBuffer;
 	currentScreenBuffer = (currentScreenBuffer + 1) % _bufferCount;
 	sceVideoOutSubmitFlip(videoHandle, prevScreenBuffer, SCE_VIDEO_OUT_FLIP_MODE_VSYNC, 0);
-
+	
 	currentPS4Buffer = screenBuffers[currentScreenBuffer];
 }
 
@@ -254,12 +245,12 @@ PS4ScreenBuffer* PS4Renderer::GenerateScreenBuffer(uint width, uint height, bool
 		sce::GpuAddress::computeSurfaceTileMode(&tileMode, sce::GpuAddress::kSurfaceTypeColorTargetDisplayable, format, 1);
 
 		const sce::Gnm::SizeAlign colourAlign = buffer->colourTarget.init(width, height, 1, format, tileMode,
-		                                        sce::Gnm::kNumSamples1, sce::Gnm::kNumFragments1, NULL, NULL);
+			sce::Gnm::kNumSamples1, sce::Gnm::kNumFragments1, NULL, NULL);
 
 		void* colourMemory = stackAllocators[GARLIC].allocate(colourAlign);
 
 		sce::Gnm::registerResource(nullptr, ownerHandle, colourMemory, colourAlign.m_size,
-		                           "Colour", sce::Gnm::kResourceTypeDepthRenderTargetBaseAddress, 0);
+			"Colour", sce::Gnm::kResourceTypeDepthRenderTargetBaseAddress, 0);
 
 		buffer->colourTarget.setAddresses(colourMemory, NULL, NULL);
 	}
@@ -277,20 +268,20 @@ PS4ScreenBuffer* PS4Renderer::GenerateScreenBuffer(uint width, uint height, bool
 		sce::Gnm::SizeAlign stencilAlign;
 
 		const sce::Gnm::SizeAlign depthAlign = buffer->depthTarget.init(width, height, depthFormat.getZFormat(), stencilFormat, depthTileMode,
-		                                       sce::Gnm::kNumFragments1, stencil ? &stencilAlign : 0, 0);
+			sce::Gnm::kNumFragments1, stencil ? &stencilAlign : 0, 0);
 
 		void* depthMemory = stackAllocators[GARLIC].allocate(depthAlign);
 
 		sce::Gnm::registerResource(nullptr, ownerHandle, depthMemory, depthAlign.m_size,
-		                           "Depth", sce::Gnm::kResourceTypeDepthRenderTargetBaseAddress, 0);
+			"Depth", sce::Gnm::kResourceTypeDepthRenderTargetBaseAddress, 0);
 
 
-		if (stencil)
+		if (stencil) 
 		{
 			stencilMemory = stackAllocators[GARLIC].allocate(stencilAlign);
 
 			sce::Gnm::registerResource(nullptr, ownerHandle, stencilMemory, stencilAlign.m_size,
-			                           "Stencil", sce::Gnm::kResourceTypeDepthRenderTargetBaseAddress, 0);
+				"Stencil", sce::Gnm::kResourceTypeDepthRenderTargetBaseAddress, 0);
 		}
 
 		buffer->depthTarget.setAddresses(depthMemory, stencilMemory);
@@ -309,7 +300,7 @@ void PS4Renderer::UpdateUniform(const shaderResourceLocation& location, const Ma
 	{
 		Mat4Graphics* matrix = (Mat4Graphics*)currentGFXContext->allocateFromCommandBuffer(sizeof(Mat4Graphics), sce::Gnm::kEmbeddedDataAlignment4);
 		*matrix = mat4;
-		sce::Gnm::Buffer constantBuffer;
+		sce::Gnm::Buffer constantBuffer; 
 		constantBuffer.initAsConstantBuffer(matrix, sizeof(Mat4Graphics));
 		constantBuffer.setResourceMemoryType(sce::Gnm::kResourceMemoryTypeRO);
 
@@ -346,27 +337,27 @@ void PS4Renderer::UpdateUniform(const shaderResourceLocation& location, const Ve
 {
 	if (location.id >= 0)
 	{
-			Vec3Graphics* vec = (Vec3Graphics*)currentGFXContext->allocateFromCommandBuffer(sizeof(Vec3Graphics), sce::Gnm::kEmbeddedDataAlignment4);
-			*vec = vec3;
-			sce::Gnm::Buffer constantBuffer;
-			constantBuffer.initAsConstantBuffer(vec, sizeof(Vec3Graphics));
-			constantBuffer.setResourceMemoryType(sce::Gnm::kResourceMemoryTypeRO);
+		Vec3Graphics* vec = (Vec3Graphics*)currentGFXContext->allocateFromCommandBuffer(sizeof(Vec3Graphics), sce::Gnm::kEmbeddedDataAlignment4);
+		*vec = vec3;
+		sce::Gnm::Buffer constantBuffer;
+		constantBuffer.initAsConstantBuffer(vec, sizeof(Vec3Graphics));
+		constantBuffer.setResourceMemoryType(sce::Gnm::kResourceMemoryTypeRO);
 
 			currentGFXContext->setConstantBuffers(location.stage, location.id, 1, &constantBuffer);
-		}
+	}
 }
 void PS4Renderer::UpdateUniform(const shaderResourceLocation& location, const Vec2Graphics& vec2)
 {
 	if (location.id >= 0)
 	{
-			Vec2Graphics* vec = (Vec2Graphics*)currentGFXContext->allocateFromCommandBuffer(sizeof(Vec2Graphics), sce::Gnm::kEmbeddedDataAlignment4);
-			*vec = vec2;
-			sce::Gnm::Buffer constantBuffer;
-			constantBuffer.initAsConstantBuffer(vec, sizeof(Vec2Graphics));
-			constantBuffer.setResourceMemoryType(sce::Gnm::kResourceMemoryTypeRO);
+		Vec2Graphics* vec = (Vec2Graphics*)currentGFXContext->allocateFromCommandBuffer(sizeof(Vec2Graphics), sce::Gnm::kEmbeddedDataAlignment4);
+		*vec = vec2;
+		sce::Gnm::Buffer constantBuffer;
+		constantBuffer.initAsConstantBuffer(vec, sizeof(Vec2Graphics));
+		constantBuffer.setResourceMemoryType(sce::Gnm::kResourceMemoryTypeRO);
 
 			currentGFXContext->setConstantBuffers(sce::Gnm::kShaderStageVs, location.id, 1, &constantBuffer);
-		}
+	}
 }
 void PS4Renderer::UpdateUniform(const shaderResourceLocation& location, float f)
 {
@@ -424,23 +415,23 @@ void PS4Renderer::UpdateUniform(const shaderResourceLocation& location, unsigned
 void PS4Renderer::UpdateShaderMatrices()
 {
 	if (currentShader)
-	{
+	{		
 		shaderResourceLocation location;
 		//Model Matrix in RenderComponent class.
-		//Texture matrix in material class.
+		//Texture matrix in material class.	
 		location = currentShader->GetResourceByName("viewMatrix");
 
 		if (location.id >= 0)
 		{
 			Mat4Graphics* vMat = (Mat4Graphics*)currentGFXContext->allocateFromCommandBuffer(sizeof(Mat4Graphics), sce::Gnm::kEmbeddedDataAlignment4);
 			*vMat = viewMatrix;
-
+		
 			sce::Gnm::Buffer constantBuffer;
 			constantBuffer.initAsConstantBuffer(vMat, sizeof(Mat4Graphics));
 			constantBuffer.setResourceMemoryType(sce::Gnm::kResourceMemoryTypeRO);
 			currentGFXContext->setConstantBuffers(location.stage, location.id, 1, &constantBuffer);
 		}
-
+		
 		location = currentShader->GetResourceByName("projMatrix");
 		if (location.id >= 0)
 		{
