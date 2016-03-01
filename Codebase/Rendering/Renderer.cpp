@@ -1,4 +1,5 @@
 #include "Renderer.h"
+#include "GUISystem.h"
 
 Renderer* Renderer::s_renderer = nullptr;
 
@@ -78,6 +79,7 @@ void Renderer::RenderScene(float msec)
 		FillBuffers(); //First Pass
 		DrawPointLights(); //Second Pass
 		CombineBuffers(); //Final Pass
+		GUISystem::GetInstance().Render();
 	}
 	SwapBuffers();
 }

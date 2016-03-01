@@ -6,6 +6,8 @@
 #include "Rendering\GameTimer.h"
 #include "Rendering\LocalControlManager.h"
 #include "Stadium.h"
+#include "Rendering\GUISystem.h"
+#include "Rendering\ScoreboardGUIComponent.h"
 
 const float TIME_STEP = 1.0f / 120.0f;
 const unsigned int SUB_STEPS = 4;
@@ -18,6 +20,7 @@ const string SIMPLESHADER_VERT = SHADER_DIR"textureVertex.glsl";
 const string SIMPLESHADER_FRAG = SHADER_DIR"textureFragment.glsl";
 const string POINTLIGHTSHADER_VERT = SHADER_DIR"2dShadowLightvertex.glsl";
 const string POINTLIGHTSHADER_FRAG = SHADER_DIR"2dShadowLightfragment.glsl";
+const string GUI_VERT = SHADER_DIR"combineVert.glsl";
 #else
 #include "Input\PS4Input.h"
 #include "Rendering\PS4Controller.h"
@@ -72,7 +75,7 @@ int main(void)
 
 	//Initialise Renderer - including the window context if compiling for Windows - PC
 	Renderer renderer("Team Project - 2016", SCREEN_WIDTH, SCREEN_HEIGHT, false);
-	if (!renderer.HasInitialised())
+	if (!renderer.HasInitialised()) 
 	{
 		return -1;
 	}
@@ -80,6 +83,12 @@ int main(void)
 #ifdef ORBIS
 	PS4Input input = PS4Input();
 #endif
+
+	GUISystem::Initialise();	
+	if (!GUISystem::GetInstance().HasInitialised())
+	{
+		return -1;
+	}
 
 	//Initialise Bullet physics engine.
 	PhysicsEngineInstance::Instance()->setGravity(btVector3(0, -9.81, 0));
@@ -107,26 +116,27 @@ int main(void)
 
 	GameObject* ai1 = new GameObject("ai1");
 
-	//Physics objects hold collision shape and collision object(body),
+	//Physics objects hold collision shape and collision object(body), 
 	//call CreateCollisionShape before CreatePhysicsBody or the object will not be created correctly.
 	//Physics objects will be deleted by the game object.
 	RigidPhysicsObject* playerPhysics = new RigidPhysicsObject();
 	playerPhysics->CreateCollisionShape(Vec3Physics(5.0, 2.5, 5.0),CUBOID);
 	playerPhysics->CreatePhysicsBody(8.0, Vec3Physics(10, 5, 0), QuatPhysics(0, 0, 0, 1), Vec3Physics(1, 1, 1));
 
+	RigidPhysicsObject* wheelPhysics = new RigidPhysicsObject();
+	wheelPhysics->CreateCollisionShape(Vec3Physics(1.5, 1.0, 1.5), CYLINDER);
+	wheelPhysics->CreatePhysicsBody(8.0, Vec3Physics(5, 5, 5), QuatPhysics(0, 0, 0, 1), Vec3Physics(1, 1, 1));
+	
 
-
-	RigidPhysicsObject* ai1Physics = new RigidPhysicsObject();
-	ai1Physics->CreateCollisionShape(Vec3Physics(5.0, 2.5, 5.0), CUBOID);
-	ai1Physics->CreatePhysicsBody(8.0, Vec3Physics(-150, 5, 50), QuatPhysics(0, 0, 0, 1), Vec3Physics(1, 1, 1));
-
-
+	RigidPhysicsObject* aiPhysics = new RigidPhysicsObject();
+	aiPhysics->CreateCollisionShape(Vec3Physics(5.0, 2.5, 5.0), CUBOID);
+	aiPhysics->CreatePhysicsBody(8.0, Vec3Physics(30, 5, 10), QuatPhysics(0, 0, 0, 1), Vec3Physics(1, 1, 1));
 
 	RigidPhysicsObject* ballPhysics = new RigidPhysicsObject();
 	ballPhysics->CreateCollisionShape(7.0);
 	ballPhysics->CreatePhysicsBody(2.0, Vec3Physics(0, 3, 0), QuatPhysics(0, 0, 0, 1), Vec3Physics(1, 1, 1));
 	int ballID = ballPhysics->GetPhysicsBody()->getBroadphaseProxy()->getUid();
-
+	
 	RigidPhysicsObject* floorPhysics = new RigidPhysicsObject();
 	floorPhysics->CreateCollisionShape(0, Vec3Physics(0, 1, 0), true);
 	floorPhysics->CreatePhysicsBody(0, Vec3Physics(0, -1, 0), QuatPhysics(0, 0, 0, 1));
@@ -134,12 +144,13 @@ int main(void)
 #ifndef ORBIS
 	BaseShader* simpleShader = new OGLShader(SIMPLESHADER_VERT, SIMPLESHADER_FRAG);
 	BaseShader* pointlightShader = new OGLShader(POINTLIGHTSHADER_VERT, POINTLIGHTSHADER_FRAG);
+	BaseShader* orthoShader = new OGLShader(GUI_VERT, SIMPLESHADER_FRAG);
 	//BaseShader* pointlightShader = new OGLShader(SHADER_DIR"CubeShadowLightvertex.glsl", SHADER_DIR"CubeShadowLightfragment.glsl");
 #else
 	BaseShader* simpleShader = new PS4Shader(SIMPLESHADER_VERT, SIMPLESHADER_FRAG);
 	BaseShader* pointlightShader = new PS4Shader(POINTLIGHTSHADER_VERT, POINTLIGHTSHADER_FRAG);
 #endif
-
+	
 	if (!pointlightShader->IsOperational() || !simpleShader->IsOperational())
 		return -1;
 
@@ -155,26 +166,39 @@ int main(void)
 
 	Material* material = new Material(simpleShader);
 	Material* ballMaterial = new Material(simpleShader);
-	Material* netMaterial = new Material(simpleShader);
-	netMaterial->hasTranslucency = true;
+	Material* netMaterial = new Material(simpleShader, true);
+	Material* guiMaterial = new Material(orthoShader);
+
 	ballMaterial->Set(ReservedMeshTextures.DIFFUSE.name, Texture::Get(TEXTURE_DIR"checkerboard.tga", true));
+	Material* playerMaterial = new Material(simpleShader);
+	Material* aiMaterial = new Material(simpleShader);
+	aiMaterial->Set(ReservedMeshTextures.DIFFUSE.name, Texture::Get(MODEL_DIR"car/body1.bmp", true));
 
 	renderer.SetCurrentScene(myScene);
 
 	// Create Stadium
-	GameObject* stadium = new Stadium(material, netMaterial, "stadium");
+	GameObject* stadium = new Stadium(material, netMaterial, "stadium"); 
 
 	myScene->addGameObject(stadium);
 	//myScene->addLightObject(light1);
 	myScene->addLightObject(light2);
 
-	player->SetRenderComponent(new RenderComponent(ballMaterial, ModelLoader::LoadMGL(MODEL_DIR"Common/cube.mgl", true)));
-	player->SetLocalTransform(Mat4Graphics::Scale(Vector3Simple(5, 2.5f, 5)));
+	player->SetRenderComponent(new RenderComponent(playerMaterial, ModelLoader::LoadMGL(MODEL_DIR"Car/car1.mgl", true)));
+	player->SetLocalTransform(Mat4Graphics::Scale(Vector3Simple(10, 10, 10)));
 	player->SetPhysicsComponent(playerPhysics);
 	player->GetPhysicsComponent()->GetPhysicsBody()->setRestitution(btScalar(0.9));
 	player->GetPhysicsComponent()->GetPhysicsBody()->setFriction(0.5);
 	player->GetPhysicsComponent()->GetPhysicsBody()->setRollingFriction(0.5);
 	player->GetPhysicsComponent()->GetPhysicsBody()->setHitFraction(0.5);
+
+	GameObject* wheel_fl = new GameObject();
+	wheel_fl->SetRenderComponent(new RenderComponent(playerMaterial, ModelLoader::LoadMGL(MODEL_DIR"Car/wheel.mgl", true)));
+	wheel_fl->SetLocalTransform(/*Mat4Graphics::Translation(Vec3Graphics(10,0,10))) */Mat4Graphics::Scale(Vector3Simple(10, 10, 10)));
+	wheel_fl->SetPhysicsComponent(wheelPhysics);
+	wheel_fl->GetPhysicsComponent()->GetPhysicsBody()->setRestitution(btScalar(0.9));
+	wheel_fl->GetPhysicsComponent()->GetPhysicsBody()->setFriction(0.5);
+	wheel_fl->GetPhysicsComponent()->GetPhysicsBody()->setRollingFriction(0.5);
+	wheel_fl->GetPhysicsComponent()->GetPhysicsBody()->setHitFraction(0.5);
 
 	ball->SetRenderComponent(new RenderComponent(ballMaterial, ModelLoader::LoadMGL(MODEL_DIR"Common/sphere.mgl", true)));
 	ball->SetLocalTransform(Mat4Graphics::Scale(Vector3Simple(7, 7, 7)));
@@ -225,9 +249,19 @@ int main(void)
 	myScene->setPlayerController(new PS4Controller(cc));
 #endif
 
+	////Define Orthographic Component
+	//OrthoComponent* hudUI = new OrthoComponent(1.0f);
+	////Add child GUI components, while defining materials, texture, and depth
+	//hudUI->AddGUIComponent(new ScoreboardGUIComponent(guiMaterial, Texture::Get(TEXTURE_DIR"blue3.png"), 1.0));
+
+	////Add Orthographic component to GUISystem
+	//GUISystem::GetInstance().AddOrthoComponent(hudUI);
+
 	myScene->attachCam(player);
 
 	myScene->addGameObject(player);
+	//player->AddChildObject(wheel_fl);
+	myScene->addGameObject(wheel_fl);
 	myScene->addGameObject(ball);
 	myScene->addGameObject(ai1);
 
@@ -254,6 +288,8 @@ int main(void)
 
 	//Cleanup
 	PhysicsEngineInstance::Release();
+	//Destroys all GUI on the scene
+	GUISystem::Destroy();
 
 #if DEBUG_DRAW
 #ifndef ORBIS
