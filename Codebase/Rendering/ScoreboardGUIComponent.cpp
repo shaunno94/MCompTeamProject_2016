@@ -9,16 +9,15 @@ stbtt_bakedchar cdata[96]; // ASCII 32..126 is 95 glyphs
 GLuint ftex;
 
 
-ScoreboardGUIComponent::ScoreboardGUIComponent(Material* material, Texture* texture, float z, const std::string& name) : GUIComponent(material, texture, z),
+ScoreboardGUIComponent::ScoreboardGUIComponent(Material* material, Texture* texture, float z, bool visible) : GUIComponent(material, texture, z, visible),
 	m_ScoreA(0),
 	m_ScoreB(0),
 	m_TimeRem(300)
 {
-
-	m_Name = name;
 	m_Material = material;
 	m_Texture = texture;
-	depth = z;
+	m_Depth = z;
+	m_Visible = visible;
 
 
 

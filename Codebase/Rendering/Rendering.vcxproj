@@ -177,7 +177,6 @@
     <ClInclude Include="NitroGUI.h" />
     <ClInclude Include="OGLMesh.h" />
     <ClInclude Include="OGLRenderer.h" />
-    <ClInclude Include="OGLTextMesh.h" />
     <ClInclude Include="OrthoComponent.h" />
     <ClInclude Include="Particle.h" />
     <ClInclude Include="ParticleEmitter.h" />
@@ -226,7 +225,6 @@
     <ClCompile Include="NitroGUI.cpp" />
     <ClCompile Include="OGLMesh.cpp" />
     <ClCompile Include="OGLRenderer.cpp" />
-    <ClCompile Include="OGLTextMesh.cpp" />
     <ClCompile Include="OrthoComponent.cpp" />
     <ClCompile Include="ParticleManager.cpp" />
     <ClCompile Include="ParticleSystem.cpp" />
