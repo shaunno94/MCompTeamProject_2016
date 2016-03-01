@@ -41,8 +41,8 @@ void ControllerComponent::AddTorque(float x, float y, float z){
 }
 
 Mat4Physics ControllerComponent::getOrientation(){
-	return Mat4Physics::Rotation(Renderer::GetInstance()->GetCurrentScene()->getCamera()->GetYaw() + 90, Vec3Physics(0, 1, 0));
-	//return m_parent->GetWorldTransform().GetRotation();
+	//return Mat4Physics::Rotation(Renderer::GetInstance()->GetCurrentScene()->getCamera()->GetYaw() + 90, Vec3Physics(0, 1, 0));
+	return m_parent->GetWorldTransform().GetRotation();
 }
 
 void ControllerComponent::setCameraControl(float pitch, float yaw){
