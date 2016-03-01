@@ -36,6 +36,13 @@ size_t sceLibcHeapSize = 512 * 1024 * 1024;			/* Set up heap area upper limit as
 //int sceUserMainThreadPriority = SCE_KERNEL_DEFAULT_PRIORITY_USER;
 #endif
 
+void SwitchScene(Renderer* renderer, Scene* scene)
+{
+	PhysicsEngineInstance::Release();
+	renderer->SetCurrentScene(scene);
+}
+
+
 int main(void) {
 	//-------------------
 	//--- MAIN Loop ---
@@ -67,6 +74,9 @@ int main(void) {
 	DebugDraw::Context(&renderer);
 #endif
 #endif
+
+	Scene* menuScene = new Scene();
+	menuScene->getCamera()->SetPosition(Vec3Graphics(10, 5, 0));
 
 	//Test Scenario - Tardis (cuboid collision shape), floor (plane collision shape), ball (sphere collison shape)
 	Scene* myScene = new Scene();
@@ -150,7 +160,7 @@ int main(void) {
 	player->SetLocalTransform(Mat4Graphics::Scale(Vector3Simple(10, 10, 10)));
 	player->SetPhysicsComponent(playerPhysics);
 	player->GetPhysicsComponent()->GetPhysicsBody()->setRestitution(btScalar(0.9));
-	player->GetPhysicsComponent()->GetPhysicsBody()->setFriction(0.5);
+	player->GetPhysicsComponent()->GetPhysicsBody()->setFriction(1.0);
 	player->GetPhysicsComponent()->GetPhysicsBody()->setRollingFriction(0.5);
 	player->GetPhysicsComponent()->GetPhysicsBody()->setHitFraction(0.5);
 
@@ -194,19 +204,30 @@ int main(void) {
 	//Add Orthographic component to GUISystem
 	GUISystem::GetInstance().AddOrthoComponent(hudUI);
 
-	myScene->attachCam(player);
-
-
+	menuScene->attachCam(player);
 	myScene->addGameObject(player);
 	//player->AddChildObject(wheel_fl);
 	myScene->addGameObject(wheel_fl);
 	myScene->addGameObject(ball);
 	myScene->addGameObject(ai1);
 
-	renderer.SetCurrentScene(myScene);
+	const char* cubeMapDirs[6] = { TEXTURE_DIR"grouse_posx.jpg",
+		TEXTURE_DIR"grouse_negx.jpg",
+		TEXTURE_DIR"grouse_posy.jpg",
+		TEXTURE_DIR"grouse_negy.jpg",
+		TEXTURE_DIR"grouse_posz.jpg",
+		TEXTURE_DIR"grouse_negz.jpg" };
+
+	myScene->setCubeMap(cubeMapDirs);
+	SwitchScene(&renderer, menuScene); 
 
 	myControllers->setActor(ai1, 0);
 
+
+//	SwitchScene(myScene, &renderer);
+	//OrthoComponent* menuUI = new OrthoComponent(1.0f);
+	//menuUI->AddGUIComponent(new ScoreboardGUIComponent(guiMaterial, Texture::Get(TEXTURE_DIR"blue3.png"), 1.0));
+	//GUISystem::GetInstance().AddOrthoComponent(menuUI);
 
 
 

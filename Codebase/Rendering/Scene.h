@@ -28,6 +28,7 @@ public:
 	unsigned int getNumTransparentObjects() { return transparentObjects.size(); }
 	unsigned int getNumOpaqueObjects() { return opaqueObjects.size(); }
 	unsigned int getNumLightObjects() { return lightObjects.size(); }
+	const char** getCubeMapDir()	{ return cubemapDir; }
 
 	Camera* getCamera(){ return cam; }
 
@@ -39,6 +40,7 @@ public:
 	}
 	void addGameObject(GameObject* obj);
 	void addLightObject(GameObject* obj);
+	void setCubeMap(const char** dir) { cubemapDir = dir; }
 
 	unsigned char renderFlags; //triggers for graphical effects such as post processing and any other info required by the renderer
 
@@ -55,5 +57,6 @@ private:
 	std::vector<GameObject*> opaqueObjects;
 	std::vector<GameObject*> lightObjects;
 	Camera* cam;
+	const char** cubemapDir;
 };
 

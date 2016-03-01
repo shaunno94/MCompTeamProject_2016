@@ -12,14 +12,21 @@ class Renderer : public OGLRenderer
 	friend class OGLRenderer;
 #else
 #include "PS4Renderer.h"
-class Renderer : public PS4Renderer 
+class Renderer : public PS4Renderer
 {
 	friend class PS4Renderer;
 #endif
 public:
-	static Renderer* GetInstance() { return s_renderer; }
-	void SetCurrentScene(Scene* s) { currentScene = s; }
-	Scene* GetCurrentScene() { return currentScene; }
+	static Renderer* GetInstance()
+	{
+		return s_renderer;
+	}
+	void SetCurrentScene(Scene* s);
+
+	Scene* GetCurrentScene()
+	{
+		return currentScene;
+	}
 
 	Renderer(std::string title, int sizeX, int sizeY, bool fullScreen);
 	virtual ~Renderer(void);
