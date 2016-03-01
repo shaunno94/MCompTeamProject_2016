@@ -1,12 +1,7 @@
 #pragma once
-#include <map>
 #include "State.h"
+#include <unordered_map>
 
-namespace stringWrapper
-{
-	typedef std::string sWrapper;
-}
-using namespace stringWrapper;
 class StateMachine
 {
 public:
@@ -28,7 +23,7 @@ public:
 
 protected:
 
-	typedef std::map<const std::string* , State*> stateMapping;
+	typedef std::unordered_map<unsigned int, State*> stateMapping;
 	stateMapping* m_stateMap;
 	State* activeState;
 

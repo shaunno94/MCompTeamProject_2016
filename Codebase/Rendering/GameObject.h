@@ -133,7 +133,7 @@ protected:
 
 	RenderComponent*			m_RenderComponent;
 	PhysicsObject*				m_PhysicsObj;
-	ControllerComponent*			m_Controller;
+	ControllerComponent*		m_Controller;
 
 	float						m_BoundingRadius;	//Unused
 	Mat4Graphics				m_WorldTransform;
