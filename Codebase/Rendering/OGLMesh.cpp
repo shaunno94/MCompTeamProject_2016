@@ -34,20 +34,25 @@ void OGLMesh::Draw(Material* material)
 {
 	//reset reserved mesh texture uniforms to use the right texture unit
 	for (int i = 0; i < ReservedMeshTextures.size; ++i)
-		Renderer::GetInstance()->UpdateUniform(m_Material->GetShader()->GetReservedMeshTextureUniformLocation(i), i);
+		Renderer::GetInstance()->UpdateUniform(material->GetShader()->GetReservedMeshTextureUniformLocation(i), i);
 
 	//reserved textures
 	for (unsigned int i = 0; i < ReservedMeshTextures.size; ++i)
 	{
 		if (m_Textures[i])
-			m_Textures[i]->Load(i);
+		{
+			shaderResourceLocation location;
+			location.id = i;
+			m_Textures[i]->Load(location);
+		}
 	}
 	//reserved colours
 	for (unsigned int i = 0; i < ReservedMeshColours.size; ++i)
 		Renderer::GetInstance()->UpdateUniform(static_cast<OGLShader*>(material->GetShader())->GetReservedMeshColourUniformLocation(i), GetColour(i));
 
 	//reserved float
-	Renderer::GetInstance()->UpdateUniform(glGetUniformLocation(static_cast<OGLShader*>(material->GetShader())->GetProgram(), "specExponent"), GetSpecExponent());
+	shaderResourceLocation location = { glGetUniformLocation(static_cast<OGLShader*>(material->GetShader())->GetProgram(), "specExponent") };
+	Renderer::GetInstance()->UpdateUniform(location, GetSpecExponent());
 
 	material->Setup();
 

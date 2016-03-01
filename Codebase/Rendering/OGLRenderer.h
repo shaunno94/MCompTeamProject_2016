@@ -65,15 +65,15 @@ public:
 	}
 	void SetCurrentShader(BaseShader* s);
 
-	void UpdateUniform(GLint location, const Mat4Graphics& mat4);
-	void UpdateUniform(GLint location, const Mat3Graphics& mat3);
-	void UpdateUniform(GLint location, const Vec4Graphics& vec4);
-	void UpdateUniform(GLint location, const Vec3Graphics& vec3);
-	void UpdateUniform(GLint location, const Vec2Graphics& vec2);
-	void UpdateUniform(GLint location, float f);
-	void UpdateUniform(GLint location, double d);
-	void UpdateUniform(GLint location, int i);
-	void UpdateUniform(GLint location, unsigned int u);
+	void UpdateUniform(const shaderResourceLocation& location, const Mat4Graphics& mat4);
+	void UpdateUniform(const shaderResourceLocation& location, const Mat3Graphics& mat3);
+	void UpdateUniform(const shaderResourceLocation& location, const Vec4Graphics& vec4);
+	void UpdateUniform(const shaderResourceLocation& location, const Vec3Graphics& vec3);
+	void UpdateUniform(const shaderResourceLocation& location, const Vec2Graphics& vec2);
+	void UpdateUniform(const shaderResourceLocation& location, float f);
+	void UpdateUniform(const shaderResourceLocation& location, double d);
+	void UpdateUniform(const shaderResourceLocation& location, int i);
+	void UpdateUniform(const shaderResourceLocation& location, unsigned int u);
 	void UpdateShaderMatrices();
 	void SetTextureFlags(unsigned int id, unsigned int flags);
 	unsigned int TextureMemoryUsage(unsigned int id);

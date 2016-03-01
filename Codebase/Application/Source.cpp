@@ -111,7 +111,12 @@ int main(void) {
 	Material* ballMaterial = new Material(simpleShader);
 	Material* netMaterial = new Material(simpleShader);
 	netMaterial->hasTranslucency = true;
+
+#ifdef ORBIS
 	ballMaterial->Set(ReservedMeshTextures.DIFFUSE.name, Texture::Get(TEXTURE_DIR"checkerboard.gnf", true));
+#else
+	ballMaterial->Set(ReservedMeshTextures.DIFFUSE.name, Texture::Get(TEXTURE_DIR"checkerboard.tga", true));
+#endif
 
 	// Create Stadium
 	GameObject* stadium = new Stadium(material, netMaterial, "stadium");

@@ -33,7 +33,7 @@ using namespace std;
 
 /// @ingroup Rendering
 /// <summary>
-/// 
+///
 /// </summary>
 class OGLShader : public BaseShader
 {
@@ -54,21 +54,24 @@ public:
 	{
 		return m_ModelMatrixLocation;
 	}
-	inline GLint GetReservedMeshTextureUniformLocation(unsigned int index) const override
+	inline shaderResourceLocation GetReservedMeshTextureUniformLocation(unsigned int index) const override
 	{
-		return m_ReservedMeshTextureLocations[index];
+		return { m_ReservedMeshTextureLocations[index] };
 	}
-	inline GLint GetReservedMeshColourUniformLocation(unsigned int index) const override
+	inline shaderResourceLocation GetReservedMeshColourUniformLocation(unsigned int index) const override
 	{
-		return m_ReservedMeshColourLocations[index];
+		return { m_ReservedMeshColourLocations[index] };
 	}
 
 	shaderResourceLocation GetResourceByName(const std::string& name) const override
 	{
-		return glGetUniformLocation(program, name.c_str());
+		return { glGetUniformLocation(program, name.c_str()) };
 	}
 
-	int GetModelMatrixLocation() const override { return m_ModelMatrixLocation; }
+	shaderResourceLocation GetModelMatrixLocation() const override
+	{
+		return { m_ModelMatrixLocation };
+	}
 
 protected:
 	GLint operational;

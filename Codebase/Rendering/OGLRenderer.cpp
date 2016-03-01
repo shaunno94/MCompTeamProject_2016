@@ -257,41 +257,41 @@ void OGLRenderer::SetTextureRepeating(GLuint target, bool repeating)
 	glBindTexture(GL_TEXTURE_2D, 0);
 }
 
-void OGLRenderer::UpdateUniform(GLint location, const Mat4Graphics& mat4)
+void OGLRenderer::UpdateUniform(const shaderResourceLocation& location, const Mat4Graphics& mat4)
 {
-	if (location >= 0) glUniformMatrix4fv(location, 1, false, (float*)&mat4);
+	if (location.id >= 0) glUniformMatrix4fv(location.id, 1, false, (float*)&mat4);
 }
-void OGLRenderer::UpdateUniform(GLint location, const Mat3Graphics& mat3)
+void OGLRenderer::UpdateUniform(const shaderResourceLocation& location, const Mat3Graphics& mat3)
 {
-	if (location >= 0) glUniformMatrix3fv(location, 1, false, (float*)&mat3);
+	if (location.id >= 0) glUniformMatrix3fv(location.id, 1, false, (float*)&mat3);
 }
-void OGLRenderer::UpdateUniform(GLint location, const Vec4Graphics& vec4)
+void OGLRenderer::UpdateUniform(const shaderResourceLocation& location, const Vec4Graphics& vec4)
 {
-	if (location >= 0) glUniform4fv(location, 1, (float*)&vec4);
+	if (location.id >= 0) glUniform4fv(location.id, 1, (float*)&vec4);
 }
-void OGLRenderer::UpdateUniform(GLint location, const Vec3Graphics& vec3)
+void OGLRenderer::UpdateUniform(const shaderResourceLocation& location, const Vec3Graphics& vec3)
 {
-	if (location >= 0) glUniform3fv(location, 1, (float*)&vec3);
+	if (location.id >= 0) glUniform3fv(location.id, 1, (float*)&vec3);
 }
-void OGLRenderer::UpdateUniform(GLint location, const Vec2Graphics& vec2)
+void OGLRenderer::UpdateUniform(const shaderResourceLocation& location, const Vec2Graphics& vec2)
 {
-	if (location >= 0) glUniform2fv(location, 1, (float*)&vec2);
+	if (location.id >= 0) glUniform2fv(location.id, 1, (float*)&vec2);
 }
-void OGLRenderer::UpdateUniform(GLint location, float f)
+void OGLRenderer::UpdateUniform(const shaderResourceLocation& location, float f)
 {
-	if (location >= 0) glUniform1f(location, f);
+	if (location.id >= 0) glUniform1f(location.id, f);
 }
-void OGLRenderer::UpdateUniform(GLint location, double d)
+void OGLRenderer::UpdateUniform(const shaderResourceLocation& location, double d)
 {
-	if (location >= 0) glUniform1d(location, d);
+	if (location.id >= 0) glUniform1d(location.id, d);
 }
-void OGLRenderer::UpdateUniform(GLint location, int i)
+void OGLRenderer::UpdateUniform(const shaderResourceLocation& location, int i)
 {
-	if (location >= 0) glUniform1i(location, i);
+	if (location.id >= 0) glUniform1i(location.id, i);
 }
-void OGLRenderer::UpdateUniform(GLint location, unsigned int u)
+void OGLRenderer::UpdateUniform(const shaderResourceLocation& location, unsigned int u)
 {
-	if (location >= 0) glUniform1ui(location, u);
+	if (location.id >= 0) glUniform1ui(location.id, u);
 }
 
 void OGLRenderer::SetTexture(const shaderResourceLocation& id, textureHandle handle)

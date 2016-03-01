@@ -58,7 +58,7 @@ typedef struct OGLShaderResourceLocation
 
 	bool inUse() const
 	{
-		id >= 0;
+		return id >= 0;
 	}
 } shaderResourceLocation;
 
