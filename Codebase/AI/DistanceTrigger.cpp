@@ -38,11 +38,13 @@ bool DistanceTrigger::HasTriggered()
 	float triggerSquare = (m_triggerDistance * m_triggerDistance);
 	if (m_triggerWhenLessThan) {
 		if ((m_parent->GetPhysicsComponent()->GetPhysicsBody()->getWorldTransform().getOrigin() - m_objectB->GetPhysicsComponent()->GetPhysicsBody()->getWorldTransform().getOrigin()).length2() <= (m_triggerDistance * m_triggerDistance)) {
+			std::cout << "Shoot -> position \t\t distance =  " << distance << "\t trigger = " << m_triggerDistance << std::endl;
 			return true;
 		}
 	}
 	else {
 		if ((m_parent->GetPhysicsComponent()->GetPhysicsBody()->getWorldTransform().getOrigin() - m_objectB->GetPhysicsComponent()->GetPhysicsBody()->getWorldTransform().getOrigin()).length2() >= (m_triggerDistance * m_triggerDistance)) {
+			std::cout << "Shoot -> position \t\t distance =  " << distance << "\t trigger = " << m_triggerDistance << std::endl;
 			return true;
 		}
 	}

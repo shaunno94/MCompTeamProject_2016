@@ -3,6 +3,7 @@
 #include "AI\DistanceTrigger.h"
 #include "AI\PositionState.h"
 #include "AI\ShootState.h"
+#include "AI\OnTargetTrigger.h"
 
 enum AITypes
 {
@@ -22,6 +23,7 @@ AIControllerComponent::AIControllerComponent(GameObject* parent, unsigned int ty
 {
 
 	GameObject* ball = Renderer::GetInstance()->GetCurrentScene()->findGameObject("ball");
+	GameObject* goal = Renderer::GetInstance()->GetCurrentScene()->findGameObject("goal1");
 
 	switch (type)
 	{
@@ -37,14 +39,14 @@ AIControllerComponent::AIControllerComponent(GameObject* parent, unsigned int ty
 		m_StateMachine->AddState(SHOOT, shoot);
 
 		// Create Triggers
-		DistanceTrigger* positionToShoot = new DistanceTrigger();
-		positionToShoot->setupTrigger(*m_parent, *ball, 15.0f, true);
-		position->AddTrigger(positionToShoot, SHOOT);
-
+		OnTargetTrigger* positionToShootOnTarget = new OnTargetTrigger();
+		positionToShootOnTarget->setupTrigger(*m_parent, *ball, *goal);
+		position->AddTrigger(positionToShootOnTarget, SHOOT);
 
 		DistanceTrigger* shootToPosition = new DistanceTrigger();
-		shootToPosition->setupTrigger(*m_parent, *ball, 19.0f, false);
+		shootToPosition->setupTrigger(*m_parent, *ball, 25.0f, false);
 		shoot->AddTrigger(shootToPosition, POSITION);
+
 
 		// Set active state
 		m_StateMachine->ChangeState(POSITION);

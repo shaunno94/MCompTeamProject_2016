@@ -125,21 +125,17 @@ int main(void)
 
 	RigidPhysicsObject* wheelPhysics = new RigidPhysicsObject();
 	wheelPhysics->CreateCollisionShape(Vec3Physics(1.5, 1.0, 1.5), CYLINDER);
-	wheelPhysics->CreatePhysicsBody(8.0, Vec3Physics(5, 5, 5), QuatPhysics(0, 0, 0, 1), Vec3Physics(1, 1, 1));
+	wheelPhysics->CreatePhysicsBody(1.0, Vec3Physics(5, 5, 5), QuatPhysics(0, 0, 0, 1), Vec3Physics(1, 1, 1));
 	
 
 	RigidPhysicsObject* aiPhysics = new RigidPhysicsObject();
 	aiPhysics->CreateCollisionShape(Vec3Physics(5.0, 2.5, 5.0), CUBOID);
-	aiPhysics->CreatePhysicsBody(8.0, Vec3Physics(30, 5, 10), QuatPhysics(0, 0, 0, 1), Vec3Physics(1, 1, 1));
+	aiPhysics->CreatePhysicsBody(8.0, Vec3Physics(-190, 5, 30), QuatPhysics(0, 0, 0, 1), Vec3Physics(1, 1, 1));
 
 	RigidPhysicsObject* ballPhysics = new RigidPhysicsObject();
 	ballPhysics->CreateCollisionShape(7.0);
-	ballPhysics->CreatePhysicsBody(2.0, Vec3Physics(0, 3, 0), QuatPhysics(0, 0, 0, 1), Vec3Physics(1, 1, 1));
+	ballPhysics->CreatePhysicsBody(1.0, Vec3Physics(0, 3, 0), QuatPhysics(0, 0, 0, 1), Vec3Physics(1, 1, 1));
 	int ballID = ballPhysics->GetPhysicsBody()->getBroadphaseProxy()->getUid();
-	
-	RigidPhysicsObject* floorPhysics = new RigidPhysicsObject();
-	floorPhysics->CreateCollisionShape(0, Vec3Physics(0, 1, 0), true);
-	floorPhysics->CreatePhysicsBody(0, Vec3Physics(0, -1, 0), QuatPhysics(0, 0, 0, 1));
 
 #ifndef ORBIS
 	BaseShader* simpleShader = new OGLShader(SIMPLESHADER_VERT, SIMPLESHADER_FRAG);
@@ -187,7 +183,7 @@ int main(void)
 	player->SetLocalTransform(Mat4Graphics::Scale(Vector3Simple(10, 10, 10)));
 	player->SetPhysicsComponent(playerPhysics);
 	player->GetPhysicsComponent()->GetPhysicsBody()->setRestitution(btScalar(0.9));
-	player->GetPhysicsComponent()->GetPhysicsBody()->setFriction(0.5);
+	player->GetPhysicsComponent()->GetPhysicsBody()->setFriction(0.6);
 	player->GetPhysicsComponent()->GetPhysicsBody()->setRollingFriction(0.5);
 	player->GetPhysicsComponent()->GetPhysicsBody()->setHitFraction(0.5);
 

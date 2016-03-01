@@ -26,11 +26,19 @@ void ShootState::Update(float dt)
 {
 	State::Update(dt);
 
-	btVector3 direction = m_goal->GetPhysicsComponent()->GetPhysicsBody()->getWorldTransform().getOrigin() - m_ball->GetPhysicsComponent()->GetPhysicsBody()->getWorldTransform().getOrigin();
+	btVector3 goalPos = m_goal->GetPhysicsComponent()->GetPhysicsBody()->getWorldTransform().getOrigin();
+	btVector3 ballPos = m_ball->GetPhysicsComponent()->GetPhysicsBody()->getWorldTransform().getOrigin();
+	btVector3 parentPos = m_parent->GetPhysicsComponent()->GetPhysicsBody()->getWorldTransform().getOrigin();
 
-	direction.normalize();
-	direction *= 10.0f;
+	btVector3 aiToBall = ballPos - parentPos;
+	btVector3 ballToGoal = goalPos - ballPos;
 
-	m_parent->GetControllerComponent()->AddForce(direction.x(), 0.0f, direction.z());
+	aiToBall.normalize();
+	ballToGoal.normalize();
+
+	btScalar dot = aiToBall.dot(ballToGoal);
+
+	aiToBall *= 10.0f;
+	m_parent->GetControllerComponent()->AddForce(aiToBall.x(), 0.0f, aiToBall.z());
 }
 

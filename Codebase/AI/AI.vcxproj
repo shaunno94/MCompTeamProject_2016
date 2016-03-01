@@ -167,11 +167,10 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="AIAgent.cpp" />
     <ClCompile Include="ChaseState.cpp" />
     <ClCompile Include="DistanceTrigger.cpp" />
+    <ClCompile Include="OnTargetTrigger.cpp" />
     <ClCompile Include="RunAwayState.cpp" />
-    <ClCompile Include="ShooterAgent.cpp" />
     <ClCompile Include="PositionState.cpp" />
     <ClCompile Include="ShootState.cpp" />
     <ClCompile Include="State.cpp" />
@@ -179,11 +178,10 @@
     <ClCompile Include="Trigger.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="AIAgent.h" />
     <ClInclude Include="ChaseState.h" />
     <ClInclude Include="DistanceTrigger.h" />
+    <ClInclude Include="OnTargetTrigger.h" />
     <ClInclude Include="RunAwayState.h" />
-    <ClInclude Include="ShooterAgent.h" />
     <ClInclude Include="PositionState.h" />
     <ClInclude Include="ShootState.h" />
     <ClInclude Include="State.h" />
