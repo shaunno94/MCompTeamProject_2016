@@ -61,7 +61,7 @@ void PositionState::Update(float dt)
 		}
 	}
 
-	btVector3 dest = ballPos - controlPoint2 * 10.0f;
+	btVector3 dest = ballPos - controlPoint2 * 5.0f;
 
 
 	controlPoint1 *= 2.0f;

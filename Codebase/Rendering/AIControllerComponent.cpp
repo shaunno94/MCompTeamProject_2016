@@ -19,7 +19,7 @@ enum AIStates
 };
 
 AIControllerComponent::AIControllerComponent(GameObject* parent, unsigned int type) :
-ControllerComponent(parent)
+	ControllerComponent(parent)
 {
 
 	GameObject* ball = Renderer::GetInstance()->GetCurrentScene()->findGameObject("ball");
@@ -29,7 +29,7 @@ ControllerComponent(parent)
 	{
 	case SHOOTER:
 	{
-					m_StateMachine = new StateMachine();
+		m_StateMachine = new StateMachine();
 
 		// Create States
 		PositionState* position = new PositionState(*m_StateMachine, *m_parent, *ball);
@@ -44,7 +44,7 @@ ControllerComponent(parent)
 		position->AddTrigger(positionToShootOnTarget, SHOOT);
 
 		DistanceTrigger* shootToPosition = new DistanceTrigger();
-		shootToPosition->setupTrigger(*m_parent, *ball, 25.0f, false);
+		shootToPosition->setupTrigger(*m_parent, *ball, 15.0f, true);
 		shoot->AddTrigger(shootToPosition, POSITION);
 
 
@@ -52,7 +52,7 @@ ControllerComponent(parent)
 		m_StateMachine->ChangeState(POSITION);
 
 	}
-		break;
+	break;
 	case GOALKEEPER:
 		break;
 	case AGGRESSIVE:
@@ -73,7 +73,8 @@ void AIControllerComponent::updateObject(float dt)
 	ControllerComponent::updateObject(dt);
 }
 
-void AIControllerComponent::AddForce(float x, float y, float z){
+void AIControllerComponent::AddForce(float x, float y, float z)
+{
 	float clamp = 0.6;
 
 	Vec3Physics in(x, y, z);
@@ -86,15 +87,16 @@ void AIControllerComponent::AddForce(float x, float y, float z){
 	float newX = std::min(std::max(in.x, -clamp), clamp);
 	float turningFactor = Lerp(0, 1, newX / clamp);
 	AddTorque(0, 5 * turningFactor, 0);
-	
+
 	float dot = in.Dot(forward);
-	if (dot>=0){
-force = forward * 7;
+	if (dot>=0)
+	{
+		force = forward * 7;
 	}
 	else
 	{
 		force = -forward * 6;
 	}
-	
+
 	force.y = 0;
 }

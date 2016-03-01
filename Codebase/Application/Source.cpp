@@ -120,7 +120,7 @@ int main(void)
 	//call CreateCollisionShape before CreatePhysicsBody or the object will not be created correctly.
 	//Physics objects will be deleted by the game object.
 	RigidPhysicsObject* playerPhysics = new RigidPhysicsObject();
-	playerPhysics->CreateCollisionShape(Vec3Physics(5.0, 2.5, 5.0),CUBOID);
+	playerPhysics->CreateCollisionShape(Vec3Physics(5.2, 2.0, 6.5),CUBOID);
 	playerPhysics->CreatePhysicsBody(8.0, Vec3Physics(10, 5, 0), QuatPhysics(0, 0, 0, 1), Vec3Physics(1, 1, 1));
 
 	RigidPhysicsObject* wheelPhysics = new RigidPhysicsObject();
@@ -129,7 +129,7 @@ int main(void)
 	
 
 	RigidPhysicsObject* aiPhysics = new RigidPhysicsObject();
-	aiPhysics->CreateCollisionShape(Vec3Physics(5.0, 2.5, 5.0), CUBOID);
+	aiPhysics->CreateCollisionShape(Vec3Physics(5.2, 2.0, 6.5), CUBOID);
 	aiPhysics->CreatePhysicsBody(8.0, Vec3Physics(-190, 5, 30), QuatPhysics(0, 0, 0, 1), Vec3Physics(1, 1, 1));
 
 	RigidPhysicsObject* ballPhysics = new RigidPhysicsObject();
@@ -180,7 +180,7 @@ int main(void)
 	myScene->addLightObject(light2);
 
 	player->SetRenderComponent(new RenderComponent(playerMaterial, ModelLoader::LoadMGL(MODEL_DIR"Car/car1.mgl", true)));
-	player->SetLocalTransform(Mat4Graphics::Scale(Vector3Simple(10, 10, 10)));
+	player->SetLocalTransform(Mat4Graphics::Scale(Vector3Simple(10, 10, 10)) * Mat4Graphics::Translation(Vector3Simple(0, -0.25f, 0)));
 	player->SetPhysicsComponent(playerPhysics);
 	player->GetPhysicsComponent()->GetPhysicsBody()->setRestitution(btScalar(0.9));
 	player->GetPhysicsComponent()->GetPhysicsBody()->setFriction(0.5);
@@ -204,8 +204,8 @@ int main(void)
 	ball->GetPhysicsComponent()->GetPhysicsBody()->setRollingFriction(0.5);
 	ball->GetPhysicsComponent()->GetPhysicsBody()->setHitFraction(0.5);
 
-	ai1->SetRenderComponent(new RenderComponent(ballMaterial, ModelLoader::LoadMGL(MODEL_DIR"Common/cube.mgl", true)));
-	ai1->SetLocalTransform(Mat4Graphics::Scale(Vector3Simple(5, 2.5f, 5)));
+	ai1->SetRenderComponent(new RenderComponent(aiMaterial, ModelLoader::LoadMGL(MODEL_DIR"Car/car1.mgl", true)));
+	ai1->SetLocalTransform(Mat4Graphics::Scale(Vector3Simple(10, 10, 10))* Mat4Graphics::Translation(Vector3Simple(0, -0.25f, 0)));
 	ai1->SetPhysicsComponent(aiPhysics);
 	ai1->GetPhysicsComponent()->GetPhysicsBody()->setRestitution(btScalar(0.9));
 	ai1->GetPhysicsComponent()->GetPhysicsBody()->setFriction(0.5);
