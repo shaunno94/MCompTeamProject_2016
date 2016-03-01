@@ -186,13 +186,13 @@ int main(void) {
 	myScene->setPlayerController(new PS4Controller(cc));
 #endif
 
-	//Define Orthographic Component
-	OrthoComponent* hudUI = new OrthoComponent(1.0f);
-	//Add child GUI components, while defining materials, texture, and depth
-	hudUI->AddGUIComponent(new ScoreboardGUIComponent(guiMaterial, Texture::Get(TEXTURE_DIR"blue3.png"), 1.0));
+	////Define Orthographic Component
+	//OrthoComponent* hudUI = new OrthoComponent(1.0f);
+	////Add child GUI components, while defining materials, texture, and depth
+	//hudUI->AddGUIComponent(new ScoreboardGUIComponent(guiMaterial, Texture::Get(TEXTURE_DIR"blue3.png"), 1.0));
 
-	//Add Orthographic component to GUISystem
-	GUISystem::GetInstance().AddOrthoComponent(hudUI);
+	////Add Orthographic component to GUISystem
+	//GUISystem::GetInstance().AddOrthoComponent(hudUI);
 
 	myScene->attachCam(player);
 
