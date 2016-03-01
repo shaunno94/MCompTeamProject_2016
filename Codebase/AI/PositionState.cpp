@@ -30,7 +30,7 @@ void PositionState::Update(float dt)
 	btVector3 controlPoint2 = m_goal->GetPhysicsComponent()->GetPhysicsBody()->getWorldTransform().getOrigin() - m_ball->GetPhysicsComponent()->GetPhysicsBody()->getWorldTransform().getOrigin();
 	controlPoint2.normalize();
 
-	btVector3 dest = m_ball->GetPhysicsComponent()->GetPhysicsBody()->getWorldTransform().getOrigin() - controlPoint2 * 10.0f;
+	btVector3 dest = m_ball->GetPhysicsComponent()->GetPhysicsBody()->getWorldTransform().getOrigin() - controlPoint2 * 20.0f;
 	btVector3 start = m_parent->GetPhysicsComponent()->GetPhysicsBody()->getWorldTransform().getOrigin();
 
 	btVector3 controlPoint1 = start + m_parent->GetPhysicsComponent()->GetPhysicsBody()->getInterpolationLinearVelocity();

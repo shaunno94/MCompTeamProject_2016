@@ -38,12 +38,12 @@ AIControllerComponent::AIControllerComponent(GameObject* parent, unsigned int ty
 
 		// Create Triggers
 		DistanceTrigger* positionToShoot = new DistanceTrigger();
-		positionToShoot->setupTrigger(*m_parent, *ball, 11.0f, true);
+		positionToShoot->setupTrigger(*m_parent, *ball, 15.0f, true);
 		position->AddTrigger(positionToShoot, SHOOT);
 
 
 		DistanceTrigger* shootToPosition = new DistanceTrigger();
-		shootToPosition->setupTrigger(*m_parent, *ball, 15.0f, false);
+		shootToPosition->setupTrigger(*m_parent, *ball, 19.0f, false);
 		shoot->AddTrigger(shootToPosition, POSITION);
 
 		// Set active state

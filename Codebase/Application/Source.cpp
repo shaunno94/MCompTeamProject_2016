@@ -106,8 +106,6 @@ int main(void)
 	GameObject* light2 = new GameObject("l");
 
 	GameObject* ai1 = new GameObject("ai1");
-	GameObject* ai2 = new GameObject("ai2");
-	GameObject* ai3 = new GameObject("ai3");
 
 	//Physics objects hold collision shape and collision object(body),
 	//call CreateCollisionShape before CreatePhysicsBody or the object will not be created correctly.
@@ -121,14 +119,6 @@ int main(void)
 	RigidPhysicsObject* ai1Physics = new RigidPhysicsObject();
 	ai1Physics->CreateCollisionShape(Vec3Physics(5.0, 2.5, 5.0), CUBOID);
 	ai1Physics->CreatePhysicsBody(8.0, Vec3Physics(-150, 5, 50), QuatPhysics(0, 0, 0, 1), Vec3Physics(1, 1, 1));
-
-	RigidPhysicsObject* ai2Physics = new RigidPhysicsObject();
-	ai2Physics->CreateCollisionShape(Vec3Physics(5.0, 2.5, 5.0), CUBOID);
-	ai2Physics->CreatePhysicsBody(8.0, Vec3Physics(-250, 5, 0), QuatPhysics(0, 0, 0, 1), Vec3Physics(1, 1, 1));
-
-	RigidPhysicsObject* ai3Physics = new RigidPhysicsObject();
-	ai3Physics->CreateCollisionShape(Vec3Physics(5.0, 2.5, 5.0), CUBOID);
-	ai3Physics->CreatePhysicsBody(8.0, Vec3Physics(-200, 5, -50), QuatPhysics(0, 0, 0, 1), Vec3Physics(1, 1, 1));
 
 
 
@@ -202,22 +192,6 @@ int main(void)
 	ai1->GetPhysicsComponent()->GetPhysicsBody()->setRollingFriction(0.5);
 	ai1->GetPhysicsComponent()->GetPhysicsBody()->setHitFraction(0.5);
 
-	ai2->SetRenderComponent(new RenderComponent(ballMaterial, ModelLoader::LoadMGL(MODEL_DIR"Common/cube.mgl", true)));
-	ai2->SetLocalTransform(Mat4Graphics::Scale(Vector3Simple(5, 2.5f, 5)));
-	ai2->SetPhysicsComponent(ai2Physics);
-	ai2->GetPhysicsComponent()->GetPhysicsBody()->setRestitution(btScalar(0.9));
-	ai2->GetPhysicsComponent()->GetPhysicsBody()->setFriction(0.5);
-	ai2->GetPhysicsComponent()->GetPhysicsBody()->setRollingFriction(0.5);
-	ai2->GetPhysicsComponent()->GetPhysicsBody()->setHitFraction(0.5);
-
-	ai3->SetRenderComponent(new RenderComponent(ballMaterial, ModelLoader::LoadMGL(MODEL_DIR"Common/cube.mgl", true)));
-	ai3->SetLocalTransform(Mat4Graphics::Scale(Vector3Simple(5, 2.5f, 5)));
-	ai3->SetPhysicsComponent(ai3Physics);
-	ai3->GetPhysicsComponent()->GetPhysicsBody()->setRestitution(btScalar(0.9));
-	ai3->GetPhysicsComponent()->GetPhysicsBody()->setFriction(0.5);
-	ai3->GetPhysicsComponent()->GetPhysicsBody()->setRollingFriction(0.5);
-	ai3->GetPhysicsComponent()->GetPhysicsBody()->setHitFraction(0.5);
-
 	RigidPhysicsObject* goalBox = new RigidPhysicsObject();
 	goalBox->CreateCollisionShape(Vec3Physics(7.0, 15.0, 29.0), CUBOID);
 	goalBox->CreatePhysicsBody(0.0, Vec3Physics(268, 17, 0), QuatPhysics(0, 0, 0, 1), Vec3Physics(1, 1, 1), true);
@@ -256,13 +230,9 @@ int main(void)
 	myScene->addGameObject(player);
 	myScene->addGameObject(ball);
 	myScene->addGameObject(ai1);
-	//myScene->addGameObject(ai2);
-	//myScene->addGameObject(ai3);
 
 
 	myControllers->setActor(ai1, 0);
-	//myControllers->setActor(ai2, 0);
-	//myControllers->setActor(ai3, 0);
 
 
 
