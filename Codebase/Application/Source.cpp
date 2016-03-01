@@ -125,6 +125,8 @@ int main(void) {
 	netMaterial->hasTranslucency = true;
 	ballMaterial->Set(ReservedMeshTextures.DIFFUSE.name, Texture::Get(TEXTURE_DIR"checkerboard.tga", true));
 	Material* playerMaterial = new Material(simpleShader);
+	Material* aiMaterial = new Material(simpleShader);
+	aiMaterial->Set(ReservedMeshTextures.DIFFUSE.name, Texture::Get(MODEL_DIR"car/body1.bmp", true));
 
 	// Create Stadium
 	GameObject* stadium = new Stadium(material, netMaterial, "stadium"); 
@@ -158,8 +160,8 @@ int main(void) {
 	ball->GetPhysicsComponent()->GetPhysicsBody()->setRollingFriction(0.5);
 	ball->GetPhysicsComponent()->GetPhysicsBody()->setHitFraction(0.5);
 
-	ai1->SetRenderComponent(new RenderComponent(ballMaterial, ModelLoader::LoadMGL(MODEL_DIR"Common/cube.mgl", true)));
-	ai1->SetLocalTransform(Mat4Graphics::Scale(Vector3Simple(5, 2.5f, 5)));
+	ai1->SetRenderComponent(new RenderComponent(aiMaterial, ModelLoader::LoadMGL(MODEL_DIR"Car/car1.mgl", true)));
+	ai1->SetLocalTransform(Mat4Graphics::Scale(Vector3Simple(10, 10, 10)));
 	ai1->SetPhysicsComponent(aiPhysics);
 	ai1->GetPhysicsComponent()->GetPhysicsBody()->setRestitution(btScalar(0.9));
 	ai1->GetPhysicsComponent()->GetPhysicsBody()->setFriction(0.5);
