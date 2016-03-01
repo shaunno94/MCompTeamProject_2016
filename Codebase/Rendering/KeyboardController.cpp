@@ -47,5 +47,10 @@ void KeyboardController::CheckInput(){
 	float pitch = (Window::GetMouse()->GetRelativePosition().y);
 	float yaw = (Window::GetMouse()->GetRelativePosition().x);
 	object->setCameraControl(pitch, yaw);
+
+	if (Window::GetKeyboard()->KeyTriggered(KEYBOARD_R))
+	{
+		object->reset();
+	}
 }
 #endif

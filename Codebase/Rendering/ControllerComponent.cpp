@@ -26,6 +26,14 @@ void ControllerComponent::updateObject(float dt){
 	dynamic_cast<RigidPhysicsObject*>(m_parent->GetPhysicsComponent())->GetPhysicsBody()->applyTorque(btVector3(torque.x, torque.y, torque.z)*dt);
 	//dynamic_cast<RigidPhysicsObject*>(m_parent->GetPhysicsComponent())->GetPhysicsBody()->applyCentralImpulse(btVector3(torque.x, torque.y, torque.z)*dt);
 	torque.ToZero();
+	Vec3Physics orientation = (getOrientation() * Vec3Physics(-1, 0, 0)).Normalize();
+	btVector3 btOrientation(orientation.x, orientation.y, orientation.z);
+	btVector3 velocity = -m_parent->GetPhysicsComponent()->GetPhysicsBody()->getInterpolationLinearVelocity();
+	btScalar friction = std::abs((3 * (velocity.normalize()).dot(btOrientation.normalize())));
+	
+	friction = friction <= 0.5 ? 0.5 : friction;
+
+	m_parent->GetPhysicsComponent()->GetPhysicsBody()->setFriction(friction);
 }
 
 void ControllerComponent::AddForce(float x, float y, float z){
@@ -63,4 +71,12 @@ void ControllerComponent::getCameraControl(float& pitch, float& yaw){
 		yaw += 360.0f;
 	if (yaw > 360.0f)
 		yaw -= 360.0f;
+}
+
+void ControllerComponent::reset(){
+	//return Mat4Physics::Rotation(Renderer::GetInstance()->GetCurrentScene()->getCamera()->GetYaw() + 90, Vec3Physics(0, 1, 0));
+	auto world = m_parent->GetWorldTransform().GetTranslation();
+	//world.SetTranslation(Vec3Physics(0, 0, 0));
+	btTransform trasform = btTransform(btQuaternion(btVector3(0,0,-1), 0), btVector3(world.x, world.y, world.z));
+		m_parent->GetPhysicsComponent()->GetPhysicsBody()->setWorldTransform(trasform);
 }
