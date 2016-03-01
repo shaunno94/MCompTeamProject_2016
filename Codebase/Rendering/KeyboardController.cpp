@@ -27,12 +27,12 @@ void KeyboardController::CheckInput(){
 	}
 	if (Window::GetKeyboard()->KeyDown(KEYBOARD_RIGHT) || Window::GetKeyboard()->KeyDown(KEYBOARD_D))
 	{
-		torque += (Vec3Physics(0,-5, 0));
+		torque += (Vec3Physics(0,-3, 0));
 		//force += (orientation * Vec3Physics(0, 0, accel));
 	}
 	if (Window::GetKeyboard()->KeyDown(KEYBOARD_LEFT) || Window::GetKeyboard()->KeyDown(KEYBOARD_A))
 	{
-		torque += (Vec3Physics(0, 5, 0));
+		torque += (Vec3Physics(0, 3, 0));
 		//force += (orientation * Vec3Physics(0, 0, -accel));
 	}
 
