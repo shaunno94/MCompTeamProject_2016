@@ -29,5 +29,6 @@ void ChaseState::Update(float dt)
 	direction.normalize();
 	direction *= 10.0f;
 
+
 	m_parent->GetControllerComponent()->AddForce(direction.x(), 0.0f, direction.z());
 }
