@@ -183,8 +183,8 @@ int main(void)
 	player->SetLocalTransform(Mat4Graphics::Scale(Vector3Simple(10, 10, 10)));
 	player->SetPhysicsComponent(playerPhysics);
 	player->GetPhysicsComponent()->GetPhysicsBody()->setRestitution(btScalar(0.9));
-	player->GetPhysicsComponent()->GetPhysicsBody()->setFriction(0.6);
-	player->GetPhysicsComponent()->GetPhysicsBody()->setRollingFriction(0.5);
+	player->GetPhysicsComponent()->GetPhysicsBody()->setFriction(0.5);
+	player->GetPhysicsComponent()->GetPhysicsBody()->setRollingFriction(1);
 	player->GetPhysicsComponent()->GetPhysicsBody()->setHitFraction(0.5);
 
 	GameObject* wheel_fl = new GameObject();

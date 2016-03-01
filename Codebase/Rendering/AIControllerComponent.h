@@ -8,6 +8,8 @@ public:
 	AIControllerComponent(GameObject* parent, unsigned int type);
 	~AIControllerComponent();
 
+	virtual void AddForce(float x, float y, float z) override;
+
 	virtual void updateObject(float dt) override;
 
 protected:
