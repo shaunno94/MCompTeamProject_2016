@@ -26,12 +26,14 @@ void GuardGoalState::Update(float dt)
 	btVector3 parentPos = m_parent->GetPhysicsComponent()->GetPhysicsBody()->getWorldTransform().getOrigin();
 
 	btVector3 goalToBall = ballPos - goalToBall;
+	goalToBall.setY(0);
 	goalToBall.normalize();
-	goalToBall * 3.0f;
+	goalToBall *= 15.0f;
 
-	btVector3 desiredPos = teamGoalPos + goalToBall;
-	btVector3 direction = parentPos - (teamGoalPos + goalToBall);
+	btVector3 desiredPos = (teamGoalPos + goalToBall) * btVector3(1,0,1);
+	btVector3 direction = parentPos - desiredPos;
 	direction.normalize();
+	direction *= 3.0f;
 
 
 	m_parent->GetControllerComponent()->AddForce(direction.x(), 0.0f, direction.z());

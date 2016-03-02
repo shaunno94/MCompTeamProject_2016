@@ -31,7 +31,7 @@ bool OnTargetTrigger::HasTriggered()
 	btScalar dot = aiToBall.dot(ballToGoal);
 
 	if (dot > 0.7) {
-		std::cout << "AI on target = POSITION -> SHOOT" << std::endl;
+		//std::cout << "AI on target = POSITION -> SHOOT" << std::endl;
 		return true;
 	}
 	return false;

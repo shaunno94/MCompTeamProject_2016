@@ -122,11 +122,15 @@ int main(void)
 	//Physics objects will be deleted by the game object.
 	RigidPhysicsObject* playerPhysics = new RigidPhysicsObject();
 	playerPhysics->CreateCollisionShape(Vec3Physics(5.2, 2.0, 6.5),CUBOID);
-	playerPhysics->CreatePhysicsBody(8.0, Vec3Physics(10, 5, 0), QuatPhysics(0, 0, 0, 1), Vec3Physics(1, 1, 1));	
+	playerPhysics->CreatePhysicsBody(8.0, Vec3Physics(100, 5, 0), QuatPhysics(0, 1, 0, 1), Vec3Physics(1, 1, 1));
+	playerPhysics->GetPhysicsBody()->setRestitution(btScalar(0.9));
+	playerPhysics->GetPhysicsBody()->setFriction(0.5);
+	playerPhysics->GetPhysicsBody()->setRollingFriction(0.5);
+	playerPhysics->GetPhysicsBody()->setHitFraction(0.5);
 
 	RigidPhysicsObject* shooterAIPhysics = new RigidPhysicsObject();
 	shooterAIPhysics->CreateCollisionShape(Vec3Physics(5.2, 2.0, 6.5), CUBOID);
-	shooterAIPhysics->CreatePhysicsBody(8.0, Vec3Physics(-190, 5, 30), QuatPhysics(0, 0, 0, 1), Vec3Physics(1, 1, 1));
+	shooterAIPhysics->CreatePhysicsBody(8.0, Vec3Physics(-190, 5, 30), QuatPhysics(0, -1, 0, 1), Vec3Physics(1, 1, 1));
 	shooterAIPhysics->GetPhysicsBody()->setRestitution(btScalar(0.9));
 	shooterAIPhysics->GetPhysicsBody()->setFriction(0.5);
 	shooterAIPhysics->GetPhysicsBody()->setRollingFriction(0.5);
@@ -134,7 +138,7 @@ int main(void)
 
 	RigidPhysicsObject* goalieAIPhysics = new RigidPhysicsObject();
 	goalieAIPhysics->CreateCollisionShape(Vec3Physics(5.2, 2.0, 6.5), CUBOID);
-	goalieAIPhysics->CreatePhysicsBody(8.0, Vec3Physics(-230, 5, -30), QuatPhysics(0, 0, 0, 1), Vec3Physics(1, 1, 1));
+	goalieAIPhysics->CreatePhysicsBody(8.0, Vec3Physics(-230, 5, -30), QuatPhysics(0, -1, 0, 1), Vec3Physics(1, 1, 1));
 	goalieAIPhysics->GetPhysicsBody()->setRestitution(btScalar(0.9));
 	goalieAIPhysics->GetPhysicsBody()->setFriction(0.5);
 	goalieAIPhysics->GetPhysicsBody()->setRollingFriction(0.5);
@@ -143,6 +147,10 @@ int main(void)
 	RigidPhysicsObject* ballPhysics = new RigidPhysicsObject();
 	ballPhysics->CreateCollisionShape(7.0);
 	ballPhysics->CreatePhysicsBody(1.0, Vec3Physics(0, 3, 0), QuatPhysics(0, 0, 0, 1), Vec3Physics(1, 1, 1));
+	ballPhysics->GetPhysicsBody()->setRestitution(btScalar(0.9));
+	ballPhysics->GetPhysicsBody()->setFriction(0.5);
+	ballPhysics->GetPhysicsBody()->setRollingFriction(0.5);
+	ballPhysics->GetPhysicsBody()->setHitFraction(0.5);
 	int ballID = ballPhysics->GetPhysicsBody()->getBroadphaseProxy()->getUid();
 
 #ifndef ORBIS
@@ -194,18 +202,10 @@ int main(void)
 	player->SetRenderComponent(new RenderComponent(playerMaterial, ModelLoader::LoadMGL(MODEL_DIR"Car/car1.mgl", true)));
 	player->SetLocalTransform(Mat4Graphics::Scale(Vector3Simple(10, 10, 10)) * Mat4Graphics::Translation(Vector3Simple(0, -0.25f, 0)));
 	player->SetPhysicsComponent(playerPhysics);
-	player->GetPhysicsComponent()->GetPhysicsBody()->setRestitution(btScalar(0.9));
-	player->GetPhysicsComponent()->GetPhysicsBody()->setFriction(0.5);
-	player->GetPhysicsComponent()->GetPhysicsBody()->setRollingFriction(1);
-	player->GetPhysicsComponent()->GetPhysicsBody()->setHitFraction(0.5);
 
 	ball->SetRenderComponent(new RenderComponent(ballMaterial, ModelLoader::LoadMGL(MODEL_DIR"Common/sphere.mgl", true)));
 	ball->SetLocalTransform(Mat4Graphics::Scale(Vector3Simple(7, 7, 7)));
 	ball->SetPhysicsComponent(ballPhysics);
-	ball->GetPhysicsComponent()->GetPhysicsBody()->setRestitution(btScalar(0.9));
-	ball->GetPhysicsComponent()->GetPhysicsBody()->setFriction(0.5);
-	ball->GetPhysicsComponent()->GetPhysicsBody()->setRollingFriction(0.5);
-	ball->GetPhysicsComponent()->GetPhysicsBody()->setHitFraction(0.5);
 
 	shooterAI->SetRenderComponent(new RenderComponent(aiMaterial, ModelLoader::LoadMGL(MODEL_DIR"Car/car1.mgl", true)));
 	shooterAI->SetLocalTransform(Mat4Graphics::Scale(Vector3Simple(10, 10, 10))* Mat4Graphics::Translation(Vector3Simple(0, -0.25f, 0)));
