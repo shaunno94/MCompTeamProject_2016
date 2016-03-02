@@ -1,6 +1,7 @@
 #include "ControllerComponent.h"
 #include "GameObject.h"
 #include "Renderer.h"
+#include <algorithm>
 
 ControllerComponent::ControllerComponent(GameObject* parent)
 {
@@ -34,7 +35,7 @@ void ControllerComponent::updateObject(float dt)
 	if (velocity.length2() > 0.0000001)
 	{
 		friction = std::abs((3 * (velocity.normalize()).dot(btOrientation.normalize())));
-
+	
 		friction = friction <= 0.5 ? 0.5 : friction;
 	}
 	m_parent->GetPhysicsComponent()->GetPhysicsBody()->setFriction(friction);
@@ -88,5 +89,5 @@ void ControllerComponent::reset()
 	auto world = m_parent->GetWorldTransform().GetTranslation();
 	//world.SetTranslation(Vec3Physics(0, 0, 0));
 	btTransform trasform = btTransform(btQuaternion(btVector3(0, 0, -1), 0), btVector3(world.x, world.y, world.z));
-	m_parent->GetPhysicsComponent()->GetPhysicsBody()->setWorldTransform(trasform);
+		m_parent->GetPhysicsComponent()->GetPhysicsBody()->setWorldTransform(trasform);
 }

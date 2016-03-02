@@ -1,57 +1,71 @@
 #include "AIControllerComponent.h"
-#include "AI\ChaseState.h"
 #include "Renderer.h"
-#include "AI\RunAwayState.h"
 #include "AI\DistanceTrigger.h"
+#include "AI\PositionState.h"
+#include "AI\ShootState.h"
+#include "AI\OnTargetTrigger.h"
+#include "AI\GuardGoalState.h"
 
-enum AITypes {
+enum AITypes
+{
 	SHOOTER = 0,
 	GOALKEEPER = 1,
 	AGGRESSIVE = 2
 };
 
-enum AIStates {
-	CHASE,
-	RUN_AWAY
+enum AIStates
+{
+	POSITION,
+	SHOOT,
+	GUARD_GOAL,
+	ADVANCE
 };
 
 AIControllerComponent::AIControllerComponent(GameObject* parent, unsigned int type) :
 ControllerComponent(parent)
 {
 
-
 	GameObject* ball = Renderer::GetInstance()->GetCurrentScene()->findGameObject("ball");
+	GameObject* targetGoal = Renderer::GetInstance()->GetCurrentScene()->findGameObject("goal1");
+	GameObject* teamGoal = Renderer::GetInstance()->GetCurrentScene()->findGameObject("goal2");
+
+	m_StateMachine = new StateMachine();
 
 	switch (type)
 	{
 	case SHOOTER:
 	{
-					m_StateMachine = new StateMachine();
-					ChaseState* chase = new ChaseState(*m_StateMachine, *m_parent, *ball);
-					RunAwayState* run = new RunAwayState(*m_StateMachine, *m_parent, *ball);
+
+		// Create States
+		PositionState* position = new PositionState(*m_StateMachine, *m_parent, *ball);
+		m_StateMachine->AddState(POSITION, position);
+
+		ShootState* shoot = new ShootState(*m_StateMachine, *m_parent, *ball);
+		m_StateMachine->AddState(SHOOT, shoot);
+
+		// Create Triggers
+		OnTargetTrigger* positionToShootOnTarget = new OnTargetTrigger();
+		positionToShootOnTarget->setupTrigger(*m_parent, *ball, *targetGoal);
+		position->AddTrigger(positionToShootOnTarget, SHOOT);
+
+		DistanceTrigger* shootToPosition = new DistanceTrigger();
+		shootToPosition->setupTrigger(*m_parent, *ball, 15.0f, true);
+		shoot->AddTrigger(shootToPosition, POSITION);
 
 
-					// Chase -> Run trigger 
-					//	Triggered when two objects are less than 5.0f apart
-					DistanceTrigger* chaseToRun = new DistanceTrigger();
-					chaseToRun->setupTrigger(*m_parent, *ball, 25.0f, true);
-					chase->AddTrigger(chaseToRun, RUN_AWAY);
+		// Set active state
+		m_StateMachine->ChangeState(POSITION);
 
-					m_StateMachine->AddState(CHASE, chase);
-
-
-					// Run -> Chase trigger 
-					//	Triggered when two objects are greater than 25.0f apart
-					DistanceTrigger* runToChase = new DistanceTrigger();
-					runToChase->setupTrigger(*m_parent, *ball, 65.0f, false);
-					run->AddTrigger(runToChase, CHASE);
-
-					m_StateMachine->AddState(RUN_AWAY, run);
-
-					m_StateMachine->ChangeState(CHASE);
 	}
 		break;
 	case GOALKEEPER:
+	{
+		GuardGoalState* guard = new GuardGoalState(*m_StateMachine, *m_parent, *ball, *teamGoal);
+		m_StateMachine->AddState(GUARD_GOAL, guard);
+
+		m_StateMachine->ChangeState(GUARD_GOAL);
+
+	}
 		break;
 	case AGGRESSIVE:
 		break;
@@ -71,7 +85,8 @@ void AIControllerComponent::updateObject(float dt)
 	ControllerComponent::updateObject(dt);
 }
 
-void AIControllerComponent::AddForce(float x, float y, float z){
+void AIControllerComponent::AddForce(float x, float y, float z)
+{
 	float clamp = 0.6;
 
 	if (Window::GetWindow().GetKeyboard()->KeyDown(KEYBOARD_SPACE)){
@@ -95,15 +110,15 @@ void AIControllerComponent::AddForce(float x, float y, float z){
 	float dot = in.Dot(left);
 
 	AddTorque(0, 5 * (dot), 0);
-
+	
 	dot = in.Dot(forward);
 	if (dot >= 0){
-		force = forward * 7;
+force = forward * 7;
 	}
 	else
 	{
 		force = -forward * 6;
 	}
-
+	
 	force.y = 0;
 }
