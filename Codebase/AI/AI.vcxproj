@@ -167,10 +167,9 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="ChaseState.cpp" />
     <ClCompile Include="DistanceTrigger.cpp" />
+    <ClCompile Include="GuardGoalState.cpp" />
     <ClCompile Include="OnTargetTrigger.cpp" />
-    <ClCompile Include="RunAwayState.cpp" />
     <ClCompile Include="PositionState.cpp" />
     <ClCompile Include="ShootState.cpp" />
     <ClCompile Include="State.cpp" />
@@ -178,10 +177,9 @@
     <ClCompile Include="Trigger.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="ChaseState.h" />
     <ClInclude Include="DistanceTrigger.h" />
+    <ClInclude Include="GuardGoalState.h" />
     <ClInclude Include="OnTargetTrigger.h" />
-    <ClInclude Include="RunAwayState.h" />
     <ClInclude Include="PositionState.h" />
     <ClInclude Include="ShootState.h" />
     <ClInclude Include="State.h" />

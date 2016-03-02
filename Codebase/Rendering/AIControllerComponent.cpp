@@ -4,6 +4,7 @@
 #include "AI\PositionState.h"
 #include "AI\ShootState.h"
 #include "AI\OnTargetTrigger.h"
+#include "AI\GuardGoalState.h"
 
 enum AITypes
 {
@@ -15,7 +16,9 @@ enum AITypes
 enum AIStates
 {
 	POSITION,
-	SHOOT
+	SHOOT,
+	GUARD_GOAL,
+	ADVANCE
 };
 
 AIControllerComponent::AIControllerComponent(GameObject* parent, unsigned int type) :
@@ -23,13 +26,15 @@ AIControllerComponent::AIControllerComponent(GameObject* parent, unsigned int ty
 {
 
 	GameObject* ball = Renderer::GetInstance()->GetCurrentScene()->findGameObject("ball");
-	GameObject* goal = Renderer::GetInstance()->GetCurrentScene()->findGameObject("goal1");
+	GameObject* targetGoal = Renderer::GetInstance()->GetCurrentScene()->findGameObject("goal1");
+	GameObject* teamGoal = Renderer::GetInstance()->GetCurrentScene()->findGameObject("goal2");
+
+	m_StateMachine = new StateMachine();
 
 	switch (type)
 	{
 	case SHOOTER:
 	{
-		m_StateMachine = new StateMachine();
 
 		// Create States
 		PositionState* position = new PositionState(*m_StateMachine, *m_parent, *ball);
@@ -40,7 +45,7 @@ AIControllerComponent::AIControllerComponent(GameObject* parent, unsigned int ty
 
 		// Create Triggers
 		OnTargetTrigger* positionToShootOnTarget = new OnTargetTrigger();
-		positionToShootOnTarget->setupTrigger(*m_parent, *ball, *goal);
+		positionToShootOnTarget->setupTrigger(*m_parent, *ball, *targetGoal);
 		position->AddTrigger(positionToShootOnTarget, SHOOT);
 
 		DistanceTrigger* shootToPosition = new DistanceTrigger();
@@ -54,7 +59,14 @@ AIControllerComponent::AIControllerComponent(GameObject* parent, unsigned int ty
 	}
 	break;
 	case GOALKEEPER:
-		break;
+	{
+		GuardGoalState* guard = new GuardGoalState(*m_StateMachine, *m_parent, *ball, *teamGoal);
+		m_StateMachine->AddState(GUARD_GOAL, guard);
+
+		m_StateMachine->ChangeState(GUARD_GOAL);
+
+	}
+	break;
 	case AGGRESSIVE:
 		break;
 	default:
