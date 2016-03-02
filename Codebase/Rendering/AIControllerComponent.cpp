@@ -5,21 +5,7 @@
 #include "AI\ShootState.h"
 #include "AI\OnTargetTrigger.h"
 #include "AI\GuardGoalState.h"
-
-enum AITypes
-{
-	SHOOTER = 0,
-	GOALKEEPER = 1,
-	AGGRESSIVE = 2
-};
-
-enum AIStates
-{
-	POSITION,
-	SHOOT,
-	GUARD_GOAL,
-	ADVANCE
-};
+#include "AI\ClearGoalState.h"
 
 AIControllerComponent::AIControllerComponent(GameObject* parent, unsigned int type) :
 ControllerComponent(parent)
@@ -36,34 +22,41 @@ ControllerComponent(parent)
 	case SHOOTER:
 	{
 
-					// Create States
-					PositionState* position = new PositionState(*m_StateMachine, *m_parent, *ball);
-					m_StateMachine->AddState(POSITION, position);
+		// Create States
+		PositionState* position = new PositionState(*m_StateMachine, *m_parent, *ball);
+		m_StateMachine->AddState(POSITION, position);
 
-					ShootState* shoot = new ShootState(*m_StateMachine, *m_parent, *ball);
-					m_StateMachine->AddState(SHOOT, shoot);
+		ShootState* shoot = new ShootState(*m_StateMachine, *m_parent, *ball);
+		m_StateMachine->AddState(SHOOT, shoot);
 
-					// Create Triggers
-					OnTargetTrigger* positionToShootOnTarget = new OnTargetTrigger();
-					positionToShootOnTarget->setupTrigger(*m_parent, *ball, *targetGoal);
-					position->AddTrigger(positionToShootOnTarget, SHOOT);
+		// Create Triggers
+		OnTargetTrigger* positionToShootOnTarget = new OnTargetTrigger();
+		positionToShootOnTarget->setupTrigger(*m_parent, *ball, *targetGoal, 0.7f);
+		position->AddTrigger(positionToShootOnTarget, SHOOT);
 
-					DistanceTrigger* shootToPosition = new DistanceTrigger();
-					shootToPosition->setupTrigger(*m_parent, *ball, 15.0f, true);
-					shoot->AddTrigger(shootToPosition, POSITION);
+		DistanceTrigger* shootToPosition = new DistanceTrigger();
+		shootToPosition->setupTrigger(*m_parent, *ball, 15.0f, true);
+		shoot->AddTrigger(shootToPosition, POSITION);
 
 
-					// Set active state
-					m_StateMachine->ChangeState(POSITION);
+		// Set active state
+		m_StateMachine->ChangeState(POSITION);
 
 	}
 		break;
 	case GOALKEEPER:
 	{
-					   GuardGoalState* guard = new GuardGoalState(*m_StateMachine, *m_parent, *ball, *teamGoal);
-					   m_StateMachine->AddState(GUARD_GOAL, guard);
+		GuardGoalState* guard = new GuardGoalState(*m_StateMachine, *m_parent, *ball, *teamGoal);
+		m_StateMachine->AddState(GUARD_GOAL, guard);
 
-					   m_StateMachine->ChangeState(GUARD_GOAL);
+		m_StateMachine->ChangeState(GUARD_GOAL);
+
+		ClearGoalState* clearGoal = new ClearGoalState(*m_StateMachine, *m_parent, *ball, *teamGoal);
+		m_StateMachine->AddState(CLEAR_GOAL, clearGoal);
+
+		OnTargetTrigger* guardToClear = new OnTargetTrigger();
+		guardToClear->setupTrigger(*m_parent, *ball, *targetGoal, 0.3f);
+		guard->AddTrigger(guardToClear, CLEAR_GOAL);
 
 	}
 		break;
@@ -111,15 +104,15 @@ void AIControllerComponent::AddForce(float x, float y, float z)
 
 	AddTorque(0, 5 * (dot), 0);
 	turnWheels(dot);
-
+	
 	dot = in.Dot(forward);
 	if (dot >= 0){
-		force = forward * 7;
+force = forward * 7;
 	}
 	else
 	{
 		force = -forward * 6;
 	}
-
+	
 	force.y = 0;
 }

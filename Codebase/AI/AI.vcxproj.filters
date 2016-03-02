@@ -51,6 +51,9 @@
     <ClCompile Include="GuardGoalState.cpp">
       <Filter>Source Files\States</Filter>
     </ClCompile>
+    <ClCompile Include="ClearGoalState.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="State.h">
@@ -76,6 +79,9 @@
     </ClInclude>
     <ClInclude Include="GuardGoalState.h">
       <Filter>Header Files\States</Filter>
+    </ClInclude>
+    <ClInclude Include="ClearGoalState.h">
+      <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

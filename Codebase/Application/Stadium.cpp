@@ -68,12 +68,10 @@ void Stadium::CreateCollisionWalls()
 	CreatePlane(m_collisionWalls, Vec3Physics(-250, GOAL_HEIGHT, 30), Vec3Physics(-280, GOAL_HEIGHT, -30));
 	CreatePlane(m_collisionWalls, Vec3Physics(-250, GOAL_HEIGHT, 30), Vec3Physics(-250, WALL_HEIGHT, -30));
 
-
-
 	RigidPhysicsObject* wallPhysics = new RigidPhysicsObject();
 	wallPhysics->CreateCollisionShape(m_collisionWalls);
 	wallPhysics->CreatePhysicsBody(0, Vec3Physics(0, 0, 0), QuatPhysics(0, 0, 0, 1));
-
+	wallPhysics->GetPhysicsBody()->getBroadphaseProxy()->m_collisionFilterMask = COL_WALL;
 	
 	RigidPhysicsObject* goalPhysics = new RigidPhysicsObject();
 

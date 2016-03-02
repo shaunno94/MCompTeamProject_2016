@@ -9,11 +9,12 @@ OnTargetTrigger::~OnTargetTrigger()
 {
 }
 
-void OnTargetTrigger::setupTrigger(GameObject& parent, GameObject& ball, GameObject& goal)
+void OnTargetTrigger::setupTrigger(GameObject& parent, GameObject& ball, GameObject& goal, float targetAccuracy)
 {
 	Trigger::setupTrigger(parent);
 	m_ball = &ball;
 	m_goal = &goal;
+	m_targetAccuracy = targetAccuracy;
 }
 
 bool OnTargetTrigger::HasTriggered()
@@ -30,8 +31,8 @@ bool OnTargetTrigger::HasTriggered()
 
 	btScalar dot = aiToBall.dot(ballToGoal);
 
-	if (dot > 0.7) {
-		std::cout << "AI on target = POSITION -> SHOOT" << std::endl;
+	if (dot > m_targetAccuracy) {
+		//std::cout << "AI on target = POSITION -> SHOOT" << std::endl;
 		return true;
 	}
 	return false;
