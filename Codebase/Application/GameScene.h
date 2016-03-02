@@ -33,7 +33,6 @@ public:
 	GameScene(ControllerManager* controller);
 	~GameScene();
 
-	ControllerManager*  GetController() { return myControllers; }
 	void SetControllerActor();
 
 protected:

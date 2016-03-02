@@ -1,4 +1,3 @@
-#include <cstdio>
 #include "Rendering\Renderer.h"
 #include "Rendering\GameTimer.h"
 #include "GameScene.h"
@@ -32,15 +31,21 @@ int main(void)
 	{
 		return -1;
 	}
+
 	GameTimer timer;
 #ifdef ORBIS
 	PS4Input input = PS4Input();
 #endif
 
+	//Initialise controller
 	ControllerManager* myControllers = new LocalControlManager;
+	//Create GameScene
 	GameScene* gameScene = new GameScene(myControllers);
-
+	//Set current scene to the game
 	renderer.SetCurrentScene(gameScene);
+
+	/*Sets controller actor for AI. Annoying that it can't be done in constructor of GameScene,
+	since it looks for the ball in the current scene, which can't exist before setting the current scene.*/
 	gameScene->SetControllerActor();
 
 
@@ -59,7 +64,6 @@ int main(void)
 		renderer.RenderScene(ms);
 	}
 
-	//delete myScene;
 	delete gameScene;
 	return 0;
 }
