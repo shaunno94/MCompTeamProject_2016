@@ -87,7 +87,7 @@ Mesh* Mesh::GenerateQuad(Vec2Graphics texCoords)
 #else
 	Mesh* m = new PS4Mesh();
 #endif
-	
+
 	m->m_NumVertices = 4;
 	m->m_NumIndices = 4;
 	m->SetPrimitiveType(TRIANGLE_STRIP);
@@ -109,11 +109,11 @@ Mesh* Mesh::GenerateQuad(Vec2Graphics texCoords)
 	m->m_TextureCoords[3] = Vec2Graphics(texCoords.x, 0.0f);
 
 	for (int i = 0; i < m->m_NumIndices; ++i)
-	{
+{
 		m->m_Normals[i] = Vec3Graphics(0.0f, 0.0f, -1.0f);
 		m->m_Tangents[i] = Vec3Graphics(1.0f, 0.0f, 0.0f);
 		m->m_Indices[i] = i;
-	}
+}
 	m->BufferData();
 	return m;
 }
@@ -157,6 +157,7 @@ Mesh* Mesh::GenerateQuad(Vec3Graphics* vertices, Vec2Graphics texCoords /* = Vec
 	m->BufferData();
 	return m;
 }
+
 
 Mesh* Mesh::GenerateQuadAlt()
 {

@@ -8,15 +8,11 @@
 #include "Helpers\interpolation.h"
 #include "Renderer.h"
 
-enum ParticleBuffer {
-	POS_BUFFER, TEX_BUFFER, COLOUR_BUFFER
-};
-
 class ParticleSystem
 {
 public:
 
-	ParticleSystem(ParticleEmitter* emitter, const std::string& texturePath, unsigned int numParticles, Camera* camera, Renderer* renderer);
+	ParticleSystem(ParticleEmitter* emitter, Material* material, Texture* texture, Mesh* mesh, unsigned int numParticles);
 	~ParticleSystem();
 
 	void EmitParticles();
@@ -24,11 +20,9 @@ public:
 	bool Update(float delta);
 	void Render();
 
-	bool LoadTexture(const std::string& fileName);
-
 protected:
 	void RandomizePos();
-	void EmitParticle(Particle &particle);
+	void EmitParticle(Particle& particle);
 private:
 
 	Camera*					m_Camera;
@@ -38,14 +32,11 @@ private:
 	std::vector<Particle>	m_Particles;
 	unsigned int			m_NumParticles;
 
-	GLuint					arrayObject;
-	GLuint					bufferObject[MAX_BUFFER];
 	GLfloat**				pos;
-	GLfloat**				tex;
-	GLfloat**				colour;
 
 	Vec3Graphics			m_Force;
-	Renderer*				renderer;
-
+	Material*				m_Material;
+	Mesh*					m_Mesh;
+	Texture*				m_texture;
 };
 #endif

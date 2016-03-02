@@ -1,4 +1,5 @@
 #include "ParticleData.h"
+#include "Helpers\RNG.h"
 
 class ParticleGenerator
 {
