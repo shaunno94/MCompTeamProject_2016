@@ -38,7 +38,7 @@ public:
 	Camera(GameObject* player){
 		this->player = player;
 		this->pitch = 0.0;
-		this->yaw = 0.0;
+		this->yaw = 90.0;
 		this->position = player->GetWorldTransform().GetTranslation() + player->GetWorldTransform().GetRotation() * Vector3Simple(0, 5, -5);
 	}
 

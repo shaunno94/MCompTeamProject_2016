@@ -25,12 +25,6 @@
     <Filter Include="Source Files\States">
       <UniqueIdentifier>{60fb3f8e-ca5a-462e-bcab-7fd25982bc15}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Header Files\Agents">
-      <UniqueIdentifier>{33f0fd73-2979-4c17-99e7-abbd94ed3c4f}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Source Files\Agents">
-      <UniqueIdentifier>{4b40532b-29d8-4acf-8d9c-af05f5abda23}</UniqueIdentifier>
-    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="State.cpp">
@@ -42,19 +36,22 @@
     <ClCompile Include="Trigger.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="ChaseState.cpp">
-      <Filter>Source Files\States</Filter>
-    </ClCompile>
-    <ClCompile Include="RunAwayState.cpp">
-      <Filter>Source Files\States</Filter>
-    </ClCompile>
     <ClCompile Include="DistanceTrigger.cpp">
       <Filter>Source Files\Triggers</Filter>
     </ClCompile>
-    <ClCompile Include="ShooterAgent.cpp">
-      <Filter>Source Files\Agents</Filter>
+    <ClCompile Include="PositionState.cpp">
+      <Filter>Source Files\States</Filter>
     </ClCompile>
-    <ClCompile Include="AIAgent.cpp">
+    <ClCompile Include="ShootState.cpp">
+      <Filter>Source Files\States</Filter>
+    </ClCompile>
+    <ClCompile Include="OnTargetTrigger.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="GuardGoalState.cpp">
+      <Filter>Source Files\States</Filter>
+    </ClCompile>
+    <ClCompile Include="ClearGoalState.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -68,19 +65,22 @@
     <ClInclude Include="Trigger.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="ChaseState.h">
-      <Filter>Header Files\States</Filter>
-    </ClInclude>
-    <ClInclude Include="RunAwayState.h">
-      <Filter>Header Files\States</Filter>
-    </ClInclude>
     <ClInclude Include="DistanceTrigger.h">
       <Filter>Header Files\Triggers</Filter>
     </ClInclude>
-    <ClInclude Include="ShooterAgent.h">
-      <Filter>Header Files\Agents</Filter>
+    <ClInclude Include="PositionState.h">
+      <Filter>Header Files\States</Filter>
     </ClInclude>
-    <ClInclude Include="AIAgent.h">
+    <ClInclude Include="ShootState.h">
+      <Filter>Header Files\States</Filter>
+    </ClInclude>
+    <ClInclude Include="OnTargetTrigger.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="GuardGoalState.h">
+      <Filter>Header Files\States</Filter>
+    </ClInclude>
+    <ClInclude Include="ClearGoalState.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

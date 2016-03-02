@@ -15,12 +15,16 @@ PS4Controller::~PS4Controller()
 void PS4Controller::CheckInput(){
 	Vec3Physics force(0, 0, 0);
 	Vec3Physics torque(0, 0, 0);
-	Mat4Physics orientation;// = object->getOrientation();
-	force.x = PS4Input::getPS4Input()->GetAxis(LEFTSTICK).x * 5;
-	force.z = PS4Input::getPS4Input()->GetAxis(LEFTSTICK).y * 5;
-	
+	float accel = 7;
+	Mat4Physics orientation = object->getOrientation();
 
-	if (PS4Input::getPS4Input()->GetButton(CROSS))
+	force = (orientation * Vec3Physics(0, 0, PS4Input::getPS4Input()->GetAxis(LEFTSTICK).x)).Normalize()*accel;
+	
+	torque = (Vec3Physics(0, -PS4Input::getPS4Input()->GetAxis(LEFTSTICK).y * 3, 0));	
+
+	object->turnWheels(PS4Input::getPS4Input()->GetAxis(LEFTSTICK).y);
+
+	if (PS4Input::getPS4Input()->GetButtonDown(BTN_CROSS))
 	{
 		//torque += (orientation * Vec3Physics(0, 5, 0));
 	}
@@ -28,6 +32,10 @@ void PS4Controller::CheckInput(){
 	object->AddForce(force.x, force.y, force.z);
 	object->AddTorque(torque.x, torque.y, torque.z);
 
+	if (PS4Input::getPS4Input()->GetButtonDown(BTN_R3))
+	{
+		object->reset();
+	}
 	float pitch = (PS4Input::getPS4Input()->GetAxis(RIGHTSTICK).y);
 	float yaw = (PS4Input::getPS4Input()->GetAxis(RIGHTSTICK).x);
 	object->setCameraControl(pitch, yaw);
