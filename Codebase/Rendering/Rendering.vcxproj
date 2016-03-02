@@ -152,11 +152,12 @@
     </Lib>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="BasicParticleGenerator.h" />
+    <ClInclude Include="BasicParticleGenerators.h" />
     <ClInclude Include="Camera.h" />
     <ClInclude Include="constants.h" />
     <ClInclude Include="Controller.h" />
     <ClInclude Include="ControllerComponent.h" />
-    <ClInclude Include="CubeEmitter.h" />
     <ClInclude Include="CubeMaterial.h" />
     <ClInclude Include="DebugDraw.h" />
     <ClInclude Include="ExtendedMaterial.h" />
@@ -170,10 +171,7 @@
     <ClInclude Include="ModelLoader.h" />
     <ClInclude Include="OGLMesh.h" />
     <ClInclude Include="OGLRenderer.h" />
-    <ClInclude Include="Particle.h" />
-    <ClInclude Include="ParticleEmitter.h" />
-    <ClInclude Include="ParticleManager.h" />
-    <ClInclude Include="ParticleSystem.h" />
+    <ClInclude Include="ParticleUpdater.h" />
     <ClInclude Include="PhysicsObject.h" />
     <ClInclude Include="PS4Controller.h" />
     <ClInclude Include="PS4Frame.h" />
@@ -192,11 +190,12 @@
     <ClInclude Include="Window.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="BasicParticleGenerators.cpp" />
+    <ClCompile Include="BasicParticles.cpp" />
     <ClCompile Include="Camera.cpp" />
     <ClCompile Include="ControllerComponent.cpp" />
     <ClCompile Include="CubeMaterial.cpp" />
     <ClCompile Include="DebugDraw.cpp" />
-    <ClCompile Include="CubeEmitter.cpp" />
     <ClCompile Include="ExtendedMaterial.cpp" />
     <ClCompile Include="Frustum.cpp" />
     <ClCompile Include="GameObject.cpp" />
@@ -207,8 +206,7 @@
     <ClCompile Include="ModelLoader.cpp" />
     <ClCompile Include="OGLMesh.cpp" />
     <ClCompile Include="OGLRenderer.cpp" />
-    <ClCompile Include="ParticleManager.cpp" />
-    <ClCompile Include="ParticleSystem.cpp" />
+    <ClCompile Include="ParticleUpdaters.cpp" />
     <ClCompile Include="PhysicsObject.cpp" />
     <ClCompile Include="PS4Controller.cpp" />
     <ClCompile Include="PS4Frame.cpp" />
