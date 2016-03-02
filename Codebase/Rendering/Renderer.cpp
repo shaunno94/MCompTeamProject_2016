@@ -27,6 +27,8 @@ PS4Renderer()
 
 Renderer::~Renderer(void) {}
 
+
+
 void Renderer::updateGlobalUniforms(Material* material)
 {
 	auto lightMat = dynamic_cast<LightMaterial*>(material);

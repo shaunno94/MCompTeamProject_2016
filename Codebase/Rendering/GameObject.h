@@ -32,6 +32,7 @@ _-_-_-_-_-_-_-""  ""
 #include "ControllerComponent.h"
 #include <vector>
 #include "AI\StateMachine.h"
+#include "AudioComponent.h"
 
 class Renderer;
 class Scene;
@@ -122,6 +123,17 @@ public:
 		return m_PhysicsObj;
 	}
 
+	void SetAudioComponent(AudioComponent* comp)
+	{
+		m_Audio = comp;
+		m_Audio->SetObject(this);
+	}
+
+	AudioComponent* GetAudioComponent() const
+	{
+		return m_Audio;
+	}
+
 protected:
 	virtual void OnRenderObject();			//Handles OpenGL calls to Render the object
 	virtual void OnUpdateObject(float dt);	//Override to handle things like AI etc on update loop
@@ -134,6 +146,8 @@ protected:
 	RenderComponent*			m_RenderComponent;
 	PhysicsObject*				m_PhysicsObj;
 	ControllerComponent*		m_Controller;
+
+	AudioComponent*				m_Audio;
 
 	float						m_BoundingRadius;	//Unused
 	Mat4Graphics				m_WorldTransform;

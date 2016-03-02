@@ -70,6 +70,12 @@
     <Filter Include="Source Files\UI\Scoretable_GUI">
       <UniqueIdentifier>{a0fff451-da59-44be-baad-55106ad8d8f9}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\Audio">
+      <UniqueIdentifier>{06dd41b2-8104-4e96-a707-09f6494f00ae}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Audio">
+      <UniqueIdentifier>{e0bd0d87-accb-46c7-b228-ebd46f8310be}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Renderer.h">
@@ -225,6 +231,9 @@
     <ClInclude Include="PS4Controller.h">
       <Filter>Header Files\Input</Filter>
     </ClInclude>
+    <ClInclude Include="AudioComponent.h">
+      <Filter>Header Files\Audio</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Renderer.cpp">
@@ -358,6 +367,9 @@
     </ClCompile>
     <ClCompile Include="PS4Controller.cpp">
       <Filter>Source Files\Input</Filter>
+    </ClCompile>
+    <ClCompile Include="AudioComponent.cpp">
+      <Filter>Source Files\Audio</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
