@@ -16,7 +16,7 @@ class Scene
 	friend class Renderer;
 public:
 	Scene();
-	~Scene();
+	virtual ~Scene();
 
 	GameObject* findGameObject(const std::string& objectName);
 	GameObject* getOpaqueObject(unsigned int i) { return opaqueObjects[i]; }

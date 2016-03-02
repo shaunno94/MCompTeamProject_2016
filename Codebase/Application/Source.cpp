@@ -8,6 +8,7 @@
 #include "Stadium.h"
 #include "Rendering\GUISystem.h"
 #include "Rendering\ScoreboardGUIComponent.h"
+#include "GameScene.h"
 
 const float TIME_STEP = 1.0f / 120.0f;
 const unsigned int SUB_STEPS = 4;
@@ -75,12 +76,13 @@ int main(void) {
 #endif
 #endif
 
+	GameScene* gameScene = new GameScene();
 	Scene* menuScene = new Scene();
 	menuScene->getCamera()->SetPosition(Vec3Graphics(10, 5, 0));
 
 	//Test Scenario - Tardis (cuboid collision shape), floor (plane collision shape), ball (sphere collison shape)
 	Scene* myScene = new Scene();
-	myScene->getCamera()->SetPosition(Vec3Graphics(10, 5, 0)); //no effect anymore
+	myScene->getCamera()->SetPosition(Vec3Graphics(10, 20, 0)); //no effect anymore
 
 	ControllerManager* myControllers = new LocalControlManager;
 
@@ -196,15 +198,15 @@ int main(void) {
 	myScene->setPlayerController(new PS4Controller(cc));
 #endif
 
-	//Define Orthographic Component
-	OrthoComponent* hudUI = new OrthoComponent(1.0f);
-	//Add child GUI components, while defining materials, texture, and depth
-	hudUI->AddGUIComponent(new ScoreboardGUIComponent(guiMaterial, Texture::Get(TEXTURE_DIR"blue3.png"), 1.0));
+	////Define Orthographic Component
+	//OrthoComponent* hudUI = new OrthoComponent(1.0f);
+	////Add child GUI components, while defining materials, texture, and depth
+	//hudUI->AddGUIComponent(new ScoreboardGUIComponent(guiMaterial, Texture::Get(TEXTURE_DIR"blue3.png"), 1.0));
 
-	//Add Orthographic component to GUISystem
-	GUISystem::GetInstance().AddOrthoComponent(hudUI);
+	////Add Orthographic component to GUISystem
+	//GUISystem::GetInstance().AddOrthoComponent(hudUI);
 
-	menuScene->attachCam(player);
+	myScene->attachCam(player);
 	myScene->addGameObject(player);
 	//player->AddChildObject(wheel_fl);
 	myScene->addGameObject(wheel_fl);
@@ -219,7 +221,8 @@ int main(void) {
 		TEXTURE_DIR"grouse_negz.jpg" };
 
 	myScene->setCubeMap(cubeMapDirs);
-	SwitchScene(&renderer, menuScene); 
+	renderer.SetCurrentScene(myScene);
+	//SwitchScene(&renderer, menuScene); 
 
 	myControllers->setActor(ai1, 0);
 

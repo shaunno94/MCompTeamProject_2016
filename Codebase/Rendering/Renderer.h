@@ -21,8 +21,24 @@ public:
 	{
 		return s_renderer;
 	}
-	void SetCurrentScene(Scene* s);
 
+	void Renderer::SetCurrentScene(Scene* s)
+	{
+		currentScene = s;
+
+		if (Renderer::GetInstance()->GetCurrentScene()->getCubeMapDir())
+		{
+
+			skyBoxTex = SOIL_load_OGL_cubemap(
+				child->GetCurrentScene()->getCubeMapDir()[0],
+				child->GetCurrentScene()->getCubeMapDir()[1],
+				child->GetCurrentScene()->getCubeMapDir()[2],
+				child->GetCurrentScene()->getCubeMapDir()[3],
+				child->GetCurrentScene()->getCubeMapDir()[4],
+				child->GetCurrentScene()->getCubeMapDir()[5],
+				SOIL_LOAD_RGB, SOIL_CREATE_NEW_ID, 0);
+		}
+	}
 	Scene* GetCurrentScene()
 	{
 		return currentScene;
