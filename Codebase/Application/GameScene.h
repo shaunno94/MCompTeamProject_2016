@@ -8,6 +8,7 @@
 #include "Stadium.h"
 #include "Rendering\DebugDraw.h"
 #include "Rendering\GUISystem.h"
+#include "Rendering\WheelObject.h"
 
 #ifndef ORBIS
 #include "Rendering\KeyboardController.h"
@@ -26,6 +27,37 @@ const string POINTLIGHTSHADER_FRAG = SHADER_DIR"2dShadowLightfragment.sb";
 
 #endif
 
+struct GoalBallCollisionFilter : public btOverlapFilterCallback
+{
+
+public:
+
+	int m_ballID = 0;
+	int m_goal1ID = 0;
+	int m_goal2ID = 0;
+
+	virtual bool needBroadphaseCollision(btBroadphaseProxy* proxy0, btBroadphaseProxy* proxy1) const override
+	{
+		if ((proxy0->getUid() == m_ballID && proxy1->getUid() == m_goal1ID) ||
+			(proxy1->getUid() == m_ballID && proxy0->getUid() == m_goal1ID))
+		{
+			//TODO: Increment goals for team 1
+			int ifojwe = 8;
+
+			//TODO: Reset Scene
+		}
+		else if ((proxy0->getUid() == m_ballID && proxy1->getUid() == m_goal2ID) ||
+			(proxy1->getUid() == m_ballID && proxy0->getUid() == m_goal2ID))
+		{
+			//TODO: Increment goals for team 2
+			int ifojwe = 8;
+
+			//TODO: Reset Scene
+		}
+		return true;
+	}
+};
+
 
 class GameScene : public Scene
 {
@@ -37,5 +69,6 @@ public:
 
 protected:
 	ControllerManager* myControllers;
+	GoalBallCollisionFilter goalBallFilter;
 };
 

@@ -29,7 +29,7 @@ bool RigidPhysicsObject::CreatePhysicsBody(double mass, const Vec3Physics& posit
 		m_CollisionObject->setCollisionFlags(btCollisionObject::CF_NO_CONTACT_RESPONSE);
 
 	//Add the body to the physics environment
-	PhysicsEngineInstance::Instance()->addRigidBody(static_cast<btRigidBody*>(m_CollisionObject));
+	PhysicsEngineInstance::Instance()->addRigidBody(static_cast<btRigidBody*>(m_CollisionObject),0,0);
 	return true;
 }
 

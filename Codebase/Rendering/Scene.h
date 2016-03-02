@@ -24,11 +24,13 @@ public:
 	GameObject* getTransparentObject(unsigned int i){ return transparentObjects[i]; }
 
 	GameObject* getLightObject(unsigned int i){ return lightObjects[i]; }
+	GameObject* getGhostObject(unsigned int i){ return ghostObjects[i]; }
 
 	unsigned int getNumTransparentObjects() { return transparentObjects.size(); }
 	unsigned int getNumOpaqueObjects() { return opaqueObjects.size(); }
 	unsigned int getNumLightObjects() { return lightObjects.size(); }
 	const char** getCubeMapDir()	{ return cubemapDir; }
+	unsigned int getNumGhostObjects() { return ghostObjects.size(); }
 
 	Camera* getCamera(){ return cam; }
 
@@ -56,6 +58,7 @@ private:
 	std::vector<GameObject*> transparentObjects;
 	std::vector<GameObject*> opaqueObjects;
 	std::vector<GameObject*> lightObjects;
+	std::vector<GameObject*> ghostObjects;
 	Camera* cam;
 	const char** cubemapDir;
 };

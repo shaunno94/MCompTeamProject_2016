@@ -1,5 +1,6 @@
 #include "Stadium.h"
 #include <vector>
+#include "Rendering\Renderer.h"
 
 Stadium::Stadium(Material* material, Material* wallMaterial, const std::string& name /*= ""*/) :
 GameObject(name),
@@ -14,8 +15,8 @@ m_wallMaterial(wallMaterial)
 	this->SetPhysicsComponent(floorPhysics);
 	this->GetPhysicsComponent()->GetPhysicsBody()->setRestitution(0.5);
 	this->SetLocalTransform(Mat4Graphics::Translation(Vec3Graphics(6.8, -28.5, 2)) * Mat4Graphics::RotationX(-0.7f) * Mat4Graphics::RotationY(30.5f));
-	this->GetPhysicsComponent()->GetPhysicsBody()->setFriction(0.5);
-	this->GetPhysicsComponent()->GetPhysicsBody()->setHitFraction(0.5);
+	this->GetPhysicsComponent()->GetPhysicsBody()->setFriction(0.7);
+	this->GetPhysicsComponent()->GetPhysicsBody()->setHitFraction(0.7);
 
 	m_netTexture = Texture::Get(TEXTURE_DIR"link2.png");
 	m_netTexture->SetTextureParams(TextureFlags::REPEATING | TextureFlags::ANISOTROPIC_FILTERING);
@@ -94,9 +95,8 @@ void Stadium::CreatePlane(std::vector<btConvexHullShape*> &collectionVector, Vec
 	GameObject* wall = new GameObject();
 	wall->SetRenderComponent(new RenderComponent(m_wallMaterial, mesh));
 	//wall->SetWorldTransform(Mat4Graphics::Translation(Vector3Simple(start.x, start.y, start.z)) * Mat4Graphics::Scale(difference));
+	wall->SetLocalTransform(Mat4Graphics::Inverse(Mat4Graphics::Translation(Vec3Graphics(6.8, -28.5, 2)) * Mat4Graphics::RotationX(-0.7f) * Mat4Graphics::RotationY(30.5f)));
 	this->AddChildObject(wall);
-
-
 
 	btConvexHullShape* newShape = new btConvexHullShape();
 
