@@ -31,17 +31,14 @@ void ControllerComponent::updateObject(float dt)
 	Vec3Physics orientation = (getOrientation() * Vec3Physics(-1, 0, 0)).Normalize();
 	btVector3 btOrientation(orientation.x, orientation.y, orientation.z);
 	btVector3 velocity = -m_parent->GetPhysicsComponent()->GetPhysicsBody()->getInterpolationLinearVelocity();
-
+	btScalar friction = 0.5;
 	if (velocity.length2() > 0.0000001)
 	{
-		btScalar friction = std::abs((4 * (velocity.normalize()).dot(btOrientation.normalize())));
-		friction = std::max(0.5f, friction);
-		m_parent->GetPhysicsComponent()->GetPhysicsBody()->setFriction(friction);
+		friction = std::abs((3 * (velocity.normalize()).dot(btOrientation.normalize())));
+	
+		friction = friction <= 0.5 ? 0.5 : friction;
 	}
-	else {
-		m_parent->GetPhysicsComponent()->GetPhysicsBody()->setFriction(0.5f);
-
-	}
+	m_parent->GetPhysicsComponent()->GetPhysicsBody()->setFriction(friction);
 }
 
 void ControllerComponent::AddForce(float x, float y, float z)
@@ -91,6 +88,6 @@ void ControllerComponent::reset()
 	//return Mat4Physics::Rotation(Renderer::GetInstance()->GetCurrentScene()->getCamera()->GetYaw() + 90, Vec3Physics(0, 1, 0));
 	auto world = m_parent->GetWorldTransform().GetTranslation();
 	//world.SetTranslation(Vec3Physics(0, 0, 0));
-	btTransform trasform = btTransform(btQuaternion(btVector3(0,0,-1), 0), btVector3(world.x, world.y, world.z));
-	m_parent->GetPhysicsComponent()->GetPhysicsBody()->setWorldTransform(trasform);
+	btTransform trasform = btTransform(btQuaternion(btVector3(0, 0, -1), 0), btVector3(world.x, world.y, world.z));
+		m_parent->GetPhysicsComponent()->GetPhysicsBody()->setWorldTransform(trasform);
 }

@@ -8,6 +8,7 @@
 #include "Stadium.h"
 #include "Rendering\GUISystem.h"
 #include "Rendering\ScoreboardGUIComponent.h"
+#include "Rendering\WheelObject.h"
 
 const float TIME_STEP = 1.0f / 120.0f;
 const unsigned int SUB_STEPS = 4;
@@ -135,7 +136,7 @@ int main(void)
 	shooterAIPhysics->GetPhysicsBody()->setFriction(0.5);
 	shooterAIPhysics->GetPhysicsBody()->setRollingFriction(0.5);
 	shooterAIPhysics->GetPhysicsBody()->setHitFraction(0.5);
-
+	
 	RigidPhysicsObject* goalieAIPhysics = new RigidPhysicsObject();
 	goalieAIPhysics->CreateCollisionShape(Vec3Physics(5.2, 2.0, 6.5), CUBOID);
 	goalieAIPhysics->CreatePhysicsBody(8.0, Vec3Physics(-230, 5, -30), QuatPhysics(0, -1, 0, 1), Vec3Physics(1, 1, 1));
@@ -152,7 +153,7 @@ int main(void)
 	ballPhysics->GetPhysicsBody()->setRollingFriction(0.5);
 	ballPhysics->GetPhysicsBody()->setHitFraction(0.5);
 	int ballID = ballPhysics->GetPhysicsBody()->getBroadphaseProxy()->getUid();
-
+	
 #ifndef ORBIS
 	BaseShader* simpleShader = new OGLShader(SIMPLESHADER_VERT, SIMPLESHADER_FRAG);
 	BaseShader* pointlightShader = new OGLShader(POINTLIGHTSHADER_VERT, POINTLIGHTSHADER_FRAG);
@@ -199,9 +200,34 @@ int main(void)
 	//myScene->addLightObject(light1);
 	myScene->addLightObject(light2);
 
-	player->SetRenderComponent(new RenderComponent(playerMaterial, ModelLoader::LoadMGL(MODEL_DIR"Car/car1.mgl", true)));
-	player->SetLocalTransform(Mat4Graphics::Scale(Vector3Simple(10, 10, 10)) * Mat4Graphics::Translation(Vector3Simple(0, -0.25f, 0)));
+	player->SetRenderComponent(new RenderComponent(playerMaterial, ModelLoader::LoadMGL(MODEL_DIR"Car/car_base.mgl", true)));
+	player->SetLocalTransform(Mat4Graphics::Translation(Vec3Graphics(0, -2.5, 0)) * Mat4Graphics::Scale(Vector3Simple(10, 10, 10)));
 	player->SetPhysicsComponent(playerPhysics);
+
+	WheelObject* wheel = new WheelObject("fl");
+	wheel->SetRenderComponent(new RenderComponent(playerMaterial, ModelLoader::LoadMGL(MODEL_DIR"Car/wheel.mgl", true)));
+	wheel->SetLocalTransform(Mat4Graphics::Translation(Vec3Graphics(-0.45, 0.17, -0.45))) /*Mat4Graphics::Scale(Vector3Simple(10, 10, 10)))*/;
+	player->AddChildObject(wheel);
+
+	wheel = new WheelObject("bl");
+	wheel->SetRenderComponent(new RenderComponent(playerMaterial, ModelLoader::LoadMGL(MODEL_DIR"Car/wheel.mgl", true)));
+	wheel->SetLocalTransform(Mat4Graphics::Translation(Vec3Graphics(-0.45, 0.17, 0.45))) /*Mat4Graphics::Scale(Vector3Simple(10, 10, 10)))*/;
+	player->AddChildObject(wheel);
+
+	wheel = new WheelObject("fr");
+	wheel->SetRenderComponent(new RenderComponent(playerMaterial, ModelLoader::LoadMGL(MODEL_DIR"Car/wheel.mgl", true)));
+	wheel->SetLocalTransform(Mat4Graphics::Translation(Vec3Graphics(0.45, 0.17, -0.45))* Mat4Graphics::Scale(Vector3Simple(-1, -1, -1))) /*Mat4Graphics::Scale(Vector3Simple(10, 10, 10)))*/;
+	player->AddChildObject(wheel);
+
+	wheel = new WheelObject("br");
+	wheel->SetRenderComponent(new RenderComponent(playerMaterial, ModelLoader::LoadMGL(MODEL_DIR"Car/wheel.mgl", true)));
+	wheel->SetLocalTransform(Mat4Graphics::Translation(Vec3Graphics(0.45, 0.17, 0.45))* Mat4Graphics::Scale(Vector3Simple(-1, -1, -1))) /*Mat4Graphics::Scale(Vector3Simple(10, 10, 10)))*/;
+	player->AddChildObject(wheel);
+	/*wheel_fl->SetPhysicsComponent(wheelPhysics);
+	wheel_fl->GetPhysicsComponent()->GetPhysicsBody()->setRestitution(btScalar(0.9));
+	wheel_fl->GetPhysicsComponent()->GetPhysicsBody()->setFriction(0.5);
+	wheel_fl->GetPhysicsComponent()->GetPhysicsBody()->setRollingFriction(0.5);
+	wheel_fl->GetPhysicsComponent()->GetPhysicsBody()->setHitFraction(0.5);*/
 
 	ball->SetRenderComponent(new RenderComponent(ballMaterial, ModelLoader::LoadMGL(MODEL_DIR"Common/sphere.mgl", true)));
 	ball->SetLocalTransform(Mat4Graphics::Scale(Vector3Simple(7, 7, 7)));
