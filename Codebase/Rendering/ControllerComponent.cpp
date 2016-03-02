@@ -61,6 +61,15 @@ Mat4Physics ControllerComponent::getOrientation()
 	return m_parent->GetWorldTransform().GetRotation();
 }
 
+float ControllerComponent::getForwardVelocity()
+{
+	auto btvelocity = m_parent->GetPhysicsComponent()->GetPhysicsBody()->getInterpolationLinearVelocity();
+	Vec3Physics velocity(btvelocity.x(), btvelocity.y(), btvelocity.z());
+	auto forward = m_parent->GetWorldTransform().GetRotation() * Vec3Physics(0, 0, -1);
+	forward.Normalize();
+	return velocity.Dot(forward);
+}
+
 void ControllerComponent::setCameraControl(float pitch, float yaw)
 {
 	dPitch += pitch;

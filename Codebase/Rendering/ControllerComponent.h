@@ -15,6 +15,7 @@ public:
 	void getCameraControl(float& pitch, float& yaw);
 
 	Mat4Physics getOrientation();
+	float getForwardVelocity();
 	void reset();
 protected:
 	GameObject* m_parent;
