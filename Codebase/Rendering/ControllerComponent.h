@@ -10,11 +10,13 @@ public:
 	virtual void updateObject(float dt);
 	virtual void AddForce(float x, float y, float z);
 	virtual void AddTorque(float x, float y, float z);
+	void turnWheels(float prop);
 
 	void setCameraControl(float pitch, float yaw);
 	void getCameraControl(float& pitch, float& yaw);
 
 	Mat4Physics getOrientation();
+	float getForwardVelocity();
 	void reset();
 protected:
 	GameObject* m_parent;

@@ -74,7 +74,7 @@ public:
 	}
 
 	//Set local transform for object.
-	void SetLocalTransform(const Mat4Graphics& transform)
+	virtual void SetLocalTransform(const Mat4Graphics& transform)
 	{
 		m_LocalTransform = transform;
 	}

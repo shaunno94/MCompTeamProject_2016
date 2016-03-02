@@ -147,6 +147,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="CarGameObject.cpp" />
     <ClCompile Include="Source.cpp" />
     <ClCompile Include="Stadium.cpp" />
   </ItemGroup>
@@ -194,6 +195,7 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="CarGameObject.h" />
     <ClInclude Include="Stadium.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

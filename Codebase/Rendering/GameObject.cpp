@@ -32,7 +32,7 @@ GameObject::~GameObject()
 	{
 		delete m_Controller;
 		m_Controller = nullptr;
-	}
+}
 	if (m_Audio)
 	{
 		delete m_Audio;
@@ -82,12 +82,13 @@ void GameObject::OnRenderObject()
 
 void GameObject::OnUpdateObject(float dt)
 {
+	if (m_Controller)
+		m_Controller->updateObject(dt);
+	UpdateTransform();
 	for (auto child : m_Children)
 	{
 		child->OnUpdateObject(dt);
 	}
-	if (m_Controller)
-		m_Controller->updateObject(dt);
 	if (m_Audio)
 		m_Audio->Update();
 
@@ -97,7 +98,8 @@ void GameObject::OnUpdateObject(float dt)
 void GameObject::UpdateTransform()
 {
 	if (!m_PhysicsObj)
-		return;
+		m_WorldTransform = m_LocalTransform;
+	else{
 
 	//Bullet physics native containers: matrix, vec3, quaternion
 	btTransform trans;
@@ -119,7 +121,7 @@ void GameObject::UpdateTransform()
 	
 	//Update model matrix 
 	m_WorldTransform = Mat4Graphics::Translation(p) * r.ToMatrix4() * m_LocalTransform;
-
+	}
 	if (m_Parent)
-		m_WorldTransform = m_Parent->m_WorldTransform * m_WorldTransform;
+		m_WorldTransform =  m_Parent->m_WorldTransform*m_WorldTransform ;
 }
