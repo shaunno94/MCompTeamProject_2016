@@ -4,7 +4,7 @@
 *  @{
 */
 
-//template<typename T>
+template<typename T>
 /// <summary>
 /// Linear interpolation.
 /// </summary>
@@ -12,10 +12,10 @@
 /// <param name="end">End value.</param>
 /// <param name="progress">Weighting from 0 to 1 for interpolation.</param>
 /// <returns>Interpolated value.</returns>
-//static inline float Lerp(const T& start, const T& end, float progress)
-//{
-//	return (end - start) * progress + start ;
-//};
+static inline float Lerp(const T& start, const T& end, float progress)
+{
+	return (end - start) * progress + start ;
+};
 
 template<typename T>
 /// <summary>

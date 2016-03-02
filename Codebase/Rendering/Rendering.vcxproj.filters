@@ -123,6 +123,21 @@
     <ClInclude Include="PhysicsObject.h">
       <Filter>Header Files\Physics</Filter>
     </ClInclude>
+    <ClInclude Include="CubeEmitter.h">
+      <Filter>Header Files\Particle System</Filter>
+    </ClInclude>
+    <ClInclude Include="Particle.h">
+      <Filter>Header Files\Particle System</Filter>
+    </ClInclude>
+    <ClInclude Include="ParticleEmitter.h">
+      <Filter>Header Files\Particle System</Filter>
+    </ClInclude>
+    <ClInclude Include="ParticleManager.h">
+      <Filter>Header Files\Particle System</Filter>
+    </ClInclude>
+    <ClInclude Include="ParticleSystem.h">
+      <Filter>Header Files\Particle System</Filter>
+    </ClInclude>
     <ClInclude Include="RigidPhysicsObject.h">
       <Filter>Header Files\Physics</Filter>
     </ClInclude>
@@ -259,6 +274,15 @@
     </ClCompile>
     <ClCompile Include="DebugDraw.cpp">
       <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="CubeEmitter.cpp">
+      <Filter>Source Files\Particle System</Filter>
+    </ClCompile>
+    <ClCompile Include="ParticleSystem.cpp">
+      <Filter>Source Files\Particle System</Filter>
+    </ClCompile>
+    <ClCompile Include="ParticleManager.cpp">
+      <Filter>Source Files\Particle System</Filter>
     </ClCompile>
     <ClCompile Include="PhysicsObject.cpp">
       <Filter>Source Files\Physics</Filter>
