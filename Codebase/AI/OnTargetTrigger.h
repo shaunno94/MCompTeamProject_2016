@@ -10,11 +10,12 @@ public:
 	OnTargetTrigger();
 	~OnTargetTrigger();
 
-	virtual void setupTrigger(GameObject& parent, GameObject& ball, GameObject& goal);
+	virtual void setupTrigger(GameObject& parent, GameObject& ball, GameObject& goal, float targetAccuracy);
 	virtual bool HasTriggered();
 
 protected:
 	GameObject* m_ball;
 	GameObject* m_goal;
+	float m_targetAccuracy;
 };
 

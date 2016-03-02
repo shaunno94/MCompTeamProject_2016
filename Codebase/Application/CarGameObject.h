@@ -1,6 +1,7 @@
 #pragma once
 #include "Rendering\GameObject.h"
 #include "Rendering\ModelLoader.h"
+#include "Rendering\WheelObject.h"
 
 class CarGameObject :
 	public GameObject

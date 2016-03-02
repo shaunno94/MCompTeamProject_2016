@@ -6,6 +6,7 @@
 #include "Rendering\GameTimer.h"
 #include "Rendering\LocalControlManager.h"
 #include "Stadium.h"
+#include "CarGameObject.h"
 #include "Rendering\GUISystem.h"
 #include "Rendering\ScoreboardGUIComponent.h"
 #include "Rendering\WheelObject.h"
@@ -37,6 +38,7 @@ size_t sceLibcHeapSize = 512 * 1024 * 1024;			/* Set up heap area upper limit as
 //int sceUserMainThreadPriority = SCE_KERNEL_DEFAULT_PRIORITY_USER;
 #endif
 
+
 struct GoalBallCollisionFilter : public btOverlapFilterCallback
 {
 
@@ -46,26 +48,36 @@ public:
 	int m_goal1ID = 0;
 	int m_goal2ID = 0;
 
-	virtual bool needBroadphaseCollision(btBroadphaseProxy* proxy0, btBroadphaseProxy* proxy1) const override
+	bool CheckIfGoal(btBroadphaseProxy* proxy0, btBroadphaseProxy* proxy1) const
 	{
 		if ((proxy0->getUid() == m_ballID && proxy1->getUid() == m_goal1ID) ||
-		    (proxy1->getUid() == m_ballID && proxy0->getUid() == m_goal1ID))
+			(proxy1->getUid() == m_ballID && proxy0->getUid() == m_goal1ID))
 		{
 			//TODO: Increment goals for team 1
 			int ifojwe = 8;
-
 			//TODO: Reset Scene
 		}
-		else if((proxy0->getUid() == m_ballID && proxy1->getUid() == m_goal2ID) ||
+		else if ((proxy0->getUid() == m_ballID && proxy1->getUid() == m_goal2ID) ||
 			(proxy1->getUid() == m_ballID && proxy0->getUid() == m_goal2ID))
 		{
 			//TODO: Increment goals for team 2
 			int ifojwe = 8;
-
 			//TODO: Reset Scene
 		}
 		return true;
 	}
+
+	virtual bool needBroadphaseCollision(btBroadphaseProxy* proxy0, btBroadphaseProxy* proxy1) const override
+	{
+		if (proxy0->m_collisionFilterMask == COL_GOAL
+			|| proxy1->m_collisionFilterMask == COL_GOAL)
+		{
+			return CheckIfGoal(proxy0, proxy1);
+		}
+		return true;
+	}
+
+
 };
 
 int main(void)
@@ -76,7 +88,7 @@ int main(void)
 
 	//Initialise Renderer - including the window context if compiling for Windows - PC
 	Renderer renderer("Team Project - 2016", SCREEN_WIDTH, SCREEN_HEIGHT, false);
-	if (!renderer.HasInitialised()) 
+	if (!renderer.HasInitialised())
 	{
 		return -1;
 	}
@@ -85,7 +97,7 @@ int main(void)
 	PS4Input input = PS4Input();
 #endif
 
-	GUISystem::Initialise();	
+	GUISystem::Initialise();
 	if (!GUISystem::GetInstance().HasInitialised())
 	{
 		return -1;
@@ -110,50 +122,27 @@ int main(void)
 	ControllerManager* myControllers = new LocalControlManager;
 
 	//Game objects added to scene are delete by the scene so don't delete twice.
-	GameObject* player = new GameObject("player");
 	GameObject* ball = new GameObject("ball");
 	GameObject* light1 = new GameObject("l");
 	GameObject* light2 = new GameObject("l");
 
-	GameObject* shooterAI = new GameObject("shooterAI");
-	GameObject* goalieAI = new GameObject("goalieAI");
 
-	//Physics objects hold collision shape and collision object(body), 
+	//Physics objects hold collision shape and collision object(body),
 	//call CreateCollisionShape before CreatePhysicsBody or the object will not be created correctly.
 	//Physics objects will be deleted by the game object.
-	RigidPhysicsObject* playerPhysics = new RigidPhysicsObject();
-	playerPhysics->CreateCollisionShape(Vec3Physics(5.2, 2.0, 6.5),CUBOID);
-	playerPhysics->CreatePhysicsBody(8.0, Vec3Physics(100, 5, 0), QuatPhysics(0, 1, 0, 1), Vec3Physics(1, 1, 1));
-	playerPhysics->GetPhysicsBody()->setRestitution(btScalar(0.9));
-	playerPhysics->GetPhysicsBody()->setFriction(0.5);
-	playerPhysics->GetPhysicsBody()->setRollingFriction(0.5);
-	playerPhysics->GetPhysicsBody()->setHitFraction(0.5);
-
-	RigidPhysicsObject* shooterAIPhysics = new RigidPhysicsObject();
-	shooterAIPhysics->CreateCollisionShape(Vec3Physics(5.2, 2.0, 6.5), CUBOID);
-	shooterAIPhysics->CreatePhysicsBody(8.0, Vec3Physics(-190, 5, 30), QuatPhysics(0, -1, 0, 1), Vec3Physics(1, 1, 1));
-	shooterAIPhysics->GetPhysicsBody()->setRestitution(btScalar(0.9));
-	shooterAIPhysics->GetPhysicsBody()->setFriction(0.5);
-	shooterAIPhysics->GetPhysicsBody()->setRollingFriction(0.5);
-	shooterAIPhysics->GetPhysicsBody()->setHitFraction(0.5);
-	
-	RigidPhysicsObject* goalieAIPhysics = new RigidPhysicsObject();
-	goalieAIPhysics->CreateCollisionShape(Vec3Physics(5.2, 2.0, 6.5), CUBOID);
-	goalieAIPhysics->CreatePhysicsBody(8.0, Vec3Physics(-230, 5, -30), QuatPhysics(0, -1, 0, 1), Vec3Physics(1, 1, 1));
-	goalieAIPhysics->GetPhysicsBody()->setRestitution(btScalar(0.9));
-	goalieAIPhysics->GetPhysicsBody()->setFriction(0.5);
-	goalieAIPhysics->GetPhysicsBody()->setRollingFriction(0.5);
-	goalieAIPhysics->GetPhysicsBody()->setHitFraction(0.5);
 
 	RigidPhysicsObject* ballPhysics = new RigidPhysicsObject();
 	ballPhysics->CreateCollisionShape(7.0);
 	ballPhysics->CreatePhysicsBody(1.0, Vec3Physics(0, 3, 0), QuatPhysics(0, 0, 0, 1), Vec3Physics(1, 1, 1));
+	ballPhysics->GetPhysicsBody()->getBroadphaseProxy()->m_collisionFilterMask = COL_BALL;
+	ballPhysics->GetPhysicsBody()->getBroadphaseProxy()->m_collisionFilterGroup = GROUP_WALL_BALL;
+#
 	ballPhysics->GetPhysicsBody()->setRestitution(btScalar(0.9));
 	ballPhysics->GetPhysicsBody()->setFriction(0.5);
 	ballPhysics->GetPhysicsBody()->setRollingFriction(0.5);
 	ballPhysics->GetPhysicsBody()->setHitFraction(0.5);
 	int ballID = ballPhysics->GetPhysicsBody()->getBroadphaseProxy()->getUid();
-	
+
 #ifndef ORBIS
 	BaseShader* simpleShader = new OGLShader(SIMPLESHADER_VERT, SIMPLESHADER_FRAG);
 	BaseShader* pointlightShader = new OGLShader(POINTLIGHTSHADER_VERT, POINTLIGHTSHADER_FRAG);
@@ -163,7 +152,7 @@ int main(void)
 	BaseShader* simpleShader = new PS4Shader(SIMPLESHADER_VERT, SIMPLESHADER_FRAG);
 	BaseShader* pointlightShader = new PS4Shader(POINTLIGHTSHADER_VERT, POINTLIGHTSHADER_FRAG);
 #endif
-	
+
 	if (!pointlightShader->IsOperational() || !simpleShader->IsOperational())
 		return -1;
 
@@ -193,63 +182,33 @@ int main(void)
 
 	renderer.SetCurrentScene(myScene);
 
+	GameObject* player = new CarGameObject(Vec3Physics(100, 5, 0), QuatPhysics(0, 1, 0, 1), playerMaterial, "player");
+	GameObject* shooterAI = new CarGameObject(Vec3Physics(-190, 5, 30), QuatPhysics(0, -1, 0, 1), aiMaterial, "shooterAI");
+	GameObject* goalieAI = new CarGameObject(Vec3Physics(-230, 5, -30), QuatPhysics(0, -1, 0, 1), ai2Material, "goalieAI");
+
+
 	// Create Stadium
-	GameObject* stadium = new Stadium(material, netMaterial, "stadium"); 
+	GameObject* stadium = new Stadium(material, netMaterial, "stadium");
 
 	myScene->addGameObject(stadium);
 	//myScene->addLightObject(light1);
 	myScene->addLightObject(light2);
 
-	player->SetRenderComponent(new RenderComponent(playerMaterial, ModelLoader::LoadMGL(MODEL_DIR"Car/car_base.mgl", true)));
-	player->SetLocalTransform(Mat4Graphics::Translation(Vec3Graphics(0, -2.5, 0)) * Mat4Graphics::Scale(Vector3Simple(10, 10, 10)));
-	player->SetPhysicsComponent(playerPhysics);
-
-	WheelObject* wheel = new WheelObject("fl");
-	wheel->SetRenderComponent(new RenderComponent(playerMaterial, ModelLoader::LoadMGL(MODEL_DIR"Car/wheel.mgl", true)));
-	wheel->SetLocalTransform(Mat4Graphics::Translation(Vec3Graphics(-0.45, 0.17, -0.45))) /*Mat4Graphics::Scale(Vector3Simple(10, 10, 10)))*/;
-	player->AddChildObject(wheel);
-
-	wheel = new WheelObject("bl");
-	wheel->SetRenderComponent(new RenderComponent(playerMaterial, ModelLoader::LoadMGL(MODEL_DIR"Car/wheel.mgl", true)));
-	wheel->SetLocalTransform(Mat4Graphics::Translation(Vec3Graphics(-0.45, 0.17, 0.45))) /*Mat4Graphics::Scale(Vector3Simple(10, 10, 10)))*/;
-	player->AddChildObject(wheel);
-
-	wheel = new WheelObject("fr");
-	wheel->SetRenderComponent(new RenderComponent(playerMaterial, ModelLoader::LoadMGL(MODEL_DIR"Car/wheel.mgl", true)));
-	wheel->SetLocalTransform(Mat4Graphics::Translation(Vec3Graphics(0.45, 0.17, -0.45))* Mat4Graphics::Scale(Vector3Simple(-1, -1, -1))) /*Mat4Graphics::Scale(Vector3Simple(10, 10, 10)))*/;
-	player->AddChildObject(wheel);
-
-	wheel = new WheelObject("br");
-	wheel->SetRenderComponent(new RenderComponent(playerMaterial, ModelLoader::LoadMGL(MODEL_DIR"Car/wheel.mgl", true)));
-	wheel->SetLocalTransform(Mat4Graphics::Translation(Vec3Graphics(0.45, 0.17, 0.45))* Mat4Graphics::Scale(Vector3Simple(-1, -1, -1))) /*Mat4Graphics::Scale(Vector3Simple(10, 10, 10)))*/;
-	player->AddChildObject(wheel);
-	/*wheel_fl->SetPhysicsComponent(wheelPhysics);
-	wheel_fl->GetPhysicsComponent()->GetPhysicsBody()->setRestitution(btScalar(0.9));
-	wheel_fl->GetPhysicsComponent()->GetPhysicsBody()->setFriction(0.5);
-	wheel_fl->GetPhysicsComponent()->GetPhysicsBody()->setRollingFriction(0.5);
-	wheel_fl->GetPhysicsComponent()->GetPhysicsBody()->setHitFraction(0.5);*/
-
 	ball->SetRenderComponent(new RenderComponent(ballMaterial, ModelLoader::LoadMGL(MODEL_DIR"Common/sphere.mgl", true)));
 	ball->SetLocalTransform(Mat4Graphics::Scale(Vector3Simple(7, 7, 7)));
 	ball->SetPhysicsComponent(ballPhysics);
-
-	shooterAI->SetRenderComponent(new RenderComponent(aiMaterial, ModelLoader::LoadMGL(MODEL_DIR"Car/car1.mgl", true)));
-	shooterAI->SetLocalTransform(Mat4Graphics::Scale(Vector3Simple(10, 10, 10))* Mat4Graphics::Translation(Vector3Simple(0, -0.25f, 0)));
-	shooterAI->SetPhysicsComponent(shooterAIPhysics);
-
-	goalieAI->SetRenderComponent(new RenderComponent(ai2Material, ModelLoader::LoadMGL(MODEL_DIR"Car/car1.mgl", true)));
-	goalieAI->SetLocalTransform(Mat4Graphics::Scale(Vector3Simple(10, 10, 10))* Mat4Graphics::Translation(Vector3Simple(0, -0.25f, 0)));
-	goalieAI->SetPhysicsComponent(goalieAIPhysics);
 
 	RigidPhysicsObject* goalBox = new RigidPhysicsObject();
 	goalBox->CreateCollisionShape(Vec3Physics(7.0, 15.0, 29.0), CUBOID);
 	goalBox->CreatePhysicsBody(0.0, Vec3Physics(268, 17, 0), QuatPhysics(0, 0, 0, 1), Vec3Physics(1, 1, 1), true);
 	int goal1ID = goalBox->GetPhysicsBody()->getBroadphaseProxy()->getUid();
+	goalBox->GetPhysicsBody()->getBroadphaseProxy()->m_collisionFilterMask = COL_GOAL;
 
 	RigidPhysicsObject* goalBox2 = new RigidPhysicsObject();
 	goalBox2->CreateCollisionShape(Vec3Physics(7.0, 15.0, 29.0), CUBOID);
 	goalBox2->CreatePhysicsBody(0.0, Vec3Physics(-268, 17, 0), QuatPhysics(0, 0, 0, 1), Vec3Physics(1, 1, 1), true);
 	int goal2ID = goalBox2->GetPhysicsBody()->getBroadphaseProxy()->getUid();
+	goalBox2->GetPhysicsBody()->getBroadphaseProxy()->m_collisionFilterMask = COL_GOAL;
 
 	GameObject* goal1 = new GameObject("goal1");
 	goal1->SetPhysicsComponent(goalBox);

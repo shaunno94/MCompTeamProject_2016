@@ -5,21 +5,7 @@
 #include "AI\ShootState.h"
 #include "AI\OnTargetTrigger.h"
 #include "AI\GuardGoalState.h"
-
-enum AITypes
-{
-	SHOOTER = 0,
-	GOALKEEPER = 1,
-	AGGRESSIVE = 2
-};
-
-enum AIStates
-{
-	POSITION,
-	SHOOT,
-	GUARD_GOAL,
-	ADVANCE
-};
+#include "AI\ClearGoalState.h"
 
 AIControllerComponent::AIControllerComponent(GameObject* parent, unsigned int type) :
 ControllerComponent(parent)
@@ -45,7 +31,7 @@ ControllerComponent(parent)
 
 		// Create Triggers
 		OnTargetTrigger* positionToShootOnTarget = new OnTargetTrigger();
-		positionToShootOnTarget->setupTrigger(*m_parent, *ball, *targetGoal);
+		positionToShootOnTarget->setupTrigger(*m_parent, *ball, *targetGoal, 0.7f);
 		position->AddTrigger(positionToShootOnTarget, SHOOT);
 
 		DistanceTrigger* shootToPosition = new DistanceTrigger();
@@ -64,6 +50,13 @@ ControllerComponent(parent)
 		m_StateMachine->AddState(GUARD_GOAL, guard);
 
 		m_StateMachine->ChangeState(GUARD_GOAL);
+
+		ClearGoalState* clearGoal = new ClearGoalState(*m_StateMachine, *m_parent, *ball, *teamGoal);
+		m_StateMachine->AddState(CLEAR_GOAL, clearGoal);
+
+		OnTargetTrigger* guardToClear = new OnTargetTrigger();
+		guardToClear->setupTrigger(*m_parent, *ball, *targetGoal, 0.3f);
+		guard->AddTrigger(guardToClear, CLEAR_GOAL);
 
 	}
 		break;

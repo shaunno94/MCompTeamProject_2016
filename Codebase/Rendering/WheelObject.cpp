@@ -1,7 +1,8 @@
 #include "WheelObject.h"
 
 
-WheelObject::WheelObject(const std::string& name)
+WheelObject::WheelObject(const std::string& name) :
+GameObject(name)
 {
 }
 

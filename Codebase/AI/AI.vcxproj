@@ -167,6 +167,7 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="ClearGoalState.cpp" />
     <ClCompile Include="DistanceTrigger.cpp" />
     <ClCompile Include="GuardGoalState.cpp" />
     <ClCompile Include="OnTargetTrigger.cpp" />
@@ -177,6 +178,7 @@
     <ClCompile Include="Trigger.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="ClearGoalState.h" />
     <ClInclude Include="DistanceTrigger.h" />
     <ClInclude Include="GuardGoalState.h" />
     <ClInclude Include="OnTargetTrigger.h" />
