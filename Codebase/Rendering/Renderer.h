@@ -22,7 +22,7 @@ public:
 		return s_renderer;
 	}
 
-	void Renderer::SetCurrentScene(Scene* s)
+	void SetCurrentScene(Scene* s)
 	{
 		currentScene = s;
 	}

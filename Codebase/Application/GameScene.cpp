@@ -75,7 +75,7 @@ GameScene::GameScene(ControllerManager* controller)
 	Material* material = new Material(simpleShader);
 	Material* ballMaterial = new Material(simpleShader);
 	Material* netMaterial = new Material(simpleShader, true);
-	Material* guiMaterial = new Material(orthoShader);
+	//Material* guiMaterial = new Material(orthoShader);
 
 	ballMaterial->Set(ReservedMeshTextures.DIFFUSE.name, Texture::Get(TEXTURE_DIR"checkerboard.tga", true));
 	Material* playerMaterial = new Material(simpleShader);
@@ -126,7 +126,7 @@ GameScene::GameScene(ControllerManager* controller)
 #ifndef ORBIS
 	myControllers->setProducer(player);
 #else
-	myScene->setPlayerController(new PS4Controller(cc));
+	myControllers->setProducer(player);
 #endif
 
 	////Define Orthographic Component
