@@ -472,6 +472,14 @@ bool OGLRenderer::initFBO()
 	up[5] = Vec3Graphics(0, 1, 0);
 
 	//skybox setup
+	skyBoxTex = SOIL_load_OGL_cubemap(
+		TEXTURE_DIR"grouse_posx.jpg",
+		TEXTURE_DIR"grouse_negx.jpg",
+		TEXTURE_DIR"grouse_posy.jpg",
+		TEXTURE_DIR"grouse_negy.jpg",
+		TEXTURE_DIR"grouse_posz.jpg",
+		TEXTURE_DIR"grouse_negz.jpg",
+		SOIL_LOAD_RGB, SOIL_CREATE_NEW_ID, 0);
 
 	skyQuad = new GameObject();
 	skyQuad->SetRenderComponent(new RenderComponent(new CubeMaterial(new OGLShader(SHADER_DIR"skyboxVertex.glsl", SHADER_DIR"skyboxfragment.glsl")), OGLMesh::GenerateQuad()));
