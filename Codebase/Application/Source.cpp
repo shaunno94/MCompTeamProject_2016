@@ -169,21 +169,11 @@ int main(void) {
 	myScene->addGameObject(ai1);
 
 	//-------- SOUND
-	enum SoundNames {
-		GUN,
-		WALK,
-		SONG
-	};
-
-	//load in a wav file into manager
-	SoundManager::AddSound(AUDIO_DIR"14615__man__canon.wav", GUN);
-	SoundManager::AddSound(AUDIO_DIR"41579__erdie__steps-on-stone01.wav", WALK);
-	SoundManager::AddSound(AUDIO_DIR"139320__votives__arpegthing.wav", SONG);
+	// load in files
+	SoundManager::LoadAssets();
 
 	//load ogg file (EXPERIMENTAL STREAMING)
 	//SoundManager::AddSound(AUDIO_DIR"139320__votives__arpegthing.ogg", "song");
-
-	
 
 	//maybe get a handle fro the loaded sounds
 	Sound* gun = SoundManager::GetSound(GUN);
@@ -191,29 +181,26 @@ int main(void) {
 	//create new sound entity and attach the sound to it
 	SoundEmitter* emitSong = new SoundEmitter(SoundManager::GetSound(SONG));
 	emitSong->SetIsGlobal(true);
-	emitSong->SetVolume(0.15f);
+	emitSong->SetVolume(0.75f);
 	emitSong->SetPriority(SOUNDPRIORITY_ALWAYS);
-
-	//Add 3D sound
-	SoundEmitter* emitWalk = new SoundEmitter(SoundManager::GetSound(WALK));
-	emitWalk->SetRadius(150.0f);
 
 	//add sounds to engine
 	SoundSystem::Instance()->AddSoundEmitter(emitSong);
-	SoundSystem::Instance()->AddSoundEmitter(emitWalk);
 
 	//modify sound values
 	SoundMOD mod = SoundMOD();
 	mod.isGlobal = true;
 	mod.looping = false;
 	mod.volume = 0.25f;
+
+	// create audio components
+	player->SetAudioComponent(new AudioCompCar(true));
+	ai1->SetAudioComponent(new AudioCompCar(false));
 	//-------- SOUND
 
 	renderer.SetCurrentScene(myScene);
 
 	myControllers->setActor(ai1, 0);
-
-
 
 
 #ifndef ORBIS
@@ -232,13 +219,6 @@ int main(void) {
 
 		//-------- SOUND
 		// just play a sound
-		if (Window::GetKeyboard()->KeyTriggered(KEYBOARD_L)){
-			mod.pitch = 1.0f;
-
-			SoundSystem::Instance()->Play(gun, mod);
-		}
-
-		// same sound but higher pitch
 		if (Window::GetKeyboard()->KeyTriggered(KEYBOARD_K)){
 			mod.pitch = 1.75f;
 
@@ -247,7 +227,7 @@ int main(void) {
 
 		// TODO: SHOULD BE WORLD TRANSFORM! using view as temp
 		// (sound panning a bit off)
-		SoundSystem::Instance()->SetListenerMatrix(ball->GetWorldTransform());
+		SoundSystem::Instance()->SetListenerMatrix(player->GetWorldTransform());
 		SoundSystem::Instance()->Update(ms);
 		//-------- SOUND
 

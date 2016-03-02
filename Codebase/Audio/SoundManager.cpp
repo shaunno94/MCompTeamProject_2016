@@ -1,5 +1,5 @@
 #include "SoundManager.h"
-
+#include "Rendering/constants.h"
 
 std::map<unsigned int, Sound*> SoundManager::soundAssets;
 
@@ -43,4 +43,13 @@ void SoundManager::DeleteSounds()
 	{
 		delete i->second;
 	}
+}
+
+void SoundManager::LoadAssets()
+{
+	AddSound(AUDIO_DIR"misc/bang.wav", GUN);
+	AddSound(AUDIO_DIR"misc/bang.wav", WALK);
+	AddSound(AUDIO_DIR"music/votives.wav", SONG);
+	AddSound(AUDIO_DIR"car/engine_idle.wav", ENGINE_IDLE);
+	AddSound(AUDIO_DIR"car/engine_rev.wav", ENGINE_REV);
 }

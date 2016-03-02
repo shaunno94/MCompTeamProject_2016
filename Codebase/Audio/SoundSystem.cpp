@@ -122,8 +122,6 @@ void	SoundSystem::CullNodes() {
 	}
 
 	totalEmitters = tempEMT;
-	std::cout << "SIZE:: " << totalEmitters.size() << std::endl;
-
 }
 
 void SoundSystem::AttachSources(int numSources) {

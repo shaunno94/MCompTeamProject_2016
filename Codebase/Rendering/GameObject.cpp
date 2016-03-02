@@ -6,6 +6,9 @@ GameObject::GameObject(const std::string& name)
 	m_Name = name;
 	m_PhysicsObj = nullptr;
 	m_RenderComponent = nullptr;
+
+	m_Audio = nullptr;
+
 	m_BoundingRadius = 1.0f;
 	m_CamDist = 0.0f;
 
@@ -20,14 +23,21 @@ GameObject::~GameObject()
 		delete m_PhysicsObj;
 		m_PhysicsObj = nullptr;
 	}
-	if (m_RenderComponent) {
+	if (m_RenderComponent) 
+	{
 		delete m_RenderComponent;
 		m_RenderComponent = nullptr;
 	}
-	if (m_Controller) {
+	if (m_Controller)
+	{
 		delete m_Controller;
 		m_Controller = nullptr;
-}
+	}
+	if (m_Audio)
+	{
+		delete m_Audio;
+		m_Audio = nullptr;
+	}
 }
 
 GameObject*	GameObject::FindGameObject(const std::string& name)
@@ -59,7 +69,6 @@ void GameObject::AddChildObject(GameObject* child)
 	child->m_Parent = this;
 }
 
-
 //TODO:: Parent-child relationship needs to be undone for sorted drawing!!
 void GameObject::OnRenderObject()				
 {
@@ -79,6 +88,8 @@ void GameObject::OnUpdateObject(float dt)
 	}
 	if (m_Controller)
 		m_Controller->updateObject(dt);
+	if (m_Audio)
+		m_Audio->Update();
 
 	UpdateTransform();
 }
