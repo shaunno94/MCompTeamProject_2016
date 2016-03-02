@@ -270,7 +270,7 @@ int main(void)
 
 	// create audio components
 	player->SetAudioComponent(new AudioCompCarLitener(true));
-	ai1->SetAudioComponent(new AudioCompCar(false));
+	shooterAI->SetAudioComponent(new AudioCompCar(false));
 	//-------- SOUND
 
 	renderer.SetCurrentScene(myScene);
