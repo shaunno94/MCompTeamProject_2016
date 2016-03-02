@@ -18,8 +18,7 @@ void KeyboardController::CheckInput(){
 	float accel = 7;
 	Mat4Physics orientation = object->getOrientation();
 
-	auto forward = orientation * Vec3Physics(0, 0, -1);
-	forward.Normalize();
+	auto forward = object->getForwardVelocity();
 
 	if (Window::GetKeyboard()->KeyDown(KEYBOARD_UP) || Window::GetKeyboard()->KeyDown(KEYBOARD_W))
 	{
@@ -31,16 +30,23 @@ void KeyboardController::CheckInput(){
 	}
 	if (Window::GetKeyboard()->KeyDown(KEYBOARD_RIGHT) || Window::GetKeyboard()->KeyDown(KEYBOARD_D))
 	{
-		torque += (Vec3Physics(0,-3, 0));
+		torque += (Vec3Physics(0, -3, 0));
+		object->turnWheels(1);
 		//force += (orientation * Vec3Physics(0, 0, accel));
 	}
+	else
 	if (Window::GetKeyboard()->KeyDown(KEYBOARD_LEFT) || Window::GetKeyboard()->KeyDown(KEYBOARD_A))
 	{
 		torque += (Vec3Physics(0, 3, 0));
+		object->turnWheels(-1);
 		//force += (orientation * Vec3Physics(0, 0, -accel));
 	}
+	else
+		object->turnWheels(0);
 
-	//if (forward)
+	if (forward < 0){
+		torque = -torque;
+	}
 
 	if (Window::GetKeyboard()->KeyTriggered(KEYBOARD_SPACE))
 	{
@@ -50,13 +56,14 @@ void KeyboardController::CheckInput(){
 	object->AddForce(force.x, force.y, force.z);
 	object->AddTorque(torque.x, torque.y, torque.z);
 
-	float pitch = (Window::GetMouse()->GetRelativePosition().y);
-	float yaw = (Window::GetMouse()->GetRelativePosition().x);
-	object->setCameraControl(pitch, yaw);
-
 	if (Window::GetKeyboard()->KeyTriggered(KEYBOARD_R))
 	{
 		object->reset();
 	}
+
+	//------camera control-------//
+	float pitch = (Window::GetMouse()->GetRelativePosition().y);
+	float yaw = (Window::GetMouse()->GetRelativePosition().x);
+	object->setCameraControl(pitch, yaw);
 }
 #endif

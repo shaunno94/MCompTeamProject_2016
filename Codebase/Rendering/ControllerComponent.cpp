@@ -1,5 +1,6 @@
 #include "ControllerComponent.h"
 #include "GameObject.h"
+#include "WheelObject.h"
 #include "Renderer.h"
 #include <algorithm>
 
@@ -61,6 +62,15 @@ Mat4Physics ControllerComponent::getOrientation()
 	return m_parent->GetWorldTransform().GetRotation();
 }
 
+float ControllerComponent::getForwardVelocity()
+{
+	auto btvelocity = m_parent->GetPhysicsComponent()->GetPhysicsBody()->getInterpolationLinearVelocity();
+	Vec3Physics velocity(btvelocity.x(), btvelocity.y(), btvelocity.z());
+	auto forward = m_parent->GetWorldTransform().GetRotation() * Vec3Physics(0, 0, -1);
+	forward.Normalize();
+	return velocity.Dot(forward);
+}
+
 void ControllerComponent::setCameraControl(float pitch, float yaw)
 {
 	dPitch += pitch;
@@ -90,4 +100,14 @@ void ControllerComponent::reset()
 	//world.SetTranslation(Vec3Physics(0, 0, 0));
 	btTransform trasform = btTransform(btQuaternion(btVector3(0, 0, -1), 0), btVector3(world.x, world.y, world.z));
 		m_parent->GetPhysicsComponent()->GetPhysicsBody()->setWorldTransform(trasform);
+}
+
+void ControllerComponent::turnWheels(float prop){
+	GameObject* fr = m_parent->FindGameObject("fr");
+	GameObject* fl = m_parent->FindGameObject("fl");
+	if (!(fr && fl)){
+		return;
+	}
+	((WheelObject*)fr)->setRotationFactor(prop);
+	((WheelObject*)fl)->setRotationFactor(prop);
 }

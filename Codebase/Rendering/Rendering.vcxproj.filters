@@ -213,9 +213,6 @@
     <ClInclude Include="CubeMaterial.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="PS4Controller.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="resource.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -224,6 +221,9 @@
     </ClInclude>
     <ClInclude Include="WheelObject.h">
       <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="PS4Controller.h">
+      <Filter>Header Files\Input</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -350,14 +350,17 @@
     <ClCompile Include="CubeMaterial.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="PS4Controller.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="OrthoComponent.cpp">
       <Filter>Source Files\UI</Filter>
     </ClCompile>
     <ClCompile Include="WheelObject.cpp">
       <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="PS4Controller.cpp">
+      <Filter>Source Files\Input</Filter>
+    </ClCompile>
+    <ClCompile Include="PS4Controller.cpp">
+      <Filter>Source Files\Input</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

@@ -8,5 +8,18 @@ public:
 	~WheelObject();
 
 	void WheelObject::OnUpdateObject(float dt) override;
+	void SetLocalTransform(const Mat4Graphics& transform) override
+	{
+		LocalTrasformWORotate = transform;
+	}
+
+	void setRotationFactor(float& factor){
+		
+		rotFactor = std::min(std::max(factor, -1.0f), 1.0f);
+	}
+protected:
+	Mat4Graphics LocalTrasformWORotate;
+	
+	float rotFactor;
 };
 

@@ -95,10 +95,10 @@ void AIControllerComponent::AddForce(float x, float y, float z)
 	forward.Normalize();
 	left.Normalize();
 
-	auto rotForce = getOrientation() * in;
+	/*auto rotForce = getOrientation() * in;
 	rotForce.Normalize();
 	float newX = std::min(std::max(rotForce.x, -clamp), clamp);
-	float turningFactor = Lerp(0, 1, newX / clamp);
+	float turningFactor = Lerp(0, 1, newX / clamp);*/
 
 	float dot = in.Dot(left);
 

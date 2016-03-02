@@ -21,6 +21,12 @@
     <ClCompile Include="Stadium.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="GameScene.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="MenuScene.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
     <ClCompile Include="CarGameObject.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -30,6 +36,12 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="CarGameObject.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="GameScene.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="MenuScene.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

@@ -112,7 +112,7 @@ OGLRenderer::OGLRenderer(std::string title, int sizeX, int sizeY, bool fullScree
 	{
 		WGL_CONTEXT_MAJOR_VERSION_ARB, major,	//TODO: Maybe lock this to 3? We might actually get an OpenGL 4.x context...
 		WGL_CONTEXT_MINOR_VERSION_ARB, minor,
-		WGL_CONTEXT_FLAGS_ARB, WGL_CONTEXT_FORWARD_COMPATIBLE_BIT_ARB, 
+		WGL_CONTEXT_FLAGS_ARB, WGL_CONTEXT_FORWARD_COMPATIBLE_BIT_ARB,
 		WGL_CONTEXT_PROFILE_MASK_ARB, WGL_CONTEXT_CORE_PROFILE_BIT_ARB,		//We want everything OpenGL 3.2 provides...
 		0
 	};
@@ -147,8 +147,8 @@ OGLRenderer::OGLRenderer(std::string title, int sizeX, int sizeY, bool fullScree
 
 	currentShader = nullptr;							//0 is the 'null' object name for shader programs...
 
-	Window::GetWindow().SetRenderer(this);					//Tell our window about the new renderer! (Which will in turn resize the renderer window to fit...)	
-	
+	Window::GetWindow().SetRenderer(this);					//Tell our window about the new renderer! (Which will in turn resize the renderer window to fit...)
+
 	RECT clientRect, windowRect;
 	if (GetClientRect(windowHandle, &clientRect) && GetWindowRect(windowHandle, &windowRect))
 	{
@@ -164,7 +164,7 @@ OGLRenderer::OGLRenderer(std::string title, int sizeX, int sizeY, bool fullScree
 	glDepthFunc(GL_LEQUAL);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 	if (initFBO())
-	init = true;
+		init = true;
 }
 
 /*
@@ -237,7 +237,7 @@ void OGLRenderer::UpdateShaderMatrices()
 		//Model Matrix in RenderComponent class.
 		//Texture matrix in material class.
 		glUniformMatrix4fv(glGetUniformLocation(currentShader->GetProgram(), "viewMatrix"), 1, false, (float*)&viewMatrix);
-		glUniformMatrix4fv(glGetUniformLocation(currentShader->GetProgram(), "projMatrix"), 1, false, (float*)&projMatrix);	
+		glUniformMatrix4fv(glGetUniformLocation(currentShader->GetProgram(), "projMatrix"), 1, false, (float*)&projMatrix);
 	}
 }
 
@@ -318,37 +318,46 @@ void OGLRenderer::SetTextureFlags(unsigned int id, unsigned int flags)
 	glBindTexture(GL_TEXTURE_2D, GLuint(id));
 
 	// Repeat/Clamp options
-	if ((flags & REPEATING) == REPEATING) {
+	if ((flags & REPEATING) == REPEATING)
+	{
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
 	}
-	else if ((flags & CLAMPING) == CLAMPING) {
+	else if ((flags & CLAMPING) == CLAMPING)
+	{
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP);
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP);
 	}
 
 	// Filtering options
-	if ((flags & NEAREST_NEIGHBOUR_MIN_FILTERING) == NEAREST_NEIGHBOUR_MIN_FILTERING) {
+	if ((flags & NEAREST_NEIGHBOUR_MIN_FILTERING) == NEAREST_NEIGHBOUR_MIN_FILTERING)
+	{
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
 	}
-	else if ((flags & BILINEAR_MIN_FILTERING) == BILINEAR_MIN_FILTERING) {
+	else if ((flags & BILINEAR_MIN_FILTERING) == BILINEAR_MIN_FILTERING)
+	{
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 	}
-	else if ((flags & TRILINEAR_MIN_FILTERING) == TRILINEAR_MIN_FILTERING) {
+	else if ((flags & TRILINEAR_MIN_FILTERING) == TRILINEAR_MIN_FILTERING)
+	{
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
 	}
 
-	if ((flags & NEAREST_NEIGHBOUR_MAX_FILTERING) == NEAREST_NEIGHBOUR_MAX_FILTERING) {
+	if ((flags & NEAREST_NEIGHBOUR_MAX_FILTERING) == NEAREST_NEIGHBOUR_MAX_FILTERING)
+	{
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 	}
-	else if ((flags & BILINEAR_MAX_FILTERING) == BILINEAR_MAX_FILTERING) {
+	else if ((flags & BILINEAR_MAX_FILTERING) == BILINEAR_MAX_FILTERING)
+	{
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 	}
-	else if ((flags & TRILINEAR_MAX_FILTERING) == TRILINEAR_MAX_FILTERING) {
+	else if ((flags & TRILINEAR_MAX_FILTERING) == TRILINEAR_MAX_FILTERING)
+	{
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR_MIPMAP_LINEAR);
 	}
 
-	if ((flags & ANISOTROPIC_FILTERING) == ANISOTROPIC_FILTERING) {
+	if ((flags & ANISOTROPIC_FILTERING) == ANISOTROPIC_FILTERING)
+	{
 		GLfloat max_aniso;
 		glGetFloatv(GL_MAX_TEXTURE_MAX_ANISOTROPY_EXT, &max_aniso);
 		glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAX_ANISOTROPY_EXT, max_aniso);
@@ -406,7 +415,7 @@ bool OGLRenderer::initFBO()
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
 
 	glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT,
-		SHADOWSIZE, SHADOWSIZE, 0, GL_DEPTH_COMPONENT, GL_FLOAT, NULL);
+	             SHADOWSIZE, SHADOWSIZE, 0, GL_DEPTH_COMPONENT, GL_FLOAT, NULL);
 
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_COMPARE_MODE, GL_COMPARE_R_TO_TEXTURE);
 
@@ -424,9 +433,10 @@ bool OGLRenderer::initFBO()
 	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
 	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 
-	for (size_t i = 0; i < 6; ++i) {
+	for (size_t i = 0; i < 6; ++i)
+	{
 		glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, GL_DEPTH_COMPONENT,
-			SHADOWSIZE, SHADOWSIZE, 0, GL_DEPTH_COMPONENT, GL_FLOAT, NULL);
+		             SHADOWSIZE, SHADOWSIZE, 0, GL_DEPTH_COMPONENT, GL_FLOAT, NULL);
 	}
 	glEnable(GL_TEXTURE_CUBE_MAP);
 	glBindTexture(GL_TEXTURE_CUBE_MAP, 0);
@@ -470,6 +480,7 @@ bool OGLRenderer::initFBO()
 		TEXTURE_DIR"grouse_posz.jpg",
 		TEXTURE_DIR"grouse_negz.jpg",
 		SOIL_LOAD_RGB, SOIL_CREATE_NEW_ID, 0);
+
 	skyQuad = new GameObject();
 	skyQuad->SetRenderComponent(new RenderComponent(new CubeMaterial(new OGLShader(SHADER_DIR"skyboxVertex.glsl", SHADER_DIR"skyboxfragment.glsl")), OGLMesh::GenerateQuad()));
 	if (!skyQuad->GetRenderComponent()->m_Material->GetShader()->IsOperational())
@@ -515,7 +526,7 @@ void OGLRenderer::FillBuffers()
 	glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
 
 	//SetCurrentShader(sceneShader);
-
+	
 	UpdateShaderMatrices();
 	DrawSky();
 
@@ -680,6 +691,7 @@ void OGLRenderer::DrawSky(){
 	glBindTexture(GL_TEXTURE_CUBE_MAP, skyBoxTex);
 	glActiveTexture(GL_TEXTURE0);
 
+	
 	skyQuad->GetRenderComponent()->Draw();
 
 	glUseProgram(0);

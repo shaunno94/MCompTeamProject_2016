@@ -16,7 +16,7 @@ class Scene
 	friend class Renderer;
 public:
 	Scene();
-	~Scene();
+	virtual ~Scene();
 
 	GameObject* findGameObject(const std::string& objectName);
 	GameObject* getOpaqueObject(unsigned int i) { return opaqueObjects[i]; }
@@ -29,6 +29,7 @@ public:
 	unsigned int getNumTransparentObjects() { return transparentObjects.size(); }
 	unsigned int getNumOpaqueObjects() { return opaqueObjects.size(); }
 	unsigned int getNumLightObjects() { return lightObjects.size(); }
+	const char** getCubeMapDir()	{ return cubemapDir; }
 	unsigned int getNumGhostObjects() { return ghostObjects.size(); }
 
 	Camera* getCamera(){ return cam; }
@@ -41,6 +42,7 @@ public:
 	}
 	void addGameObject(GameObject* obj);
 	void addLightObject(GameObject* obj);
+	void setCubeMap(const char** dir) { cubemapDir = dir; }
 
 	unsigned char renderFlags; //triggers for graphical effects such as post processing and any other info required by the renderer
 
@@ -58,5 +60,6 @@ private:
 	std::vector<GameObject*> lightObjects;
 	std::vector<GameObject*> ghostObjects;
 	Camera* cam;
+	const char** cubemapDir;
 };
 
