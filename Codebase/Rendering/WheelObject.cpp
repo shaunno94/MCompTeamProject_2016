@@ -1,8 +1,9 @@
 #include "WheelObject.h"
 
 
-WheelObject::WheelObject(const std::string& name)
+WheelObject::WheelObject(const std::string& name) :GameObject(name)
 {
+	rotFactor = 0;
 }
 
 
@@ -17,8 +18,10 @@ void WheelObject::OnUpdateObject(float dt)
 	//velocity.Normalize();
 	auto forward = m_Parent->GetWorldTransform().GetRotation() * Vec3Physics(0,0,1);
 	forward.Normalize();
-	float dot = velocity.Dot(forward);
-	m_LocalTransform = m_LocalTransform * Mat4Physics::RotationX(dot*0.5);
+	float dot = velocity.Dot(forward);	
 
+	m_LocalTransform = Mat4Physics::Translation(LocalTrasformWORotate.GetTranslation()) * Mat4Physics::RotationY(30*rotFactor)* LocalTrasformWORotate.GetRotation() *  Mat4Physics::RotationX(dot*0.5);
+
+	LocalTrasformWORotate = LocalTrasformWORotate * Mat4Physics::RotationX(dot*0.5);
 	GameObject::OnUpdateObject(dt);
 }

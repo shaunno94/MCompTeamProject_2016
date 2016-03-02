@@ -31,13 +31,18 @@ void KeyboardController::CheckInput(){
 	if (Window::GetKeyboard()->KeyDown(KEYBOARD_RIGHT) || Window::GetKeyboard()->KeyDown(KEYBOARD_D))
 	{
 		torque += (Vec3Physics(0, -3, 0));
+		object->turnWheels(1);
 		//force += (orientation * Vec3Physics(0, 0, accel));
 	}
+	else
 	if (Window::GetKeyboard()->KeyDown(KEYBOARD_LEFT) || Window::GetKeyboard()->KeyDown(KEYBOARD_A))
 	{
 		torque += (Vec3Physics(0, 3, 0));
+		object->turnWheels(-1);
 		//force += (orientation * Vec3Physics(0, 0, -accel));
 	}
+	else
+		object->turnWheels(0);
 
 	if (forward < 0){
 		torque = -torque;

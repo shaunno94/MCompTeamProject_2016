@@ -1,5 +1,6 @@
 #include "ControllerComponent.h"
 #include "GameObject.h"
+#include "WheelObject.h"
 #include "Renderer.h"
 #include <algorithm>
 
@@ -99,4 +100,14 @@ void ControllerComponent::reset()
 	//world.SetTranslation(Vec3Physics(0, 0, 0));
 	btTransform trasform = btTransform(btQuaternion(btVector3(0, 0, -1), 0), btVector3(world.x, world.y, world.z));
 		m_parent->GetPhysicsComponent()->GetPhysicsBody()->setWorldTransform(trasform);
+}
+
+void ControllerComponent::turnWheels(float prop){
+	GameObject* fr = m_parent->FindGameObject("fr");
+	GameObject* fl = m_parent->FindGameObject("fl");
+	if (!(fr && fl)){
+		return;
+	}
+	((WheelObject*)fr)->setRotationFactor(prop);
+	((WheelObject*)fl)->setRotationFactor(prop);
 }
