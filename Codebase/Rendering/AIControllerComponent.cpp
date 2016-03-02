@@ -103,7 +103,7 @@ void AIControllerComponent::AddForce(float x, float y, float z)
 	float dot = in.Dot(left);
 
 	AddTorque(0, 5 * (dot), 0);
-	turnWheels(dot);
+	turnWheels(-dot);
 	
 	dot = in.Dot(forward);
 	if (dot >= 0){
