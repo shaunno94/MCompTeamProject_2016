@@ -19,7 +19,6 @@ public:
 		return instance;
 	}
 
-	//
 	void AddSoundEmitter(SoundEmitter* s)
 	{
 		totalEmitters.push_back(s);
@@ -32,6 +31,10 @@ public:
 
 	Mat4 GetListenerTransform() { return listenerTransform; }
 
+	void SetBackgroundMusic(Sound* snd);
+
+	void SetBackgroundVolume(float val);
+
 	void		Update(float msec);
 
 	void		SetMasterVolume(float value);
@@ -39,18 +42,21 @@ public:
 	void		Play(Sound* s, SoundMOD modifier);
 
 protected:
-	SoundSystem(unsigned int channels = 32);
+	SoundSystem(unsigned int channels = 64);
 	~SoundSystem(void);
 
 	void		UpdateListener();
 
-	void AttachSources(int numSources);
+	void AttachSources();
 
 	void		CullNodes();
 
 	OALSource*	GetSource();
 
 	std::vector<OALSource*>	sources;
+
+	SoundEmitter* m_Background;
+	int m_MaxDynamicSources;
 
 	std::vector<SoundEmitter*>	emitters;
 	std::vector<SoundEmitter*>	totalEmitters;

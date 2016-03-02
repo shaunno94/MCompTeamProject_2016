@@ -39,6 +39,12 @@ SoundSystem::SoundSystem(unsigned int channels) {
 		}
 	}
 
+	m_MaxDynamicSources = channels - 1;
+
+	m_Background = new SoundEmitter();
+	m_Background->SetPriority(SOUNDPRIORITY_ALWAYS);
+	m_Background->SetIsGlobal(true);
+
 	std::cout << "SoundSystem has " << sources.size() << " channels available!" << std::endl;
 }
 
@@ -46,6 +52,7 @@ SoundSystem::~SoundSystem(void)	{
 	for (auto emitter : totalEmitters) {
 		delete emitter;
 	}
+	delete m_Background;
 
 	for (auto src : sources) {
 		alDeleteSources(1, &src->source);
@@ -63,6 +70,18 @@ void SoundSystem::SetListenerMatrix(const Mat4& transform)
 	listenerPos = transform.GetTranslation();
 }
 
+void SoundSystem::SetBackgroundMusic(Sound* snd)
+{
+	m_Background->SetSound(snd);
+}
+
+void SoundSystem::SetBackgroundVolume(float val)
+{
+	m_Background->SetVolume(
+		fmax(fmin(1.0f, val), 0.0f)
+		);
+}
+
 void		SoundSystem::Update(float msec) {
 	UpdateListener(); // update listener position
 
@@ -74,19 +93,19 @@ void		SoundSystem::Update(float msec) {
 		emitter->Update(msec);
 	}
 
+	m_Background->Update(msec); // update background music
+
 	CullNodes();	//First off, remove nodes that are too far away
-
 	std::sort(totalEmitters.begin(), totalEmitters.end(), SoundEmitter::CompareNodesByPriority);	//Then sort by priority
-	AttachSources(sources.size());
+	AttachSources(); // add playable sounds
 
-	emitters.clear();	//We're done for the frame! empty the emitters list
+	emitters.clear();	//done for this frame
 }
 
 void	SoundSystem::CullNodes() {
 	std::vector<SoundEmitter*>	tempEMT;
 
 	int size = 0;
-	int sizeMax = sources.size(); // max allowed emitters
 
 	for (auto emt : totalEmitters) {
 
@@ -100,7 +119,7 @@ void	SoundSystem::CullNodes() {
 		if (length < emt->GetRadius() && 
 			emt->GetSound() &&
 			emt->GetTimeLeft() > 0 &&
-			size < sizeMax) {
+			size < m_MaxDynamicSources) {
 
 			emitters.push_back(emt);
 			tempEMT.push_back(emt);
@@ -116,7 +135,7 @@ void	SoundSystem::CullNodes() {
 			}
 		}
 
-		if (size >= sizeMax) {
+		if (size >= m_MaxDynamicSources) {
 			break;
 		}
 	}
@@ -124,7 +143,11 @@ void	SoundSystem::CullNodes() {
 	totalEmitters = tempEMT;
 }
 
-void SoundSystem::AttachSources(int numSources) {
+void SoundSystem::AttachSources() {
+	// attach background first
+	if (m_Background->GetSound() && !m_Background->GetSource()) 
+		m_Background->AttachSource(GetSource());
+
 	for (auto emt : emitters) {
 		if (!emt->GetSource()) {	//Don't attach a new source if we already have one!
 			emt->AttachSource(GetSource());

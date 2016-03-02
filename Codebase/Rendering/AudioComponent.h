@@ -17,8 +17,9 @@ protected:
 	void AddEmitters();
 
 	// Bulk functions
-	void SetPositions(const Vec3& pos);
-	void SetVelocities(const Vec3& vel);
+	void SetPositions();
+	Vec3 GetVec3Velocity();
+	void SetVelocities();
 	void SetRadius(float rad);
 
 	std::vector<SoundEmitter*> m_AudioList;
@@ -29,6 +30,14 @@ class AudioCompCar : public AudioComponent {
 public:
 	AudioCompCar(bool global);
 	virtual ~AudioCompCar(){}
+
+	virtual void Update() override;
+};
+
+class AudioCompCarLitener : public AudioCompCar {
+public:
+	AudioCompCarLitener(bool global) : AudioCompCar(global) {}
+	virtual ~AudioCompCarLitener(){}
 
 	virtual void Update() override;
 };

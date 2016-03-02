@@ -212,26 +212,18 @@ int main(void) {
 	//load ogg file (EXPERIMENTAL STREAMING)
 	//SoundManager::AddSound(AUDIO_DIR"139320__votives__arpegthing.ogg", "song");
 
-	//maybe get a handle fro the loaded sounds
-	Sound* gun = SoundManager::GetSound(GUN);
+	// add background music
+	SoundSystem::Instance()->SetBackgroundMusic(SoundManager::GetSound(SONG));
+	SoundSystem::Instance()->SetBackgroundVolume(0.4f); // can be used for mute / unmute
 
-	//create new sound entity and attach the sound to it
-	SoundEmitter* emitSong = new SoundEmitter(SoundManager::GetSound(SONG));
-	emitSong->SetIsGlobal(true);
-	emitSong->SetVolume(0.75f);
-	emitSong->SetPriority(SOUNDPRIORITY_ALWAYS);
-
-	//add sounds to engine
-	SoundSystem::Instance()->AddSoundEmitter(emitSong);
-
-	//modify sound values
+	//modify sound values (for later)
 	SoundMOD mod = SoundMOD();
 	mod.isGlobal = true;
 	mod.looping = false;
-	mod.volume = 0.25f;
+	mod.volume = 0.45f;
 
 	// create audio components
-	player->SetAudioComponent(new AudioCompCar(true));
+	player->SetAudioComponent(new AudioCompCarLitener(true));
 	ai1->SetAudioComponent(new AudioCompCar(false));
 	//-------- SOUND
 
@@ -259,12 +251,9 @@ int main(void) {
 		if (Window::GetKeyboard()->KeyTriggered(KEYBOARD_K)){
 			mod.pitch = 1.75f;
 
-			SoundSystem::Instance()->Play(gun, mod);
+			SoundSystem::Instance()->Play(SoundManager::GetSound(GUN), mod);
 		}
 
-		// TODO: SHOULD BE WORLD TRANSFORM! using view as temp
-		// (sound panning a bit off)
-		SoundSystem::Instance()->SetListenerMatrix(player->GetWorldTransform());
 		SoundSystem::Instance()->Update(ms);
 		//-------- SOUND
 
