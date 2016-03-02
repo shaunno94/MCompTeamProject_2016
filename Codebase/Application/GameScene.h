@@ -9,6 +9,7 @@
 #include "Rendering\DebugDraw.h"
 #include "Rendering\GUISystem.h"
 #include "Rendering\WheelObject.h"
+#include "CarGameObject.h"
 
 #ifndef ORBIS
 #include "Rendering\KeyboardController.h"

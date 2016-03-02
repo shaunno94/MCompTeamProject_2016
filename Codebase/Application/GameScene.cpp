@@ -21,33 +21,10 @@ GameScene::GameScene(ControllerManager* controller)
 	DebugDraw::Context(Renderer::GetInstance());
 #endif
 #endif
-	GameObject* player = new GameObject("player");
+	
 	GameObject* ball = new GameObject("ball");
 	GameObject* light1 = new GameObject("l");
 	GameObject* light2 = new GameObject("l");
-
-	GameObject* shooterAI = new GameObject("shooterAI");
-	GameObject* goalieAI = new GameObject("goalieAI");
-
-	RigidPhysicsObject* playerPhysics = new RigidPhysicsObject();
-	playerPhysics->CreateCollisionShape(Vec3Physics(5.0, 2.5, 5.0), CUBOID);
-	playerPhysics->CreatePhysicsBody(8.0, Vec3Physics(10, 5, 0), QuatPhysics(0, 0, 0, 1), Vec3Physics(1, 1, 1));
-
-	RigidPhysicsObject* shooterAIPhysics = new RigidPhysicsObject();
-	shooterAIPhysics->CreateCollisionShape(Vec3Physics(5.2, 2.0, 6.5), CUBOID);
-	shooterAIPhysics->CreatePhysicsBody(8.0, Vec3Physics(-190, 5, 30), QuatPhysics(0, 0, 0, 1), Vec3Physics(1, 1, 1));
-	shooterAIPhysics->GetPhysicsBody()->setRestitution(btScalar(0.9));
-	shooterAIPhysics->GetPhysicsBody()->setFriction(0.5);
-	shooterAIPhysics->GetPhysicsBody()->setRollingFriction(0.5);
-	shooterAIPhysics->GetPhysicsBody()->setHitFraction(0.5);
-
-	RigidPhysicsObject* goalieAIPhysics = new RigidPhysicsObject();
-	goalieAIPhysics->CreateCollisionShape(Vec3Physics(5.2, 2.0, 6.5), CUBOID);
-	goalieAIPhysics->CreatePhysicsBody(8.0, Vec3Physics(-230, 5, -30), QuatPhysics(0, 0, 0, 1), Vec3Physics(1, 1, 1));
-	goalieAIPhysics->GetPhysicsBody()->setRestitution(btScalar(0.9));
-	goalieAIPhysics->GetPhysicsBody()->setFriction(0.5);
-	goalieAIPhysics->GetPhysicsBody()->setRollingFriction(0.5);
-	goalieAIPhysics->GetPhysicsBody()->setHitFraction(0.5);
 
 	RigidPhysicsObject* ballPhysics = new RigidPhysicsObject();
 	ballPhysics->CreateCollisionShape(7.0);
@@ -91,40 +68,17 @@ GameScene::GameScene(ControllerManager* controller)
 	Material* ai2Material = new Material(simpleShader);
 	ai2Material->Set(ReservedMeshTextures.DIFFUSE.name, Texture::Get(MODEL_DIR"car/body2.bmp", true));
 
+
+	GameObject* player = new CarGameObject(Vec3Physics(10, 5, 0), QuatPhysics(0, 0, 0, 1), playerMaterial, "player");
+	GameObject* shooterAI = new CarGameObject(Vec3Physics(-190, 5, 30), QuatPhysics(0, 0, 0, 1), aiMaterial, "shooterAI");
+	GameObject* goalieAI = new CarGameObject(Vec3Physics(-230, 5, -30), QuatPhysics(0, 0, 0, 1), ai2Material, "goalieAI");
+
 	// Create Stadium
 	GameObject* stadium = new Stadium(material, netMaterial, "stadium");
 
 	addGameObject(stadium);
 	//myScene->addLightObject(light1);
 	addLightObject(light2);
-
-	player->SetRenderComponent(new RenderComponent(playerMaterial, ModelLoader::LoadMGL(MODEL_DIR"Car/car_base.mgl", true)));
-	player->SetLocalTransform(Mat4Graphics::Translation(Vec3Graphics(0, -2.5, 0)) * Mat4Graphics::Scale(Vector3Simple(10, 10, 10)));
-	player->SetPhysicsComponent(playerPhysics);
-	player->GetPhysicsComponent()->GetPhysicsBody()->setRestitution(btScalar(0.9));
-	player->GetPhysicsComponent()->GetPhysicsBody()->setFriction(0.5);
-	player->GetPhysicsComponent()->GetPhysicsBody()->setRollingFriction(1);
-	player->GetPhysicsComponent()->GetPhysicsBody()->setHitFraction(0.5);
-
-	WheelObject* wheel = new WheelObject("fl");
-	wheel->SetRenderComponent(new RenderComponent(playerMaterial, ModelLoader::LoadMGL(MODEL_DIR"Car/wheel.mgl", true)));
-	wheel->SetLocalTransform(Mat4Graphics::Translation(Vec3Graphics(-0.45, 0.17, -0.45))) /*Mat4Graphics::Scale(Vector3Simple(10, 10, 10)))*/;
-	player->AddChildObject(wheel);
-
-	wheel = new WheelObject("bl");
-	wheel->SetRenderComponent(new RenderComponent(playerMaterial, ModelLoader::LoadMGL(MODEL_DIR"Car/wheel.mgl", true)));
-	wheel->SetLocalTransform(Mat4Graphics::Translation(Vec3Graphics(-0.45, 0.17, 0.45))) /*Mat4Graphics::Scale(Vector3Simple(10, 10, 10)))*/;
-	player->AddChildObject(wheel);
-
-	wheel = new WheelObject("fr");
-	wheel->SetRenderComponent(new RenderComponent(playerMaterial, ModelLoader::LoadMGL(MODEL_DIR"Car/wheel.mgl", true)));
-	wheel->SetLocalTransform(Mat4Graphics::Translation(Vec3Graphics(0.45, 0.17, -0.45))* Mat4Graphics::Scale(Vector3Simple(-1, -1, -1))) /*Mat4Graphics::Scale(Vector3Simple(10, 10, 10)))*/;
-	player->AddChildObject(wheel);
-
-	wheel = new WheelObject("br");
-	wheel->SetRenderComponent(new RenderComponent(playerMaterial, ModelLoader::LoadMGL(MODEL_DIR"Car/wheel.mgl", true)));
-	wheel->SetLocalTransform(Mat4Graphics::Translation(Vec3Graphics(0.45, 0.17, 0.45))* Mat4Graphics::Scale(Vector3Simple(-1, -1, -1))) /*Mat4Graphics::Scale(Vector3Simple(10, 10, 10)))*/;
-	player->AddChildObject(wheel);
 
 	ball->SetRenderComponent(new RenderComponent(ballMaterial, ModelLoader::LoadMGL(MODEL_DIR"Common/sphere.mgl", true)));
 	ball->SetLocalTransform(Mat4Graphics::Scale(Vector3Simple(7, 7, 7)));
@@ -133,14 +87,6 @@ GameScene::GameScene(ControllerManager* controller)
 	ball->GetPhysicsComponent()->GetPhysicsBody()->setFriction(0.5);
 	ball->GetPhysicsComponent()->GetPhysicsBody()->setRollingFriction(0.5);
 	ball->GetPhysicsComponent()->GetPhysicsBody()->setHitFraction(0.5);
-
-	shooterAI->SetRenderComponent(new RenderComponent(aiMaterial, ModelLoader::LoadMGL(MODEL_DIR"Car/car1.mgl", true)));
-	shooterAI->SetLocalTransform(Mat4Graphics::Scale(Vector3Simple(10, 10, 10))* Mat4Graphics::Translation(Vector3Simple(0, -0.25f, 0)));
-	shooterAI->SetPhysicsComponent(shooterAIPhysics);
-
-	goalieAI->SetRenderComponent(new RenderComponent(ai2Material, ModelLoader::LoadMGL(MODEL_DIR"Car/car1.mgl", true)));
-	goalieAI->SetLocalTransform(Mat4Graphics::Scale(Vector3Simple(10, 10, 10))* Mat4Graphics::Translation(Vector3Simple(0, -0.25f, 0)));
-	goalieAI->SetPhysicsComponent(goalieAIPhysics);
 
 	RigidPhysicsObject* goalBox = new RigidPhysicsObject();
 	goalBox->CreateCollisionShape(Vec3Physics(7.0, 15.0, 29.0), CUBOID);
