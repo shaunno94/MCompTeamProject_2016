@@ -31,6 +31,32 @@ enum MeshBuffer
 	MAX_BUFFER
 };
 
+enum CollisionMasks {
+	COL_WALL,
+	COL_CAR,
+	COL_BALL,
+	COL_GOAL
+};
+enum CollisionGroups {
+	GROUP_WALL_BALL = COL_WALL | COL_BALL
+};
+
+enum AITypes
+{
+	SHOOTER,
+	GOALKEEPER,
+	AGGRESSIVE
+};
+
+enum AIStates
+{
+	POSITION,
+	SHOOT,
+	GUARD_GOAL,
+	CLEAR_GOAL,
+	ADVANCE
+};
+
 #ifdef _DEBUG
 //In debug, the expectation is applications will be run from visual studio (starting directory being the project)
 #ifndef ORBIS

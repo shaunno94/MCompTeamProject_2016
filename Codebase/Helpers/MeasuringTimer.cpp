@@ -85,7 +85,7 @@ void MeasuringTimer::Print(std::ostream& os, unsigned startLevel, unsigned maxDe
 					siblingGroupOpenOnLevel[indentCount + 1] = false;
 				}
 
-				float duration = Timer::Duration(startTimestamps.top(), m_logs[i].timestamp, timeResolution);
+				float duration = (float) Timer::Duration(startTimestamps.top(), m_logs[i].timestamp, timeResolution);
 				siblingDurationsPerLevel[indentCount]->back()->push_back(duration);
 				siblingGroupOpenOnLevel[indentCount] = true;
 				startTimestamps.pop();

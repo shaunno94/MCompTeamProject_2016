@@ -116,7 +116,7 @@ protected:
 	GLuint lightEmissiveTex; // Store emissive lighting
 	GLuint lightSpecularTex; // Store specular lighting
 	
-	GLuint skyBoxTex; // skybo texture
+	GLuint skyBoxTex; // skybox texture
 	GameObject* skyQuad;
 
 	GLuint shadowFBO;

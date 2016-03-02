@@ -152,25 +152,34 @@
     </Lib>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="AIControllerComponent.h" />
+    <ClInclude Include="AudioComponent.h" />
     <ClInclude Include="BasicParticleGenerator.h" />
     <ClInclude Include="Camera.h" />
     <ClInclude Include="constants.h" />
     <ClInclude Include="Controller.h" />
     <ClInclude Include="ControllerComponent.h" />
+    <ClInclude Include="ControllerManager.h" />
     <ClInclude Include="CubeEmitter.h" />
     <ClInclude Include="CubeMaterial.h" />
     <ClInclude Include="DebugDraw.h" />
+    <ClInclude Include="EventTextGUI.h" />
     <ClInclude Include="ExtendedMaterial.h" />
     <ClInclude Include="Frustum.h" />
     <ClInclude Include="GameObject.h" />
     <ClInclude Include="GameTimer.h" />
+    <ClInclude Include="GUISystem.h" />
+    <ClInclude Include="GUIComponent.h" />
     <ClInclude Include="KeyboardController.h" />
     <ClInclude Include="LightMaterial.h" />
+    <ClInclude Include="LocalControlManager.h" />
     <ClInclude Include="Material.h" />
     <ClInclude Include="Mesh.h" />
     <ClInclude Include="ModelLoader.h" />
+    <ClInclude Include="NitroGUI.h" />
     <ClInclude Include="OGLMesh.h" />
     <ClInclude Include="OGLRenderer.h" />
+    <ClInclude Include="OrthoComponent.h" />
     <ClInclude Include="Particle.h" />
     <ClInclude Include="ParticleData.h" />
     <ClInclude Include="ParticleEmitter.h" />
@@ -193,27 +202,40 @@
     <ClInclude Include="Scene.h" />
     <ClInclude Include="OGLShader.h" />
     <ClInclude Include="BaseShader.h" />
+    <ClInclude Include="ScoreboardGUIComponent.h" />
+    <ClInclude Include="ScoretableGUI.h" />
     <ClInclude Include="SoftPhysicsObject.h" />
+    <ClInclude Include="TableBackgroundGUI.h" />
+    <ClInclude Include="TextInfoGUI.h" />
     <ClInclude Include="Texture.h" />
+    <ClInclude Include="WheelObject.h" />
     <ClInclude Include="Window.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="AIControllerComponent.cpp" />
+    <ClCompile Include="AudioComponent.cpp" />
     <ClCompile Include="BasicParticleGenerator.cpp" />
     <ClCompile Include="Camera.cpp" />
     <ClCompile Include="ControllerComponent.cpp" />
+    <ClCompile Include="ControllerManager.cpp" />
     <ClCompile Include="CubeMaterial.cpp" />
     <ClCompile Include="DebugDraw.cpp" />
     <ClCompile Include="CubeEmitter.cpp" />
+    <ClCompile Include="EventTextGUI.cpp" />
     <ClCompile Include="ExtendedMaterial.cpp" />
     <ClCompile Include="Frustum.cpp" />
     <ClCompile Include="GameObject.cpp" />
+    <ClCompile Include="GUISystem.cpp" />
     <ClCompile Include="KeyboardController.cpp" />
     <ClCompile Include="LightMaterial.cpp" />
+    <ClCompile Include="LocalControlManager.cpp" />
     <ClCompile Include="Material.cpp" />
     <ClCompile Include="Mesh.cpp" />
     <ClCompile Include="ModelLoader.cpp" />
+    <ClCompile Include="NitroGUI.cpp" />
     <ClCompile Include="OGLMesh.cpp" />
     <ClCompile Include="OGLRenderer.cpp" />
+    <ClCompile Include="OrthoComponent.cpp" />
     <ClCompile Include="ParticleData.cpp" />
     <ClCompile Include="ParticleEmitter7.cpp" />
     <ClCompile Include="ParticleManager.cpp" />
@@ -231,8 +253,13 @@
     <ClCompile Include="Scene.cpp" />
     <ClCompile Include="OGLShader.cpp" />
     <ClCompile Include="BaseShader.cpp" />
+    <ClCompile Include="ScoreboardGUIComponent.cpp" />
+    <ClCompile Include="ScoretableGUI.cpp" />
     <ClCompile Include="SoftPhysicsObject.cpp" />
+    <ClCompile Include="TableBackgroundGUI.cpp" />
+    <ClCompile Include="TextInfoGUI.cpp" />
     <ClCompile Include="Texture.cpp" />
+    <ClCompile Include="WheelObject.cpp" />
     <ClCompile Include="Window.cpp" />
   </ItemGroup>
   <ItemGroup>

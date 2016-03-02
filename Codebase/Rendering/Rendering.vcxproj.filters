@@ -52,6 +52,30 @@
     <Filter Include="PS4Shaders">
       <UniqueIdentifier>{7c1933be-f444-40cc-9968-5a8b90a16558}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\UI">
+      <UniqueIdentifier>{efbaec60-98a4-4d61-bd72-8437c399fccf}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\UI">
+      <UniqueIdentifier>{527d2b9a-08e1-4c85-8cfd-504b9d789985}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\UI\HUD_GUI">
+      <UniqueIdentifier>{41eec608-7ba7-4b2f-842b-b2f6c70820d4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\UI\HUD_GUI">
+      <UniqueIdentifier>{9ab7a03a-31e7-41f6-be86-676e9652b272}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\UI\Scoretable_GUI">
+      <UniqueIdentifier>{fafb15a4-631a-4991-b203-014cb65a0e7f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\UI\Scoretable_GUI">
+      <UniqueIdentifier>{a0fff451-da59-44be-baad-55106ad8d8f9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Audio">
+      <UniqueIdentifier>{06dd41b2-8104-4e96-a707-09f6494f00ae}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Audio">
+      <UniqueIdentifier>{e0bd0d87-accb-46c7-b228-ebd46f8310be}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Renderer.h">
@@ -159,14 +183,56 @@
     <ClInclude Include="PS4Frame.h">
       <Filter>Header Files\GNM_API</Filter>
     </ClInclude>
+    <ClInclude Include="GUISystem.h">
+      <Filter>Header Files\UI</Filter>
+    </ClInclude>
+    <ClInclude Include="NitroGUI.h">
+      <Filter>Header Files\UI\HUD_GUI</Filter>
+    </ClInclude>
+    <ClInclude Include="TextInfoGUI.h">
+      <Filter>Header Files\UI\Scoretable_GUI</Filter>
+    </ClInclude>
+    <ClInclude Include="EventTextGUI.h">
+      <Filter>Header Files\UI\HUD_GUI</Filter>
+    </ClInclude>
+    <ClInclude Include="TableBackgroundGUI.h">
+      <Filter>Header Files\UI\Scoretable_GUI</Filter>
+    </ClInclude>
+    <ClInclude Include="ScoretableGUI.h">
+      <Filter>Header Files\UI\Scoretable_GUI</Filter>
+    </ClInclude>
+    <ClInclude Include="GUIComponent.h">
+      <Filter>Header Files\UI</Filter>
+    </ClInclude>
+    <ClInclude Include="ScoreboardGUIComponent.h">
+      <Filter>Header Files\UI\HUD_GUI</Filter>
+    </ClInclude>
+    <ClInclude Include="ControllerManager.h">
+      <Filter>Header Files\Input</Filter>
+    </ClInclude>
+    <ClInclude Include="LocalControlManager.h">
+      <Filter>Header Files\Input</Filter>
+    </ClInclude>
+    <ClInclude Include="AIControllerComponent.h">
+      <Filter>Header Files\Input</Filter>
+    </ClInclude>
     <ClInclude Include="CubeMaterial.h">
-      <Filter>Header Files\Material</Filter>
+      <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="resource.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="OrthoComponent.h">
+      <Filter>Header Files\UI</Filter>
+    </ClInclude>
+    <ClInclude Include="WheelObject.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
     <ClInclude Include="PS4Controller.h">
       <Filter>Header Files\Input</Filter>
+    </ClInclude>
+    <ClInclude Include="AudioComponent.h">
+      <Filter>Header Files\Audio</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -260,11 +326,50 @@
     <ClCompile Include="PS4Frame.cpp">
       <Filter>Source Files\GNM_API</Filter>
     </ClCompile>
+    <ClCompile Include="GUISystem.cpp">
+      <Filter>Source Files\UI</Filter>
+    </ClCompile>
+    <ClCompile Include="NitroGUI.cpp">
+      <Filter>Source Files\UI\HUD_GUI</Filter>
+    </ClCompile>
+    <ClCompile Include="EventTextGUI.cpp">
+      <Filter>Source Files\UI\HUD_GUI</Filter>
+    </ClCompile>
+    <ClCompile Include="TableBackgroundGUI.cpp">
+      <Filter>Source Files\UI\Scoretable_GUI</Filter>
+    </ClCompile>
+    <ClCompile Include="ScoretableGUI.cpp">
+      <Filter>Source Files\UI\Scoretable_GUI</Filter>
+    </ClCompile>
+    <ClCompile Include="TextInfoGUI.cpp">
+      <Filter>Source Files\UI\Scoretable_GUI</Filter>
+    </ClCompile>
+    <ClCompile Include="ScoreboardGUIComponent.cpp">
+      <Filter>Source Files\UI\HUD_GUI</Filter>
+    </ClCompile>
+    <ClCompile Include="ControllerManager.cpp">
+      <Filter>Source Files\Input</Filter>
+    </ClCompile>
+    <ClCompile Include="LocalControlManager.cpp">
+      <Filter>Source Files\Input</Filter>
+    </ClCompile>
+    <ClCompile Include="AIControllerComponent.cpp">
+      <Filter>Source Files\Input</Filter>
+    </ClCompile>
     <ClCompile Include="CubeMaterial.cpp">
-      <Filter>Source Files\Material</Filter>
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="OrthoComponent.cpp">
+      <Filter>Source Files\UI</Filter>
+    </ClCompile>
+    <ClCompile Include="WheelObject.cpp">
+      <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="PS4Controller.cpp">
       <Filter>Source Files\Input</Filter>
+    </ClCompile>
+    <ClCompile Include="AudioComponent.cpp">
+      <Filter>Source Files\Audio</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
