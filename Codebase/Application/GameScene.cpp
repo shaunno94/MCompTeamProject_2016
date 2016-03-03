@@ -184,8 +184,3 @@ void GameScene::SetControllerActor()
 	//myControllers->setActor(Renderer::GetInstance()->GetCurrentScene()->findGameObject("goalieAI"), 1);
 }
 
-void GameScene::TestContact()
-{
-	
-	PhysicsEngineInstance::Instance()->contactTest(Renderer::GetInstance()->GetCurrentScene()->findGameObject("ball")->GetPhysicsComponent()->GetPhysicsBody(), *callback);
-}

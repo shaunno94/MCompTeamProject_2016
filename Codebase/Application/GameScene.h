@@ -87,7 +87,6 @@ public:
 	~GameScene();
 
 	void SetControllerActor();
-	void TestContact();
 
 protected:
 	ControllerManager* myControllers;
