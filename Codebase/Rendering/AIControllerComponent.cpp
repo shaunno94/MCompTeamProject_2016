@@ -68,7 +68,6 @@ ControllerComponent(parent)
 	default:
 		break;
 	}
-
 }
 
 AIControllerComponent::~AIControllerComponent()
@@ -77,6 +76,18 @@ AIControllerComponent::~AIControllerComponent()
 
 void AIControllerComponent::updateObject(float dt)
 {
+	if (m_parent->GetPhysicsComponent()->GetPhysicsBody()->getInterpolationLinearVelocity().length2() < 0.01) {
+		m_inactiveFramesAgainstWall++;
+	}
+	else if (m_parent->GetPhysicsComponent()->GetPhysicsBody()->getInterpolationLinearVelocity().length2() > 0.05){
+		m_inactiveFramesAgainstWall = 0;
+	}
+
+	if (m_inactiveFramesAgainstWall > 120) {
+		reset();
+		m_inactiveFramesAgainstWall = 0;
+	}
+
 	m_StateMachine->Update(dt);
 	ControllerComponent::updateObject(dt);
 }

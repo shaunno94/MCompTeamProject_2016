@@ -10,7 +10,7 @@ CarGameObject::CarGameObject(const Vec3Physics& position, const QuatPhysics& rot
 	RigidPhysicsObject* carPhysics = new RigidPhysicsObject();
 	carPhysics->CreateCollisionShape(Vec3Physics(5.2, 2.0, 6.5), CUBOID);
 	carPhysics->CreatePhysicsBody(8.0, position, rotation, Vec3Physics(1, 1, 1));
-	carPhysics->GetPhysicsBody()->setRestitution(btScalar(0.9));
+	carPhysics->GetPhysicsBody()->setRestitution(btScalar(0.3));
 	carPhysics->GetPhysicsBody()->setFriction(0.5);
 	carPhysics->GetPhysicsBody()->setRollingFriction(0.5);
 	carPhysics->GetPhysicsBody()->setHitFraction(0.5);
@@ -39,7 +39,6 @@ CarGameObject::CarGameObject(const Vec3Physics& position, const QuatPhysics& rot
 	wheel->SetRenderComponent(new RenderComponent(material, wheelMesh));
 	wheel->SetLocalTransform(Mat4Graphics::Translation(Vec3Graphics(0.45, 0.17, 0.45))* Mat4Graphics::Scale(Vector3Simple(-1, -1, -1))) /*Mat4Graphics::Scale(Vector3Simple(10, 10, 10)))*/;
 	this->AddChildObject(wheel);
-
 }
 
 

@@ -14,4 +14,5 @@ public:
 
 protected:
 	StateMachine* m_StateMachine;
+	unsigned int m_inactiveFramesAgainstWall;
 };

@@ -12,7 +12,7 @@ public:
 	virtual void AddTorque(float x, float y, float z);
 	virtual void AddImpulse(float x, float y, float z);
 	void turnWheels(float prop);
-	bool airborn();
+	bool airbourne();
 
 	void setCameraControl(float pitch, float yaw);
 	void getCameraControl(float& pitch, float& yaw);
@@ -26,5 +26,7 @@ protected:
 	Vector3Simple torque;
 	Vector3Simple impulse;
 	float dPitch, dYaw;
+
+	unsigned int m_inactiveFramesUpsideDown;
 };
 

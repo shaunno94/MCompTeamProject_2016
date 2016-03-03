@@ -12,8 +12,6 @@ public:
 	void AddSystem(ParticleSystem* system);
 	void RemoveSystem(ParticleSystem* system);
 	void Render(float delta);
-	void Shutdown();
-
 	bool HasInitialised();
 
 protected:

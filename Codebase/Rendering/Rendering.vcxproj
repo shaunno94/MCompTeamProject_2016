@@ -212,9 +212,9 @@
     <ClCompile Include="Camera.cpp" />
     <ClCompile Include="ControllerComponent.cpp" />
     <ClCompile Include="ControllerManager.cpp" />
+    <ClCompile Include="CubeEmitter.cpp" />
     <ClCompile Include="CubeMaterial.cpp" />
     <ClCompile Include="DebugDraw.cpp" />
-    <ClCompile Include="CubeEmitter.cpp" />
     <ClCompile Include="EventTextGUI.cpp" />
     <ClCompile Include="ExtendedMaterial.cpp" />
     <ClCompile Include="Frustum.cpp" />
