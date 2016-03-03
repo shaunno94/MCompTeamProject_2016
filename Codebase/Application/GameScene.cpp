@@ -136,8 +136,8 @@ GameScene::GameScene(ControllerManager* controller)
 
 	addGameObject(player);
 	addGameObject(ball);
-	//addGameObject(shooterAI);
-	//addGameObject(goalieAI);
+	addGameObject(shooterAI);
+	addGameObject(goalieAI);
 
 	addGameObject(goal1);
 	addGameObject(goal2);
@@ -180,7 +180,7 @@ GameScene::~GameScene()
 
 void GameScene::SetControllerActor()
 {
-	//myControllers->setActor(Renderer::GetInstance()->GetCurrentScene()->findGameObject("shooterAI"), 0);
-	//myControllers->setActor(Renderer::GetInstance()->GetCurrentScene()->findGameObject("goalieAI"), 1);
+	myControllers->setActor(Renderer::GetInstance()->GetCurrentScene()->findGameObject("shooterAI"), 0);
+	myControllers->setActor(Renderer::GetInstance()->GetCurrentScene()->findGameObject("goalieAI"), 1);
 }
 
