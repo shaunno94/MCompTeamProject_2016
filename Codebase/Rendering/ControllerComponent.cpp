@@ -21,11 +21,17 @@ ControllerComponent::~ControllerComponent()
 
 void ControllerComponent::updateObject(float dt)
 {
-	if (force.LengthSq() > 0.0000001 || torque.LengthSq() > 0.0000001)
+	if (force.LengthSq() > 0.0000001 || torque.LengthSq() > 0.0000001 || impulse.LengthSq() > 0.0000001)
 		dynamic_cast<RigidPhysicsObject*>(m_parent->GetPhysicsComponent())->GetPhysicsBody()->activate();
 
-	dynamic_cast<RigidPhysicsObject*>(m_parent->GetPhysicsComponent())->GetPhysicsBody()->applyCentralForce(btVector3(force.x, force.y, force.z) * dt);
+	Vec3 up = getOrientation() * Vec3(0, 1, 0);
+	
+	if (up.Dot(Vec3(0, 1, 0)) > 0.8 && !airborn()){
+		dynamic_cast<RigidPhysicsObject*>(m_parent->GetPhysicsComponent())->GetPhysicsBody()->applyCentralForce(btVector3(force.x, force.y, force.z) * dt);
+		dynamic_cast<RigidPhysicsObject*>(m_parent->GetPhysicsComponent())->GetPhysicsBody()->applyCentralImpulse(btVector3(impulse.x, impulse.y, impulse.z));
+	}
 	force.ToZero();
+	impulse.ToZero();
 	dynamic_cast<RigidPhysicsObject*>(m_parent->GetPhysicsComponent())->GetPhysicsBody()->applyTorque(btVector3(torque.x, torque.y, torque.z)*dt);
 	//dynamic_cast<RigidPhysicsObject*>(m_parent->GetPhysicsComponent())->GetPhysicsBody()->applyCentralImpulse(btVector3(torque.x, torque.y, torque.z)*dt);
 	torque.ToZero();
@@ -35,9 +41,9 @@ void ControllerComponent::updateObject(float dt)
 	btScalar friction = 0.5;
 	if (velocity.length2() > 0.0000001)
 	{
-		friction = std::abs((3 * (velocity.normalize()).dot(btOrientation.normalize())));
-	
-		friction = friction <= 0.5 ? 0.5 : friction;
+		friction = std::abs((2.2 * (velocity.normalize()).dot(btOrientation.normalize())));
+
+		friction = friction <= 0.8 ? 0.8 : friction;
 	}
 	m_parent->GetPhysicsComponent()->GetPhysicsBody()->setFriction(friction);
 }
@@ -54,6 +60,12 @@ void ControllerComponent::AddTorque(float x, float y, float z)
 	torque.x = (x);
 	torque.y = (y);
 	torque.z = (z);
+}
+void ControllerComponent::AddImpulse(float x, float y, float z)
+{
+	impulse.x = (x);
+	impulse.y = (y);
+	impulse.z = (z);
 }
 
 Mat4Physics ControllerComponent::getOrientation()
@@ -99,7 +111,8 @@ void ControllerComponent::reset()
 	auto world = m_parent->GetWorldTransform().GetTranslation();
 	//world.SetTranslation(Vec3Physics(0, 0, 0));
 	btTransform trasform = btTransform(btQuaternion(btVector3(0, 0, -1), 0), btVector3(world.x, world.y, world.z));
-		m_parent->GetPhysicsComponent()->GetPhysicsBody()->setWorldTransform(trasform);
+	m_parent->GetPhysicsComponent()->GetPhysicsBody()->setWorldTransform(trasform);
+	dynamic_cast<RigidPhysicsObject*>(m_parent->GetPhysicsComponent())->GetPhysicsBody()->activate();
 }
 
 void ControllerComponent::turnWheels(float prop){
@@ -110,4 +123,8 @@ void ControllerComponent::turnWheels(float prop){
 	}
 	((WheelObject*)fr)->setRotationFactor(prop);
 	((WheelObject*)fl)->setRotationFactor(prop);
+}
+
+bool ControllerComponent::airborn(){
+	return  m_parent->GetPhysicsComponent()->GetPhysicsBody()->getWorldTransform().getOrigin().y() > 1.5;
 }
