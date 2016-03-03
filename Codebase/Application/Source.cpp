@@ -59,12 +59,15 @@ int main(void)
 		myControllers->update(ms);
 
 		renderer.RenderScene(ms);
+#ifndef ORBIS
 		SoundSystem::Instance()->Update(ms);
+#endif
 	}
 
 	delete gameScene;
-
+#ifndef ORBIS
 	SoundSystem::Release();
+#endif
 
 	return 0;
 }

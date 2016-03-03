@@ -26,6 +26,8 @@ Texture* Texture::Make(const std::string& filePath, bool preload)
 
 Texture* Texture::Get(const std::string& filePath, bool preload)
 {
+	//filePath.replace(filePath.find_last_of("."), filePath.end(), "gnf");
+	//std::string rawname = filePath.replace(0, lastindex);
 	Texture* newTexture;
 	std::unordered_map<std::string, std::vector<Texture*>>::iterator match = s_textureRecords.find(filePath);
 	if (match != s_textureRecords.end())

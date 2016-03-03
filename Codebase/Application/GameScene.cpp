@@ -1,6 +1,5 @@
 #include "GameScene.h"
 
-
 GameScene::GameScene(ControllerManager* controller)
 : myControllers(controller)
 {
