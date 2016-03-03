@@ -28,16 +28,12 @@ m_wallMaterial(wallMaterial)
 	m_wallMaterial->Set("diffuseTex", m_netTexture);
 
 	CreateCollisionWalls();
-
 }
 
-Stadium::~Stadium()
-{
-}
+Stadium::~Stadium(){}
 
 void Stadium::CreateCollisionWalls()
 {
-
 	const float WALL_HEIGHT = 100;
 
 	// FRONT HALF
@@ -72,15 +68,11 @@ void Stadium::CreateCollisionWalls()
 	CreatePlane(m_collisionWalls, Vec3Physics(-250, WALL_HEIGHT / 3, 30), Vec3Physics(-280, WALL_HEIGHT / 3, -30));
 	CreatePlane(m_collisionWalls, Vec3Physics(-250, WALL_HEIGHT / 3, 30), Vec3Physics(-250, WALL_HEIGHT, -30));
 
-
-
 	RigidPhysicsObject* wallPhysics = new RigidPhysicsObject();
 	wallPhysics->CreateCollisionShape(m_collisionWalls);
 	wallPhysics->CreatePhysicsBody(0, Vec3Physics(0, 0, 0), QuatPhysics(0, 0, 0, 1));
 
-	
 	RigidPhysicsObject* goalPhysics = new RigidPhysicsObject();
-
 }
 
 void Stadium::CreatePlane(std::vector<btConvexHullShape*> &collectionVector, Vec3Physics start, Vec3Physics end)
@@ -98,10 +90,9 @@ void Stadium::CreatePlane(std::vector<btConvexHullShape*> &collectionVector, Vec
 
 	GameObject* wall = new GameObject();
 	wall->SetRenderComponent(new RenderComponent(m_wallMaterial, mesh));
+
 	//wall->SetWorldTransform(Mat4Graphics::Translation(Vector3Simple(start.x, start.y, start.z)) * Mat4Graphics::Scale(difference));
-	this->AddChildObject(wall);
-
-
+	AddChildObject(wall);
 
 	btConvexHullShape* newShape = new btConvexHullShape();
 

@@ -175,6 +175,7 @@
     <ClInclude Include="ParticleManager.h" />
     <ClInclude Include="ParticleSystem.h" />
     <ClInclude Include="PhysicsObject.h" />
+    <ClInclude Include="PS4Buffer.h" />
     <ClInclude Include="PS4Controller.h" />
     <ClInclude Include="PS4Frame.h" />
     <ClInclude Include="PS4Mesh.h" />
@@ -210,6 +211,7 @@
     <ClCompile Include="ParticleManager.cpp" />
     <ClCompile Include="ParticleSystem.cpp" />
     <ClCompile Include="PhysicsObject.cpp" />
+    <ClCompile Include="PS4Buffer.cpp" />
     <ClCompile Include="PS4Controller.cpp" />
     <ClCompile Include="PS4Frame.cpp" />
     <ClCompile Include="PS4Mesh.cpp" />
@@ -268,6 +270,18 @@
       <Profile Condition="'$(Configuration)|$(Platform)'=='Release|ORBIS'">sce_vs_vs_orbis</Profile>
       <Profile Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">sce_vs_vs_orbis</Profile>
       <OutputFileName Condition="'$(Configuration)|$(Platform)'=='Debug|ORBIS'">$(SolutionDir)\Application\Assets\PS4Shaders\%(FileName).sb</OutputFileName>
+    </OrbisWavePsslc>
+    <OrbisWavePsslc Include="combineFrag.pssl">
+      <Profile Condition="'$(Configuration)|$(Platform)'=='Debug|ORBIS'">sce_ps_orbis</Profile>
+      <Profile Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">sce_ps_orbis</Profile>
+      <Profile Condition="'$(Configuration)|$(Platform)'=='Release|ORBIS'">sce_ps_orbis</Profile>
+      <Profile Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">sce_ps_orbis</Profile>
+    </OrbisWavePsslc>
+    <OrbisWavePsslc Include="combineVert.pssl">
+      <Profile Condition="'$(Configuration)|$(Platform)'=='Debug|ORBIS'">sce_vs_vs_orbis</Profile>
+      <Profile Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">sce_vs_vs_orbis</Profile>
+      <Profile Condition="'$(Configuration)|$(Platform)'=='Release|ORBIS'">sce_vs_vs_orbis</Profile>
+      <Profile Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">sce_vs_vs_orbis</Profile>
     </OrbisWavePsslc>
     <OrbisWavePsslc Include="textureFragment.pssl">
       <Profile Condition="'$(Configuration)|$(Platform)'=='Debug|ORBIS'">sce_ps_orbis</Profile>

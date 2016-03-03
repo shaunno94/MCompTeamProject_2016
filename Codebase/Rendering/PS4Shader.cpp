@@ -30,6 +30,7 @@ PS4Shader::PS4Shader(const std::string& vertex, const std::string& pixel, const 
 	}
 
 	m_ModelMatrixLocation = GetResourceByName("modelMatrix");
+	m_InverseModelMatrixLocation = GetResourceByName("invModelMat");
 	for (size_t i = 0; i < ReservedMeshTextures.size; ++i)
 		m_ReservedMeshTextureLocations[i] = GetResourceByName(ReservedMeshTextures.values[i].name);
 

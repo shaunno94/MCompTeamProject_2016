@@ -3,6 +3,12 @@ ConstantBuffer modelMatrix
 {
 	column_major matrix modelMatrix;
 };
+
+ConstantBuffer invModelMat
+{
+	column_major matrix invModelMat;
+};
+
 ConstantBuffer viewMatrix
 {
 	column_major matrix viewMatrix;
@@ -34,8 +40,7 @@ VS_OUTPUT main(VS_INPUT Input)
 	float4x4 MVP = mul(mul(projMatrix, viewMatrix), modelMatrix);
 	Output.position = mul(MVP, float4(Input.position.xyz, 1.0));
 
-	float3x3 model3 = float3x3(modelMatrix);
-	float3x3 normalMatrix = (transpose(model3)); //need to do inverse on CPU
+	float3x3 normalMatrix = float3x3(invModelMat); //Inverse transpose done on CPU.
 	Output.normal = normalize(mul(normalMatrix,normalize(Input.normal)));
 
 	Output.texCoord = Input.texCoord;

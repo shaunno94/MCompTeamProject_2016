@@ -21,10 +21,10 @@ void RenderComponent::Draw()
 		return;
 
 	Renderer::GetInstance()->SetCurrentShader(m_Material->GetShader());
-
 	//model matrix
 	Renderer::GetInstance()->UpdateUniform(m_Material->GetShader()->GetModelMatrixLocation(), m_GameObject->GetWorldTransform());
-	
+	//Inverse, transposed model matrix
+	Renderer::GetInstance()->UpdateUniform(m_Material->GetShader()->GetInverseModelMatrixLocation(), Matrix4Simple::Inverse(Matrix4Simple::Transpose(m_GameObject->GetWorldTransform())));
 	m_Mesh->Draw(m_Material);	
 }
 

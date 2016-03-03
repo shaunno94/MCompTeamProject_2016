@@ -200,8 +200,8 @@ Mesh* Mesh::GenerateQuad(Vec3Graphics* vertices, Vec2Graphics texCoords /* = Vec
 
 	for (int i = 0; i < m->m_NumIndices; ++i)
 	{
-		m->m_Normals[i] = normal;
-		m->m_Tangents[i] = normal.Cross(normal);
+		m->m_Normals[i] = normal.Normalize();
+		m->m_Tangents[i] = normal.Cross(normal).Normalize();
 		m->m_Indices[i] = i;
 	}
 	m->BufferData();

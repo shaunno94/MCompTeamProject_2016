@@ -47,7 +47,7 @@ class GameObject
 	friend class Scene;
 
 public:
-	GameObject(const std::string& name = "");
+	GameObject(const std::string& name = std::to_string(id));
 	virtual ~GameObject();
 
 	const std::string& GetName()
@@ -140,4 +140,6 @@ protected:
 	Mat4Graphics				m_LocalTransform;
 
 	float m_CamDist; //For ordering of rendering lists.
+
+	static unsigned int id;
 };

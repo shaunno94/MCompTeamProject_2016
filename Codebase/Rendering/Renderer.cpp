@@ -105,8 +105,6 @@ void Renderer::OnRenderLights()
 		lm->Set("cameraPos", currentScene->getCamera()->GetPosition());
 		lm->Set("shadowBias", lm->shadowBias);
 
-		UpdateShaderMatrices();
-
 		float dist = (light->GetWorldTransform().GetTranslation() - currentScene->getCamera()->GetPosition()).Length();
 
 		if (dist < light->GetBoundingRadius())  // camera is inside the light volume !

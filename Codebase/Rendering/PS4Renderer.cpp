@@ -8,7 +8,6 @@ Renderer* PS4Renderer::child = nullptr;
 
 PS4Renderer::PS4Renderer()
 {
-	framesSubmitted = 0;
 	currentGPUBuffer = 0;
 	currentScreenBuffer = 0;
 	prevScreenBuffer = 0;
@@ -26,6 +25,9 @@ PS4Renderer::PS4Renderer()
 	trilinearSampler.init();
 	trilinearSampler.setMipFilterMode(sce::Gnm::kMipFilterModeLinear);
 	trilinearSampler.setXyFilterMode(sce::Gnm::kFilterModeAnisoBilinear, sce::Gnm::kFilterModeAnisoBilinear);
+	trilinearSampler.setAnisotropyRatio(sce::Gnm::kAnisotropyRatio16);
+	//trilinearSampler.setWrapMode(sce::Gnm::kWrapModeWrap, sce::Gnm::kWrapModeWrap, sce::Gnm::kWrapModeWrap);
+	trilinearSampler.setWrapMode(sce::Gnm::kWrapModeMirror, sce::Gnm::kWrapModeMirror, sce::Gnm::kWrapModeMirror);
 
 	primitiveSetup.init();
 	primitiveSetup.setCullFace(sce::Gnm::kPrimitiveSetupCullFaceNone);
@@ -34,9 +36,15 @@ PS4Renderer::PS4Renderer()
 	dsc.init();
 	dsc.setDepthControl(sce::Gnm::kDepthControlZWriteEnable, sce::Gnm::kCompareFuncLessEqual);
 	dsc.setDepthEnable(true);
+	
+	blendControl.init();
+	blendControl.setBlendEnable(true);
+	blendControl.setColorEquation(sce::Gnm::kBlendMultiplierOne, sce::Gnm::kBlendFuncAdd, sce::Gnm::kBlendMultiplierOneMinusSrcAlpha);
 
-	mesh = static_cast<PS4Mesh*>(Mesh::GenerateTriangle());
-	shader = new PS4Shader(SHADER_DIR"textureVertex.sb", SHADER_DIR"textureFragment.sb");
+	dEqaaControl.init();
+	dEqaaControl.setAlphaToMaskSamples(sce::Gnm::NumSamples::kNumSamples4);
+
+	cc.init();
 
 	SwapBuffers();	
 	init = true;
@@ -44,32 +52,36 @@ PS4Renderer::PS4Renderer()
 
 void PS4Renderer::InitialiseVideoSystem()
 {
-	screenBuffers = new PS4ScreenBuffer*[_bufferCount];
-
-	for (int i = 0; i < _bufferCount; ++i) 
+	//open up the video port
+	videoHandle = sceVideoOutOpen(0, SCE_VIDEO_OUT_BUS_TYPE_MAIN, 0, NULL);	
+	
+	TestBuf.resize(_bufferCount);
+	for (int i = 0; i < _bufferCount; ++i)
 	{
-		screenBuffers[i] = GenerateScreenBuffer(1920, 1080);
+		TestBuf[i] = new PS4Buffer(1920, 1080, stackAllocators[GARLIC], 2, videoHandle, false);
 	}
-
-	//Now we can open up the video port
-	videoHandle = sceVideoOutOpen(0, SCE_VIDEO_OUT_BUS_TYPE_MAIN, 0, NULL);
 
 	SceVideoOutBufferAttribute attribute;
 	sceVideoOutSetBufferAttribute(&attribute,
 		SCE_VIDEO_OUT_PIXEL_FORMAT_B8_G8_R8_A8_SRGB,
 		SCE_VIDEO_OUT_TILING_MODE_TILE,
 		SCE_VIDEO_OUT_ASPECT_RATIO_16_9,
-		screenBuffers[0]->colourTarget.getWidth(),
-		screenBuffers[0]->colourTarget.getHeight(),
-		screenBuffers[0]->colourTarget.getPitch());
+		TestBuf[0]->GetBufferWidth(),
+		TestBuf[0]->GetBufferHeight(),
+		TestBuf[0]->GetTarget(0).getPitch());
 
 	void* bufferAddresses[_bufferCount];
 
-	for (int i = 0; i < _bufferCount; ++i) 
+	for (int i = 0; i < _bufferCount; ++i)
 	{
-		bufferAddresses[i] = screenBuffers[i]->colourTarget.getBaseAddress();
+		bufferAddresses[i] = TestBuf[i]->GetTarget(0).getBaseAddress();
 	}
+	sceVideoOutRegisterBuffers(videoHandle, 0, bufferAddresses, _bufferCount, &attribute);
 
+	for (int i = 0; i < _bufferCount; ++i)
+	{
+		bufferAddresses[i] = TestBuf[i]->GetTarget(1).getBaseAddress();
+	}
 	sceVideoOutRegisterBuffers(videoHandle, 0, bufferAddresses, _bufferCount, &attribute);
 }
 
@@ -111,9 +123,8 @@ void	PS4Renderer::DestroyVideoSystem()
 {
 	for (int i = 0; i < _bufferCount; ++i) 
 	{
-		delete screenBuffers[i];
+		//delete screenBuffers[i];
 	}
-	delete[] screenBuffers;
 	sceVideoOutClose(videoHandle);
 }
 
@@ -126,7 +137,53 @@ PS4Renderer::~PS4Renderer()
 
 void PS4Renderer::SetTextureFlags(textureHandle&, unsigned int flags)
 {
+	// Repeat/Clamp options
+	if ((flags & REPEATING) == REPEATING) 
+	{
+		trilinearSampler.setWrapMode(sce::Gnm::kWrapModeWrap, sce::Gnm::kWrapModeWrap, sce::Gnm::kWrapModeWrap);
+	}
+	else if ((flags & CLAMPING) == CLAMPING) 
+	{
+		trilinearSampler.setWrapMode(sce::Gnm::kWrapModeClampBorder, sce::Gnm::kWrapModeClampBorder, sce::Gnm::kWrapModeClampBorder);
+	}
 
+	// Filtering options
+	/*if ((flags & NEAREST_NEIGHBOUR_MIN_FILTERING) == NEAREST_NEIGHBOUR_MIN_FILTERING) 
+	{
+		if ((flags & NEAREST_NEIGHBOUR_MAX_FILTERING) == NEAREST_NEIGHBOUR_MAX_FILTERING)
+		{
+			trilinearSampler.setXyFilterMode(sce::Gnm::kFilterModePoint, sce::Gnm::kFilterModePoint);
+			trilinearSampler.setMipFilterMode(sce::Gnm::kMipFilterModePoint);
+		}
+		//mag/min filter
+		trilinearSampler.setXyFilterMode(sce::Gnm::kFilterModeAnisoBilinear, sce::Gnm::kFilterModePoint);
+		trilinearSampler.setMipFilterMode(sce::Gnm::kMipFilterModePoint);
+	}
+	else if ((flags & BILINEAR_MIN_FILTERING) == BILINEAR_MIN_FILTERING) 
+	{
+		if ((flags & BILINEAR_MAX_FILTERING) == BILINEAR_MAX_FILTERING) 
+		{
+			trilinearSampler.setXyFilterMode(sce::Gnm::kFilterModeAnisoBilinear, sce::Gnm::kFilterModeAnisoBilinear);
+			trilinearSampler.setMipFilterMode(sce::Gnm::kMipFilterModePoint);
+		}
+		trilinearSampler.setXyFilterMode(sce::Gnm::kFilterModeAnisoBilinear, sce::Gnm::kFilterModeAnisoBilinear);
+		trilinearSampler.setMipFilterMode(sce::Gnm::kMipFilterModePoint);
+	}
+	else if ((flags & TRILINEAR_MIN_FILTERING) == TRILINEAR_MIN_FILTERING) {
+		trilinearSampler.setXyFilterMode(sce::Gnm::kFilterModeAnisoBilinear, sce::Gnm::kFilterModeAnisoBilinear);
+		trilinearSampler.setMipFilterMode(sce::Gnm::kMipFilterModeLinear);
+	}
+
+
+	else if ((flags & TRILINEAR_MAX_FILTERING) == TRILINEAR_MAX_FILTERING) {
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+	}*/
+
+	/*if ((flags & ANISOTROPIC_FILTERING) == ANISOTROPIC_FILTERING) {
+		trilinearSampler.setXyFilterMode(sce::Gnm::kFilterModeAnisoBilinear, sce::Gnm::kFilterModeAnisoBilinear);
+		trilinearSampler.setMipFilterMode(sce::Gnm::kMipFilterModeLinear);
+	}*/
+	currentGFXContext->setSamplers(sce::Gnm::kShaderStagePs, 0, 1, &trilinearSampler);
 }
 
 void PS4Renderer::SetCurrentShader(BaseShader* s)
@@ -140,27 +197,75 @@ void PS4Renderer::SetCurrentShader(BaseShader* s)
 void PS4Renderer::FillBuffers()
 {
 	currentFrame->StartFrame();
-
 	currentGFXContext->waitUntilSafeForRendering(videoHandle, currentGPUBuffer);
-	SetRenderBuffer(currentPS4Buffer, true, true, true);
+	
+	currentPS4Buffer->SetRenderTargets(*currentGFXContext);
 		
-	currentGFXContext->setPrimitiveSetup(primitiveSetup);
-	currentGFXContext->setDepthStencilControl(dsc);
-	currentGFXContext->setupScreenViewport(0, 0, currentPS4Buffer->colourTarget.getWidth(), currentPS4Buffer->colourTarget.getHeight(), 0.5f, 0.5f);
-	currentGFXContext->setSamplers(sce::Gnm::kShaderStagePs, 0, 1, &trilinearSampler);
+	InitCMD();
 
 	child->OnRenderScene();
 
+	/*currentPS4Buffer->normalTex.initFromRenderTarget(&currentPS4Buffer->normalTarget, false);
+	currentPS4Buffer->normalTex.setResourceMemoryType(sce::Gnm::kResourceMemoryTypeRO);
+
+	currentPS4Buffer->depthTex.initFromDepthRenderTarget(&currentPS4Buffer->depthTarget, false);
+	currentPS4Buffer->depthTex.setResourceMemoryType(sce::Gnm::kResourceMemoryTypeRO);
+	sce::Gnmx::decompressDepthSurface(currentGFXContext, &currentPS4Buffer->depthTarget);*/
 	currentFrame->EndFrame();
-	framesSubmitted++;
+}
+
+void PS4Renderer::InitCMD()
+{
+	currentGFXContext->setPrimitiveSetup(primitiveSetup);
+	currentGFXContext->setDepthStencilControl(dsc);
+	currentGFXContext->setupScreenViewport(0, 0, currentPS4Buffer->GetBufferWidth(), currentPS4Buffer->GetBufferHeight(), 0.5f, 0.5f);
+	currentGFXContext->setSamplers(sce::Gnm::kShaderStagePs, 0, 1, &trilinearSampler);
+	currentGFXContext->setBlendControl(0, blendControl);
+	currentGFXContext->setDepthEqaaControl(dEqaaControl);
+	currentGFXContext->setAaSampleCount(sce::Gnm::NumSamples::kNumSamples4, 100);
+	currentGFXContext->setClipControl(cc);
 }
 
 void PS4Renderer::DrawPointLights()
 {
+	//currentFrame->StartFrame();
+	//currentGFXContext->waitUntilSafeForRendering(videoHandle, currentGPUBuffer);
+	//SetRenderBuffer(currentPS4Buffer);
 
+	//blendControl.setAlphaEquation(sce::Gnm::kBlendMultiplierOne, sce::Gnm::kBlendFuncAdd, sce::Gnm::kBlendMultiplierOne);
+	//InitCMD();
+	////SetTexture();
+	//sce::Gnm::Texture depthTex;
+	//depthTex.initFromDepthRenderTarget(&currentPS4Buffer->depthTarget, false);
+	//
+	//child->OnRenderLights();
+
+	//currentFrame->EndFrame();
 }
 
 void PS4Renderer::DrawShadow(GameObject* light)
+{
+	LightMaterial* lm = (LightMaterial*)(light->GetRenderComponent()->m_Material);
+	switch (lm->shadowType)
+	{
+	case _NONE:
+	default:
+		break;
+	case _2D:
+		DrawShadow2D(light);
+		break;
+	case _CUBE:
+		DrawShadowCube(light);
+		break;
+	}
+}
+
+void PS4Renderer::DrawShadow2D(GameObject* light)
+{
+
+}
+
+void PS4Renderer::DrawShadowCube(GameObject* light)
 {
 
 }
@@ -173,34 +278,16 @@ void PS4Renderer::CombineBuffers()
 //TODO:fix id here
 void PS4Renderer::SetTexture(const shaderResourceLocation& location, textureHandle& handle)
 {
-	currentGFXContext->setTextures(sce::Gnm::kShaderStagePs, 0, 1, &handle);
-}
-
-void PS4Renderer::ClearBuffer(bool colour, bool depth, bool stencil)
-{
-	if (colour) 
-	{
-		Vector4 defaultClearColour(1.0f, 1.0f, 0.0f, 1.0f);
-		sce::Gnmx::Toolkit::SurfaceUtil::clearRenderTarget(*currentGFXContext, &currentPS4Buffer->colourTarget, defaultClearColour);
-	}
-	if (depth) 
-	{
-		sce::Gnmx::Toolkit::SurfaceUtil::clearDepthTarget(*currentGFXContext, &currentPS4Buffer->depthTarget, 1.0f);
-	}
-
-	if (stencil && currentPS4Buffer->depthTarget.getStencilReadAddress()) 
-	{
-		sce::Gnmx::Toolkit::SurfaceUtil::clearStencilTarget(*currentGFXContext, &currentPS4Buffer->depthTarget, 0);
-	}
+	currentGFXContext->setTextures(sce::Gnm::kShaderStagePs, location.id, 1, &handle);		
 }
 
 void PS4Renderer::SwapBuffers()
 {
 	SwapScreenBuffer();
-	SwapCommandBuffer();
+	SwapCommandBuffer(true);
 }
 
-void PS4Renderer::SwapCommandBuffer()
+void PS4Renderer::SwapCommandBuffer(bool submitDone)
 {
 	if (currentGFXContext) 
 	{
@@ -220,73 +307,7 @@ void PS4Renderer::SwapScreenBuffer()
 	currentScreenBuffer = (currentScreenBuffer + 1) % _bufferCount;
 	sceVideoOutSubmitFlip(videoHandle, prevScreenBuffer, SCE_VIDEO_OUT_FLIP_MODE_VSYNC, 0);
 	
-	currentPS4Buffer = screenBuffers[currentScreenBuffer];
-}
-
-void PS4Renderer::SetRenderBuffer(PS4ScreenBuffer* buffer, bool clearColour, bool clearDepth, bool clearStencil)
-{
-	currentPS4Buffer = buffer;
-
-	ClearBuffer(clearColour, clearDepth, clearStencil);
-
-	currentGFXContext->setRenderTargetMask(0xF);
-	currentGFXContext->setRenderTarget(0, &currentPS4Buffer->colourTarget);
-	currentGFXContext->setDepthRenderTarget(&currentPS4Buffer->depthTarget);
-}
-
-PS4ScreenBuffer* PS4Renderer::GenerateScreenBuffer(uint width, uint height, bool colour, bool depth, bool stencil)
-{
-	PS4ScreenBuffer* buffer = new PS4ScreenBuffer();
-
-	if (colour)
-	{
-		sce::Gnm::DataFormat format = sce::Gnm::kDataFormatB8G8R8A8UnormSrgb;
-		sce::Gnm::TileMode	tileMode;
-		sce::GpuAddress::computeSurfaceTileMode(&tileMode, sce::GpuAddress::kSurfaceTypeColorTargetDisplayable, format, 1);
-
-		const sce::Gnm::SizeAlign colourAlign = buffer->colourTarget.init(width, height, 1, format, tileMode,
-			sce::Gnm::kNumSamples1, sce::Gnm::kNumFragments1, NULL, NULL);
-
-		void* colourMemory = stackAllocators[GARLIC].allocate(colourAlign);
-
-		sce::Gnm::registerResource(nullptr, ownerHandle, colourMemory, colourAlign.m_size,
-			"Colour", sce::Gnm::kResourceTypeDepthRenderTargetBaseAddress, 0);
-
-		buffer->colourTarget.setAddresses(colourMemory, NULL, NULL);
-	}
-
-	if (depth)
-	{
-		sce::Gnm::DataFormat depthFormat = sce::Gnm::DataFormat::build(sce::Gnm::kZFormat32Float);
-		sce::Gnm::TileMode	depthTileMode;
-
-		sce::GpuAddress::computeSurfaceTileMode(&depthTileMode, sce::GpuAddress::kSurfaceTypeDepthOnlyTarget, depthFormat, 1);
-
-		sce::Gnm::StencilFormat stencilFormat = (stencil ? sce::Gnm::kStencil8 : sce::Gnm::kStencilInvalid);
-
-		void* stencilMemory = 0;
-		sce::Gnm::SizeAlign stencilAlign;
-
-		const sce::Gnm::SizeAlign depthAlign = buffer->depthTarget.init(width, height, depthFormat.getZFormat(), stencilFormat, depthTileMode,
-			sce::Gnm::kNumFragments1, stencil ? &stencilAlign : 0, 0);
-
-		void* depthMemory = stackAllocators[GARLIC].allocate(depthAlign);
-
-		sce::Gnm::registerResource(nullptr, ownerHandle, depthMemory, depthAlign.m_size,
-			"Depth", sce::Gnm::kResourceTypeDepthRenderTargetBaseAddress, 0);
-
-
-		if (stencil) 
-		{
-			stencilMemory = stackAllocators[GARLIC].allocate(stencilAlign);
-
-			sce::Gnm::registerResource(nullptr, ownerHandle, stencilMemory, stencilAlign.m_size,
-				"Stencil", sce::Gnm::kResourceTypeDepthRenderTargetBaseAddress, 0);
-		}
-
-		buffer->depthTarget.setAddresses(depthMemory, stencilMemory);
-	}
-	return buffer;
+	currentPS4Buffer = TestBuf[currentScreenBuffer];
 }
 
 void PS4Renderer::SetCullFace(CULL c)
@@ -343,7 +364,7 @@ void PS4Renderer::UpdateUniform(const shaderResourceLocation& location, const Ve
 		constantBuffer.initAsConstantBuffer(vec, sizeof(Vec3Graphics));
 		constantBuffer.setResourceMemoryType(sce::Gnm::kResourceMemoryTypeRO);
 
-			currentGFXContext->setConstantBuffers(location.stage, location.id, 1, &constantBuffer);
+		currentGFXContext->setConstantBuffers(location.stage, location.id, 1, &constantBuffer);
 	}
 }
 void PS4Renderer::UpdateUniform(const shaderResourceLocation& location, const Vec2Graphics& vec2)
@@ -356,7 +377,7 @@ void PS4Renderer::UpdateUniform(const shaderResourceLocation& location, const Ve
 		constantBuffer.initAsConstantBuffer(vec, sizeof(Vec2Graphics));
 		constantBuffer.setResourceMemoryType(sce::Gnm::kResourceMemoryTypeRO);
 
-			currentGFXContext->setConstantBuffers(sce::Gnm::kShaderStageVs, location.id, 1, &constantBuffer);
+		currentGFXContext->setConstantBuffers(sce::Gnm::kShaderStageVs, location.id, 1, &constantBuffer);
 	}
 }
 void PS4Renderer::UpdateUniform(const shaderResourceLocation& location, float f)

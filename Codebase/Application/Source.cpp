@@ -91,13 +91,13 @@ int main(void) {
 	//BaseShader* pointlightShader = new OGLShader(SHADER_DIR"CubeShadowLightvertex.glsl", SHADER_DIR"CubeShadowLightfragment.glsl");
 #else
 	BaseShader* simpleShader = new PS4Shader(SIMPLESHADER_VERT, SIMPLESHADER_FRAG);
-	//BaseShader* pointlightShader = new PS4Shader(POINTLIGHTSHADER_VERT, POINTLIGHTSHADER_FRAG);
+	BaseShader* pointlightShader = new PS4Shader(POINTLIGHTSHADER_VERT, POINTLIGHTSHADER_FRAG);
 #endif
 	
-	if (/*!pointlightShader->IsOperational() ||*/ !simpleShader->IsOperational())
+	if (!pointlightShader->IsOperational() || !simpleShader->IsOperational())
 		return -1;
 
-	/*LightMaterial* lightMaterial = new LightMaterial(pointlightShader);
+	LightMaterial* lightMaterial = new LightMaterial(pointlightShader);
 	light1->SetRenderComponent(new RenderComponent(lightMaterial, ModelLoader::LoadMGL(MODEL_DIR"Common/ico.mgl", true)));
 	light1->SetWorldTransform(Mat4Graphics::Translation(Vec3Graphics(0, 2, 2)) *Mat4Graphics::Scale(Vec3Graphics(20, 20, 20)));
 	light1->SetBoundingRadius(20);
@@ -105,7 +105,7 @@ int main(void) {
 	lightMaterial->shadowType = _2D;
 	light2->SetRenderComponent(new RenderComponent(lightMaterial, ModelLoader::LoadMGL(MODEL_DIR"Common/ico.mgl", true)));
 	light2->SetWorldTransform(Mat4Graphics::Translation(Vec3Graphics(600, 600, 600)) *Mat4Graphics::Scale(Vec3Graphics(1600, 1600, 1600)));
-	light2->SetBoundingRadius(1600);*/
+	light2->SetBoundingRadius(1600);
 
 	Material* material = new Material(simpleShader);
 	Material* ballMaterial = new Material(simpleShader);
@@ -122,8 +122,7 @@ int main(void) {
 	GameObject* stadium = new Stadium(material, netMaterial, "stadium");
 
 	myScene->addGameObject(stadium);
-	//myScene->addLightObject(light1);
-	//myScene->addLightObject(light2);
+	myScene->addLightObject(light2);
 
 	ball->SetRenderComponent(new RenderComponent(ballMaterial, ModelLoader::LoadMGL(MODEL_DIR"Common/Cube.mgl", true)));
 	ball->SetLocalTransform(Mat4Graphics::Scale(Vector3Simple(5, 5, 5)));

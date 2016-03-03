@@ -6,7 +6,6 @@
 PS4Mesh::PS4Mesh(uint32_t numVertices, Vec3Graphics* vertices, Vec2Graphics* texCoords, Vec3Graphics* normals, Vec3Graphics* tangents, uint32_t numIndices, uint32_t* indices)
 : Mesh(numVertices, vertices, texCoords, normals, tangents, numIndices, indices)
 {
-	//primitiveType = sce::Gnm::PrimitiveType::kPrimitiveTypeTriStrip;
 	primitiveType = sce::Gnm::PrimitiveType::kPrimitiveTypeTriList;
 	indexType = sce::Gnm::IndexSize::kIndexSize32;
 	indexBuffer = nullptr;
@@ -26,7 +25,6 @@ PS4Mesh::PS4Mesh()
 	vertexDataSize = 0;
 	indexDataSize = 0;
 	primitiveType = sce::Gnm::PrimitiveType::kPrimitiveTypeTriList;
-	//primitiveType = sce::Gnm::PrimitiveType::kPrimitiveTypeTriStrip;
 	indexType = sce::Gnm::IndexSize::kIndexSize32;
 }
 
@@ -43,6 +41,9 @@ void PS4Mesh::SetPrimitiveType(pType type)
 		primitiveType = sce::Gnm::PrimitiveType::kPrimitiveTypePolygon;
 		break;
 	case TRIANGLE_STRIP:
+		primitiveType = sce::Gnm::PrimitiveType::kPrimitiveTypeTriStrip;
+		break;
+	case TRIANGLE_LIST:
 		primitiveType = sce::Gnm::PrimitiveType::kPrimitiveTypeTriList;
 		break;
 	}
@@ -51,8 +52,6 @@ void PS4Mesh::SetPrimitiveType(pType type)
 
 void PS4Mesh::BufferData() 
 {
-	//primitiveType = sce::Gnm::PrimitiveType::kPrimitiveTypePolygon;
-	//indexType = sce::Gnm::IndexSize::kIndexSize32;
 	vertexDataSize = m_NumVertices * sizeof(MeshVertex);
 	indexDataSize = m_NumIndices * sizeof(uint32_t);
 
@@ -69,13 +68,9 @@ void PS4Mesh::BufferData()
 
 		if (m_Normals)
 			memcpy(&vertexBuffer[i].normal, &m_Normals[i], sizeof(float) * 3);
-		/*else
-			memset(&vertexBuffer[i].normal, 0, sizeof(float)* 3);*/
 		
 		if (m_Tangents)
 			memcpy(&vertexBuffer[i].tangent, &m_Tangents[i], sizeof(float) * 3);
-		/*else
-			memset(&vertexBuffer[i].tangent, 0, sizeof(float) * 3);*/
 	}
 
 	for (unsigned int i = 0; i < m_NumIndices; ++i) 
@@ -102,7 +97,7 @@ void PS4Mesh::InitAttributeBuffer(sce::Gnm::Buffer& buffer, sce::Gnm::DataFormat
 	buffer.initAsVertexBuffer(offset, format, sizeof(MeshVertex), m_NumVertices);
 	buffer.setResourceMemoryType(sce::Gnm::kResourceMemoryTypeRO);
 }
-//To-Do: Implement this :)
+
 void PS4Mesh::Draw(Material* material)
 {
 	//reserved textures
@@ -118,19 +113,22 @@ void PS4Mesh::Draw(Material* material)
 		Renderer::GetInstance()->UpdateUniform(material->GetShader()->GetReservedMeshColourUniformLocation(i), GetColour(i));
 	
 	//reserved float
-	Renderer::GetInstance()->UpdateUniform(material->GetShader()->GetResourceByName("specExponent"), GetSpecExponent()); 
+	Renderer::GetInstance()->UpdateUniform(material->GetShader()->GetResourceByName("specExponent"), m_SpecExponent); 
 	material->Setup();
 
 	SubmitDraw(*Renderer::GetInstance()->GetGFXContext(), sce::Gnm::ShaderStage::kShaderStageVs);
+
 	for (auto child : m_Children)
 		child->Draw(material);
 }
 
 void PS4Mesh::SubmitDraw(sce::Gnmx::GnmxGfxContext& cmdList, sce::Gnm::ShaderStage stage)
 {
+	//Renderer::GetInstance()->SubmitCMDBuffer();
 	cmdList.setVertexBuffers(stage, 0, attributeCount, attributeBuffers);
 	cmdList.setPrimitiveType(primitiveType);
-	cmdList.setIndexSize(indexType);
+	cmdList.setIndexSize(indexType);	
 	cmdList.drawIndex(m_NumIndices, indexBuffer);
+	//cmdList.splitCommandBuffers();
 }
 #endif

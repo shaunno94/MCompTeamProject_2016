@@ -73,6 +73,11 @@ public:
 		return { m_ModelMatrixLocation };
 	}
 
+	shaderResourceLocation GetInverseModelMatrixLocation() const override
+	{
+		return { m_InvModelMatrixLocation };
+	}
+
 protected:
 	GLint operational;
 	bool	LoadShaderFile(string from, string& into);
@@ -83,6 +88,7 @@ protected:
 	GLuint program;
 
 	GLint m_ModelMatrixLocation;
+	GLint m_InvModelMatrixLocation;
 	GLint m_ReservedMeshTextureLocations[ReservedMeshTextures.size];
 	GLint m_ReservedMeshColourLocations[ReservedMeshColours.size];
 };

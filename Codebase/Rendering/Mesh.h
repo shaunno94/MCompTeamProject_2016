@@ -38,7 +38,7 @@ struct MeshMtlData
 
 enum pType
 {
-	TRIANGLE, TRIANGLE_STRIP
+	TRIANGLE, TRIANGLE_STRIP, TRIANGLE_LIST
 };
 
 /// @ingroup Rendering

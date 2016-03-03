@@ -4,7 +4,7 @@
 Scene::Scene()
 {
 	cam = new Camera(0.0f, 0.0f, Vec3Graphics(0, 0, 0));
-	playerController = NULL;
+	playerController = nullptr;
 }
 
 

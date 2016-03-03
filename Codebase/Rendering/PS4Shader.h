@@ -31,6 +31,7 @@ public:
 	bool IsOperational() const override { return operational; }
 	shaderResourceLocation	GetResourceByName(const std::string &name) const override;
 	shaderResourceLocation GetModelMatrixLocation() const override { return m_ModelMatrixLocation; }
+	shaderResourceLocation GetInverseModelMatrixLocation() const override { return m_InverseModelMatrixLocation; }
 
 protected:
 	void GenerateVertexShader(const std::string&name, bool makeFetch);
@@ -71,6 +72,7 @@ protected:
 	bool operational = false;
 
 	shaderResourceLocation m_ModelMatrixLocation;
+	shaderResourceLocation m_InverseModelMatrixLocation;
 	shaderResourceLocation m_ReservedMeshTextureLocations[ReservedMeshTextures.size];
 	shaderResourceLocation m_ReservedMeshColourLocations[ReservedMeshColours.size];
 };

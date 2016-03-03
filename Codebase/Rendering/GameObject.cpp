@@ -1,5 +1,7 @@
 #include "GameObject.h"
 
+unsigned int GameObject::id = 0;
+
 GameObject::GameObject(const std::string& name)
 {
 	m_Parent = nullptr;
@@ -9,6 +11,7 @@ GameObject::GameObject(const std::string& name)
 	m_BoundingRadius = 1.0f;
 	m_CamDist = 0.0f;
 	m_Controller = nullptr;
+	id++;
 
 	m_LocalTransform.ToIdentity();
 	m_WorldTransform.ToIdentity();
@@ -28,7 +31,7 @@ GameObject::~GameObject()
 	if (m_Controller) {
 		delete m_Controller;
 		m_Controller = nullptr;
-}
+	}
 }
 
 GameObject*	GameObject::FindGameObject(const std::string& name)
@@ -60,14 +63,8 @@ void GameObject::AddChildObject(GameObject* child)
 	child->m_Parent = this;
 }
 
-
-//TODO:: Parent-child relationship needs to be undone for sorted drawing!!
 void GameObject::OnRenderObject()				
 {
-	for (auto child : m_Children)
-	{
-		child->OnRenderObject();
-	}
 	if (m_RenderComponent)
 		m_RenderComponent->Draw();
 }

@@ -53,6 +53,7 @@ OGLShader::OGLShader(std::string vFile, std::string fFile, std::string gFile, st
 		else
 		{
 			m_ModelMatrixLocation = GetResourceByName("modelMatrix").id;
+			m_InvModelMatrixLocation = GetResourceByName("invModelMat").id;
 			for (size_t i = 0; i < ReservedMeshTextures.size; ++i)
 				m_ReservedMeshTextureLocations[i] = GetResourceByName(ReservedMeshTextures.values[i].name).id;
 

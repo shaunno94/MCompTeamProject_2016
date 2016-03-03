@@ -167,5 +167,6 @@ protected:
 	std::string filePath;
 	unsigned int m_referenceCount;
 	bool textureLoaded = false;
+	unsigned int textureFlags;
 };
 

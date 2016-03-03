@@ -168,6 +168,9 @@
     <ClInclude Include="PS4Controller.h">
       <Filter>Header Files\Input</Filter>
     </ClInclude>
+    <ClInclude Include="PS4Buffer.h">
+      <Filter>Header Files\GNM_API</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Renderer.cpp">
@@ -266,6 +269,9 @@
     <ClCompile Include="PS4Controller.cpp">
       <Filter>Source Files\Input</Filter>
     </ClCompile>
+    <ClCompile Include="PS4Buffer.cpp">
+      <Filter>Source Files\GNM_API</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <OrbisWavePsslc Include="textureVertex.pssl">
@@ -278,6 +284,12 @@
       <Filter>PS4Shaders</Filter>
     </OrbisWavePsslc>
     <OrbisWavePsslc Include="2dShadowLightfragment.pssl">
+      <Filter>PS4Shaders</Filter>
+    </OrbisWavePsslc>
+    <OrbisWavePsslc Include="combineVert.pssl">
+      <Filter>PS4Shaders</Filter>
+    </OrbisWavePsslc>
+    <OrbisWavePsslc Include="combineFrag.pssl">
       <Filter>PS4Shaders</Filter>
     </OrbisWavePsslc>
   </ItemGroup>

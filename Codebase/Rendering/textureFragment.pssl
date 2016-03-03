@@ -1,6 +1,6 @@
 
-SamplerState samp0;
-Texture2D diffuseTex;
+SamplerState samp0 : register(s0);
+Texture2D diffuseTex : register(t0);
 
 struct VS_OUTPUT
 {
@@ -9,8 +9,17 @@ struct VS_OUTPUT
 	float3 normal		: NORMAL;
 };
 
-float4 main(VS_OUTPUT In) : S_TARGET_OUTPUT
+struct PS_OUTPUT
 {
-	return diffuseTex.Sample(samp0, In.texCoord.xy);    
-	//return float4 = float4(In.normal.xyz * 0.5 + 0.5, 1.0); //Need to find out how to output to multiple targets
+	float4 colour : S_TARGET_OUTPUT0;
+	float4 normal : S_TARGET_OUTPUT1;
+};
+
+PS_OUTPUT main(VS_OUTPUT In) : S_TARGET_OUTPUT
+{
+	PS_OUTPUT Output;
+
+	Output.colour = diffuseTex.Sample(samp0, In.texCoord.xy); 
+	Output.normal = float4(In.normal.xyz * 0.5 + 0.5, 1.0);
+	return Output;
 }

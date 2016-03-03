@@ -13,7 +13,7 @@ Texture* Texture::Make(const std::string& filePath, bool preload)
 	std::unordered_map<std::string, std::vector<Texture*>>::iterator match = s_textureRecords.find(filePath);
 	if (match != s_textureRecords.end())
 	{
-		newTexture = new Texture(filePath, match->second.size(), preload);
+		newTexture = new Texture(filePath, match->second.size(), preload); 
 		match->second.push_back(newTexture);
 	}
 	else
@@ -95,10 +95,10 @@ void Texture::ClearAll()
 
 void Texture::SetTextureParams(unsigned int flags)
 {
-	if (!textureLoaded)
-		LoadFromFile();
-
-	Renderer::GetInstance()->SetTextureFlags(textureId, flags);
+	//if (!textureLoaded)
+		//LoadFromFile();
+	textureFlags = flags;
+	//Renderer::GetInstance()->SetTextureFlags(textureId, flags);
 }
 
 void Texture::MeasureMemoryUsageAdd(textureHandle textureId)
@@ -115,7 +115,9 @@ Texture::Texture(const std::string& filepath, size_t index, bool preload) : file
 {
 	textureCopyIndex = index;
 	m_referenceCount = 1;
-	if (preload) LoadFromFile();
+	textureFlags = 0;
+	if (preload)
+		LoadFromFile();
 }
 
 Texture::~Texture()
@@ -183,7 +185,7 @@ void Texture::LoadFromFile()
 
 	sce::Gnf::Contents* contentsDesc = (sce::Gnf::Contents*)rawContents;
 
-	sce::Gnm::SizeAlign dataParams = getTexturePixelsSize(contentsDesc, 0);
+	sce::Gnm::SizeAlign dataParams = sce::Gnf::getTexturePixelsSize(contentsDesc, 0);
 
 	void *pixelsAddr = garlicAllocator.allocate(dataParams);
 	sce::Gnm::registerResource(nullptr, ownerHandle, pixelsAddr, dataParams.m_size, filePath.c_str(), sce::Gnm::kResourceTypeTextureBaseAddress, 0);
@@ -191,7 +193,8 @@ void Texture::LoadFromFile()
 	file.seekg(getTexturePixelsByteOffset(contentsDesc, 0), ios::cur); //fast forward in the file a bit
 	file.read((char*)pixelsAddr, dataParams.m_size);
 
-	textureId = *patchTextures(contentsDesc, 0, 1, &pixelsAddr);
+	textureId = *sce::Gnf::patchTextures(contentsDesc, 0, 1, &pixelsAddr);
+
 	/*tex->width = tex->apiTexture.getWidth();
 	tex->height = tex->apiTexture.getHeight();
 	tex->bpp = tex->apiTexture.getDepth();*/
@@ -211,6 +214,9 @@ void Texture::Load(const shaderResourceLocation& textureUnit)
 {
 	if (!textureLoaded) 
 		LoadFromFile();
-
+	
+	if (textureFlags != 0)
+		Renderer::GetInstance()->SetTextureFlags(textureId, textureFlags);
+	
 	Renderer::GetInstance()->SetTexture(textureUnit, textureId);
 }

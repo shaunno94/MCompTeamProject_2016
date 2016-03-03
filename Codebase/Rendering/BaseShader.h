@@ -76,5 +76,6 @@ public:
 	virtual shaderResourceLocation GetReservedMeshTextureUniformLocation(unsigned int index) const = 0;
 	virtual shaderResourceLocation GetReservedMeshColourUniformLocation(unsigned int index) const = 0;
 	virtual shaderResourceLocation GetModelMatrixLocation() const = 0;
+	virtual shaderResourceLocation GetInverseModelMatrixLocation() const = 0;
 protected:
 };

@@ -4,13 +4,33 @@ Texture2D depthTex			: register(t0);
 Texture2D normTex			: register(t1);
 Texture2D shadowTex			: register(t2); //Texture2DShadow ????
 
-ConstantBuffer ShaderConstants
+ConstantBuffer shadowBias
 {
 	column_major matrix shadowBias;
+};
+
+ConstantBuffer pixelSize
+{
 	float2 pixelSize;
+};
+
+ConstantBuffer cameraPos
+{
 	float3 cameraPos;
+};
+
+ConstantBuffer lightRadius
+{
 	float lightRadius;
+};
+
+ConstantBuffer lightPos
+{
 	float3 lightPos;
+};
+
+ConstantBuffer lightColour
+{
 	float4 lightColour;
 };
 
@@ -20,8 +40,16 @@ struct VS_OUTPUT
 	float4x4 inverseProjView;
 };
 
-float4 main(VS_OUTPUT In) : S_TARGET_OUTPUT
+struct PS_OUTPUT
 {
+	float4 emissive : S_TARGET_OUTPUT2;
+	float4 specular : S_TARGET_OUTPUT3;
+};
+
+PS_OUTPUT main(VS_OUTPUT In) : S_TARGET_OUTPUT
+{
+	PS_OUTPUT Output;
+
 	float3 pos = float3(In.position.x * pixelSize.x, In.position.y * pixelSize.y, 0.0);
 	pos.z = depthTex.Sample(samp0, pos.xy).r;
 
@@ -57,6 +85,8 @@ float4 main(VS_OUTPUT In) : S_TARGET_OUTPUT
 	lambert *= shadow;
 	sFactor *= shadow;
 
-	return float4(lightColour.xyz * lambert * atten, 1.0); //Need to find out how to output to multiple targets
-	//float4(lightColour.xyz * sFactor * atten * 0.33, 1.0)
+	Output.emissive = float4(lightColour.xyz * lambert * atten, 1.0);
+	Output.specular = float4(lightColour.xyz * sFactor * atten * 0.33, 1.0);
+
+	return Output;
 }
