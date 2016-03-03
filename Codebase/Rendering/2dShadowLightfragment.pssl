@@ -42,8 +42,8 @@ struct VS_OUTPUT
 
 struct PS_OUTPUT
 {
-	float4 emissive : S_TARGET_OUTPUT0;
-	float4 specular : S_TARGET_OUTPUT1;
+	float4 emissive : S_TARGET_OUTPUT2;
+	float4 specular : S_TARGET_OUTPUT3;
 };
 
 PS_OUTPUT main(VS_OUTPUT In) : S_TARGET_OUTPUT

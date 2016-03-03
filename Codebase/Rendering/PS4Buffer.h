@@ -4,11 +4,6 @@
 #include <..\samples\sample_code\graphics\api_gnm\toolkit\toolkit.h>
 #include "PS4Shader.h"
 
-enum TextureIndex
-{
-	DEPTH, COLOUR
-};
-
 class PS4Buffer : PS4Memory
 {
 public:
@@ -19,9 +14,7 @@ public:
 	uint32_t GetBufferHeight() const { return height; }
 	uint32_t GetBufferWidth() const  { return width; }
 
-	sce::Gnm::RenderTarget* GetTarget(uint i) { return i > numRenderTargets ? nullptr : &buffer->renderTargets[i]; }
-	sce::Gnm::DepthRenderTarget* GetDepthTarget() { return &buffer->depthTarget; }
-	sce::Gnm::Texture* GetTexture(uint i) { return i > (numRenderTargets + 1) ? nullptr : &textures[i]; }
+	sce::Gnm::RenderTarget& GetTarget(uint i) { return buffer->renderTargets[i]; }
 
 	~PS4Buffer();
 	

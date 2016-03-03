@@ -9,11 +9,12 @@ Renderer* PS4Renderer::child = nullptr;
 PS4Renderer::PS4Renderer()
 {
 	currentGPUBuffer = 0;
-	currentScreenBuffer = BACK_BUFFER1;
+	currentScreenBuffer = 0;
 	prevScreenBuffer = 0;
 	projMatrix.ToIdentity();
 	viewMatrix.ToIdentity();
 
+	currentScreenBuffer = 0;
 	currentShader = nullptr;
 	currentGFXContext = nullptr;
 
@@ -45,20 +46,8 @@ PS4Renderer::PS4Renderer()
 
 	cc.init();
 
-	//quad for final render
-	fullScreenQuad = new GameObject();
-	fullScreenQuad->SetRenderComponent(new RenderComponent(new LightMaterial(new PS4Shader(SHADER_DIR"combineVert.sb", SHADER_DIR"combineFrag.sb")), Mesh::GenerateQuad()));
-	((LightMaterial*)fullScreenQuad->GetRenderComponent()->m_Material)->Set(ReservedOtherTextures.EMISSIVE.name, (int)ReservedOtherTextures.EMISSIVE.index);
-	((LightMaterial*)fullScreenQuad->GetRenderComponent()->m_Material)->Set(ReservedOtherTextures.SPECULAR.name, (int)ReservedOtherTextures.SPECULAR.index);
-	init = true;
-
-	if (!fullScreenQuad->GetRenderComponent()->m_Material->GetShader()->IsOperational())
-	{
-		std::cerr << "Combine Shader is not operational" << std::endl;
-		init = false;
-	}
-
 	SwapBuffers();	
+	init = true;
 }
 
 void PS4Renderer::InitialiseVideoSystem()
@@ -66,36 +55,34 @@ void PS4Renderer::InitialiseVideoSystem()
 	//open up the video port
 	videoHandle = sceVideoOutOpen(0, SCE_VIDEO_OUT_BUS_TYPE_MAIN, 0, NULL);	
 	
-	frameBuffers.resize(MAX_FBO);
-	G_buffer = new PS4Buffer(width, height, stackAllocators[GARLIC], 2, videoHandle, false);
-	light_buffer = new PS4Buffer(width, height, stackAllocators[GARLIC], 2, videoHandle, false);
-	frameBuffers[BACK_BUFFER1] = new PS4Buffer(width, height, stackAllocators[GARLIC], 1, videoHandle, false);
-	frameBuffers[BACK_BUFFER2] = new PS4Buffer(width, height, stackAllocators[GARLIC], 1, videoHandle, false);
-	frameBuffers[BACK_BUFFER3] = new PS4Buffer(width, height, stackAllocators[GARLIC], 1, videoHandle, false);
+	TestBuf.resize(_bufferCount);
+	for (int i = 0; i < _bufferCount; ++i)
+	{
+		TestBuf[i] = new PS4Buffer(1920, 1080, stackAllocators[GARLIC], 2, videoHandle, false);
+	}
 
 	SceVideoOutBufferAttribute attribute;
-	sceVideoOutSetBufferAttribute(&attribute, SCE_VIDEO_OUT_PIXEL_FORMAT_B8_G8_R8_A8_SRGB, SCE_VIDEO_OUT_TILING_MODE_TILE,
-		SCE_VIDEO_OUT_ASPECT_RATIO_16_9, width, height, (*frameBuffers[0]->GetTarget(0)).getPitch());
+	sceVideoOutSetBufferAttribute(&attribute,
+		SCE_VIDEO_OUT_PIXEL_FORMAT_B8_G8_R8_A8_SRGB,
+		SCE_VIDEO_OUT_TILING_MODE_TILE,
+		SCE_VIDEO_OUT_ASPECT_RATIO_16_9,
+		TestBuf[0]->GetBufferWidth(),
+		TestBuf[0]->GetBufferHeight(),
+		TestBuf[0]->GetTarget(0).getPitch());
 
-	void* bufferAddresses[MAX_FBO];
+	void* bufferAddresses[_bufferCount];
 
-	for (int i = 0; i < MAX_FBO; ++i)
+	for (int i = 0; i < _bufferCount; ++i)
 	{
-		if (frameBuffers[i]->GetTarget(0))
-			bufferAddresses[i] = (*frameBuffers[i]->GetTarget(0)).getBaseAddress();
-		else
-			bufferAddresses[i] = nullptr;
+		bufferAddresses[i] = TestBuf[i]->GetTarget(0).getBaseAddress();
 	}
-	sceVideoOutRegisterBuffers(videoHandle, 0, bufferAddresses, MAX_FBO, &attribute);
+	sceVideoOutRegisterBuffers(videoHandle, 0, bufferAddresses, _bufferCount, &attribute);
 
-	for (int i = 0; i < MAX_FBO; ++i)
+	for (int i = 0; i < _bufferCount; ++i)
 	{
-		if (frameBuffers[i]->GetTarget(1))
-			bufferAddresses[i] = (*frameBuffers[i]->GetTarget(1)).getBaseAddress();
-		else
-			bufferAddresses[i] = nullptr;
+		bufferAddresses[i] = TestBuf[i]->GetTarget(1).getBaseAddress();
 	}
-	sceVideoOutRegisterBuffers(videoHandle, 0, bufferAddresses, MAX_FBO, &attribute);
+	sceVideoOutRegisterBuffers(videoHandle, 0, bufferAddresses, _bufferCount, &attribute);
 }
 
 void PS4Renderer::InitialiseGCMRendering()
@@ -134,9 +121,9 @@ void	PS4Renderer::DestroyGCMRendering()
 
 void	PS4Renderer::DestroyVideoSystem() 
 {
-	for (int i = 0; i < MAX_FBO; ++i) 
+	for (int i = 0; i < _bufferCount; ++i) 
 	{
-		delete frameBuffers[i];
+		//delete screenBuffers[i];
 	}
 	sceVideoOutClose(videoHandle);
 }
@@ -212,23 +199,19 @@ void PS4Renderer::FillBuffers()
 	currentFrame->StartFrame();
 	currentGFXContext->waitUntilSafeForRendering(videoHandle, currentGPUBuffer);
 	
-	G_buffer->SetRenderTargets(*currentGFXContext);
+	currentPS4Buffer->SetRenderTargets(*currentGFXContext);
+		
 	InitCMD();
 
 	child->OnRenderScene();
-	
-	//Albedo texture
-	G_buffer->GetTexture(COLOUR)->initFromRenderTarget(G_buffer->GetTarget(0), false);
-	G_buffer->GetTexture(COLOUR)->setResourceMemoryType(sce::Gnm::kResourceMemoryTypeRO);
 
-	//Normal texture
-	G_buffer->GetTexture(COLOUR + 1)->initFromRenderTarget(G_buffer->GetTarget(1), false);
-	G_buffer->GetTexture(COLOUR + 1)->setResourceMemoryType(sce::Gnm::kResourceMemoryTypeRO);
+	/*currentPS4Buffer->normalTex.initFromRenderTarget(&currentPS4Buffer->normalTarget, false);
+	currentPS4Buffer->normalTex.setResourceMemoryType(sce::Gnm::kResourceMemoryTypeRO);
 
-	//Depth texture
-	G_buffer->GetTexture(DEPTH)->initFromDepthRenderTarget(G_buffer->GetDepthTarget(), false);
-	G_buffer->GetTexture(DEPTH)->setResourceMemoryType(sce::Gnm::kResourceMemoryTypeRO);
-	sce::Gnmx::decompressDepthSurface(currentGFXContext, G_buffer->GetDepthTarget());	
+	currentPS4Buffer->depthTex.initFromDepthRenderTarget(&currentPS4Buffer->depthTarget, false);
+	currentPS4Buffer->depthTex.setResourceMemoryType(sce::Gnm::kResourceMemoryTypeRO);
+	sce::Gnmx::decompressDepthSurface(currentGFXContext, &currentPS4Buffer->depthTarget);*/
+	currentFrame->EndFrame();
 }
 
 void PS4Renderer::InitCMD()
@@ -245,54 +228,19 @@ void PS4Renderer::InitCMD()
 
 void PS4Renderer::DrawPointLights()
 {
-	light_buffer->SetRenderTargets(*currentGFXContext);
+	//currentFrame->StartFrame();
+	//currentGFXContext->waitUntilSafeForRendering(videoHandle, currentGPUBuffer);
+	//SetRenderBuffer(currentPS4Buffer);
 
-	blendControl.setAlphaEquation(sce::Gnm::kBlendMultiplierOne, sce::Gnm::kBlendFuncAdd, sce::Gnm::kBlendMultiplierOne);
-	InitCMD();
+	//blendControl.setAlphaEquation(sce::Gnm::kBlendMultiplierOne, sce::Gnm::kBlendFuncAdd, sce::Gnm::kBlendMultiplierOne);
+	//InitCMD();
+	////SetTexture();
+	//sce::Gnm::Texture depthTex;
+	//depthTex.initFromDepthRenderTarget(&currentPS4Buffer->depthTarget, false);
+	//
+	//child->OnRenderLights();
 
-	PS4ShaderResourceLocations depthLoc;
-	depthLoc.id = 0;
-	SetTexture(depthLoc, *G_buffer->GetTexture(DEPTH));
-
-	PS4ShaderResourceLocations NormalLoc;
-	NormalLoc.id = 1;
-	SetTexture(NormalLoc, *G_buffer->GetTexture(COLOUR + 1));
-	
-	child->OnRenderLights();
-
-	//Emissive texture
-	light_buffer->GetTexture(COLOUR)->initFromRenderTarget(light_buffer->GetTarget(0), false);
-	light_buffer->GetTexture(COLOUR)->setResourceMemoryType(sce::Gnm::kResourceMemoryTypeRO);
-
-	//Specular texture
-	light_buffer->GetTexture(COLOUR + 1)->initFromRenderTarget(light_buffer->GetTarget(1), false);
-	light_buffer->GetTexture(COLOUR + 1)->setResourceMemoryType(sce::Gnm::kResourceMemoryTypeRO);
-	
-	primitiveSetup.setCullFace(sce::Gnm::kPrimitiveSetupCullFaceNone);
-	blendControl.setColorEquation(sce::Gnm::kBlendMultiplierOne, sce::Gnm::kBlendFuncAdd, sce::Gnm::kBlendMultiplierOneMinusSrcAlpha);
-}
-
-void PS4Renderer::CombineBuffers()
-{
-	currentPS4Buffer->SetRenderTargets(*currentGFXContext);
-
-	projMatrix = Mat4Graphics::Orthographic(-1, 1, 1, -1, 1, -1);
-	InitCMD();
-
-	PS4ShaderResourceLocations diffuseLoc;
-	diffuseLoc.id = 0;
-	SetTexture(diffuseLoc, *G_buffer->GetTexture(COLOUR));
-
-	PS4ShaderResourceLocations emissiveLoc;
-	emissiveLoc.id = 1;
-	SetTexture(emissiveLoc, *light_buffer->GetTexture(COLOUR));
-
-	PS4ShaderResourceLocations specularLoc;
-	specularLoc.id = 2;
-	SetTexture(specularLoc, *light_buffer->GetTexture(COLOUR + 1));
-
-	fullScreenQuad->GetRenderComponent()->Draw();
-	currentFrame->EndFrame();
+	//currentFrame->EndFrame();
 }
 
 void PS4Renderer::DrawShadow(GameObject* light)
@@ -322,6 +270,11 @@ void PS4Renderer::DrawShadowCube(GameObject* light)
 
 }
 
+void PS4Renderer::CombineBuffers()
+{
+
+}
+
 //TODO:fix id here
 void PS4Renderer::SetTexture(const shaderResourceLocation& location, textureHandle& handle)
 {
@@ -331,10 +284,10 @@ void PS4Renderer::SetTexture(const shaderResourceLocation& location, textureHand
 void PS4Renderer::SwapBuffers()
 {
 	SwapScreenBuffer();
-	SwapCommandBuffer();
+	SwapCommandBuffer(true);
 }
 
-void PS4Renderer::SwapCommandBuffer()
+void PS4Renderer::SwapCommandBuffer(bool submitDone)
 {
 	if (currentGFXContext) 
 	{
@@ -351,17 +304,15 @@ void PS4Renderer::SwapCommandBuffer()
 void PS4Renderer::SwapScreenBuffer()
 {
 	prevScreenBuffer = currentScreenBuffer;
-
-	currentScreenBuffer = (currentScreenBuffer + 1) % MAX_FBO;
+	currentScreenBuffer = (currentScreenBuffer + 1) % _bufferCount;
 	sceVideoOutSubmitFlip(videoHandle, prevScreenBuffer, SCE_VIDEO_OUT_FLIP_MODE_VSYNC, 0);
 	
-	currentPS4Buffer = frameBuffers[currentScreenBuffer];
+	currentPS4Buffer = TestBuf[currentScreenBuffer];
 }
 
 void PS4Renderer::SetCullFace(CULL c)
 {
 	primitiveSetup.setCullFace(c == FRONT ? sce::Gnm::kPrimitiveSetupCullFaceFront : sce::Gnm::kPrimitiveSetupCullFaceBack);
-	currentGFXContext->setPrimitiveSetup(primitiveSetup);
 }
 
 void PS4Renderer::UpdateUniform(const shaderResourceLocation& location, const Mat4Graphics& mat4)
@@ -510,17 +461,6 @@ void PS4Renderer::UpdateShaderMatrices()
 
 			sce::Gnm::Buffer constantBuffer;
 			constantBuffer.initAsConstantBuffer(pMat, sizeof(Mat4Graphics));
-			constantBuffer.setResourceMemoryType(sce::Gnm::kResourceMemoryTypeRO);
-			currentGFXContext->setConstantBuffers(location.stage, location.id, 1, &constantBuffer);
-		}
-		location = currentShader->GetResourceByName("inverseProjView");
-		if (location.id >= 0)
-		{
-			Mat4Graphics* invVP = (Mat4Graphics*)currentGFXContext->allocateFromCommandBuffer(sizeof(Mat4Graphics), sce::Gnm::kEmbeddedDataAlignment4);
-			*invVP = Matrix4Simple::Inverse(projMatrix * viewMatrix);
-
-			sce::Gnm::Buffer constantBuffer;
-			constantBuffer.initAsConstantBuffer(invVP, sizeof(Mat4Graphics));
 			constantBuffer.setResourceMemoryType(sce::Gnm::kResourceMemoryTypeRO);
 			currentGFXContext->setConstantBuffers(location.stage, location.id, 1, &constantBuffer);
 		}

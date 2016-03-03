@@ -124,6 +124,7 @@ void PS4Mesh::Draw(Material* material)
 
 void PS4Mesh::SubmitDraw(sce::Gnmx::GnmxGfxContext& cmdList, sce::Gnm::ShaderStage stage)
 {
+	//Renderer::GetInstance()->SubmitCMDBuffer();
 	cmdList.setVertexBuffers(stage, 0, attributeCount, attributeBuffers);
 	cmdList.setPrimitiveType(primitiveType);
 	cmdList.setIndexSize(indexType);	

@@ -8,7 +8,6 @@ PS4Buffer::PS4Buffer(const uint width, const uint height, sce::Gnmx::Toolkit::St
 {
 	buffer = new ScreenBuffer();
 	buffer->renderTargets.resize(numRTargets);
-	textures.resize(numRTargets + 1);
 
 	for (uint i = 0; i < numRTargets; ++i)
 	{
@@ -106,7 +105,7 @@ void PS4Buffer::SetRenderTargets(sce::Gnmx::GnmxGfxContext& context)
 {
 	ClearBuffer(context);
 
-	context.setRenderTargetMask(0xFFFFF);
+	context.setRenderTargetMask(0xFF);
 	for (uint i = 0; i < numRenderTargets; ++i)
 	{
 		context.setRenderTarget(i, &buffer->renderTargets[i]);

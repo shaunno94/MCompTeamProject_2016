@@ -17,11 +17,6 @@ enum MemoryLocation
 	MEMORYMAX
 };
 
-enum BACK_BUFFERS
-{
-	BACK_BUFFER1, BACK_BUFFER2, BACK_BUFFER3, MAX_FBO
-};
-
 class Renderer;
 class GameObject;
 class PS4Mesh;
@@ -84,13 +79,14 @@ private:
 	const int _MaxCMDBufferCount = 3;
 
 	//SCREEN BUFFER VARIABLES
+	const int _bufferCount = 3;	//How many screen buffers should we have
 	int	currentScreenBuffer;
 	int	prevScreenBuffer;
-	std::vector<PS4Buffer*> frameBuffers;
+
+	std::vector<PS4Buffer*> TestBuf;
 	PS4Buffer* G_buffer;
 	PS4Buffer* light_buffer;
-	const uint width = 1920;
-	const uint height = 1080;
+	PS4Buffer* combine_buffer;
 
 	//Per frame pointers.
 	PS4Buffer* currentPS4Buffer;
@@ -113,9 +109,7 @@ private:
 	void	DestroyVideoSystem();
 	void	DestroyGCMRendering();
 	
-	void SwapCommandBuffer();
+	void SwapCommandBuffer(bool submitDone);
 	void SwapScreenBuffer();
-
-	GameObject* fullScreenQuad;
 };
 #endif
