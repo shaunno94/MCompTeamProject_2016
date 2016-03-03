@@ -8,16 +8,14 @@ GameScene::GameScene(ControllerManager* controller)
 
 #ifndef ORBIS
 	SoundSystem::Initialise();
-#endif
-
-	GUISystem::Initialise();
 	ParticleManager::Initialise();
 
 	if (ParticleManager::GetManager().HasInitialised())
 	{
 		std::cout << "Particle Manager not Initialised" << std::endl;
 	}
-
+#endif
+	GUISystem::Initialise();
 	if (!GUISystem::GetInstance().HasInitialised())
 	{
 		std::cout << "GUI not Initialised!" << std::endl;
@@ -45,7 +43,9 @@ GameScene::~GameScene()
 {
 	PhysicsEngineInstance::Release();
 	GUISystem::Destroy();
+#ifndef ORBIS
 	ParticleManager::Destroy();
+#endif
 
 #if DEBUG_DRAW
 #ifndef ORBIS
@@ -131,6 +131,7 @@ void GameScene::SetupGameObjects()
 	addLightObject(light2);
 }
 
+
 void GameScene::LoadAudio()
 {
 #ifndef ORBIS
@@ -158,6 +159,7 @@ void GameScene::LoadAudio()
 #endif
 }
 
+
 void GameScene::SetupShaders()
 {
 #ifndef ORBIS
@@ -166,12 +168,16 @@ void GameScene::SetupShaders()
 	orthoShader = new OGLShader(GUI_VERT, SIMPLESHADER_FRAG);
 	//BaseShader* pointlightShader = new OGLShader(SHADER_DIR"CubeShadowLightvertex.glsl", SHADER_DIR"CubeShadowLightfragment.glsl");
 #else
-	BaseShader* simpleShader = new PS4Shader(SIMPLESHADER_VERT, SIMPLESHADER_FRAG);
-	BaseShader* pointlightShader = new PS4Shader(POINTLIGHTSHADER_VERT, POINTLIGHTSHADER_FRAG);
+	simpleShader = new PS4Shader(SIMPLESHADER_VERT, SIMPLESHADER_FRAG);
+	pointlightShader = new PS4Shader(POINTLIGHTSHADER_VERT, POINTLIGHTSHADER_FRAG);
+	orthoShader = new PS4Shader(SIMPLESHADER_VERT, SIMPLESHADER_FRAG);
 #endif
-
-	if (!pointlightShader->IsOperational() || !simpleShader->IsOperational() || !orthoShader->IsOperational())
-		std::cout << "Shader not operational!" << std::endl;
+	if (!pointlightShader->IsOperational())
+		std::cout << "Point light shader not operational!" << std::endl;
+	if(!simpleShader->IsOperational())
+		std::cout << "Simple shader not operational!" << std::endl;
+	if(!orthoShader->IsOperational())
+		std::cout << "ortho shader not operational!" << std::endl;
 }
 
 void GameScene::SetupMaterials()
@@ -235,6 +241,4 @@ void GameScene::ResetObjects()
 	dynamic_cast<RigidPhysicsObject*>(ball->GetPhysicsComponent())->GetPhysicsBody()->setAngularVelocity(zeroVector);
 
 	ball->GetPhysicsComponent()->GetPhysicsBody()->setWorldTransform(btTransform(btQuaternion(0, 0, 0, 1), zeroVector));
-
-
 }

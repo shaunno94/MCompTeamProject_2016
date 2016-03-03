@@ -90,11 +90,17 @@
       <AdditionalDependencies>%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <PreLinkEvent>
-      <Command>xcopy /y $(SolutionDir)Dependencies\OpenAL32.dll $(SolutionDir)$(Configuration)\</Command>
+      <Command>
+      </Command>
     </PreLinkEvent>
     <PreLinkEvent>
       <Message>move dependency</Message>
     </PreLinkEvent>
+    <PostBuildEvent>
+      <Command>
+      </Command>
+      <Message>move dependency</Message>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|ORBIS'">
     <ClCompile>

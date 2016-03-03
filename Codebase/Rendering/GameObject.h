@@ -135,16 +135,7 @@ public:
 	{
 		return m_Audio;
 	}
-
-	void SetParticleSystem(ParticleSystem* system)
-	{
-		m_ParticleSystem = system;
-	}
-
-	ParticleSystem* GetParticleSystem() const
-	{
-		return m_ParticleSystem;
-	}
+#endif
 
 protected:
 	virtual void OnRenderObject();			//Handles OpenGL calls to Render the object
@@ -162,7 +153,6 @@ protected:
 #ifndef ORBIS
 	AudioComponent*				m_Audio;
 #endif
-	ParticleSystem*				m_ParticleSystem;
 
 	float						m_BoundingRadius;	//Unused
 	Mat4Graphics				m_WorldTransform;

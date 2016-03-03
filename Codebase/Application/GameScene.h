@@ -49,8 +49,8 @@ public:
 
 	void IncrementScore(int team) {
 		scores[team % 2]++;
-		std::cout << "TEAM " << team + 1 << " SCORED!" << endl;
-		std::cout << scores[0] << " - " << scores[1] << endl;
+		std::cout << "TEAM " << team + 1 << " SCORED!" << std::endl;
+		std::cout << scores[0] << " - " << scores[1] << std::endl;
 	}
 	void ResetScene();
 
