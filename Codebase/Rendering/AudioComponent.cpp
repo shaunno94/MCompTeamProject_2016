@@ -89,7 +89,7 @@ AudioCompCar::AudioCompCar(bool global) : AudioComponent()
 
 	AddEmitters();
 
-	SetRadius(200.0f);
+	SetRadius(300.0f);
 }
 
 void AudioCompCar::Update()

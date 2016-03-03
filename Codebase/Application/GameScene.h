@@ -43,6 +43,11 @@ public:
 		scores[team % 2]++;
 		std::cout << "TEAM " << team + 1 << " SCORED!" << endl;
 		std::cout << scores[0] << " - " << scores[1] << endl;
+
+		SoundMOD mod;
+		mod.looping = false;
+		mod.isGlobal = true;
+		SoundSystem::Instance()->Play(SoundManager::GetSound(BANG), mod);
 	}
 	void ResetScene();
 

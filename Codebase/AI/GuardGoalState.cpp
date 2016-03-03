@@ -38,7 +38,4 @@ void GuardGoalState::Update(float dt)
 	//std::cout << "desiredPos = (" << desiredPos.x() << ", " << desiredPos.y() << ", " << desiredPos.z() << ")";
 	//std::cout << "\tdirection = (" << direction.x() << ", " << direction.y() << ", " << direction.z() << ")" << std::endl;
 	m_parent->GetControllerComponent()->AddForce(direction.x(), 0.0f, direction.z());
-
-
-
 }
