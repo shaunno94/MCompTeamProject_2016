@@ -58,6 +58,10 @@ ControllerComponent(parent)
 		guardToClear->setupTrigger(*m_parent, *ball, *targetGoal, 0.3f);
 		guard->AddTrigger(guardToClear, CLEAR_GOAL);
 
+		DistanceTrigger* clearToGuard = new DistanceTrigger();
+		clearToGuard->setupTrigger(*ball, *teamGoal, 100, false);
+		clearGoal->AddTrigger(clearToGuard, GUARD_GOAL);
+
 	}
 		break;
 	case AGGRESSIVE:

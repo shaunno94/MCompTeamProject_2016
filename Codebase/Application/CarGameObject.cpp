@@ -1,7 +1,7 @@
 #include "CarGameObject.h"
 
 
-CarGameObject::CarGameObject(Vec3Physics& position, QuatPhysics& rotation, Material* material, const std::string& name /* = "" */) :
+CarGameObject::CarGameObject(Vec3Physics& position, QuatPhysics& rotation, Material* material, const std::string& name /* = "" */, unsigned int collisionFilterMask /* = COL_CAR */) :
 	GameObject(name)
 {
 	Mesh* carBaseMesh = ModelLoader::LoadMGL(MODEL_DIR"Car/car_base.mgl", true);
@@ -14,6 +14,7 @@ CarGameObject::CarGameObject(Vec3Physics& position, QuatPhysics& rotation, Mater
 	carPhysics->GetPhysicsBody()->setFriction(0.5);
 	carPhysics->GetPhysicsBody()->setRollingFriction(0.5);
 	carPhysics->GetPhysicsBody()->setHitFraction(0.5);
+	carPhysics->GetPhysicsBody()->getBroadphaseProxy()->m_collisionFilterMask = collisionFilterMask;
 
 	this->SetRenderComponent(new RenderComponent(material, carBaseMesh));
 	this->SetLocalTransform(Mat4Graphics::Scale(Vector3Simple(10, 10, 10)) * Mat4Graphics::Translation(Vector3Simple(0, -0.25f, 0)));

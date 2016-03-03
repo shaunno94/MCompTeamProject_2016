@@ -73,7 +73,6 @@ void Stadium::CreateCollisionWalls()
 	wallPhysics->CreatePhysicsBody(0, Vec3Physics(0, 0, 0), QuatPhysics(0, 0, 0, 1));
 	wallPhysics->GetPhysicsBody()->getBroadphaseProxy()->m_collisionFilterMask = COL_WALL;
 	
-	RigidPhysicsObject* goalPhysics = new RigidPhysicsObject();
 
 }
 
@@ -92,7 +91,6 @@ void Stadium::CreatePlane(std::vector<btConvexHullShape*> &collectionVector, Vec
 
 	GameObject* wall = new GameObject();
 	wall->SetRenderComponent(new RenderComponent(m_wallMaterial, mesh));
-	//wall->SetWorldTransform(Mat4Graphics::Translation(Vector3Simple(start.x, start.y, start.z)) * Mat4Graphics::Scale(difference));
 	wall->SetLocalTransform(Mat4Graphics::Inverse(Mat4Graphics::Translation(Vec3Graphics(6.8, -28.5, 2)) * Mat4Graphics::RotationX(-0.7f) * Mat4Graphics::RotationY(30.5f)));
 	this->AddChildObject(wall);
 

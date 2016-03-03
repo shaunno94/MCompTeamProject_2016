@@ -2,7 +2,7 @@
 
 
 GameScene::GameScene(ControllerManager* controller)
-	: myControllers(controller)
+: myControllers(controller)
 {
 
 	//Initialise Bullet physics engine.
@@ -61,7 +61,7 @@ GameScene::GameScene(ControllerManager* controller)
 	Material* netMaterial = new Material(simpleShader, true);
 	//Material* guiMaterial = new Material(orthoShader);
 
-	ballMaterial->Set(ReservedMeshTextures.DIFFUSE.name, Texture::Get(TEXTURE_DIR"checkerboard.tga", true));
+	ballMaterial->Set(ReservedMeshTextures.DIFFUSE.name, Texture::Get(TEXTURE_DIR"football.png", true));
 	Material* playerMaterial = new Material(simpleShader);
 
 	Material* aiMaterial = new Material(simpleShader);
@@ -71,9 +71,9 @@ GameScene::GameScene(ControllerManager* controller)
 	ai2Material->Set(ReservedMeshTextures.DIFFUSE.name, Texture::Get(MODEL_DIR"car/body2.bmp", true));
 
 
-	GameObject* player = new CarGameObject(Vec3Physics(10, 5, 0), QuatPhysics(0, 0, 0, 1), playerMaterial, "player");
-	GameObject* shooterAI = new CarGameObject(Vec3Physics(-190, 5, 30), QuatPhysics(0, 0, 0, 1), aiMaterial, "shooterAI");
-	GameObject* goalieAI = new CarGameObject(Vec3Physics(-230, 5, -30), QuatPhysics(0, 0, 0, 1), ai2Material, "goalieAI");
+	GameObject* player = new CarGameObject(Vec3Physics(100, 5, 0), QuatPhysics(0, 1, 0, 1), playerMaterial, "player");
+	GameObject* shooterAI = new CarGameObject(Vec3Physics(-190, 5, 30), QuatPhysics(0, 0, 0, 1), aiMaterial, "shooterAI", COL_AI_CAR);
+	GameObject* goalieAI = new CarGameObject(Vec3Physics(-230, 5, -30), QuatPhysics(0, 0, 0, 1), ai2Material, "goalieAI", COL_AI_CAR);
 
 	// Create Stadium
 	GameObject* stadium = new Stadium(material, netMaterial, "stadium");
@@ -84,11 +84,16 @@ GameScene::GameScene(ControllerManager* controller)
 
 	ball->SetRenderComponent(new RenderComponent(ballMaterial, ModelLoader::LoadMGL(MODEL_DIR"Common/sphere.mgl", true)));
 	ball->SetLocalTransform(Mat4Graphics::Scale(Vector3Simple(7, 7, 7)));
+
+
+	ballPhysics->GetPhysicsBody()->getBroadphaseProxy()->m_collisionFilterMask = COL_BALL;
+
 	ball->SetPhysicsComponent(ballPhysics);
 	ball->GetPhysicsComponent()->GetPhysicsBody()->setRestitution(btScalar(0.9));
 	ball->GetPhysicsComponent()->GetPhysicsBody()->setFriction(0.5);
 	ball->GetPhysicsComponent()->GetPhysicsBody()->setRollingFriction(0.5);
 	ball->GetPhysicsComponent()->GetPhysicsBody()->setHitFraction(0.5);
+
 
 	RigidPhysicsObject* goalBox = new RigidPhysicsObject();
 	goalBox->CreateCollisionShape(Vec3Physics(7.0, 15.0, 29.0), CUBOID);
@@ -109,6 +114,8 @@ GameScene::GameScene(ControllerManager* controller)
 	goalBallFilter.m_ballID = ballID;
 	goalBallFilter.m_goal1ID = goal1ID;
 	goalBallFilter.m_goal2ID = goal2ID;
+
+	callback = new ContactSensorCallback(*ballPhysics->GetPhysicsBody());
 
 	PhysicsEngineInstance::Instance()->getPairCache()->setOverlapFilterCallback(&goalBallFilter);
 
@@ -131,8 +138,8 @@ GameScene::GameScene(ControllerManager* controller)
 
 	addGameObject(player);
 	addGameObject(ball);
-	addGameObject(shooterAI);
-	addGameObject(goalieAI);
+	//addGameObject(shooterAI);
+	//addGameObject(goalieAI);
 
 	addGameObject(goal1);
 	addGameObject(goal2);
@@ -175,6 +182,12 @@ GameScene::~GameScene()
 
 void GameScene::SetControllerActor()
 {
-	myControllers->setActor(Renderer::GetInstance()->GetCurrentScene()->findGameObject("shooterAI"), 0);
-	myControllers->setActor(Renderer::GetInstance()->GetCurrentScene()->findGameObject("goalieAI"), 1);
+	//myControllers->setActor(Renderer::GetInstance()->GetCurrentScene()->findGameObject("shooterAI"), 0);
+	//myControllers->setActor(Renderer::GetInstance()->GetCurrentScene()->findGameObject("goalieAI"), 1);
+}
+
+void GameScene::TestContact()
+{
+	
+	PhysicsEngineInstance::Instance()->contactTest(Renderer::GetInstance()->GetCurrentScene()->findGameObject("ball")->GetPhysicsComponent()->GetPhysicsBody(), *callback);
 }
