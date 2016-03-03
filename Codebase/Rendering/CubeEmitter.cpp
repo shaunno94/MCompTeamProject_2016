@@ -14,11 +14,11 @@ CubeEmitter::CubeEmitter()
 , MaxSpeed(20)
 , MinLifetime(3)
 , MaxLifetime(5)
-, Origin(Vec3Graphics(0,0,0))
+, Origin(Vec3Graphics(0, 0, 0))
 {}
 
 void CubeEmitter::EmitParticle(Particle& particle)
-{	
+{
 	float x = RNG32::Rand(MinWidth, MaxWidth);
 	float y = RNG32::Rand(MinHeight, MaxHeight);
 	float z = RNG32::Rand(MinDepth, MaxDepth);

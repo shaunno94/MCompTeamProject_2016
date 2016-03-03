@@ -34,6 +34,8 @@ _-_-_-_-_-_-_-""  ""
 #include "AI\StateMachine.h"
 #include "AudioComponent.h"
 
+
+class ParticleSystem;
 class Renderer;
 class Scene;
 
@@ -134,6 +136,16 @@ public:
 		return m_Audio;
 	}
 
+	void SetParticleSystem(ParticleSystem* system)
+	{
+		m_ParticleSystem = system;
+	}
+
+	ParticleSystem* GetParticleSystem() const
+	{
+		return m_ParticleSystem;
+	}
+
 protected:
 	virtual void OnRenderObject();			//Handles OpenGL calls to Render the object
 	virtual void OnUpdateObject(float dt);	//Override to handle things like AI etc on update loop
@@ -148,6 +160,7 @@ protected:
 	ControllerComponent*		m_Controller;
 
 	AudioComponent*				m_Audio;
+	ParticleSystem*				m_ParticleSystem;
 
 	float						m_BoundingRadius;	//Unused
 	Mat4Graphics				m_WorldTransform;

@@ -1,10 +1,11 @@
 #ifndef ORBIS
 #pragma once
+#include "GameObject.h"
 
-struct Particle
+class Particle : public GameObject
 {
+public:
 	Particle() : m_Position(Vec3Graphics(0, 0, 0)),
-	m_OldPos(Vec3Graphics(0, 0, 0)),
 	m_Velocity(Vec3Graphics(0, 0, 0)),
 	m_Colour(Vec4Graphics(0, 0, 0, 0)),
 	m_Rotate(0),
@@ -12,6 +13,7 @@ struct Particle
 	m_Size(0),
 	m_Age(0)
 	{}
+	virtual ~Particle();
 
 	Vec3Graphics m_Position;
 	Vec3Graphics m_OldPos;
