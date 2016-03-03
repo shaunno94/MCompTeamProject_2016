@@ -19,7 +19,7 @@ enum MemoryLocation
 
 enum BACK_BUFFERS
 {
-	BACK_BUFFER1, BACK_BUFFER2, BACK_BUFFER3, MAX_FBO
+	BACK_BUFFER1, BACK_BUFFER2, BACK_BUFFER3, MAX_BACK_BUFFER
 };
 
 class Renderer;
@@ -76,6 +76,7 @@ protected:
 	sce::Gnm::BlendControl blendControl;
 	sce::Gnm::DepthEqaaControl dEqaaControl;
 	sce::Gnm::ClipControl cc;
+	sce::Gnm::DbRenderControl dbRenderControl;
 
 private:	
 	//VIDEO SYSTEM VARIABLES
@@ -91,6 +92,7 @@ private:
 	PS4Buffer* light_buffer;
 	const uint width = 1920;
 	const uint height = 1080;
+	const uint MAX_TARGETS_PER_BUFFER = 2;
 
 	//Per frame pointers.
 	PS4Buffer* currentPS4Buffer;
@@ -108,6 +110,7 @@ private:
 	void	InitialiseMemoryAllocators();
 	void	InitialiseVideoSystem();
 	void	InitialiseGCMRendering();
+	void	RegisterTargets(const uint targetIndex);
 
 	void	DestroyMemoryAllocators();
 	void	DestroyVideoSystem();

@@ -19,17 +19,16 @@ in Vertex {
 out vec4 gl_FragColor [2];
 
 void main (void) {
-	vec3 pos = vec3 ((gl_FragCoord.x * pixelSize.x) ,
-	( gl_FragCoord . y * pixelSize . y ) , 0.0);
-	pos . z = texture ( depthTex , pos . xy ). r ;
+	vec3 pos = vec3 ((gl_FragCoord.x * pixelSize.x), (gl_FragCoord.y * pixelSize.y), 0.0);
+	pos . z = texture ( depthTex , pos .xy).r;
 
-	vec3 normal = normalize ( texture ( normTex , pos . xy ). xyz *2.0 - 1.0);
+	vec3 normal = normalize(texture(normTex, pos.xy). xyz * 2.0 - 1.0);
 
-	vec4 clip = IN.inverseProjView * vec4 ( pos * 2.0 - 1.0 , 1.0);
-	pos = clip . xyz / clip . w ;
+	vec4 clip = IN.inverseProjView * vec4 (pos * 2.0 - 1.0, 1.0);
+	pos = clip.xyz / clip.w;
 
-	float dist = length ( lightPos - pos );
-	float atten = 1.0 - clamp ( dist / lightRadius , 0.0 , 1.0);
+	float dist = length(lightPos - pos);
+	float atten = 1.0 - clamp( dist / lightRadius , 0.0 , 1.0);
 
 	if( atten == 0.0) {
 		discard ;
@@ -47,13 +46,14 @@ void main (void) {
 	
 	vec4 shadowProj = ( shadowBias * vec4 (pos + ( normal *1.5), 1));
 
-	if( shadowProj . w > 0.0) { 
-		shadow = textureProj (shadowTex ,shadowProj );
+	if( shadowProj . w > 0.0) 
+	{ 
+		shadow = textureProj(shadowTex, shadowProj);
 	}
 
-	lambert *= shadow ;
+	lambert *= shadow;
 	sFactor *= shadow;
 	
-	gl_FragColor [0] = vec4 ( lightColour.xyz * lambert * atten, 1.0);
-	gl_FragColor [1] = vec4 ( lightColour.xyz * sFactor * atten * 0.33, 1.0);
+	gl_FragColor[0] = vec4(lightColour.xyz * lambert * atten, 1.0);
+	gl_FragColor[1] = vec4(lightColour.xyz * sFactor * atten * 0.33, 1.0);
 }

@@ -9,10 +9,15 @@ enum TextureIndex
 	DEPTH, COLOUR
 };
 
+enum Displayable
+{
+	NONE, FIRST_ONLY
+};
+
 class PS4Buffer : PS4Memory
 {
 public:
-	PS4Buffer(const uint width, const uint height, sce::Gnmx::Toolkit::StackAllocator& allocator, const uint numRTargets, const int videoHandle, bool genStencil);
+	PS4Buffer(const uint width, const uint height, sce::Gnmx::Toolkit::StackAllocator& allocator, const uint numRTargets, const int videoHandle, bool genStencil, Displayable display);
 	void ClearBuffer(sce::Gnmx::GnmxGfxContext& context);
 	void SetRenderTargets(sce::Gnmx::GnmxGfxContext& context);
 
@@ -27,8 +32,7 @@ public:
 	
 private:
 	void GenerateDepthTarget(uint width, uint height, sce::Gnmx::Toolkit::StackAllocator& allocator);
-	void GenerateRenderTarget(uint width, uint height, sce::Gnmx::Toolkit::StackAllocator& allocator, uint targetID, bool displayable);	
-	void RegisterTargets(const int videoHandle);
+	void GenerateRenderTarget(uint width, uint height, sce::Gnmx::Toolkit::StackAllocator& allocator, uint targetID, Displayable display);
 
 	std::vector<sce::Gnm::Texture> textures;
 	uint numRenderTargets;

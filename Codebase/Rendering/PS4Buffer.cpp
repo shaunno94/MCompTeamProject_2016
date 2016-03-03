@@ -4,7 +4,8 @@
 
 unsigned int PS4Buffer::ID = 0;
 
-PS4Buffer::PS4Buffer(const uint width, const uint height, sce::Gnmx::Toolkit::StackAllocator& allocator, const uint numRTargets, const int videoHandle, bool genStencil)
+PS4Buffer::PS4Buffer(const uint width, const uint height, sce::Gnmx::Toolkit::StackAllocator& allocator,
+	const uint numRTargets, const int videoHandle, bool genStencil, Displayable display)
 {
 	buffer = new ScreenBuffer();
 	buffer->renderTargets.resize(numRTargets);
@@ -12,7 +13,7 @@ PS4Buffer::PS4Buffer(const uint width, const uint height, sce::Gnmx::Toolkit::St
 
 	for (uint i = 0; i < numRTargets; ++i)
 	{
-		GenerateRenderTarget(width, height, allocator, i, i > 0 ? false : true);
+		GenerateRenderTarget(width, height, allocator, i, display);
 	}
 
 	GenerateDepthTarget(width, height, allocator);
@@ -22,8 +23,6 @@ PS4Buffer::PS4Buffer(const uint width, const uint height, sce::Gnmx::Toolkit::St
 	this->height = height;
 	stencil = genStencil;
 	ID++;
-	
-	//RegisterTargets(videoHandle);
 }
 
 PS4Buffer::~PS4Buffer()
@@ -31,22 +30,14 @@ PS4Buffer::~PS4Buffer()
 	delete buffer;
 }
 
-void PS4Buffer::RegisterTargets(const int videoHandle)
+void PS4Buffer::GenerateRenderTarget(uint width, uint height, sce::Gnmx::Toolkit::StackAllocator& allocator, uint targetID, Displayable display)
 {
-	SceVideoOutBufferAttribute attribute;
-	sceVideoOutSetBufferAttribute(&attribute, SCE_VIDEO_OUT_PIXEL_FORMAT_B8_G8_R8_A8_SRGB, SCE_VIDEO_OUT_TILING_MODE_TILE,
-		SCE_VIDEO_OUT_ASPECT_RATIO_16_9, buffer->renderTargets[0].getWidth(), buffer->renderTargets[0].getHeight(), buffer->renderTargets[0].getPitch());
+	bool displayable;
+	if (display == NONE || (display == FIRST_ONLY && targetID > 0))
+		displayable = false;
+	else
+		displayable = true;
 
-	void* bufferAddresses[numRenderTargets];
-	for (int i = 0; i < numRenderTargets; ++i)
-	{
-		bufferAddresses[i] = buffer->renderTargets[i].getBaseAddress();
-	}
-	sceVideoOutRegisterBuffers(videoHandle, 0, bufferAddresses, numRenderTargets, &attribute);
-}
-
-void PS4Buffer::GenerateRenderTarget(uint width, uint height, sce::Gnmx::Toolkit::StackAllocator& allocator, uint targetID, bool displayable)
-{
 	sce::Gnm::DataFormat format = sce::Gnm::kDataFormatB8G8R8A8UnormSrgb;
 	sce::Gnm::TileMode	tileMode;
 	sce::GpuAddress::computeSurfaceTileMode(&tileMode, displayable ? sce::GpuAddress::kSurfaceTypeColorTargetDisplayable : sce::GpuAddress::kSurfaceTypeColorTarget, format, 1);
@@ -106,7 +97,7 @@ void PS4Buffer::SetRenderTargets(sce::Gnmx::GnmxGfxContext& context)
 {
 	ClearBuffer(context);
 
-	context.setRenderTargetMask(0xFFFFF);
+	context.setRenderTargetMask(0xFF);
 	for (uint i = 0; i < numRenderTargets; ++i)
 	{
 		context.setRenderTarget(i, &buffer->renderTargets[i]);

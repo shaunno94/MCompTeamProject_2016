@@ -55,11 +55,11 @@ PS_OUTPUT main(VS_OUTPUT In) : S_TARGET_OUTPUT
 
 	float3 normal = float3(normalize(normTex.Sample(samp0, pos.xy).xyz * 2.0 - 1.0)); 
 
-	float4 clipSpace = mul(In.inverseProjView, In.position);
+	float4 clipSpace = mul(In.inverseProjView, float4(pos * 2.0 - 1.0, 1.0));
 	pos = clipSpace.xyz / clipSpace.w;	
 
 	float dist = length(lightPos - pos);
-	float atten = 1.0 - clamp(dist / lightRadius, 0.0, 1.0);
+	float atten = 1.0 - saturate(dist / lightRadius); //Same as clamp(x, 0, 1)
 
 	if(atten == 0.0)
 	{

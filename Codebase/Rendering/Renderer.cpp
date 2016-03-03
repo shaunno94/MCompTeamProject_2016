@@ -52,8 +52,8 @@ void Renderer::UpdateScene(float msec)
 		currentScene->UpdateNodeLists(msec, frameFrustrum, currentScene->getCamera()->GetPosition());
 	}
 
-	if (m_UpdateGlobalUniforms)
-	{	
+	/*if (m_UpdateGlobalUniforms)
+	{
 		for (unsigned int i = 0; i < currentScene->getNumLightObjects(); ++i)
 		{
 			auto rc = currentScene->getLightObject(i)->GetRenderComponent();
@@ -61,7 +61,7 @@ void Renderer::UpdateScene(float msec)
 			updateGlobalUniforms(rc->m_Material);
 		}
 		//m_UpdateGlobalUniforms = false;
-	}
+	}*/
 }
 
 //TODO:: Might need to be seperate from UpdateScene call if you want to update the scene once and draw several times (like for the cube shadow maps)
@@ -97,16 +97,22 @@ void Renderer::OnRenderScene()
 
 void Renderer::OnRenderLights()
 {
+	Vec3Graphics camPos = currentScene->getCamera()->GetPosition();
 	for (unsigned int i = 0; i < currentScene->getNumLightObjects(); ++i)
 	{
 		GameObject* light = currentScene->getLightObject(i);
+
 		DrawShadow(light);
-		LightMaterial* lm = (LightMaterial*)light->GetRenderComponent()->m_Material;
+
+		LightMaterial* lm = static_cast<LightMaterial*>(light->GetRenderComponent()->m_Material);
+
 		lm->Set("lightPos", light->GetWorldTransform().GetTranslation());
 		lm->Set("lightRadius", light->GetBoundingRadius());
 		lm->Set("lightColour", Vec4Graphics(1, 0.7, 0.5, 1));
 		lm->Set("cameraPos", currentScene->getCamera()->GetPosition());
 		lm->Set("shadowBias", lm->shadowBias);
+		lm->Set("cameraPos", camPos);
+		lm->Set("pixelSize", pixelPitch);
 
 		float dist = (light->GetWorldTransform().GetTranslation() - currentScene->getCamera()->GetPosition()).Length();
 
