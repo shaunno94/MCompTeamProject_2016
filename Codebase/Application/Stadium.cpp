@@ -15,7 +15,7 @@ m_wallMaterial(wallMaterial)
 	this->SetPhysicsComponent(floorPhysics);
 	this->GetPhysicsComponent()->GetPhysicsBody()->setRestitution(0.5);
 	this->SetLocalTransform(Mat4Graphics::Translation(Vec3Graphics(6.8, -28.5, 2)) * Mat4Graphics::RotationX(-0.7f) * Mat4Graphics::RotationY(30.5f));
-	this->GetPhysicsComponent()->GetPhysicsBody()->setFriction(0.7);
+	this->GetPhysicsComponent()->GetPhysicsBody()->setFriction(1.3);
 	this->GetPhysicsComponent()->GetPhysicsBody()->setHitFraction(0.7);
 
 	m_netTexture = Texture::Get(TEXTURE_DIR"link2.png");

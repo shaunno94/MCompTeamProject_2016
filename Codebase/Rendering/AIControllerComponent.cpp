@@ -86,10 +86,6 @@ void AIControllerComponent::AddForce(float x, float y, float z)
 {
 	float clamp = 0.6;
 
-	if (Window::GetWindow().GetKeyboard()->KeyDown(KEYBOARD_SPACE)){
-		int i = 0;
-	}
-
 	Vec3Physics in(x, y, z);
 	//in = getOrientation() * in;
 	in.Normalize();
@@ -106,16 +102,16 @@ void AIControllerComponent::AddForce(float x, float y, float z)
 
 	float dot = in.Dot(left);
 
-	AddTorque(0, 5 * (dot), 0);
+	AddTorque(0, 13 * (dot), 0);
 	turnWheels(-dot);
 	
 	dot = in.Dot(forward);
 	if (dot >= 0){
-force = forward * 7;
+force = forward * 17;
 	}
 	else
 	{
-		force = -forward * 6;
+		force = -forward * 16;
 	}
 	
 	force.y = 0;

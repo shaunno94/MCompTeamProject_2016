@@ -173,15 +173,13 @@ void		SoundSystem::SetMasterVolume(float value)	{
 // FIX THIS SHIT
 void	SoundSystem::UpdateListener() {
 
+
+	Vec3 forward = listenerTransform.GetRotation() * Vec3(0, 0, -1);
+	Vec3 up = listenerTransform.GetRotation() * Vec3(0, 1, 0);
+
 	Vec3 dirup[2];
-	//forward
-	dirup[0].x = listenerTransform.values[2];
-	dirup[0].y = listenerTransform.values[6];
-	dirup[0].z = listenerTransform.values[10];
-	//Up
-	dirup[1].x = listenerTransform.values[1];
-	dirup[1].y = listenerTransform.values[5];
-	dirup[1].z = listenerTransform.values[9];
+	dirup[0] = forward;
+	dirup[1] = up;
 
 	dirup[0].Normalize();
 	dirup[1].Normalize();
