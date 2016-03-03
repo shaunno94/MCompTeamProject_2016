@@ -6,9 +6,13 @@
 #include "AI\OnTargetTrigger.h"
 #include "AI\GuardGoalState.h"
 #include "AI\ClearGoalState.h"
+#include "AI\TimingTrigger.h"
+#include "AI\AdvanceState.h"
+#include "AI\ArenaHalfTrigger.h"
+#include "AI\DefenceState.h"
 
 AIControllerComponent::AIControllerComponent(GameObject* parent, unsigned int type) :
-ControllerComponent(parent)
+	ControllerComponent(parent)
 {
 
 	GameObject* ball = Renderer::GetInstance()->GetCurrentScene()->findGameObject("ball");
@@ -31,39 +35,58 @@ ControllerComponent(parent)
 
 		// Create Triggers
 		OnTargetTrigger* positionToShootOnTarget = new OnTargetTrigger();
-		positionToShootOnTarget->setupTrigger(*m_parent, *ball, *targetGoal, 0.7f);
+		positionToShootOnTarget->setupTrigger(*m_parent, *ball, *targetGoal, 0.85f);
 		position->AddTrigger(positionToShootOnTarget, SHOOT);
 
-		DistanceTrigger* shootToPosition = new DistanceTrigger();
-		shootToPosition->setupTrigger(*m_parent, *ball, 15.0f, true);
-		shoot->AddTrigger(shootToPosition, POSITION);
-
+		TimingTrigger* shootToPositionTiming = new TimingTrigger();
+		shootToPositionTiming->setupTrigger(*m_parent, 60);
+		shoot->AddTrigger(shootToPositionTiming, POSITION);
 
 		// Set active state
 		m_StateMachine->ChangeState(POSITION);
 
 	}
-		break;
+	break;
 	case GOALKEEPER:
 	{
+
+		// DEFENCE STATE (When ball is in team's half):
+		//		Contains Guard and Clear state
+		//		One transition to Advance single state
+		//		Starts on Guard, transition between Guard and Clear
+
 		GuardGoalState* guard = new GuardGoalState(*m_StateMachine, *m_parent, *ball, *teamGoal);
-		m_StateMachine->AddState(GUARD_GOAL, guard);
+		ClearGoalState* clearGoal = new ClearGoalState(*m_StateMachine, *m_parent, *ball);
 
-		m_StateMachine->ChangeState(GUARD_GOAL);
+		DefenceState* defenceParentState = new DefenceState(*m_StateMachine, *m_parent, *ball, *teamGoal, *targetGoal);
+		
+		defenceParentState->AddChildState(GUARD_GOAL, guard);
+		defenceParentState->AddChildState(CLEAR_GOAL, clearGoal);
 
-		ClearGoalState* clearGoal = new ClearGoalState(*m_StateMachine, *m_parent, *ball, *teamGoal);
-		m_StateMachine->AddState(CLEAR_GOAL, clearGoal);
+		defenceParentState->setupChildStates();
+		defenceParentState->Start();
 
-		OnTargetTrigger* guardToClear = new OnTargetTrigger();
-		guardToClear->setupTrigger(*m_parent, *ball, *targetGoal, 0.3f);
-		guard->AddTrigger(guardToClear, CLEAR_GOAL);
+		ArenaHalfTrigger* toAdvanceTrigger = new ArenaHalfTrigger();
+		toAdvanceTrigger->setupTrigger(*m_parent, *ball, *teamGoal, false);
+		defenceParentState->AddTrigger(toAdvanceTrigger, ADVANCE);
 
-		DistanceTrigger* clearToGuard = new DistanceTrigger();
-		clearToGuard->setupTrigger(*ball, *teamGoal, 100, false);
-		clearGoal->AddTrigger(clearToGuard, GUARD_GOAL);
+		m_StateMachine->AddState(DEFENCE, defenceParentState);
+
+		// ADVANCE STATE (When ball is in other half):
+		//		One Transition to Defence parent state
+
+		AdvanceState* advanceState = new AdvanceState(*m_StateMachine, *m_parent, *ball, *teamGoal);
+		m_StateMachine->AddState(ADVANCE, advanceState);
+
+		ArenaHalfTrigger* toDefenceTrigger = new ArenaHalfTrigger();
+		toDefenceTrigger->setupTrigger(*m_parent, *ball, *teamGoal, true);
+		advanceState->AddTrigger(toDefenceTrigger, DEFENCE);
+
+		// Default state is Defence (Guard Goal)
+		m_StateMachine->ChangeState(DEFENCE);
 
 	}
-		break;
+	break;
 	case AGGRESSIVE:
 		break;
 	default:
@@ -77,14 +100,17 @@ AIControllerComponent::~AIControllerComponent()
 
 void AIControllerComponent::updateObject(float dt)
 {
-	if (m_parent->GetPhysicsComponent()->GetPhysicsBody()->getInterpolationLinearVelocity().length2() < 0.01) {
+	if (m_parent->GetPhysicsComponent()->GetPhysicsBody()->getInterpolationLinearVelocity().length2() < 0.01)
+	{
 		m_inactiveFramesAgainstWall++;
 	}
-	else if (m_parent->GetPhysicsComponent()->GetPhysicsBody()->getInterpolationLinearVelocity().length2() > 0.05){
+	else if (m_parent->GetPhysicsComponent()->GetPhysicsBody()->getInterpolationLinearVelocity().length2() > 0.05)
+	{
 		m_inactiveFramesAgainstWall = 0;
 	}
 
-	if (m_inactiveFramesAgainstWall > 120) {
+	if (m_inactiveFramesAgainstWall > 60)
+	{
 		reset();
 		m_inactiveFramesAgainstWall = 0;
 	}
@@ -115,15 +141,16 @@ void AIControllerComponent::AddForce(float x, float y, float z)
 
 	AddTorque(0, 13 * (dot), 0);
 	turnWheels(-dot);
-	
+
 	dot = in.Dot(forward);
-	if (dot >= 0){
-force = forward * 17;
+	if (dot >= 0)
+	{
+		force = forward * 15;
 	}
 	else
 	{
-		force = -forward * 16;
+		force = -forward * 12;
 	}
-	
+
 	force.y = 0;
 }

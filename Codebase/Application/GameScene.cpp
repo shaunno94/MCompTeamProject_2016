@@ -73,6 +73,7 @@ GameScene::GameScene(ControllerManager* controller)
 	ai2Material->Set(ReservedMeshTextures.DIFFUSE.name, Texture::Get(MODEL_DIR"car/body2.bmp", true));
 
 
+	//GameObject* player = new CarGameObject(Vec3Physics(100, 5, 0), QuatPhysics(0, 1, 0, 1), playerMaterial, "player");
 	GameObject* player = new CarGameObject(Vec3Physics(100, 5, 0), QuatPhysics(0, 1, 0, 1), playerMaterial, "player");
 	GameObject* shooterAI = new CarGameObject(Vec3Physics(-190, 5, 30), QuatPhysics(0, 0, 0, 1), aiMaterial, "shooterAI", COL_AI_CAR);
 	GameObject* goalieAI = new CarGameObject(Vec3Physics(-230, 5, -30), QuatPhysics(0, 0, 0, 1), ai2Material, "goalieAI", COL_AI_CAR);
@@ -183,8 +184,8 @@ GameScene::~GameScene()
 
 void GameScene::SetControllerActor()
 {
-	myControllers->setActor(findGameObject("shooterAI"), 0);
-	myControllers->setActor(findGameObject("goalieAI"), 1);
+	myControllers->setActor(findGameObject("shooterAI"), SHOOTER);
+	myControllers->setActor(findGameObject("goalieAI"), GOALKEEPER);
 }
 
 void GameScene::ResetScene()
