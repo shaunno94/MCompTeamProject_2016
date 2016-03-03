@@ -12,6 +12,7 @@ ControllerComponent::ControllerComponent(GameObject* parent)
 	torque.ToZero();
 	dPitch = 0;
 	dYaw = 0;
+	reset();
 }
 
 
@@ -21,24 +22,48 @@ ControllerComponent::~ControllerComponent()
 
 void ControllerComponent::updateObject(float dt)
 {
-	if (force.LengthSq() > 0.0000001 || torque.LengthSq() > 0.0000001)
+	if (force.LengthSq() > 0.0000001 || torque.LengthSq() > 0.0000001 || impulse.LengthSq() > 0.0000001)
 		dynamic_cast<RigidPhysicsObject*>(m_parent->GetPhysicsComponent())->GetPhysicsBody()->activate();
 
-	dynamic_cast<RigidPhysicsObject*>(m_parent->GetPhysicsComponent())->GetPhysicsBody()->applyCentralForce(btVector3(force.x, force.y, force.z) * dt);
+	Vec3 up = getOrientation() * Vec3(0, 1, 0);
+
+	if (up.Dot(Vec3(0, 1, 0)) > 0.8 && !airbourne())
+	{
+		dynamic_cast<RigidPhysicsObject*>(m_parent->GetPhysicsComponent())->GetPhysicsBody()->applyCentralForce(btVector3(force.x, force.y, force.z) * dt);
+		dynamic_cast<RigidPhysicsObject*>(m_parent->GetPhysicsComponent())->GetPhysicsBody()->applyCentralImpulse(btVector3(impulse.x, impulse.y, impulse.z));
+		m_inactiveFramesUpsideDown = 0;
+	}
+	else if (up.Dot(Vec3(0,1,0)) < 0.5 && !airbourne()) {
+		m_inactiveFramesUpsideDown++;
+	}
+	else {
+		m_inactiveFramesUpsideDown = 0;
+	}
+
+	if (m_inactiveFramesUpsideDown > 120) {
+		reset();
+		m_inactiveFramesUpsideDown = 0;
+	}
+
 	force.ToZero();
+	impulse.ToZero();
+
 	dynamic_cast<RigidPhysicsObject*>(m_parent->GetPhysicsComponent())->GetPhysicsBody()->applyTorque(btVector3(torque.x, torque.y, torque.z)*dt);
 	//dynamic_cast<RigidPhysicsObject*>(m_parent->GetPhysicsComponent())->GetPhysicsBody()->applyCentralImpulse(btVector3(torque.x, torque.y, torque.z)*dt);
 	torque.ToZero();
+
 	Vec3Physics orientation = (getOrientation() * Vec3Physics(-1, 0, 0)).Normalize();
 	btVector3 btOrientation(orientation.x, orientation.y, orientation.z);
 	btVector3 velocity = -m_parent->GetPhysicsComponent()->GetPhysicsBody()->getInterpolationLinearVelocity();
 	btScalar friction = 0.5;
+
 	if (velocity.length2() > 0.0000001)
 	{
-		friction = std::abs((3 * (velocity.normalize()).dot(btOrientation.normalize())));
-	
-		friction = friction <= 0.5 ? 0.5 : friction;
+		friction = std::abs((2.0 * (velocity.normalize()).dot(btOrientation.normalize())));
+
+		friction = friction <= 0.8 ? 0.8 : friction;
 	}
+
 	m_parent->GetPhysicsComponent()->GetPhysicsBody()->setFriction(friction);
 }
 
@@ -54,6 +79,12 @@ void ControllerComponent::AddTorque(float x, float y, float z)
 	torque.x = (x);
 	torque.y = (y);
 	torque.z = (z);
+}
+void ControllerComponent::AddImpulse(float x, float y, float z)
+{
+	impulse.x = (x);
+	impulse.y = (y);
+	impulse.z = (z);
 }
 
 Mat4Physics ControllerComponent::getOrientation()
@@ -96,18 +127,36 @@ void ControllerComponent::getCameraControl(float& pitch, float& yaw)
 void ControllerComponent::reset()
 {
 	//return Mat4Physics::Rotation(Renderer::GetInstance()->GetCurrentScene()->getCamera()->GetYaw() + 90, Vec3Physics(0, 1, 0));
-	auto world = m_parent->GetWorldTransform().GetTranslation();
+	btVector3 world = m_parent->GetPhysicsComponent()->GetPhysicsBody()->getWorldTransform().getOrigin();
 	//world.SetTranslation(Vec3Physics(0, 0, 0));
-	btTransform trasform = btTransform(btQuaternion(btVector3(0, 0, -1), 0), btVector3(world.x, world.y, world.z));
-		m_parent->GetPhysicsComponent()->GetPhysicsBody()->setWorldTransform(trasform);
+
+	btVector3 worldNorm = world;
+	worldNorm.normalize();
+
+	float dot = worldNorm.dot(btVector3(0, 0, 1));
+
+	float radians = std::acos(dot);
+
+	if (world.x() < 0)
+		radians = -radians;
+	btTransform transform = btTransform(btQuaternion(btVector3(0, 1, 0), radians), world);
+	m_parent->GetPhysicsComponent()->GetPhysicsBody()->setWorldTransform(transform);
+	dynamic_cast<RigidPhysicsObject*>(m_parent->GetPhysicsComponent())->GetPhysicsBody()->activate();
 }
 
-void ControllerComponent::turnWheels(float prop){
+void ControllerComponent::turnWheels(float prop)
+{
 	GameObject* fr = m_parent->FindGameObject("fr");
 	GameObject* fl = m_parent->FindGameObject("fl");
-	if (!(fr && fl)){
+	if (!(fr && fl))
+	{
 		return;
 	}
 	((WheelObject*)fr)->setRotationFactor(prop);
 	((WheelObject*)fl)->setRotationFactor(prop);
+}
+
+bool ControllerComponent::airbourne()
+{
+	return  m_parent->GetPhysicsComponent()->GetPhysicsBody()->getWorldTransform().getOrigin().y() > 1.5;
 }

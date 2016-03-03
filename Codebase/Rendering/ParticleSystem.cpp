@@ -12,8 +12,8 @@ ParticleSystem::ParticleSystem(ParticleEmitter* emitter, Material* material, Tex
 	m_Particles[numParticles];
 	material->Set("diffuseTex", m_Texture);
 
-	for (int i = 0; i < numParticles; i++)
-		m_Particles->SetRenderComponent(new RenderComponent(m_Material, m_Mesh));
+	//for (int i = 0; i < numParticles; i++)
+	//	m_Particles->SetRenderComponent(new RenderComponent(m_Material, m_Mesh));
 	
 }
 

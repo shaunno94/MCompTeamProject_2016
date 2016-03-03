@@ -29,38 +29,9 @@ const string POINTLIGHTSHADER_VERT = SHADER_DIR"2dShadowLightvertex.sb";
 const string POINTLIGHTSHADER_FRAG = SHADER_DIR"2dShadowLightfragment.sb";
 
 #endif
+#include "BulletCollision\CollisionDispatch\btCollisionWorld.h"
 
-struct GoalBallCollisionFilter : public btOverlapFilterCallback
-{
-
-public:
-
-	int m_ballID = 0;
-	int m_goal1ID = 0;
-	int m_goal2ID = 0;
-
-	virtual bool needBroadphaseCollision(btBroadphaseProxy* proxy0, btBroadphaseProxy* proxy1) const override
-	{
-		if ((proxy0->getUid() == m_ballID && proxy1->getUid() == m_goal1ID) ||
-			(proxy1->getUid() == m_ballID && proxy0->getUid() == m_goal1ID))
-		{
-			//TODO: Increment goals for team 1
-			int ifojwe = 8;
-
-			//TODO: Reset Scene
-		}
-		else if ((proxy0->getUid() == m_ballID && proxy1->getUid() == m_goal2ID) ||
-			(proxy1->getUid() == m_ballID && proxy0->getUid() == m_goal2ID))
-		{
-			//TODO: Increment goals for team 2
-			int ifojwe = 8;
-
-			//TODO: Reset Scene
-		}
-		return true;
-	}
-};
-
+struct GameCollisionFilter;
 
 class GameScene : public Scene
 {
@@ -74,12 +45,21 @@ public:
 	void SetupMaterials();
 	void SetupControls();
 	void DrawGUI();
-
 	void SetControllerActor();
-	
+
+	void IncrementScore(int team) {
+		scores[team % 2]++;
+		std::cout << "TEAM " << team + 1 << " SCORED!" << endl;
+		std::cout << scores[0] << " - " << scores[1] << endl;
+	}
+	void ResetScene();
+
 protected:
 	ControllerManager* myControllers;
-	GoalBallCollisionFilter goalBallFilter;
+	GameCollisionFilter* goalBallFilter;
+	int scores[2];
+
+	void ResetObjects();
 
 	GameObject* ball;
 	GameObject* light1;
@@ -114,6 +94,60 @@ protected:
 	int ballID;
 	int goal1ID;
 	int goal2ID;
+};
 
+struct GameCollisionFilter : public btOverlapFilterCallback
+{
+
+public:
+
+	int m_ballID = 0;
+	int m_goal1ID = 0;
+	int m_goal2ID = 0;
+	GameScene* m_scene;
+
+	GameCollisionFilter(GameScene* scene) : m_scene(scene) {
+
+	}
+
+
+	virtual bool needBroadphaseCollision(btBroadphaseProxy* proxy0, btBroadphaseProxy* proxy1) const override
+	{
+		short int combined = COL_CAR | COL_WALL;
+		/*int combinedMask = proxy0->m_collisionFilterMask | proxy1->m_collisionFilterMask;
+		int test1 = (combinedMask & COL_CAR) == COL_CAR;
+		int test2 = (combinedMask & COL_WALL) == COL_WALL;
+		int test3;*/
+		if ((proxy0->m_collisionFilterMask | proxy1->m_collisionFilterMask) & combined == combined)
+		{
+			int test = 0;
+		}
+		else
+		{
+			int test2 = 0;
+		}
+		//if (((combinedMask & COL_CAR) == COL_CAR) && ((combinedMask & COL_WALL) == COL_WALL)) {
+		//	std::cout << "Car and wall collision" << std::endl;
+		//	// sort out car-wall collision
+		//}
+
+		if ((proxy0->getUid() == m_ballID && proxy1->getUid() == m_goal1ID) ||
+			(proxy1->getUid() == m_ballID && proxy0->getUid() == m_goal1ID))
+		{
+			//Increment goals for team 1
+			m_scene->IncrementScore(0);
+			//TODO: Reset Scene
+			m_scene->ResetScene();
+		}
+		else if ((proxy0->getUid() == m_ballID && proxy1->getUid() == m_goal2ID) ||
+			(proxy1->getUid() == m_ballID && proxy0->getUid() == m_goal2ID))
+		{
+			//Increment goals for team 2
+			m_scene->IncrementScore(1);
+			//TODO: Reset Scene
+			m_scene->ResetScene();
+		}
+		return true;
+	}
 };
 

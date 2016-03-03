@@ -58,6 +58,10 @@ ControllerComponent(parent)
 		guardToClear->setupTrigger(*m_parent, *ball, *targetGoal, 0.3f);
 		guard->AddTrigger(guardToClear, CLEAR_GOAL);
 
+		DistanceTrigger* clearToGuard = new DistanceTrigger();
+		clearToGuard->setupTrigger(*ball, *teamGoal, 100, false);
+		clearGoal->AddTrigger(clearToGuard, GUARD_GOAL);
+
 	}
 		break;
 	case AGGRESSIVE:
@@ -65,7 +69,6 @@ ControllerComponent(parent)
 	default:
 		break;
 	}
-
 }
 
 AIControllerComponent::~AIControllerComponent()
@@ -74,6 +77,18 @@ AIControllerComponent::~AIControllerComponent()
 
 void AIControllerComponent::updateObject(float dt)
 {
+	if (m_parent->GetPhysicsComponent()->GetPhysicsBody()->getInterpolationLinearVelocity().length2() < 0.01) {
+		m_inactiveFramesAgainstWall++;
+	}
+	else if (m_parent->GetPhysicsComponent()->GetPhysicsBody()->getInterpolationLinearVelocity().length2() > 0.05){
+		m_inactiveFramesAgainstWall = 0;
+	}
+
+	if (m_inactiveFramesAgainstWall > 120) {
+		reset();
+		m_inactiveFramesAgainstWall = 0;
+	}
+
 	m_StateMachine->Update(dt);
 	ControllerComponent::updateObject(dt);
 }
@@ -81,10 +96,6 @@ void AIControllerComponent::updateObject(float dt)
 void AIControllerComponent::AddForce(float x, float y, float z)
 {
 	float clamp = 0.6;
-
-	if (Window::GetWindow().GetKeyboard()->KeyDown(KEYBOARD_SPACE)){
-		int i = 0;
-	}
 
 	Vec3Physics in(x, y, z);
 	//in = getOrientation() * in;
@@ -102,16 +113,16 @@ void AIControllerComponent::AddForce(float x, float y, float z)
 
 	float dot = in.Dot(left);
 
-	AddTorque(0, 5 * (dot), 0);
+	AddTorque(0, 13 * (dot), 0);
 	turnWheels(-dot);
 	
 	dot = in.Dot(forward);
 	if (dot >= 0){
-force = forward * 7;
+force = forward * 17;
 	}
 	else
 	{
-		force = -forward * 6;
+		force = -forward * 16;
 	}
 	
 	force.y = 0;

@@ -19,6 +19,8 @@ GameScene::GameScene(ControllerManager* controller)
 	{
 		std::cout << "GUI not Initialised!" << std::endl;
 	}
+	scores[0] = 0;
+	scores[1] = 0;
 
 #if DEBUG_DRAW
 #ifndef ORBIS
@@ -26,7 +28,7 @@ GameScene::GameScene(ControllerManager* controller)
 	DebugDraw::Context(Renderer::GetInstance());
 #endif
 #endif
-
+	
 	SetupShaders();
 	SetupMaterials();
 	SetupGameObjects();
@@ -75,17 +77,21 @@ void GameScene::SetupGameObjects()
 
 	ball->SetRenderComponent(new RenderComponent(ballMaterial, ModelLoader::LoadMGL(MODEL_DIR"Common/sphere.mgl", true)));
 	ball->SetLocalTransform(Mat4Graphics::Scale(Vector3Simple(7, 7, 7)));
+
+
+	ballPhysics->GetPhysicsBody()->getBroadphaseProxy()->m_collisionFilterMask = COL_BALL;
+
 	ball->SetPhysicsComponent(ballPhysics);
-	ball->GetPhysicsComponent()->GetPhysicsBody()->setRestitution(btScalar(0.9));
+	ball->GetPhysicsComponent()->GetPhysicsBody()->setRestitution(btScalar(1.6));
 	ball->GetPhysicsComponent()->GetPhysicsBody()->setFriction(0.5);
 	ball->GetPhysicsComponent()->GetPhysicsBody()->setRollingFriction(0.5);
 	ball->GetPhysicsComponent()->GetPhysicsBody()->setHitFraction(0.5);
+	player = new CarGameObject(Vec3Physics(100, 5, 0), QuatPhysics(0, 1, 0, 1), playerMaterial, "player");
 
-	player = new CarGameObject(Vec3Physics(10, 5, 0), QuatPhysics(0, 0, 0, 1), playerMaterial, "player");
-	player->SetParticleSystem(new ParticleSystem(new CubeEmitter(), playerMaterial, Texture::Get(TEXTURE_DIR"particle.tga"), 100000));
+	shooterAI = new CarGameObject(Vec3Physics(-190, 5, 30), QuatPhysics(0, 0, 0, 1), aiMaterial, "shooterAI", COL_AI_CAR);
 
-	shooterAI = new CarGameObject(Vec3Physics(-190, 5, 30), QuatPhysics(0, 0, 0, 1), aiMaterial, "shooterAI");
-	goalieAI = new CarGameObject(Vec3Physics(-230, 5, -30), QuatPhysics(0, 0, 0, 1), ai2Material, "goalieAI");
+	goalieAI = new CarGameObject(Vec3Physics(-230, 5, -30), QuatPhysics(0, 0, 0, 1), ai2Material, "goalieAI", COL_AI_CAR);
+
 
 	// Create Stadium
 	stadium = new Stadium(material, netMaterial, "stadium");
@@ -104,11 +110,12 @@ void GameScene::SetupGameObjects()
 	goal2ID = goalBox2->GetPhysicsBody()->getBroadphaseProxy()->getUid();
 	goal2->SetPhysicsComponent(goalBox2);
 
-	goalBallFilter.m_ballID = ballID;
-	goalBallFilter.m_goal1ID = goal1ID;
-	goalBallFilter.m_goal2ID = goal2ID;
+	goalBallFilter = new GameCollisionFilter(this);
+	goalBallFilter->m_ballID = ballID;
+	goalBallFilter->m_goal1ID = goal1ID;
+	goalBallFilter->m_goal2ID = goal2ID;
 
-	PhysicsEngineInstance::Instance()->getPairCache()->setOverlapFilterCallback(&goalBallFilter);
+	PhysicsEngineInstance::Instance()->getPairCache()->setOverlapFilterCallback(goalBallFilter);
 
 	addGameObject(stadium);
 	addGameObject(player);
@@ -176,14 +183,14 @@ void GameScene::SetupMaterials()
 	ai2Material = new Material(simpleShader);
 	//Material* guiMaterial = new Material(orthoShader);
 
-	ballMaterial->Set(ReservedMeshTextures.DIFFUSE.name, Texture::Get(TEXTURE_DIR"checkerboard.tga", true));
+	ballMaterial->Set(ReservedMeshTextures.DIFFUSE.name, Texture::Get(TEXTURE_DIR"football.png", true));
 	playerMaterial = new Material(simpleShader);
 
 	aiMaterial->Set(ReservedMeshTextures.DIFFUSE.name, Texture::Get(MODEL_DIR"car/body1.bmp", true));
 
 	ai2Material->Set(ReservedMeshTextures.DIFFUSE.name, Texture::Get(MODEL_DIR"car/body2.bmp", true));
 
-	particleMaterial->Set(ReservedMeshTextures.DIFFUSE.name, Texture::Get(TEXTURE_DIR"particle.tga", true));
+	//particleMaterial->Set(ReservedMeshTextures.DIFFUSE.name, Texture::Get(TEXTURE_DIR"particle.tga", true));
 }
 
 void GameScene::DrawGUI()
@@ -206,4 +213,23 @@ void GameScene::SetupControls()
 	myControllers->setProducer(player);
 #endif
 	attachCam(player);
+}
+
+void GameScene::ResetScene()
+{
+	// Do other things before resetting scene fully
+	ResetObjects();
+}
+
+void GameScene::ResetObjects()
+{
+	btVector3 zeroVector = btVector3(0, 0, 0);
+
+	dynamic_cast<RigidPhysicsObject*>(ball->GetPhysicsComponent())->GetPhysicsBody()->clearForces();
+	dynamic_cast<RigidPhysicsObject*>(ball->GetPhysicsComponent())->GetPhysicsBody()->setLinearVelocity(zeroVector);
+	dynamic_cast<RigidPhysicsObject*>(ball->GetPhysicsComponent())->GetPhysicsBody()->setAngularVelocity(zeroVector);
+
+	ball->GetPhysicsComponent()->GetPhysicsBody()->setWorldTransform(btTransform(btQuaternion(0, 0, 0, 1), zeroVector));
+
+
 }
