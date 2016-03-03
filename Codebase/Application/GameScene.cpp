@@ -1,7 +1,7 @@
 #include "GameScene.h"
 
 GameScene::GameScene(ControllerManager* controller)
-	: myControllers(controller)
+: myControllers(controller)
 {
 	//Initialise Bullet physics engine.
 	PhysicsEngineInstance::Instance()->setGravity(btVector3(0, -9.81, 0));
@@ -75,28 +75,6 @@ void GameScene::SetupGameObjects()
 	ballPhysics->CreatePhysicsBody(1.0, Vec3Physics(0, 3, 0), QuatPhysics(0, 0, 0, 1), Vec3Physics(1, 1, 1));
 	ballID = ballPhysics->GetPhysicsBody()->getBroadphaseProxy()->getUid();
 
-	ballMaterial->Set(ReservedMeshTextures.DIFFUSE.name, Texture::Get(TEXTURE_DIR"football.png", true));
-	Material* playerMaterial = new Material(simpleShader);
-
-	Material* aiMaterial = new Material(simpleShader);
-	aiMaterial->Set(ReservedMeshTextures.DIFFUSE.name, Texture::Get(MODEL_DIR"car/body1.bmp", true));
-
-	Material* ai2Material = new Material(simpleShader);
-	ai2Material->Set(ReservedMeshTextures.DIFFUSE.name, Texture::Get(MODEL_DIR"car/body2.bmp", true));
-
-
-	//GameObject* player = new CarGameObject(Vec3Physics(100, 5, 0), QuatPhysics(0, 1, 0, 1), playerMaterial, "player");
-	GameObject* player = new CarGameObject(Vec3Physics(100, 5, 0), QuatPhysics(0, 1, 0, 1), playerMaterial, "player");
-	GameObject* shooterAI = new CarGameObject(Vec3Physics(-190, 5, 30), QuatPhysics(0, 0, 0, 1), aiMaterial, "shooterAI", COL_AI_CAR);
-	GameObject* goalieAI = new CarGameObject(Vec3Physics(-230, 5, -30), QuatPhysics(0, 0, 0, 1), ai2Material, "goalieAI", COL_AI_CAR);
-
-	// Create Stadium
-	GameObject* stadium = new Stadium(material, netMaterial, "stadium");
-
-	addGameObject(stadium);
-	//myScene->addLightObject(light1);
-	addLightObject(light2);
-
 	ball->SetRenderComponent(new RenderComponent(ballMaterial, ModelLoader::LoadMGL(MODEL_DIR"Common/sphere.mgl", true)));
 	ball->SetLocalTransform(Mat4Graphics::Scale(Vector3Simple(7, 7, 7)));
 
@@ -108,22 +86,28 @@ void GameScene::SetupGameObjects()
 	ball->GetPhysicsComponent()->GetPhysicsBody()->setFriction(0.5);
 	ball->GetPhysicsComponent()->GetPhysicsBody()->setRollingFriction(0.5);
 	ball->GetPhysicsComponent()->GetPhysicsBody()->setHitFraction(0.5);
+	player = new CarGameObject(Vec3Physics(100, 5, 0), QuatPhysics(0, 1, 0, 1), playerMaterial, "player");
+
+	shooterAI = new CarGameObject(Vec3Physics(-190, 5, 30), QuatPhysics(0, 0, 0, 1), aiMaterial, "shooterAI", COL_AI_CAR);
+
+	goalieAI = new CarGameObject(Vec3Physics(-230, 5, -30), QuatPhysics(0, 0, 0, 1), ai2Material, "goalieAI", COL_AI_CAR);
 
 
-	RigidPhysicsObject* goalBox = new RigidPhysicsObject();
+	// Create Stadium
+	stadium = new Stadium(material, netMaterial, "stadium");
+
+	goal1 = new GameObject("goal1");
+	goalBox = new RigidPhysicsObject();
 	goalBox->CreateCollisionShape(Vec3Physics(7.0, 15.0, 29.0), CUBOID);
 	goalBox->CreatePhysicsBody(0.0, Vec3Physics(268, 17, 0), QuatPhysics(0, 0, 0, 1), Vec3Physics(1, 1, 1), true);
-	int goal1ID = goalBox->GetPhysicsBody()->getBroadphaseProxy()->getUid();
-
-	RigidPhysicsObject* goalBox2 = new RigidPhysicsObject();
-	goalBox2->CreateCollisionShape(Vec3Physics(7.0, 15.0, 29.0), CUBOID);
-	goalBox2->CreatePhysicsBody(0.0, Vec3Physics(-268, 17, 0), QuatPhysics(0, 0, 0, 1), Vec3Physics(1, 1, 1), true);
-	int goal2ID = goalBox2->GetPhysicsBody()->getBroadphaseProxy()->getUid();
-
-	GameObject* goal1 = new GameObject("goal1");
+	goal1ID = goalBox->GetPhysicsBody()->getBroadphaseProxy()->getUid();
 	goal1->SetPhysicsComponent(goalBox);
 
-	GameObject* goal2 = new GameObject("goal2");
+	goal2 = new GameObject("goal2");
+	goalBox2 = new RigidPhysicsObject();
+	goalBox2->CreateCollisionShape(Vec3Physics(7.0, 15.0, 29.0), CUBOID);
+	goalBox2->CreatePhysicsBody(0.0, Vec3Physics(-268, 17, 0), QuatPhysics(0, 0, 0, 1), Vec3Physics(1, 1, 1), true);
+	goal2ID = goalBox2->GetPhysicsBody()->getBroadphaseProxy()->getUid();
 	goal2->SetPhysicsComponent(goalBox2);
 
 	goalBallFilter = new GameCollisionFilter(this);
@@ -239,11 +223,6 @@ void GameScene::ResetScene()
 
 void GameScene::ResetObjects()
 {
-	GameObject* ball = findGameObject("ball");
-	GameObject* player = findGameObject("player");
-	GameObject* shooter = findGameObject("shooterAI");
-	GameObject* goalie = findGameObject("goalieAI");
-
 	btVector3 zeroVector = btVector3(0, 0, 0);
 
 	dynamic_cast<RigidPhysicsObject*>(ball->GetPhysicsComponent())->GetPhysicsBody()->clearForces();
