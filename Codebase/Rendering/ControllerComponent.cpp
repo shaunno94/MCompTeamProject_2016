@@ -41,7 +41,7 @@ void ControllerComponent::updateObject(float dt)
 	btScalar friction = 0.5;
 	if (velocity.length2() > 0.0000001)
 	{
-		friction = std::abs((2.2 * (velocity.normalize()).dot(btOrientation.normalize())));
+		friction = std::abs((2.0 * (velocity.normalize()).dot(btOrientation.normalize())));
 
 		friction = friction <= 0.8 ? 0.8 : friction;
 	}

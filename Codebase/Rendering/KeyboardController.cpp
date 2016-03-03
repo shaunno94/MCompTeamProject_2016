@@ -16,10 +16,10 @@ void KeyboardController::CheckInput(){
 	Vec3Physics force(0, 0, 0);
 	Vec3Physics torque(0, 0, 0);
 	Vec3Physics impulse(0, 0, 0);
-	float accel = 17;
+	float accel = 14;
 	float rotAccel = 13;
 	float airAccel = 13;
-	float jump = 10;
+	float jump = 15;
 	Mat4Physics orientation = object->getOrientation();
 	float turn = 0;
 	bool airborn = object->airborn();
@@ -60,7 +60,7 @@ void KeyboardController::CheckInput(){
 
 	if (Window::GetKeyboard()->KeyTriggered(KEYBOARD_SPACE))
 	{
-		impulse += (orientation * Vec3Physics(0, jump, 0));
+		impulse += (orientation * Vec3Physics(0, jump, -jump *.5));
 	}
 
 	object->AddForce(force.x, force.y, force.z);
