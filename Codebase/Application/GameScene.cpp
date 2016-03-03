@@ -231,5 +231,4 @@ void GameScene::ResetObjects()
 
 	ball->GetPhysicsComponent()->GetPhysicsBody()->setWorldTransform(btTransform(btQuaternion(0, 0, 0, 1), zeroVector));
 
-
 }
