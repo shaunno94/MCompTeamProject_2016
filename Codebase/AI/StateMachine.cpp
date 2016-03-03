@@ -1,11 +1,9 @@
 #include "StateMachine.h"
 
-
 StateMachine::StateMachine()
 {
 	m_stateMap = new stateMapping();
 }
-
 
 StateMachine::~StateMachine()
 {
@@ -35,8 +33,8 @@ void StateMachine::Update(float dt)
 /// <param name="state"> Actual State object</param>
 void StateMachine::AddState(unsigned int stateName, State* state)
 {
-	if (m_stateMap->find(&stateName) == m_stateMap->end())
-		(*m_stateMap)[&stateName] = state;
+	if (m_stateMap->find(stateName) == m_stateMap->end())
+		(*m_stateMap)[stateName] = state;
 }
 
 /// <summary>
@@ -46,11 +44,10 @@ void StateMachine::AddState(unsigned int stateName, State* state)
 /// <returns> State matching </returns>
 bool StateMachine::ChangeState(unsigned int stateName)
 {
-	if (m_stateMap->find(&stateName) != m_stateMap->end()) {
-		activeState = (*m_stateMap)[&stateName];
+	if (m_stateMap->find(stateName) != m_stateMap->end()) {
+		activeState = (*m_stateMap)[stateName];
 		activeState->Start();
 		return true;
 	}
 	return false;
 }
-

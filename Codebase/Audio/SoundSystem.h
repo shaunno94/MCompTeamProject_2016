@@ -1,3 +1,4 @@
+#ifndef ORBIS
 #pragma once
 
 #include "SoundEmitter.h"
@@ -72,3 +73,4 @@ protected:
 
 	static SoundSystem* instance;
 };
+#endif

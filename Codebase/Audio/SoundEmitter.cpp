@@ -1,3 +1,4 @@
+#ifndef ORBIS
 #include "SoundEmitter.h"
 
 SoundEmitter::SoundEmitter(void)
@@ -189,3 +190,4 @@ void		SoundEmitter::Update(float msec)
 		}
 	}
 }
+#endif

@@ -1,3 +1,4 @@
+#ifndef ORBIS
 #include "AudioComponent.h"
 #include "GameObject.h"
 
@@ -133,3 +134,4 @@ void AudioCompCarLitener::Update()
 
 	AudioCompCar::Update();
 }
+#endif

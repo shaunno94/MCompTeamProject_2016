@@ -6,7 +6,7 @@
 unsigned char ttf_buffer[1 << 20];
 unsigned char temp_bitmap[512 * 512];
 stbtt_bakedchar cdata[96]; // ASCII 32..126 is 95 glyphs
-GLuint ftex;
+unsigned int ftex;
 
 
 ScoreboardGUIComponent::ScoreboardGUIComponent(Material* material, Texture* texture, float z, bool visible) : GUIComponent(material, texture, z, visible),
@@ -18,8 +18,6 @@ ScoreboardGUIComponent::ScoreboardGUIComponent(Material* material, Texture* text
 	m_Texture = texture;
 	m_Depth = z;
 	m_Visible = visible;
-
-
 
 	material->Set("diffuseTex", m_Texture);
 

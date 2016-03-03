@@ -1,3 +1,4 @@
+#ifndef ORBIS
 #pragma once
 
 #include <vector>
@@ -30,3 +31,4 @@ protected:
 	static std::map<unsigned int, Sound*> soundAssets;
 
 };
+#endif

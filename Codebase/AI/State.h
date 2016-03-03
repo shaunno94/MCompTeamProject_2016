@@ -15,9 +15,9 @@ public:
 	virtual void Start() = 0;
 	virtual void Update(float dt);
 
-	void AddChildState(const std::string& stateName, State* childState);
-	void AddTrigger(Trigger* trigger, const std::string& destState);
-	
+	void AddChildState(unsigned int stateName, State* childState);
+	void AddTrigger(Trigger* trigger, unsigned int destState);
+
 protected:
 
 	bool CheckTriggers();
@@ -33,4 +33,3 @@ protected:
 	GameObject* m_parent;
 	StateMachine* m_stateMachine;
 };
-

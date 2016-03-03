@@ -560,6 +560,7 @@ void OGLRenderer::DrawPointLights()
 
 	glActiveTexture(GL_TEXTURE0 + ReservedOtherTextures.NORMALS.index);
 	glBindTexture(GL_TEXTURE_2D, bufferNormalTex);
+	glActiveTexture(GL_TEXTURE0);
 
 	child->OnRenderLights();
 

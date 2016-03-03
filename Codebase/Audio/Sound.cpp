@@ -1,3 +1,4 @@
+#ifndef ORBIS
 #include "Sound.h"
 
 // sound
@@ -101,3 +102,4 @@ ALenum Sound::GetOALFormat()
 	}
 	return AL_FORMAT_MONO8;
 }
+#endif

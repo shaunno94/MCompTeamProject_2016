@@ -1,26 +1,25 @@
-# version 150 core
+#version 450 core
 
-uniform sampler2D depthTex ;
-uniform sampler2D normTex ;
+uniform sampler2D depthTex;
+uniform sampler2D normTex;
 
 uniform sampler2DShadow shadowTex;
-uniform mat4 shadowBias ;
+uniform mat4 shadowBias;
 
-uniform vec2 pixelSize ;
-uniform vec3 cameraPos ;
+uniform vec2 pixelSize;
+uniform vec3 cameraPos;
 
-uniform float lightRadius ;
-uniform vec3 lightPos ;
-uniform vec4 lightColour ;
+uniform float lightRadius;
+uniform vec3 lightPos;
+uniform vec4 lightColour;
 
 in Vertex {
-	mat4 inverseProjView ;
-	//vec4 shadowProj;
+	mat4 inverseProjView;
 } IN;
 out vec4 gl_FragColor [2];
 
-void main ( void ) {
-	vec3 pos = vec3 (( gl_FragCoord . x * pixelSize . x ) ,
+void main (void) {
+	vec3 pos = vec3 ((gl_FragCoord.x * pixelSize.x) ,
 	( gl_FragCoord . y * pixelSize . y ) , 0.0);
 	pos . z = texture ( depthTex , pos . xy ). r ;
 
@@ -40,22 +39,21 @@ void main ( void ) {
 	vec3 viewDir = normalize ( cameraPos - pos );
 	vec3 halfDir = normalize ( incident + viewDir );
 
-	float lambert = clamp ( dot ( incident , normal ) ,0.0 ,1.0);
-	float rFactor = clamp ( dot ( halfDir , normal ) ,0.0 ,1.0);
+	float lambert = clamp ( dot ( incident , normal ), 0.0, 1.0);
+	float rFactor = clamp ( dot ( halfDir , normal ), 0.0, 1.0);
 	float sFactor = pow ( rFactor , 33.0 );
 	
 	float shadow = 1.0; 
 	
-	vec4 shadowProj = ( shadowBias * vec4 ( pos +( normal *1.5) ,1));
+	vec4 shadowProj = ( shadowBias * vec4 (pos + ( normal *1.5), 1));
 
 	if( shadowProj . w > 0.0) { 
-		shadow = textureProj ( shadowTex , shadowProj );
+		shadow = textureProj (shadowTex ,shadowProj );
 	}
 
 	lambert *= shadow ;
 	sFactor *= shadow;
 	
-	gl_FragColor [0] = vec4 ( lightColour . xyz * lambert * atten , 1.0);
-	gl_FragColor [1] = vec4 ( lightColour . xyz * sFactor * atten *0.33 ,1.0);
-	//gl_FragColor [1].rgb = normal.rgb;
+	gl_FragColor [0] = vec4 ( lightColour.xyz * lambert * atten, 1.0);
+	gl_FragColor [1] = vec4 ( lightColour.xyz * sFactor * atten * 0.33, 1.0);
 }

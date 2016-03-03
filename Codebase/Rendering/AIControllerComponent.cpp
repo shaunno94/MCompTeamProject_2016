@@ -41,15 +41,14 @@ ControllerComponent(parent)
 
 		// Set active state
 		m_StateMachine->ChangeState(POSITION);
-
 	}
-		break;
+	break;
 	case GOALKEEPER:
 	{
-		GuardGoalState* guard = new GuardGoalState(*m_StateMachine, *m_parent, *ball, *teamGoal);
-		m_StateMachine->AddState(GUARD_GOAL, guard);
+		 GuardGoalState* guard = new GuardGoalState(*m_StateMachine, *m_parent, *ball, *teamGoal);
+		 m_StateMachine->AddState(GUARD_GOAL, guard);
 
-		m_StateMachine->ChangeState(GUARD_GOAL);
+		 m_StateMachine->ChangeState(GUARD_GOAL);
 
 		ClearGoalState* clearGoal = new ClearGoalState(*m_StateMachine, *m_parent, *ball, *teamGoal);
 		m_StateMachine->AddState(CLEAR_GOAL, clearGoal);
@@ -104,15 +103,15 @@ void AIControllerComponent::AddForce(float x, float y, float z)
 
 	AddTorque(0, 13 * (dot), 0);
 	turnWheels(-dot);
-	
+
 	dot = in.Dot(forward);
 	if (dot >= 0){
-force = forward * 17;
+		force = forward * 17;
 	}
 	else
 	{
 		force = -forward * 16;
 	}
-	
+
 	force.y = 0;
 }

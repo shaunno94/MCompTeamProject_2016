@@ -22,10 +22,10 @@ const string GUI_VERT = SHADER_DIR"combineVert.glsl";
 
 #else
 #include "Rendering\PS4Controller.h"
-const string SIMPLESHADER_VERT = SHADER_DIR"textureVertex.sb";
-const string SIMPLESHADER_FRAG = SHADER_DIR"textureFragment.sb";
-const string POINTLIGHTSHADER_VERT = SHADER_DIR"2dShadowLightvertex.sb";
-const string POINTLIGHTSHADER_FRAG = SHADER_DIR"2dShadowLightfragment.sb";
+const std::string SIMPLESHADER_VERT = SHADER_DIR"textureVertex.sb";
+const std::string SIMPLESHADER_FRAG = SHADER_DIR"textureFragment.sb";
+const std::string POINTLIGHTSHADER_VERT = SHADER_DIR"2dShadowLightvertex.sb";
+const std::string POINTLIGHTSHADER_FRAG = SHADER_DIR"2dShadowLightfragment.sb";
 
 #endif
 #include "BulletCollision\CollisionDispatch\btCollisionWorld.h"

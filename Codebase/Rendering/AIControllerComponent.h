@@ -15,4 +15,3 @@ public:
 protected:
 	StateMachine* m_StateMachine;
 };
-

@@ -8,7 +8,9 @@ GameScene::GameScene(ControllerManager* controller)
 	//Initialise Bullet physics engine.
 	PhysicsEngineInstance::Instance()->setGravity(btVector3(0, -9.81, 0));
 
+#ifndef ORBIS
 	SoundSystem::Initialise();
+#endif
 
 	GUISystem::Initialise();
 
@@ -142,6 +144,7 @@ GameScene::GameScene(ControllerManager* controller)
 	addGameObject(goal1);
 	addGameObject(goal2);
 
+#ifndef ORBIS
 	//-------- SOUND
 	// load in files
 	SoundManager::LoadAssets();
@@ -163,6 +166,7 @@ GameScene::GameScene(ControllerManager* controller)
 	player->SetAudioComponent(new AudioCompCarLitener(true));
 	shooterAI->SetAudioComponent(new AudioCompCar(false));
 	//-------- SOUND
+#endif
 }
 
 
