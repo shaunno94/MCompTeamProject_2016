@@ -10,7 +10,7 @@ ParticleSystem::ParticleSystem(ParticleEmitter* emitter, Material* material, Tex
 	, m_ParticleEmitter(emitter)
 	, m_NumParticles(numParticles)
 {
-	pos[numParticles][3];
+	m_Centre[numParticles];
 }
 
 ParticleSystem::~ParticleSystem()
@@ -53,11 +53,10 @@ void ParticleSystem::BuildVertexBuffer()
 		Particle& particle = m_Particles[i];
 
 		unsigned int vertexIndex = i * 4;
-
-		pos[i][0] = (particle.m_Position + ((-x - y) * particle.m_Size)).x;
-		pos[i][1] = (particle.m_Position + ((-x - y) * particle.m_Size)).y;
-		pos[i][2] = (particle.m_Position + ((-x - y) * particle.m_Size)).z;
-
+		
+		m_Centre[i] = Vec3Graphics((particle.m_Position + (-x * -y) * particle.m_Size).x,
+			(particle.m_Position + (-x * -y) * particle.m_Size).y,
+			(particle.m_Position + (-x * -y) * particle.m_Size).z);
 	}
 }
 

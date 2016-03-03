@@ -32,7 +32,7 @@ private:
 	std::vector<Particle>	m_Particles;
 	unsigned int			m_NumParticles;
 
-	GLfloat**				pos;
+	Vec3Graphics*			m_Centre;
 
 	Vec3Graphics			m_Force;
 	Material*				m_Material;

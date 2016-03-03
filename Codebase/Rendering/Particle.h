@@ -5,7 +5,6 @@ class Particle : public GameObject
 {
 public:
 	Particle() : m_Position(Vec3Graphics(0, 0, 0)),
-	m_OldPos(Vec3Graphics(0, 0, 0)),
 	m_Velocity(Vec3Graphics(0, 0, 0)),
 	m_Colour(Vec4Graphics(0, 0, 0, 0)),
 	m_Rotate(0),

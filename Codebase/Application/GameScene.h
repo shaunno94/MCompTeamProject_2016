@@ -11,6 +11,7 @@
 #include "Rendering\WheelObject.h"
 #include "CarGameObject.h"
 #include "Audio\SoundSystem.h"
+#include "Rendering\ParticleManager.h"
 
 #ifndef ORBIS
 #include "Rendering\KeyboardController.h"
@@ -67,10 +68,51 @@ public:
 	GameScene(ControllerManager* controller);
 	~GameScene();
 
-	void SetControllerActor();
+	void LoadAudio();
+	void SetupGameObjects();
+	void SetupShaders();
+	void SetupMaterials();
+	void SetupControls();
+	void DrawGUI();
 
+	void SetControllerActor();
+	
 protected:
 	ControllerManager* myControllers;
 	GoalBallCollisionFilter goalBallFilter;
+
+	GameObject* ball;
+	GameObject* light1;
+	GameObject* light2;
+	GameObject* player;
+	GameObject* shooterAI;
+	GameObject* goalieAI;
+	GameObject* stadium;
+	GameObject* goal1;
+	GameObject* goal2;
+
+	RigidPhysicsObject* ballPhysics;
+	RigidPhysicsObject* goalBox;
+	RigidPhysicsObject* goalBox2;
+
+	BaseShader* simpleShader;
+	BaseShader* pointlightShader;
+	BaseShader* orthoShader;
+
+	LightMaterial* lightMaterial;
+
+	Material* material;
+	Material* ballMaterial;
+	Material* netMaterial;
+	Material* playerMaterial;
+	Material* aiMaterial;
+	Material* ai2Material;
+
+	ControllerComponent* cc;
+
+	int ballID;
+	int goal1ID;
+	int goal2ID;
+
 };
 

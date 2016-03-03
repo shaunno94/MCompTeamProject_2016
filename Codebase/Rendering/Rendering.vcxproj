@@ -154,7 +154,6 @@
   <ItemGroup>
     <ClInclude Include="AIControllerComponent.h" />
     <ClInclude Include="AudioComponent.h" />
-    <ClInclude Include="BasicParticleGenerator.h" />
     <ClInclude Include="Camera.h" />
     <ClInclude Include="constants.h" />
     <ClInclude Include="Controller.h" />
@@ -209,7 +208,6 @@
   <ItemGroup>
     <ClCompile Include="AIControllerComponent.cpp" />
     <ClCompile Include="AudioComponent.cpp" />
-    <ClCompile Include="BasicParticleGenerator.cpp" />
     <ClCompile Include="Camera.cpp" />
     <ClCompile Include="ControllerComponent.cpp" />
     <ClCompile Include="ControllerManager.cpp" />
@@ -231,8 +229,6 @@
     <ClCompile Include="OGLMesh.cpp" />
     <ClCompile Include="OGLRenderer.cpp" />
     <ClCompile Include="OrthoComponent.cpp" />
-    <ClCompile Include="ParticleData.cpp" />
-    <ClCompile Include="ParticleEmitter7.cpp" />
     <ClCompile Include="ParticleManager.cpp" />
     <ClCompile Include="ParticleSystem.cpp" />
     <ClCompile Include="PhysicsObject.cpp" />
