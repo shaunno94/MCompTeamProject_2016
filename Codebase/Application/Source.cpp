@@ -60,7 +60,6 @@ int main(void)
 		myControllers->update(ms);
 
 		renderer.RenderScene(ms);
-
 		SoundSystem::Instance()->Update(ms);
 	}
 

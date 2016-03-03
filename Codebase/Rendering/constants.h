@@ -31,14 +31,19 @@ enum MeshBuffer
 	MAX_BUFFER
 };
 
+# define BIT(x) 1<<x
 enum CollisionMasks {
-	COL_WALL,
-	COL_CAR,
-	COL_BALL,
-	COL_GOAL
+	COL_NOTHING = 0,
+	COL_WALL = BIT(0),
+	COL_CAR = BIT(1),
+	COL_AI_CAR = BIT(2),
+	COL_BALL = BIT(3),
+	COL_GOAL = BIT(4)
 };
 enum CollisionGroups {
-	GROUP_WALL_BALL = COL_WALL | COL_BALL
+	GROUP_WALL_BALL = COL_WALL | COL_BALL,
+	GROUP_CAR_WALL = COL_CAR | COL_WALL,
+	GROUP_CAR_BALL = COL_CAR | COL_BALL
 };
 
 enum AITypes
