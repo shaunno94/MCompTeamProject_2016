@@ -33,7 +33,7 @@ void StateMachine::Update(float dt)
 /// </summary>
 /// <param name="stateName"> Identifier for State </param>
 /// <param name="state"> Actual State object</param>
-void StateMachine::AddState(const std::string& stateName, State* state)
+void StateMachine::AddState(unsigned int stateName, State* state)
 {
 	if (m_stateMap->find(&stateName) == m_stateMap->end())
 		(*m_stateMap)[&stateName] = state;
@@ -44,7 +44,7 @@ void StateMachine::AddState(const std::string& stateName, State* state)
 /// </summary>
 /// <param name="stateName"> Name of state to change to </param>
 /// <returns> State matching </returns>
-bool StateMachine::ChangeState(const std::string& stateName)
+bool StateMachine::ChangeState(unsigned int stateName)
 {
 	if (m_stateMap->find(&stateName) != m_stateMap->end()) {
 		activeState = (*m_stateMap)[&stateName];

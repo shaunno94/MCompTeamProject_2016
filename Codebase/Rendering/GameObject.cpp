@@ -8,6 +8,9 @@ GameObject::GameObject(const std::string& name)
 	m_Name = name;
 	m_PhysicsObj = nullptr;
 	m_RenderComponent = nullptr;
+
+	m_Audio = nullptr;
+
 	m_BoundingRadius = 1.0f;
 	m_CamDist = 0.0f;
 	m_Controller = nullptr;
@@ -24,14 +27,21 @@ GameObject::~GameObject()
 		delete m_PhysicsObj;
 		m_PhysicsObj = nullptr;
 	}
-	if (m_RenderComponent) {
+	if (m_RenderComponent) 
+	{
 		delete m_RenderComponent;
 		m_RenderComponent = nullptr;
 	}
-	if (m_Controller) {
+	if (m_Controller)
+	{
 		delete m_Controller;
 		m_Controller = nullptr;
-	}
+}
+	if (m_Audio)
+	{
+		delete m_Audio;
+		m_Audio = nullptr;
+}
 }
 
 GameObject*	GameObject::FindGameObject(const std::string& name)
@@ -71,19 +81,24 @@ void GameObject::OnRenderObject()
 
 void GameObject::OnUpdateObject(float dt)
 {
+	if (m_Controller)
+		m_Controller->updateObject(dt);
+	UpdateTransform();
 	for (auto child : m_Children)
 	{
 		child->OnUpdateObject(dt);
 	}
-	if (m_Controller)
-		m_Controller->updateObject(dt);
+	if (m_Audio)
+		m_Audio->Update();
+
 	UpdateTransform();
 }
 
 void GameObject::UpdateTransform()
 {
 	if (!m_PhysicsObj)
-		return;
+		m_WorldTransform = m_LocalTransform;
+	else{
 
 	//Bullet physics native containers: matrix, vec3, quaternion
 	btTransform trans;
@@ -105,7 +120,7 @@ void GameObject::UpdateTransform()
 	
 	//Update model matrix 
 	m_WorldTransform = Mat4Graphics::Translation(p) * r.ToMatrix4() * m_LocalTransform;
-
+	}
 	if (m_Parent)
-		m_WorldTransform = m_Parent->m_WorldTransform * m_WorldTransform;
+		m_WorldTransform =  m_Parent->m_WorldTransform*m_WorldTransform ;
 }

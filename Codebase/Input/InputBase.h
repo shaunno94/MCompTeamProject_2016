@@ -1,4 +1,3 @@
-#ifdef ORBIS
 #pragma once
 
 struct AXIS {
@@ -25,12 +24,14 @@ public:
 	AXIS	GetAxis(unsigned int i);
 	float	GetButton(unsigned int i);
 	bool	GetButtonDown(unsigned int i);
-
+	bool	GetButtonTriggered(unsigned int i);
+	bool	GetButtonHeld(unsigned int i);
 
 protected:
 
 	AXIS	axis[MAX_AXIS];
 	float   buttons[MAX_BUTTONS];
+	float   buttonsHeld[MAX_BUTTONS];
 };
-#endif
+
 

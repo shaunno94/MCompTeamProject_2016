@@ -1,46 +1,27 @@
-#include <cstdio>
 #include "Rendering\Renderer.h"
-#include "PhysicsEngine\PhysicsEngineInstance.h"
-#include "Rendering\ModelLoader.h"
-#include "Rendering\DebugDraw.h"
 #include "Rendering\GameTimer.h"
-#include "Stadium.h"
+#include "GameScene.h"
 
-// Includes for AI States and Triggers
-#include "AI\StateMachine.h"
-#include "AI\ChaseState.h"
-#include "AI\RunAwayState.h"
-#include "AI\DistanceTrigger.h"
-#include "AI\ShooterAgent.h"
-#include "Rendering\KeyboardController.h"
 
 const float TIME_STEP = 1.0f / 120.0f;
 const unsigned int SUB_STEPS = 4;
 
 #ifndef ORBIS
-#include "Rendering\KeyboardController.h"
 const unsigned int SCREEN_HEIGHT = 800;
 const unsigned int SCREEN_WIDTH = 1280;
-const std::string SIMPLESHADER_VERT = SHADER_DIR"textureVertex.glsl";
-const std::string SIMPLESHADER_FRAG = SHADER_DIR"textureFragment.glsl";
-const std::string POINTLIGHTSHADER_VERT = SHADER_DIR"2dShadowLightvertex.glsl";
-const std::string POINTLIGHTSHADER_FRAG = SHADER_DIR"2dShadowLightfragment.glsl";
 #else
 #include "Input\PS4Input.h"
 #include "Rendering\PS4Controller.h"
 const unsigned int SCREEN_HEIGHT = 1080;
 const unsigned int SCREEN_WIDTH = 1920;
-const std::string SIMPLESHADER_VERT = SHADER_DIR"textureVertex.sb";
-const std::string SIMPLESHADER_FRAG = SHADER_DIR"textureFragment.sb";
-const std::string POINTLIGHTSHADER_VERT = SHADER_DIR"2dShadowLightvertex.sb";
-const std::string POINTLIGHTSHADER_FRAG = SHADER_DIR"2dShadowLightfragment.sb";
 //System Variables
 unsigned int sceLibcHeapExtendedAlloc = 1;			/* Switch to dynamic allocation */
 size_t sceLibcHeapSize = 512 * 1024 * 1024;			/* Set up heap area upper limit as 256 MiB */
 //int sceUserMainThreadPriority = SCE_KERNEL_DEFAULT_PRIORITY_USER;
 #endif
 
-int main(void) {
+int main(void)
+{
 	//-------------------
 	//--- MAIN Loop ---
 	//-------------------
@@ -51,98 +32,18 @@ int main(void) {
 	{
 		return -1;
 	}
+
 	GameTimer timer;
 #ifdef ORBIS
 	PS4Input input = PS4Input();
 #endif
 
-	//Initialise Bullet physics engine.
-	PhysicsEngineInstance::Instance()->setGravity(btVector3(0, -9.81, 0));
-
-#if DEBUG_DRAW
-#ifndef ORBIS
-	PhysicsEngineInstance::Instance()->setDebugDrawer(DebugDraw::Instance());
-	DebugDraw::Context(&renderer);
-#endif
-#endif
-
-	Scene* myScene = new Scene();
-	myScene->getCamera()->SetPosition(Vec3Graphics(10, 5, 0));
-
-	//Game objects added to scene are delete by the scene so don't delete twice.
-	GameObject* ball = new GameObject("ball");
-	GameObject* light1 = new GameObject("l");
-	GameObject* light2 = new GameObject("l");
-
-	//Physics objects hold collision shape and collision object(body), 
-	//call CreateCollisionShape before CreatePhysicsBody or the object will not be created correctly.
-	//Physics objects will be deleted by the game object.
-	RigidPhysicsObject* ballPhysics = new RigidPhysicsObject();
-	ballPhysics->CreateCollisionShape(Vec3Physics(5.0, 5.0, 5.0), CUBOID);
-	ballPhysics->CreatePhysicsBody(5.0, Vec3Physics(0, 5, 0), QuatPhysics(0, 0, 0, 1), Vec3Physics(1, 1, 1));
-
-	RigidPhysicsObject* floorPhysics = new RigidPhysicsObject();
-	floorPhysics->CreateCollisionShape(0, Vec3Physics(0, 1, 0), true);
-	floorPhysics->CreatePhysicsBody(0, Vec3Physics(0, -1, 0), QuatPhysics(0, 0, 0, 1));
-
-#ifndef ORBIS
-	BaseShader* simpleShader = new OGLShader(SIMPLESHADER_VERT, SIMPLESHADER_FRAG);
-	BaseShader* pointlightShader = new OGLShader(POINTLIGHTSHADER_VERT, POINTLIGHTSHADER_FRAG);
-	//BaseShader* pointlightShader = new OGLShader(SHADER_DIR"CubeShadowLightvertex.glsl", SHADER_DIR"CubeShadowLightfragment.glsl");
-#else
-	BaseShader* simpleShader = new PS4Shader(SIMPLESHADER_VERT, SIMPLESHADER_FRAG);
-	BaseShader* pointlightShader = new PS4Shader(POINTLIGHTSHADER_VERT, POINTLIGHTSHADER_FRAG);
-#endif
-	
-	if (!pointlightShader->IsOperational() || !simpleShader->IsOperational())
-		return -1;
-
-	LightMaterial* lightMaterial = new LightMaterial(pointlightShader);
-	light1->SetRenderComponent(new RenderComponent(lightMaterial, ModelLoader::LoadMGL(MODEL_DIR"Common/ico.mgl", true)));
-	light1->SetWorldTransform(Mat4Graphics::Translation(Vec3Graphics(0, 2, 2)) *Mat4Graphics::Scale(Vec3Graphics(20, 20, 20)));
-	light1->SetBoundingRadius(20);
-
-	lightMaterial->shadowType = _2D;
-	light2->SetRenderComponent(new RenderComponent(lightMaterial, ModelLoader::LoadMGL(MODEL_DIR"Common/ico.mgl", true)));
-	light2->SetWorldTransform(Mat4Graphics::Translation(Vec3Graphics(600, 600, 600)) *Mat4Graphics::Scale(Vec3Graphics(1600, 1600, 1600)));
-	light2->SetBoundingRadius(1600);
-
-	Material* material = new Material(simpleShader);
-	Material* ballMaterial = new Material(simpleShader);
-	Material* netMaterial = new Material(simpleShader);
-	netMaterial->hasTranslucency = true;
-
-#ifdef ORBIS
-	ballMaterial->Set(ReservedMeshTextures.DIFFUSE.name, Texture::Get(TEXTURE_DIR"checkerboard.gnf", true));
-#else
-	ballMaterial->Set(ReservedMeshTextures.DIFFUSE.name, Texture::Get(TEXTURE_DIR"checkerboard.tga", true));
-#endif
-
-	// Create Stadium
-	GameObject* stadium = new Stadium(material, netMaterial, "stadium");
-
-	myScene->addGameObject(stadium);
-	myScene->addLightObject(light2);
-
-	ball->SetRenderComponent(new RenderComponent(ballMaterial, ModelLoader::LoadMGL(MODEL_DIR"Common/Cube.mgl", true)));
-	ball->SetLocalTransform(Mat4Graphics::Scale(Vector3Simple(5, 5, 5)));
-	ball->SetPhysicsComponent(ballPhysics);
-	ball->GetPhysicsComponent()->GetPhysicsBody()->setRestitution(btScalar(0.9));
-	ball->GetPhysicsComponent()->GetPhysicsBody()->setFriction(0.5);
-	ball->GetPhysicsComponent()->GetPhysicsBody()->setRollingFriction(0.5);
-	ball->GetPhysicsComponent()->GetPhysicsBody()->setHitFraction(0.5);
-
-	ControllerComponent* cc = new ControllerComponent(ball);
-#ifndef ORBIS
-	myScene->setPlayerController(new KeyboardController(cc));
-#else
-	myScene->setPlayerController(new PS4Controller(cc));
-#endif
-
-	myScene->attachCam(ball);
-	myScene->addGameObject(ball);
-
-	renderer.SetCurrentScene(myScene);
+	ControllerManager* myControllers = new LocalControlManager;
+	//Create GameScene
+	GameScene* gameScene = new GameScene(myControllers);
+	//Set current scene to the game
+	renderer.SetCurrentScene(gameScene);
+	gameScene->SetControllerActor();
 
 #ifndef ORBIS
 	while (Window::GetWindow().UpdateWindow() && !Window::GetKeyboard()->KeyDown(KEYBOARD_ESCAPE))
@@ -155,18 +56,15 @@ int main(void) {
 #endif
 		float ms = timer.GetTimer()->Get(1000.0f);
 		PhysicsEngineInstance::Instance()->stepSimulation(ms, SUB_STEPS, TIME_STEP);
+		myControllers->update(ms);
+
 		renderer.RenderScene(ms);
+		SoundSystem::Instance()->Update(ms);
 	}
 
-	//Cleanup
-	PhysicsEngineInstance::Release();
+	delete gameScene;
 
-#if DEBUG_DRAW
-#ifndef ORBIS
-	DebugDraw::Release();
-#endif
-#endif
+	SoundSystem::Release();
 
-	delete myScene;
 	return 0;
 }

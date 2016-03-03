@@ -1,5 +1,6 @@
 #include "Stadium.h"
 #include <vector>
+#include "Rendering\Renderer.h"
 
 Stadium::Stadium(Material* material, Material* wallMaterial, const std::string& name /*= ""*/) :
 GameObject(name),
@@ -14,8 +15,8 @@ m_wallMaterial(wallMaterial)
 	this->SetPhysicsComponent(floorPhysics);
 	this->GetPhysicsComponent()->GetPhysicsBody()->setRestitution(0.5);
 	this->SetLocalTransform(Mat4Graphics::Translation(Vec3Graphics(6.8, -28.5, 2)) * Mat4Graphics::RotationX(-0.7f) * Mat4Graphics::RotationY(30.5f));
-	this->GetPhysicsComponent()->GetPhysicsBody()->setFriction(0.5);
-	this->GetPhysicsComponent()->GetPhysicsBody()->setHitFraction(0.5);
+	this->GetPhysicsComponent()->GetPhysicsBody()->setFriction(1.3);
+	this->GetPhysicsComponent()->GetPhysicsBody()->setHitFraction(0.7);
 
 	
 #ifdef ORBIS
@@ -34,7 +35,9 @@ Stadium::~Stadium(){}
 
 void Stadium::CreateCollisionWalls()
 {
-	const float WALL_HEIGHT = 100;
+
+	const float WALL_HEIGHT = 150;
+	const float GOAL_HEIGHT = 33;
 
 	// FRONT HALF
 	CreatePlane(m_collisionWalls, Vec3Physics(250, 0, -90), Vec3Physics(125, WALL_HEIGHT, -120));
@@ -46,11 +49,11 @@ void Stadium::CreateCollisionWalls()
 	CreatePlane(m_collisionWalls, Vec3Physics(125, 0, 120), Vec3Physics(75, WALL_HEIGHT, 125));
 	CreatePlane(m_collisionWalls, Vec3Physics(75, 0, 125), Vec3Physics(0, WALL_HEIGHT, 128));
 
-	CreatePlane(m_collisionWalls, Vec3Physics(280, 0, -30), Vec3Physics(280, WALL_HEIGHT / 3, 30));
-	CreatePlane(m_collisionWalls, Vec3Physics(250, 0, -30), Vec3Physics(280, WALL_HEIGHT / 3, -30));
-	CreatePlane(m_collisionWalls, Vec3Physics(250, 0, 30), Vec3Physics(280, WALL_HEIGHT / 3, 30));
-	CreatePlane(m_collisionWalls, Vec3Physics(250, WALL_HEIGHT / 3, 30), Vec3Physics(280, WALL_HEIGHT / 3, -30));
-	CreatePlane(m_collisionWalls, Vec3Physics(250, WALL_HEIGHT / 3, 30), Vec3Physics(250, WALL_HEIGHT, -30));
+	CreatePlane(m_collisionWalls, Vec3Physics(280, 0, -30), Vec3Physics(280, GOAL_HEIGHT, 30));
+	CreatePlane(m_collisionWalls, Vec3Physics(250, 0, -30), Vec3Physics(280, GOAL_HEIGHT, -30));
+	CreatePlane(m_collisionWalls, Vec3Physics(250, 0, 30), Vec3Physics(280, GOAL_HEIGHT, 30));
+	CreatePlane(m_collisionWalls, Vec3Physics(250, GOAL_HEIGHT, 30), Vec3Physics(280, GOAL_HEIGHT, -30));
+	CreatePlane(m_collisionWalls, Vec3Physics(250, GOAL_HEIGHT, 30), Vec3Physics(250, WALL_HEIGHT, -30));
 
 	// BACK HALF
 	CreatePlane(m_collisionWalls, Vec3Physics(-250, 0, -90), Vec3Physics(-125, WALL_HEIGHT, -120));
@@ -62,17 +65,18 @@ void Stadium::CreateCollisionWalls()
 	CreatePlane(m_collisionWalls, Vec3Physics(-125, 0, 120), Vec3Physics(-75, WALL_HEIGHT, 125));
 	CreatePlane(m_collisionWalls, Vec3Physics(-75, 0, 125), Vec3Physics(0, WALL_HEIGHT, 128));
 
-	CreatePlane(m_collisionWalls, Vec3Physics(-280, 0, -30), Vec3Physics(-280, WALL_HEIGHT / 3, 30));
-	CreatePlane(m_collisionWalls, Vec3Physics(-250, 0, -30), Vec3Physics(-280, WALL_HEIGHT / 3, -30));
-	CreatePlane(m_collisionWalls, Vec3Physics(-250, 0, 30), Vec3Physics(-280, WALL_HEIGHT / 3, 30));
-	CreatePlane(m_collisionWalls, Vec3Physics(-250, WALL_HEIGHT / 3, 30), Vec3Physics(-280, WALL_HEIGHT / 3, -30));
-	CreatePlane(m_collisionWalls, Vec3Physics(-250, WALL_HEIGHT / 3, 30), Vec3Physics(-250, WALL_HEIGHT, -30));
+	CreatePlane(m_collisionWalls, Vec3Physics(-280, 0, -30), Vec3Physics(-280, GOAL_HEIGHT, 30));
+	CreatePlane(m_collisionWalls, Vec3Physics(-250, 0, -30), Vec3Physics(-280, GOAL_HEIGHT, -30));
+	CreatePlane(m_collisionWalls, Vec3Physics(-250, 0, 30), Vec3Physics(-280, GOAL_HEIGHT, 30));
+	CreatePlane(m_collisionWalls, Vec3Physics(-250, GOAL_HEIGHT, 30), Vec3Physics(-280, GOAL_HEIGHT, -30));
+	CreatePlane(m_collisionWalls, Vec3Physics(-250, GOAL_HEIGHT, 30), Vec3Physics(-250, WALL_HEIGHT, -30));
 
 	RigidPhysicsObject* wallPhysics = new RigidPhysicsObject();
 	wallPhysics->CreateCollisionShape(m_collisionWalls);
 	wallPhysics->CreatePhysicsBody(0, Vec3Physics(0, 0, 0), QuatPhysics(0, 0, 0, 1));
+	wallPhysics->GetPhysicsBody()->getBroadphaseProxy()->m_collisionFilterMask = COL_WALL;
+	
 
-	RigidPhysicsObject* goalPhysics = new RigidPhysicsObject();
 }
 
 void Stadium::CreatePlane(std::vector<btConvexHullShape*> &collectionVector, Vec3Physics start, Vec3Physics end)
@@ -90,9 +94,8 @@ void Stadium::CreatePlane(std::vector<btConvexHullShape*> &collectionVector, Vec
 
 	GameObject* wall = new GameObject();
 	wall->SetRenderComponent(new RenderComponent(m_wallMaterial, mesh));
-
-	//wall->SetWorldTransform(Mat4Graphics::Translation(Vector3Simple(start.x, start.y, start.z)) * Mat4Graphics::Scale(difference));
-	AddChildObject(wall);
+	wall->SetLocalTransform(Mat4Graphics::Inverse(Mat4Graphics::Translation(Vec3Graphics(6.8, -28.5, 2)) * Mat4Graphics::RotationX(-0.7f) * Mat4Graphics::RotationY(30.5f)));
+	this->AddChildObject(wall);
 
 	btConvexHullShape* newShape = new btConvexHullShape();
 

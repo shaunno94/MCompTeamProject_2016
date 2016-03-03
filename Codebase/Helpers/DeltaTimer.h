@@ -56,7 +56,7 @@ public:
 template <typename T>
 T DeltaTimer<T>::Peek(float timeResolution)
 {
-	return (Age(1.0f) - lastAge) * timeResolution;
+	return (T) ((Age(1.0f) - lastAge) * timeResolution);
 }
 
 
@@ -66,7 +66,7 @@ T DeltaTimer<T>::Get(float timeResolution)
 	float newAge = Age(1.0f);
 	float result = newAge - lastAge;
 	lastAge	= newAge;
-	return result * timeResolution;
+	return (T) (result * timeResolution);
 }
 
 

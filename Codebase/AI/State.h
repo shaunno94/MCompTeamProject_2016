@@ -22,11 +22,11 @@ protected:
 
 	bool CheckTriggers();
 
-	typedef std::pair<Trigger*, std::string> triggerPair;
-	typedef std::map<const std::string*, State*> stateMapping;
+	typedef std::pair<Trigger*, unsigned int> triggerPair;
+	typedef std::map<unsigned int, State*> stateMapping;
 
 	stateMapping* m_childStates;
-	std::string	m_activeChildState;
+	unsigned int m_activeChildState;
 
 	std::vector<triggerPair*> m_triggers;
 

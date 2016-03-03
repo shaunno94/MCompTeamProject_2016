@@ -1,4 +1,5 @@
 #include "Renderer.h"
+#include "GUISystem.h"
 
 Renderer* Renderer::s_renderer = nullptr;
 
@@ -26,6 +27,8 @@ PS4Renderer()
 
 Renderer::~Renderer(void) {}
 
+
+
 void Renderer::updateGlobalUniforms(Material* material)
 {
 	auto lightMat = dynamic_cast<LightMaterial*>(material);
@@ -47,7 +50,6 @@ void Renderer::UpdateScene(float msec)
 		//Updates all objects in the scene, sorts lists for rendering
 		frameFrustrum.FromMatrix(projMatrix * viewMatrix);
 		currentScene->UpdateNodeLists(msec, frameFrustrum, currentScene->getCamera()->GetPosition());
-		currentScene->playerController->CheckInput();
 	}
 
 	if (m_UpdateGlobalUniforms)
@@ -75,6 +77,7 @@ void Renderer::RenderScene(float msec)
 		FillBuffers(); //First Pass
 		DrawPointLights(); //Second Pass
 		CombineBuffers(); //Final Pass
+		GUISystem::GetInstance().Render();
 	}
 	SwapBuffers();
 }
