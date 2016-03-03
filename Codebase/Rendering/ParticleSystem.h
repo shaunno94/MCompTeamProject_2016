@@ -1,18 +1,16 @@
 #pragma once
 #ifndef ORBIS
 #include "Math/nclglMath.h"
-#include "Camera.h"
 #include "Particle.h"
 #include "ParticleEmitter.h"
 #include "Material.h"
 #include "Helpers\interpolation.h"
-#include "Renderer.h"
 
 class ParticleSystem
 {
 public:
 
-	ParticleSystem(ParticleEmitter* emitter, Material* material, Texture* texture, Mesh* mesh, unsigned int numParticles);
+	ParticleSystem(ParticleEmitter* emitter, Material* material, Texture* texture, unsigned int numParticles);
 	~ParticleSystem();
 
 	void EmitParticles();
@@ -25,18 +23,17 @@ protected:
 	void EmitParticle(Particle& particle);
 private:
 
-	Camera*					m_Camera;
+	GameObject*				m_Object;
 	ParticleEmitter*		m_ParticleEmitter;
 	Texture*				m_Texture;
 	unsigned int			m_NumAlive;
-	std::vector<Particle>	m_Particles;
+	Particle*				m_Particles;
 	unsigned int			m_NumParticles;
 
 	Vec3Graphics*			m_Centre;
 
 	Vec3Graphics			m_Force;
 	Material*				m_Material;
-	Mesh*					m_Mesh;
 	Texture*				m_texture;
 };
 #endif

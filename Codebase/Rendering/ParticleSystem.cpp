@@ -1,16 +1,20 @@
 #ifndef ORBIS
 #include "ParticleSystem.h"
 
-ParticleSystem::ParticleSystem(ParticleEmitter* emitter, Material* material, Texture* texture, Mesh* mesh, unsigned int numParticles)
+ParticleSystem::ParticleSystem(ParticleEmitter* emitter, Material* material, Texture* texture, unsigned int numParticles)
 : m_Material(material)
 	, m_Texture(texture)
-	, m_Mesh(mesh)
 	, m_Force(0,-9.81f,0)
 	, m_NumAlive(0)
 	, m_ParticleEmitter(emitter)
 	, m_NumParticles(numParticles)
 {
-	m_Centre[numParticles];
+	m_Particles[numParticles];
+	material->Set("diffuseTex", m_Texture);
+
+	for (int i = 0; i < numParticles; i++)
+		m_Particles->SetRenderComponent(new RenderComponent(m_Material, m_Mesh));
+	
 }
 
 ParticleSystem::~ParticleSystem()
@@ -30,7 +34,7 @@ void ParticleSystem::EmitParticle(Particle& particle)
 
 void ParticleSystem::EmitParticles()
 {
-	for (unsigned int i = 0; i < m_Particles.size(); ++i)
+	for (unsigned int i = 0; i < m_NumParticles; ++i)
 	{
 		EmitParticle(m_Particles[i]);
 	}
@@ -42,13 +46,7 @@ void ParticleSystem::BuildVertexBuffer()
 	Vec3Graphics y = Vec3Graphics(0.0, 0.5, 0.0);
 	Vec3Graphics z = Vec3Graphics(0.0, 0.0, 1.0);
 
-	if (m_Camera != NULL)
-	{
-		m_Camera->BuildViewMatrix();
-	}
-
-
-	for (unsigned int i = 0; i < m_Particles.size(); ++i)
+	for (unsigned int i = 0; i < m_NumParticles; ++i)
 	{
 		Particle& particle = m_Particles[i];
 
@@ -62,7 +60,7 @@ void ParticleSystem::BuildVertexBuffer()
 
 bool ParticleSystem::Update(float delta)
 {
-	for (unsigned int i = 0; i < m_Particles.size(); ++i)
+	for (unsigned int i = 0; i < m_NumParticles; ++i)
 	{
 		Particle& particle = m_Particles[i];
 

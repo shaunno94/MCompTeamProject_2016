@@ -38,7 +38,6 @@ CarGameObject::CarGameObject(Vec3Physics& position, QuatPhysics& rotation, Mater
 	wheel->SetRenderComponent(new RenderComponent(material, wheelMesh));
 	wheel->SetLocalTransform(Mat4Graphics::Translation(Vec3Graphics(0.45, 0.17, 0.45))* Mat4Graphics::Scale(Vector3Simple(-1, -1, -1))) /*Mat4Graphics::Scale(Vector3Simple(10, 10, 10)))*/;
 	this->AddChildObject(wheel);
-
 }
 
 

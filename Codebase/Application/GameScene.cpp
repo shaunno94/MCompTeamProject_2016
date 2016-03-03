@@ -1,6 +1,4 @@
 #include "GameScene.h"
-#include "Rendering\ParticleManager.h"
-
 
 GameScene::GameScene(ControllerManager* controller)
 	: myControllers(controller)
@@ -42,6 +40,7 @@ GameScene::~GameScene()
 {
 	PhysicsEngineInstance::Release();
 	GUISystem::Destroy();
+	ParticleManager::Destroy();
 
 #if DEBUG_DRAW
 #ifndef ORBIS
@@ -83,6 +82,8 @@ void GameScene::SetupGameObjects()
 	ball->GetPhysicsComponent()->GetPhysicsBody()->setHitFraction(0.5);
 
 	player = new CarGameObject(Vec3Physics(10, 5, 0), QuatPhysics(0, 0, 0, 1), playerMaterial, "player");
+	player->SetParticleSystem(new ParticleSystem(new CubeEmitter(), playerMaterial, Texture::Get(TEXTURE_DIR"particle.tga"), 100000));
+
 	shooterAI = new CarGameObject(Vec3Physics(-190, 5, 30), QuatPhysics(0, 0, 0, 1), aiMaterial, "shooterAI");
 	goalieAI = new CarGameObject(Vec3Physics(-230, 5, -30), QuatPhysics(0, 0, 0, 1), ai2Material, "goalieAI");
 
@@ -170,16 +171,19 @@ void GameScene::SetupMaterials()
 	material = new Material(simpleShader);
 	ballMaterial = new Material(simpleShader);
 	netMaterial = new Material(simpleShader, true);
+	aiMaterial = new Material(simpleShader);
+	particleMaterial = new Material(simpleShader);
+	ai2Material = new Material(simpleShader);
 	//Material* guiMaterial = new Material(orthoShader);
 
 	ballMaterial->Set(ReservedMeshTextures.DIFFUSE.name, Texture::Get(TEXTURE_DIR"checkerboard.tga", true));
 	playerMaterial = new Material(simpleShader);
 
-	aiMaterial = new Material(simpleShader);
 	aiMaterial->Set(ReservedMeshTextures.DIFFUSE.name, Texture::Get(MODEL_DIR"car/body1.bmp", true));
 
-	ai2Material = new Material(simpleShader);
 	ai2Material->Set(ReservedMeshTextures.DIFFUSE.name, Texture::Get(MODEL_DIR"car/body2.bmp", true));
+
+	particleMaterial->Set(ReservedMeshTextures.DIFFUSE.name, Texture::Get(TEXTURE_DIR"particle.tga", true));
 }
 
 void GameScene::DrawGUI()

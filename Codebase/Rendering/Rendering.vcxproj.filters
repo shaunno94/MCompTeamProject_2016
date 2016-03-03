@@ -123,16 +123,7 @@
     <ClInclude Include="PhysicsObject.h">
       <Filter>Header Files\Physics</Filter>
     </ClInclude>
-    <ClInclude Include="CubeEmitter.h">
-      <Filter>Header Files\Particle System</Filter>
-    </ClInclude>
     <ClInclude Include="Particle.h">
-      <Filter>Header Files\Particle System</Filter>
-    </ClInclude>
-    <ClInclude Include="ParticleEmitter.h">
-      <Filter>Header Files\Particle System</Filter>
-    </ClInclude>
-    <ClInclude Include="ParticleManager.h">
       <Filter>Header Files\Particle System</Filter>
     </ClInclude>
     <ClInclude Include="ParticleSystem.h">
@@ -234,6 +225,15 @@
     <ClInclude Include="AudioComponent.h">
       <Filter>Header Files\Audio</Filter>
     </ClInclude>
+    <ClInclude Include="CubeEmitter.h">
+      <Filter>Header Files\Particle System</Filter>
+    </ClInclude>
+    <ClInclude Include="ParticleEmitter.h">
+      <Filter>Header Files\Particle System</Filter>
+    </ClInclude>
+    <ClInclude Include="ParticleManager.h">
+      <Filter>Header Files\Particle System</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Renderer.cpp">
@@ -275,13 +275,7 @@
     <ClCompile Include="DebugDraw.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="CubeEmitter.cpp">
-      <Filter>Source Files\Particle System</Filter>
-    </ClCompile>
     <ClCompile Include="ParticleSystem.cpp">
-      <Filter>Source Files\Particle System</Filter>
-    </ClCompile>
-    <ClCompile Include="ParticleManager.cpp">
       <Filter>Source Files\Particle System</Filter>
     </ClCompile>
     <ClCompile Include="PhysicsObject.cpp">
@@ -370,6 +364,12 @@
     </ClCompile>
     <ClCompile Include="AudioComponent.cpp">
       <Filter>Source Files\Audio</Filter>
+    </ClCompile>
+    <ClCompile Include="CubeEmitter.cpp">
+      <Filter>Source Files\Particle System</Filter>
+    </ClCompile>
+    <ClCompile Include="ParticleManager.cpp">
+      <Filter>Source Files\Particle System</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

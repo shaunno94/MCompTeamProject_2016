@@ -107,6 +107,7 @@ protected:
 	Material* playerMaterial;
 	Material* aiMaterial;
 	Material* ai2Material;
+	Material* particleMaterial;
 
 	ControllerComponent* cc;
 

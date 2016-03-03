@@ -1,5 +1,6 @@
 #ifndef ORBIS
 #pragma once
+#include "GameObject.h"
 
 class Particle : public GameObject
 {
@@ -12,7 +13,7 @@ public:
 	m_Size(0),
 	m_Age(0)
 	{}
-	~Particle();
+	virtual ~Particle();
 
 	Vec3Graphics m_Position;
 	Vec3Graphics m_OldPos;
