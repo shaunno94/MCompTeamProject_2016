@@ -115,8 +115,6 @@ GameScene::GameScene(ControllerManager* controller)
 	goalBallFilter.m_goal1ID = goal1ID;
 	goalBallFilter.m_goal2ID = goal2ID;
 
-	callback = new ContactSensorCallback(*ballPhysics->GetPhysicsBody());
-
 	PhysicsEngineInstance::Instance()->getPairCache()->setOverlapFilterCallback(&goalBallFilter);
 
 	ControllerComponent* cc = new ControllerComponent(player);
