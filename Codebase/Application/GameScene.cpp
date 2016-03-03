@@ -2,7 +2,7 @@
 
 
 GameScene::GameScene(ControllerManager* controller)
-: myControllers(controller)
+	: myControllers(controller)
 {
 
 	//Initialise Bullet physics engine.
@@ -16,6 +16,8 @@ GameScene::GameScene(ControllerManager* controller)
 	{
 		std::cout << "GUI not Initialised!" << std::endl;
 	}
+	scores[0] = 0;
+	scores[1] = 0;
 
 #if DEBUG_DRAW
 #ifndef ORBIS
@@ -23,7 +25,7 @@ GameScene::GameScene(ControllerManager* controller)
 	DebugDraw::Context(Renderer::GetInstance());
 #endif
 #endif
-	
+
 	GameObject* ball = new GameObject("ball");
 	GameObject* light1 = new GameObject("l");
 	GameObject* light2 = new GameObject("l");
@@ -89,7 +91,7 @@ GameScene::GameScene(ControllerManager* controller)
 	ballPhysics->GetPhysicsBody()->getBroadphaseProxy()->m_collisionFilterMask = COL_BALL;
 
 	ball->SetPhysicsComponent(ballPhysics);
-	ball->GetPhysicsComponent()->GetPhysicsBody()->setRestitution(btScalar(0.9));
+	ball->GetPhysicsComponent()->GetPhysicsBody()->setRestitution(btScalar(1.6));
 	ball->GetPhysicsComponent()->GetPhysicsBody()->setFriction(0.5);
 	ball->GetPhysicsComponent()->GetPhysicsBody()->setRollingFriction(0.5);
 	ball->GetPhysicsComponent()->GetPhysicsBody()->setHitFraction(0.5);
@@ -111,11 +113,12 @@ GameScene::GameScene(ControllerManager* controller)
 	GameObject* goal2 = new GameObject("goal2");
 	goal2->SetPhysicsComponent(goalBox2);
 
-	goalBallFilter.m_ballID = ballID;
-	goalBallFilter.m_goal1ID = goal1ID;
-	goalBallFilter.m_goal2ID = goal2ID;
+	goalBallFilter = new GameCollisionFilter(this);
+	goalBallFilter->m_ballID = ballID;
+	goalBallFilter->m_goal1ID = goal1ID;
+	goalBallFilter->m_goal2ID = goal2ID;
 
-	PhysicsEngineInstance::Instance()->getPairCache()->setOverlapFilterCallback(&goalBallFilter);
+	PhysicsEngineInstance::Instance()->getPairCache()->setOverlapFilterCallback(goalBallFilter);
 
 	ControllerComponent* cc = new ControllerComponent(player);
 #ifndef ORBIS
@@ -180,7 +183,31 @@ GameScene::~GameScene()
 
 void GameScene::SetControllerActor()
 {
-	myControllers->setActor(Renderer::GetInstance()->GetCurrentScene()->findGameObject("shooterAI"), 0);
-	myControllers->setActor(Renderer::GetInstance()->GetCurrentScene()->findGameObject("goalieAI"), 1);
+	myControllers->setActor(findGameObject("shooterAI"), 0);
+	myControllers->setActor(findGameObject("goalieAI"), 1);
+}
+
+void GameScene::ResetScene()
+{
+	// Do other things before resetting scene fully
+	ResetObjects();
+}
+
+void GameScene::ResetObjects()
+{
+	GameObject* ball = findGameObject("ball");
+	GameObject* player = findGameObject("player");
+	GameObject* shooter = findGameObject("shooterAI");
+	GameObject* goalie = findGameObject("goalieAI");
+
+	btVector3 zeroVector = btVector3(0, 0, 0);
+
+	dynamic_cast<RigidPhysicsObject*>(ball->GetPhysicsComponent())->GetPhysicsBody()->clearForces();
+	dynamic_cast<RigidPhysicsObject*>(ball->GetPhysicsComponent())->GetPhysicsBody()->setLinearVelocity(zeroVector);
+	dynamic_cast<RigidPhysicsObject*>(ball->GetPhysicsComponent())->GetPhysicsBody()->setAngularVelocity(zeroVector);
+
+	ball->GetPhysicsComponent()->GetPhysicsBody()->setWorldTransform(btTransform(btQuaternion(0, 0, 0, 1), zeroVector));
+
+
 }
 

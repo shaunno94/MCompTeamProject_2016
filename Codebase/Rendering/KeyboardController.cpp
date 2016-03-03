@@ -22,7 +22,7 @@ void KeyboardController::CheckInput(){
 	float jump = 15;
 	Mat4Physics orientation = object->getOrientation();
 	float turn = 0;
-	bool airborn = object->airborn();
+	bool airborn = object->airbourne();
 
 	auto forward = object->getForwardVelocity();
 
@@ -40,14 +40,23 @@ void KeyboardController::CheckInput(){
 	}
 	if (Window::GetKeyboard()->KeyDown(KEYBOARD_RIGHT) || Window::GetKeyboard()->KeyDown(KEYBOARD_D))
 	{
-		torque += (orientation *Vec3Physics(0, -1, 0)).Normalize() * rotAccel;
+
+		if (airborn)
+			torque += (orientation *Vec3Physics(0, 0, -1)).Normalize() * airAccel * 0.7f;
+		else
+			torque += (orientation *Vec3Physics(0, -1, 0)).Normalize() * rotAccel;
+
 		turn++;
 		//force += (orientation * Vec3Physics(0, 0, accel));
 	}
 
 	if (Window::GetKeyboard()->KeyDown(KEYBOARD_LEFT) || Window::GetKeyboard()->KeyDown(KEYBOARD_A))
 	{
-		torque += (orientation *Vec3Physics(0, 1, 0)).Normalize() * rotAccel;
+		if (airborn)
+			torque += (orientation *Vec3Physics(0, 0, 1)).Normalize() * airAccel * 0.7f; 
+		else
+			torque += (orientation *Vec3Physics(0, 1, 0)).Normalize() * rotAccel;
+
 		turn--;
 		//force += (orientation * Vec3Physics(0, 0, -accel));
 	}
