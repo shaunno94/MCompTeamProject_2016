@@ -30,6 +30,30 @@ const string POINTLIGHTSHADER_FRAG = SHADER_DIR"2dShadowLightfragment.sb";
 #endif
 #include "BulletCollision\CollisionDispatch\btCollisionWorld.h"
 
+struct GameCollisionFilter;
+
+class GameScene : public Scene
+{
+public:
+	GameScene(ControllerManager* controller);
+	~GameScene();
+
+	void SetControllerActor();
+	void IncrementScore(int team) {
+		scores[team % 2]++;
+		std::cout << "TEAM " << team + 1 << " SCORED!" << endl;
+		std::cout << scores[0] << " - " << scores[1] << endl;
+	}
+	void ResetScene();
+
+protected:
+	ControllerManager* myControllers;
+	GameCollisionFilter* goalBallFilter;
+	int scores[2];
+
+	void ResetObjects();
+};
+
 struct GameCollisionFilter : public btOverlapFilterCallback
 {
 
@@ -38,10 +62,16 @@ public:
 	int m_ballID = 0;
 	int m_goal1ID = 0;
 	int m_goal2ID = 0;
+	GameScene* m_scene;
+
+	GameCollisionFilter(GameScene* scene) : m_scene(scene) {
+
+	}
+
 
 	virtual bool needBroadphaseCollision(btBroadphaseProxy* proxy0, btBroadphaseProxy* proxy1) const override
 	{
-		short int combined = COL_CAR & COL_WALL;
+		short int combined = COL_CAR | COL_WALL;
 		/*int combinedMask = proxy0->m_collisionFilterMask | proxy1->m_collisionFilterMask;
 		int test1 = (combinedMask & COL_CAR) == COL_CAR;
 		int test2 = (combinedMask & COL_WALL) == COL_WALL;
@@ -60,35 +90,21 @@ public:
 		//}
 
 		if ((proxy0->getUid() == m_ballID && proxy1->getUid() == m_goal1ID) ||
-		    (proxy1->getUid() == m_ballID && proxy0->getUid() == m_goal1ID))
+			(proxy1->getUid() == m_ballID && proxy0->getUid() == m_goal1ID))
 		{
-			//TODO: Increment goals for team 1
-			int ifojwe = 8;
-
+			//Increment goals for team 1
+			m_scene->IncrementScore(0);
 			//TODO: Reset Scene
+			m_scene->ResetScene();
 		}
 		else if ((proxy0->getUid() == m_ballID && proxy1->getUid() == m_goal2ID) ||
-		         (proxy1->getUid() == m_ballID && proxy0->getUid() == m_goal2ID))
+			(proxy1->getUid() == m_ballID && proxy0->getUid() == m_goal2ID))
 		{
-			//TODO: Increment goals for team 2
-			int ifojwe = 8;
-
+			//Increment goals for team 2
+			m_scene->IncrementScore(1);
 			//TODO: Reset Scene
+			m_scene->ResetScene();
 		}
 		return true;
 	}
-};
-
-
-class GameScene : public Scene
-{
-public:
-	GameScene(ControllerManager* controller);
-	~GameScene();
-
-	void SetControllerActor();
-
-protected:
-	ControllerManager* myControllers;
-	GameCollisionFilter goalBallFilter;
 };
