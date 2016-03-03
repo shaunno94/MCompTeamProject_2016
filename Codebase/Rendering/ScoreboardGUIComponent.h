@@ -1,6 +1,7 @@
 #pragma once
 #include "GUIComponent.h"
 #include "GameObject.h"
+#include "Font.h"
 
 class ScoreboardGUIComponent : public GUIComponent
 {
@@ -16,4 +17,6 @@ protected:
 	int m_ScoreA;
 	int m_ScoreB;
 	int m_TimeRem;
+
+	Font* font;
 };

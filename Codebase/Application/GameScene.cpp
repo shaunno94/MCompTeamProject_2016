@@ -174,14 +174,14 @@ void GameScene::SetupMaterials()
 	lightMaterial = new LightMaterial(pointlightShader);
 	lightMaterial->shadowType = _2D;
 
-
 	material = new Material(simpleShader);
 	ballMaterial = new Material(simpleShader);
 	netMaterial = new Material(simpleShader, true);
 	aiMaterial = new Material(simpleShader);
 	particleMaterial = new Material(simpleShader);
 	ai2Material = new Material(simpleShader);
-	//Material* guiMaterial = new Material(orthoShader);
+	guiMaterial = new Material(orthoShader);
+	textMaterial = new Material(orthoShader);
 
 	ballMaterial->Set(ReservedMeshTextures.DIFFUSE.name, Texture::Get(TEXTURE_DIR"football.png", true));
 	playerMaterial = new Material(simpleShader);
@@ -195,23 +195,22 @@ void GameScene::SetupMaterials()
 
 void GameScene::DrawGUI()
 {
-	////Define Orthographic Component
-	//OrthoComponent* hudUI = new OrthoComponent(1.0f);
-	////Add child GUI components, while defining materials, texture, and depth
-	//hudUI->AddGUIComponent(new ScoreboardGUIComponent(guiMaterial, Texture::Get(TEXTURE_DIR"blue3.png"), 1.0));
+	//Define Orthographic Component
+	OrthoComponent* hudUI = new OrthoComponent(1.0f);
+	//Add child GUI components, while defining materials, texture, and depth
+	ScoreboardGUIComponent* s = new ScoreboardGUIComponent(guiMaterial, Texture::Get(TEXTURE_DIR"tahoma.tga"), 1.0);
 
-	////Add Orthographic component to GUISystem
-	//GUISystem::GetInstance().AddOrthoComponent(hudUI);
+	hudUI->AddGUIComponent(s);
+
+	//Add Orthographic component to GUISystem
+	GUISystem::GetInstance().AddOrthoComponent(hudUI);
 }
 
 void GameScene::SetupControls()
 {
 	cc = new ControllerComponent(player);
-#ifndef ORBIS
 	myControllers->setProducer(player);
-#else
-	myControllers->setProducer(player);
-#endif
+
 	attachCam(player);
 }
 

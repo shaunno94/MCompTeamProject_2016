@@ -12,6 +12,7 @@
 #include "CarGameObject.h"
 #include "Audio\SoundSystem.h"
 #include "Rendering\ParticleManager.h"
+#include "Rendering\ScoreboardGUIComponent.h"
 
 #ifndef ORBIS
 #include "Rendering\KeyboardController.h"
@@ -88,6 +89,8 @@ protected:
 	Material* aiMaterial;
 	Material* ai2Material;
 	Material* particleMaterial;
+	Material* guiMaterial;
+	Material* textMaterial;
 
 	ControllerComponent* cc;
 

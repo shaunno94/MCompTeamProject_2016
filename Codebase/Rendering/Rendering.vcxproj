@@ -164,6 +164,7 @@
     <ClInclude Include="DebugDraw.h" />
     <ClInclude Include="EventTextGUI.h" />
     <ClInclude Include="ExtendedMaterial.h" />
+    <ClInclude Include="Font.h" />
     <ClInclude Include="Frustum.h" />
     <ClInclude Include="GameObject.h" />
     <ClInclude Include="GameTimer.h" />
