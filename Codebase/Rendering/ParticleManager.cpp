@@ -3,7 +3,7 @@
 
 ParticleManager* ParticleManager::particleManager;
 
-ParticleManager ::ParticleManager()
+ParticleManager::ParticleManager()
 {
 	init = true;
 }
@@ -55,8 +55,8 @@ void ParticleManager::Render(float delta)
 		m_Systems[i]->Render();
 }
 
-void ParticleManager::Shutdown()
+void ParticleManager::Destroy()
 {
-	m_Systems.clear();
+	particleManager->m_Systems.clear();
 }
 #endif
