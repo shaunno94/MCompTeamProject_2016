@@ -120,5 +120,6 @@ private:
 	void SwapScreenBuffer();
 
 	GameObject* fullScreenQuad;
+	Matrix4Simple textureMatrix;
 };
 #endif

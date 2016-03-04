@@ -17,6 +17,10 @@ ConstantBuffer projMatrix
 {
 	column_major matrix projMatrix;
 };
+ConstantBuffer textureMatrix
+{
+	column_major matrix textureMatrix;
+};
 
 struct VS_INPUT
 {
@@ -43,6 +47,6 @@ VS_OUTPUT main(VS_INPUT Input)
 	float3x3 normalMatrix = float3x3(invModelMat); //Inverse transpose done on CPU.
 	Output.normal = normalize(mul(normalMatrix,normalize(Input.normal)));
 
-	Output.texCoord = Input.texCoord;
+	Output.texCoord = mul(textureMatrix, float4(Input.texCoord.xy, 1, 1)).xy;
 	return Output;
 }

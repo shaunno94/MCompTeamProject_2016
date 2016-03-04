@@ -128,6 +128,5 @@ void PS4Mesh::SubmitDraw(sce::Gnmx::GnmxGfxContext& cmdList, sce::Gnm::ShaderSta
 	cmdList.setPrimitiveType(primitiveType);
 	cmdList.setIndexSize(indexType);	
 	cmdList.drawIndex(m_NumIndices, indexBuffer);
-	//cmdList.splitCommandBuffers();
 }
 #endif

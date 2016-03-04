@@ -25,8 +25,8 @@ PS4Renderer::PS4Renderer()
 	trilinearSampler.setMipFilterMode(sce::Gnm::kMipFilterModeLinear);
 	trilinearSampler.setXyFilterMode(sce::Gnm::kFilterModeAnisoBilinear, sce::Gnm::kFilterModeAnisoBilinear);
 	trilinearSampler.setAnisotropyRatio(sce::Gnm::kAnisotropyRatio16);
-	//trilinearSampler.setWrapMode(sce::Gnm::kWrapModeWrap, sce::Gnm::kWrapModeWrap, sce::Gnm::kWrapModeWrap);
-	trilinearSampler.setWrapMode(sce::Gnm::kWrapModeMirror, sce::Gnm::kWrapModeMirror, sce::Gnm::kWrapModeMirror);
+	trilinearSampler.setWrapMode(sce::Gnm::kWrapModeWrap, sce::Gnm::kWrapModeWrap, sce::Gnm::kWrapModeWrap);
+	//trilinearSampler.setWrapMode(sce::Gnm::kWrapModeMirror, sce::Gnm::kWrapModeMirror, sce::Gnm::kWrapModeMirror);
 
 	primitiveSetup.init();
 	primitiveSetup.setCullFace(sce::Gnm::kPrimitiveSetupCullFaceNone);
@@ -53,6 +53,8 @@ PS4Renderer::PS4Renderer()
 	fullScreenQuad->SetRenderComponent(new RenderComponent(new LightMaterial(new PS4Shader(SHADER_DIR"combineVert.sb", SHADER_DIR"combineFrag.sb")), Mesh::GenerateQuad()));
 	((LightMaterial*)fullScreenQuad->GetRenderComponent()->m_Material)->Set(ReservedOtherTextures.EMISSIVE.name, (int)ReservedOtherTextures.EMISSIVE.index);
 	((LightMaterial*)fullScreenQuad->GetRenderComponent()->m_Material)->Set(ReservedOtherTextures.SPECULAR.name, (int)ReservedOtherTextures.SPECULAR.index);
+	//Textures need rotating 180 degrees.
+	textureMatrix = Matrix4Simple::RotationX(180.0f);
 	init = true;
 
 	if (!fullScreenQuad->GetRenderComponent()->m_Material->GetShader()->IsOperational())
@@ -122,13 +124,13 @@ void PS4Renderer::InitialiseMemoryAllocators()
 
 void PS4Renderer::DestroyMemoryAllocators() 
 {
-	//stackAllocators[GARLIC].deinit();
-	//stackAllocators[ONION].deinit();
+	stackAllocators[GARLIC].deinit();
+	stackAllocators[ONION].deinit();
 }
 
 void	PS4Renderer::DestroyGCMRendering() 
 {
-	//onionAllocator.release(frames);
+	onionAllocator.release(frames);
 }
 
 void	PS4Renderer::DestroyVideoSystem() 
@@ -204,6 +206,7 @@ void PS4Renderer::SetCurrentShader(BaseShader* s)
 		currentShader = static_cast<PS4Shader*>(s);
 
 	currentShader->SubmitShaderSwitch(*currentGFXContext);
+	UpdateUniform(currentShader->GetResourceByName("textureMatrix"), textureMatrix);
 }
 
 void PS4Renderer::FillBuffers()
@@ -325,7 +328,8 @@ void PS4Renderer::DrawShadowCube(GameObject* light)
 //TODO:fix id here
 void PS4Renderer::SetTexture(const shaderResourceLocation& location, textureHandle& handle)
 {
-	currentGFXContext->setTextures(sce::Gnm::kShaderStagePs, location.id, 1, &handle);		
+	if (location.id >= 0)
+		currentGFXContext->setTextures(sce::Gnm::kShaderStagePs, location.id, 1, &handle);		
 }
 
 void PS4Renderer::SwapBuffers()
@@ -511,7 +515,7 @@ void PS4Renderer::UpdateShaderMatrices()
 			constantBuffer.setResourceMemoryType(sce::Gnm::kResourceMemoryTypeRO);
 			currentGFXContext->setConstantBuffers(location.stage, location.id, 1, &constantBuffer);
 		}
-		location = currentShader->GetResourceByName("inverseProjView");
+		location = currentShader->GetResourceByName("inverseProjView"); 
 		if (location.id >= 0)
 		{
 			Mat4Graphics* invVP = (Mat4Graphics*)currentGFXContext->allocateFromCommandBuffer(sizeof(Mat4Graphics), sce::Gnm::kEmbeddedDataAlignment4);

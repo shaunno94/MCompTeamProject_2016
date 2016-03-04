@@ -7,7 +7,6 @@ LightMaterial::LightMaterial(BaseShader* shader, bool hasTranslucency) : Materia
 	Set(ReservedOtherTextures.DEPTH.name, (int)ReservedOtherTextures.DEPTH.index);
 	Set(ReservedOtherTextures.NORMALS.name, (int)ReservedOtherTextures.NORMALS.index);
 	Set(ReservedOtherTextures.SHADOW_2D.name, (int)ReservedOtherTextures.SHADOW_2D.index);
-
 }
 
 
@@ -23,7 +22,10 @@ void LightMaterial::Setup()
 	UpdateUniformValue(m_uniformVec3s);
 	UpdateUniformValue(m_uniformVec2s);
 	UpdateUniformValue(m_uniformFloats);
+	//This is hacky but...
+#ifndef ORBIS
 	UpdateUniformValue(m_uniformInts);
+#endif
 }
 
 shaderResourceLocation LightMaterial::Set(const std::string& uniformName, const Mat4Graphics& mat4)

@@ -35,7 +35,7 @@ void Renderer::updateGlobalUniforms(Material* material)
 	if (lightMat)
 	{
 		Vec3Graphics camPos = currentScene->getCamera()->GetPosition();
-		auto test = lightMat->Set("cameraPos", camPos);
+		lightMat->Set("cameraPos", camPos);
 		lightMat->Set("pixelSize", pixelPitch);
 		int i = 0;
 	}
