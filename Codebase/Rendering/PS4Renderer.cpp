@@ -317,7 +317,7 @@ void PS4Renderer::DrawShadow(GameObject* light)
 
 void PS4Renderer::DrawShadow2D(GameObject* light)
 {
-	projMatrix = Mat4Graphics::Perspective(50.0f, 15000.0f, 1.0f, 45.0f);
+	projMatrix = shadowProj;
 
 	viewMatrix = Mat4Graphics::View(light->GetWorldTransform().GetTranslation(), Vec3Graphics(0, 0, 0));
 	((LightMaterial*)light->GetRenderComponent()->m_Material)->shadowBias = biasMatrix * (projMatrix * viewMatrix);
@@ -328,8 +328,8 @@ void PS4Renderer::DrawShadow2D(GameObject* light)
 	child->OnRenderScene();
 
 	viewMatrix = child->currentScene->getCamera()->BuildViewMatrix();
-
 	projMatrix = child->localProjMat;
+
 	child->OnUpdateScene(child->frameFrustrum, child->currentScene->getCamera()->GetPosition());
 
 	sce::Gnmx::decompressDepthSurface(currentGFXContext, shadow_buffer->GetDepthTarget());

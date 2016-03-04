@@ -76,13 +76,13 @@ PS_OUTPUT main(VS_OUTPUT In) : S_TARGET_OUTPUT
 	float sFactor = pow(rFactor, 33.0);
 
 	float shadow = 1.0;
+	float4 shadowMapPos = mul(shadowBias, float4(pos + (normal * 1.5), 1.0));
 
-	float4 shadowProj = mul(shadowBias, float4(pos + (normal * 1.5), 1.0));
-	if(shadowProj.w > 0.0)
+	if(shadowMapPos.w > 0.0)
 	{
-		float4 s4 = shadowTex.GatherCmp(samp1, (shadowProj.xy / shadowProj.w), (shadowProj.z / shadowProj.w));	 
-		//float3 s3 = shadowTex.Sample(samp0, shadowProj.xy).xyz;
-		float3 shadowPos =  (2.0 * shadowProj.xyz / shadowProj.w) - 1.0;
+		float3 shadowMapDivide = (shadowMapPos.xyz / shadowMapPos.w);
+		float4 s4 = shadowTex.GatherCmp(samp1, shadowMapDivide.xy, shadowMapDivide.z);	 
+		float3 shadowPos =  (2.0 * shadowMapDivide.xyz) - 1.0;
 		shadow = (s4.x + s4.y + s4.z + s4.w) /* 0.25f*/;
 		shadow *= saturate(1.0 - pow(shadowPos.x * shadowPos.x + shadowPos.y * shadowPos.y, 8));
 	}

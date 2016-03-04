@@ -130,5 +130,8 @@ private:
 	PS4ShaderResourceLocations shadowLoc;
 	PS4ShaderResourceLocations normalLoc;
 	PS4ShaderResourceLocations depthLoc;
+
+	//Shadow Projection matrix
+	Matrix4Simple shadowProj = Matrix4Simple::Perspective(50.0f, 15000.0f, 1.0f, 45.0f);
 };
 #endif
