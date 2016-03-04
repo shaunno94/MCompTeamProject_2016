@@ -63,13 +63,14 @@ void GameScene::SetControllerActor()
 void GameScene::IncrementScore(int team)
 {
 	scores[team % 2]++;
-	std::cout << "TEAM " << team + 1 << " SCORED!" << endl;
-	std::cout << scores[0] << " - " << scores[1] << endl;
-
+	std::cout << "TEAM " << team + 1 << " SCORED!" << std::endl;
+	std::cout << scores[0] << " - " << scores[1] << std::endl;
+#ifndef ORBIS
 	SoundMOD mod;
 	mod.looping = false;
 	mod.isGlobal = true;
 	SoundSystem::Instance()->Play(SoundManager::GetSound(BANG), mod);
+#endif
 }
 
 void GameScene::UpdateScene(float dt)
@@ -288,7 +289,7 @@ void GameScene::applyImpulseFromExplosion(CarGameObject* car)
 	// 1 at same position
 	// 0 at 200 units away
 
-	attenuation = max(1 - (attenuation / (600 * 600)), 0.0f);
+	attenuation = fmax(1 - (attenuation / (600 * 600)), 0.0f);
 
 	dynamic_cast<RigidPhysicsObject*>(car->GetPhysicsComponent())->GetPhysicsBody()->applyCentralImpulse(ballToCar * attenuation * 1500.0f);
 }
