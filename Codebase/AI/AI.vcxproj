@@ -167,7 +167,6 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="AdvanceState.cpp" />
     <ClCompile Include="ArenaHalfTrigger.cpp" />
     <ClCompile Include="ClearGoalState.cpp" />
     <ClCompile Include="DefenceState.cpp" />
@@ -195,6 +194,9 @@
     <ClInclude Include="StateMachine.h" />
     <ClInclude Include="TimingTrigger.h" />
     <ClInclude Include="Trigger.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="ClassDiagram.cd" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
