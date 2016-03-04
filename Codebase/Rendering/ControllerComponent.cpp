@@ -3,6 +3,7 @@
 #include "WheelObject.h"
 #include "Renderer.h"
 #include <algorithm>
+#include "Application\GameScene.h"
 
 ControllerComponent::ControllerComponent(GameObject* parent)
 {
@@ -55,13 +56,22 @@ void ControllerComponent::updateObject(float dt)
 	Vec3Physics orientation = (getOrientation() * Vec3Physics(-1, 0, 0)).Normalize();
 	btVector3 btOrientation(orientation.x, orientation.y, orientation.z);
 	btVector3 velocity = -m_parent->GetPhysicsComponent()->GetPhysicsBody()->getInterpolationLinearVelocity();
-	btScalar friction = 0.5;
+
+	btVector3 fullVelocity = dynamic_cast<RigidPhysicsObject*>(m_parent->GetPhysicsComponent())->GetPhysicsBody()->getLinearVelocity();
+
+	btScalar friction = 0.8;
+	float maxSpeed = 100.0f;
 
 	if (velocity.length2() > 0.0000001)
 	{
-		friction = std::abs((2.0 * (velocity.normalize()).dot(btOrientation.normalize())));
+		/*if (dynamic_cast<GameScene*>(Renderer::GetInstance()->GetCurrentScene())->GetGoalScored() == 0) {
+			float velocityFactor = (maxSpeed * maxSpeed) / std::max(fullVelocity.length2(), maxSpeed * maxSpeed);
+			dynamic_cast<RigidPhysicsObject*>(m_parent->GetPhysicsComponent())->GetPhysicsBody()->setLinearVelocity(fullVelocity * velocityFactor);
+		}*/
+		friction = std::abs(2.0 * velocity.normalize().dot(btOrientation.normalize()));
 
-		friction = friction <= 0.8 ? 0.8 : friction;
+		friction = friction <= 1 ? 1 : friction;
+
 	}
 
 	m_parent->GetPhysicsComponent()->GetPhysicsBody()->setFriction(friction);

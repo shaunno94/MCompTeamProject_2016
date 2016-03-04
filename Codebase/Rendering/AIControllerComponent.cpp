@@ -24,7 +24,6 @@ AIControllerComponent::AIControllerComponent(GameObject* parent, unsigned int ty
 	switch (type)
 	{
 	case SHOOTER:
-	case GOALKEEPER: //Temp solution to get compilation
 	{
 
 		// Create States
@@ -48,7 +47,7 @@ AIControllerComponent::AIControllerComponent(GameObject* parent, unsigned int ty
 
 	}
 	break;
-	//case GOALKEEPER:
+	case GOALKEEPER:
 	{
 
 		// DEFENCE STATE (When ball is in team's half):

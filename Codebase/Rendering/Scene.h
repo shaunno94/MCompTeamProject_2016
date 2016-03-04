@@ -41,6 +41,7 @@ public:
 		cam = new Camera(player);
 	}
 	void addGameObject(GameObject* obj);
+	virtual void UpdateScene(float dt);
 	void addLightObject(GameObject* obj);
 	void setCubeMap(const char** dir) { cubemapDir = dir; }
 
