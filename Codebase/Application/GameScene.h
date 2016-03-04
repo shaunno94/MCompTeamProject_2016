@@ -108,6 +108,8 @@ protected:
 	int goal2ID;
 
 	float timerCount = 0.0f;
+	float currentTime = 0.0f;
+	float lastTime = 0;
 	int goalScored = 0;
 };
 

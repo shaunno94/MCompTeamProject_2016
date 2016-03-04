@@ -67,11 +67,25 @@ void GameScene::IncrementScore(int team)
 	mod.looping = false;
 	mod.isGlobal = true;
 	SoundSystem::Instance()->Play(SoundManager::GetSound(BANG), mod);
-	scoreboardComponent->Update(scores[0], scores[1]);
+	scoreboardComponent->Update(scores[0], scores[1], currentTime);
 }
 
 void GameScene::UpdateScene(float dt)
 {
+	if (currentTime > 180)
+	{
+		//TODO: Proceed to end game screen
+		currentTime = 0;
+		lastTime = 0;
+	}
+	currentTime += dt / 1000.0f;
+
+	if (currentTime - lastTime > 1)
+	{
+		lastTime = currentTime;
+		scoreboardComponent->Update(scores[0], scores[1], currentTime);
+	}
+
 	if (goalScored > 0) {
 		if (timerCount == 0)
 		{
@@ -233,7 +247,7 @@ void GameScene::DrawGUI()
 	//Define Orthographic Component
 	hudOrtho = new OrthoComponent(1.0f);
 	//Add child GUI components, while defining materials, texture, and depth
-	scoreboardComponent = new ScoreboardGUIComponent(guiMaterial, Texture::Get(TEXTURE_DIR"tahoma.tga"), 1.0, true, "scoreboard");
+	scoreboardComponent = new ScoreboardGUIComponent(guiMaterial, Texture::Get(TEXTURE_DIR"tahoma.tga"), 1.0);
 	hudOrtho->AddGUIComponent(scoreboardComponent);
 
 	//Add Orthographic component to GUISystem

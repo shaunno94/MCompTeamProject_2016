@@ -1,9 +1,6 @@
 #include "ScoreboardGUIComponent.h"
 
-ScoreboardGUIComponent::ScoreboardGUIComponent(Material* material, Texture* texture, float z, bool visible, const std::string& name) : GUIComponent(material, texture, z, visible, name),
-m_ScoreA(0),
-m_ScoreB(0),
-m_TimeRem(300)
+ScoreboardGUIComponent::ScoreboardGUIComponent(Material* material, Texture* texture, float z, bool visible) : GUIComponent(material, texture, z, visible)
 {
 	m_Material = material;
 	m_Texture = texture;
@@ -14,8 +11,8 @@ m_TimeRem(300)
 
 	font = new Font(m_Texture, 16, 16);
 
-	m_Mesh = Mesh::GenerateTextQuad("Team1: " + std::to_string(m_ScoreA) + "Team2: " + std::to_string(m_ScoreB), font);
-
+	m_Mesh = Mesh::GenerateTextQuad(std::to_string(0) + " - " + "3:00" + " - 0", font);
+	
 	text = new GameObject("text");
 	text_renderComp = new RenderComponent(m_Material, m_Mesh);
 	text->SetRenderComponent(text_renderComp);
@@ -33,11 +30,16 @@ void ScoreboardGUIComponent::Update()
 	
 }
 
-void ScoreboardGUIComponent::Update(int scoreA, int scoreB)
+void ScoreboardGUIComponent::Update(int& scoreA, int& scoreB, float& time)
 {
-	m_ScoreA = scoreA;
-	m_ScoreB = scoreB;
-	m_Mesh = Mesh::GenerateTextQuad("Team1: " + std::to_string(m_ScoreA) + "Team2: " + std::to_string(m_ScoreB), font);
+	float timeRem = 180 - time;
+	int min = (int)timeRem / 60;
+	int sec = (int)timeRem % 60;
+
+	m_Mesh = Mesh::GenerateTextQuad(std::to_string(scoreA) + " - " + 
+		std::to_string(min) + ":" + (sec < 10 ? "0" : "") + std::to_string(sec) + " - " +
+									std::to_string(scoreB), font);
+
 	text_renderComp->m_Mesh = m_Mesh;
 	text->SetRenderComponent(text_renderComp);
 }

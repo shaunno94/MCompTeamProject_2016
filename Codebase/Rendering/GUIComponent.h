@@ -4,7 +4,7 @@
 class GUIComponent : public GameObject
 {
 public:
-	GUIComponent(Material* material, Texture* texture, float z, bool visible, const std::string& name) : GameObject(name) 
+	GUIComponent(Material* material, Texture* texture, float z, bool visible, const std::string& name = "") : GameObject(name) 
 	{
 		
 	};
