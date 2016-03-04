@@ -8,9 +8,9 @@
 #include "OggSound.h"
 
 enum SoundAssets {
-	GUN,
-	WALK,
+	BANG,
 	SONG,
+	SONG2,
 	ENGINE_IDLE,
 	ENGINE_REV
 };

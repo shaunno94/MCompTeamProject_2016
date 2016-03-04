@@ -6,7 +6,7 @@ class ClearGoalState :
 	public State
 {
 public:
-	ClearGoalState(StateMachine& stateMachine, GameObject& parent, GameObject& ball, GameObject& teamGoal);
+	ClearGoalState(StateMachine& stateMachine, GameObject& parent, GameObject& ball);
 	~ClearGoalState();
 
 	virtual void Start();
@@ -14,6 +14,5 @@ public:
 
 protected:
 	GameObject* m_ball;
-	GameObject* m_teamGoal;
 };
 

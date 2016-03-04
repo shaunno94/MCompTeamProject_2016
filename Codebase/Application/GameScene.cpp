@@ -1,7 +1,7 @@
 #include "GameScene.h"
 
 GameScene::GameScene(ControllerManager* controller)
-	: myControllers(controller)
+: myControllers(controller)
 {
 	//Initialise Bullet physics engine.
 	PhysicsEngineInstance::Instance()->setGravity(btVector3(0, -9.81, 0));
@@ -28,7 +28,7 @@ GameScene::GameScene(ControllerManager* controller)
 	DebugDraw::Context(Renderer::GetInstance());
 #endif
 #endif
-	
+
 	SetupShaders();
 	SetupMaterials();
 	SetupGameObjects();
@@ -149,6 +149,7 @@ void GameScene::LoadAudio()
 	// create audio components
 	player->SetAudioComponent(new AudioCompCarLitener(true));
 	shooterAI->SetAudioComponent(new AudioCompCar(false));
+	goalieAI->SetAudioComponent(new AudioCompCar(false));
 	//-------- SOUND
 }
 
@@ -229,6 +230,5 @@ void GameScene::ResetObjects()
 	dynamic_cast<RigidPhysicsObject*>(ball->GetPhysicsComponent())->GetPhysicsBody()->setAngularVelocity(zeroVector);
 
 	ball->GetPhysicsComponent()->GetPhysicsBody()->setWorldTransform(btTransform(btQuaternion(0, 0, 0, 1), zeroVector));
-
 
 }
