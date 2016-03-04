@@ -167,6 +167,7 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="AdvanceState.cpp" />
     <ClCompile Include="ArenaHalfTrigger.cpp" />
     <ClCompile Include="ClearGoalState.cpp" />
     <ClCompile Include="DefenceState.cpp" />
@@ -184,7 +185,7 @@
     <ClInclude Include="AdvanceState.h" />
     <ClInclude Include="ArenaHalfTrigger.h" />
     <ClInclude Include="ClearGoalState.h" />
-    <ClInclude Include="DefenseState.h" />
+    <ClInclude Include="DefenceState.h" />
     <ClInclude Include="DistanceTrigger.h" />
     <ClInclude Include="GuardGoalState.h" />
     <ClInclude Include="OnTargetTrigger.h" />

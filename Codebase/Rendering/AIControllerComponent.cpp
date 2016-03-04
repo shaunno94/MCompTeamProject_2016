@@ -7,9 +7,9 @@
 #include "AI\GuardGoalState.h"
 #include "AI\ClearGoalState.h"
 #include "AI\TimingTrigger.h"
-//#include "AI\AdvanceState.h"
+#include "AI\AdvanceState.h"
 #include "AI\ArenaHalfTrigger.h"
-//#include "AI\DefenceState.h"
+#include "AI\DefenceState.h"
 
 AIControllerComponent::AIControllerComponent(GameObject* parent, unsigned int type) :
 	ControllerComponent(parent)
@@ -56,35 +56,35 @@ AIControllerComponent::AIControllerComponent(GameObject* parent, unsigned int ty
 		//		One transition to Advance single state
 		//		Starts on Guard, transition between Guard and Clear
 
-		//GuardGoalState* guard = new GuardGoalState(*m_StateMachine, *m_parent, *ball, *teamGoal);
-		//ClearGoalState* clearGoal = new ClearGoalState(*m_StateMachine, *m_parent, *ball);
+		GuardGoalState* guard = new GuardGoalState(*m_StateMachine, *m_parent, *ball, *teamGoal);
+		ClearGoalState* clearGoal = new ClearGoalState(*m_StateMachine, *m_parent, *ball);
 
-		//DefenceState* defenceParentState = new DefenceState(*m_StateMachine, *m_parent, *ball, *teamGoal, *targetGoal);
-		//
-		//defenceParentState->AddChildState(GUARD_GOAL, guard);
-		//defenceParentState->AddChildState(CLEAR_GOAL, clearGoal);
+		DefenceState* defenceParentState = new DefenceState(*m_StateMachine, *m_parent, *ball, *teamGoal, *targetGoal);
+		
+		defenceParentState->AddChildState(GUARD_GOAL, guard);
+		defenceParentState->AddChildState(CLEAR_GOAL, clearGoal);
 
-		//defenceParentState->setupChildStates();
-		//defenceParentState->Start();
+		defenceParentState->setupChildStates();
+		defenceParentState->Start();
 
-		//ArenaHalfTrigger* toAdvanceTrigger = new ArenaHalfTrigger();
-		//toAdvanceTrigger->setupTrigger(*m_parent, *ball, *teamGoal, false);
-		//defenceParentState->AddTrigger(toAdvanceTrigger, ADVANCE);
+		ArenaHalfTrigger* toAdvanceTrigger = new ArenaHalfTrigger();
+		toAdvanceTrigger->setupTrigger(*m_parent, *ball, *teamGoal, false);
+		defenceParentState->AddTrigger(toAdvanceTrigger, ADVANCE);
 
-		//m_StateMachine->AddState(DEFENCE, defenceParentState);
+		m_StateMachine->AddState(DEFENCE, defenceParentState);
 
-		//// ADVANCE STATE (When ball is in other half):
-		////		One Transition to Defence parent state
+		// ADVANCE STATE (When ball is in other half):
+		//		One Transition to Defence parent state
 
-		//AdvanceState* advanceState = new AdvanceState(*m_StateMachine, *m_parent, *ball, *teamGoal);
-		//m_StateMachine->AddState(ADVANCE, advanceState);
+		AdvanceState* advanceState = new AdvanceState(*m_StateMachine, *m_parent, *ball, *teamGoal);
+		m_StateMachine->AddState(ADVANCE, advanceState);
 
-		//ArenaHalfTrigger* toDefenceTrigger = new ArenaHalfTrigger();
-		//toDefenceTrigger->setupTrigger(*m_parent, *ball, *teamGoal, true);
-		//advanceState->AddTrigger(toDefenceTrigger, DEFENCE);
+		ArenaHalfTrigger* toDefenceTrigger = new ArenaHalfTrigger();
+		toDefenceTrigger->setupTrigger(*m_parent, *ball, *teamGoal, true);
+		advanceState->AddTrigger(toDefenceTrigger, DEFENCE);
 
-		//// Default state is Defence (Guard Goal)
-		//m_StateMachine->ChangeState(DEFENCE);
+		// Default state is Defence (Guard Goal)
+		m_StateMachine->ChangeState(DEFENCE);
 
 	}
 	break;
