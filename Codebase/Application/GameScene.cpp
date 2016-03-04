@@ -150,6 +150,7 @@ void GameScene::LoadAudio()
 	// create audio components
 	player->SetAudioComponent(new AudioCompCarLitener(true));
 	shooterAI->SetAudioComponent(new AudioCompCar(false));
+	goalieAI->SetAudioComponent(new AudioCompCar(false));
 	//-------- SOUND
 }
 
