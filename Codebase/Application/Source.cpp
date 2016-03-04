@@ -58,7 +58,6 @@ int main(void)
 		float ms = timer.GetTimer()->Get(1000.0f);
 		PhysicsEngineInstance::Instance()->stepSimulation(ms, SUB_STEPS, TIME_STEP);
 		myControllers->update(ms);
-
 		renderer.RenderScene(ms);
 		SoundSystem::Instance()->Update(ms);
 	}

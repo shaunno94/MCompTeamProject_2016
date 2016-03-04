@@ -6,17 +6,21 @@
 class ScoreboardGUIComponent : public GUIComponent
 {
 public:
-	ScoreboardGUIComponent(Material* material, Texture* texture, float z, bool visible = true);
+	ScoreboardGUIComponent(Material* material, Texture* texture, float z, bool visible, const std::string& name);
 	virtual ~ScoreboardGUIComponent();
 
 	virtual void Update();
 	virtual void Render();
 
+	void Update(int scoreA, int scoreB);
+
 protected:
-	void Update(int scoreA, int scoreB, int timeRem);
 	int m_ScoreA;
 	int m_ScoreB;
 	int m_TimeRem;
+
+	GameObject* text;
+	RenderComponent* text_renderComp;
 
 	Font* font;
 };

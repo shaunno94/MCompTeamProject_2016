@@ -116,7 +116,6 @@ void GameScene::SetupGameObjects()
 	goalBallFilter->m_goal2ID = goal2ID;
 
 	PhysicsEngineInstance::Instance()->getPairCache()->setOverlapFilterCallback(goalBallFilter);
-
 	addGameObject(stadium);
 	addGameObject(player);
 	addGameObject(ball);
@@ -158,7 +157,7 @@ void GameScene::SetupShaders()
 #ifndef ORBIS
 	simpleShader = new OGLShader(SIMPLESHADER_VERT, SIMPLESHADER_FRAG);
 	pointlightShader = new OGLShader(POINTLIGHTSHADER_VERT, POINTLIGHTSHADER_FRAG);
-	orthoShader = new OGLShader(GUI_VERT, SIMPLESHADER_FRAG);
+	orthoShader = new OGLShader(GUI_VERT, GUI_FRAG);
 	//BaseShader* pointlightShader = new OGLShader(SHADER_DIR"CubeShadowLightvertex.glsl", SHADER_DIR"CubeShadowLightfragment.glsl");
 #else
 	BaseShader* simpleShader = new PS4Shader(SIMPLESHADER_VERT, SIMPLESHADER_FRAG);
@@ -195,15 +194,16 @@ void GameScene::SetupMaterials()
 
 void GameScene::DrawGUI()
 {
-	//Define Orthographic Component
-	OrthoComponent* hudUI = new OrthoComponent(1.0f);
-	//Add child GUI components, while defining materials, texture, and depth
-	ScoreboardGUIComponent* s = new ScoreboardGUIComponent(guiMaterial, Texture::Get(TEXTURE_DIR"tahoma.tga"), 1.0);
 
-	hudUI->AddGUIComponent(s);
+	//Define Orthographic Component
+	hudOrtho = new OrthoComponent(1.0f);
+	//Add child GUI components, while defining materials, texture, and depth
+	scoreboardComponent = new ScoreboardGUIComponent(guiMaterial, Texture::Get(TEXTURE_DIR"tahoma.tga"), 1.0, true, "scoreboard");
+	hudOrtho->AddGUIComponent(scoreboardComponent);
 
 	//Add Orthographic component to GUISystem
-	GUISystem::GetInstance().AddOrthoComponent(hudUI);
+	GUISystem::GetInstance().AddOrthoComponent(hudOrtho);
+
 }
 
 void GameScene::SetupControls()

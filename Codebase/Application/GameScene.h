@@ -20,7 +20,8 @@ const string SIMPLESHADER_VERT = SHADER_DIR"textureVertex.glsl";
 const string SIMPLESHADER_FRAG = SHADER_DIR"textureFragment.glsl";
 const string POINTLIGHTSHADER_VERT = SHADER_DIR"2dShadowLightvertex.glsl";
 const string POINTLIGHTSHADER_FRAG = SHADER_DIR"2dShadowLightfragment.glsl";
-const string GUI_VERT = SHADER_DIR"combineVert.glsl";
+const string GUI_VERT = SHADER_DIR"TexturedVertex.glsl";
+const string GUI_FRAG = SHADER_DIR"TexturedFragment.glsl";
 
 #else
 #include "Rendering\PS4Controller.h"
@@ -52,6 +53,7 @@ public:
 		scores[team % 2]++;
 		std::cout << "TEAM " << team + 1 << " SCORED!" << endl;
 		std::cout << scores[0] << " - " << scores[1] << endl;
+		scoreboardComponent->Update(scores[0], scores[1]);
 	}
 	void ResetScene();
 
@@ -93,6 +95,9 @@ protected:
 	Material* textMaterial;
 
 	ControllerComponent* cc;
+
+	OrthoComponent* hudOrtho;
+	ScoreboardGUIComponent* scoreboardComponent;
 
 	int ballID;
 	int goal1ID;
@@ -139,6 +144,7 @@ public:
 		{
 			//Increment goals for team 1
 			m_scene->IncrementScore(0);
+
 			//TODO: Reset Scene
 			m_scene->ResetScene();
 		}
