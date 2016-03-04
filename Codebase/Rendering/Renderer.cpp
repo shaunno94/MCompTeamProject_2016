@@ -46,6 +46,7 @@ void Renderer::UpdateScene(float msec)
 	if (currentScene)
 	{
 		currentScene->getCamera()->UpdateCamera(msec);
+		currentScene->UpdateScene(msec);
 		viewMatrix = currentScene->getCamera()->BuildViewMatrix();
 		//Updates all objects in the scene, sorts lists for rendering
 		frameFrustrum.FromMatrix(projMatrix * viewMatrix);

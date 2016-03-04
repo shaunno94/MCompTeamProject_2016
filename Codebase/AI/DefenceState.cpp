@@ -9,7 +9,6 @@ m_ball(&ball),
 m_teamGoal(&teamGoal),
 m_targetGoal(&targetGoal)
 {
-
 	m_activeChildState = GUARD_GOAL;
 }
 
