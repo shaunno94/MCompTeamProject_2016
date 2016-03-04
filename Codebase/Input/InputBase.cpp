@@ -1,4 +1,5 @@
 #include "InputBase.h"
+#include <math.h>
 
 
 InputBase::InputBase()
@@ -25,10 +26,10 @@ AXIS	InputBase::GetAxis(unsigned int i) {
 	if (i > MAX_AXIS) {
 		return AXIS();
 	}
-	if (axis[i].x < 0.05)
-		axis[i].x = 0;
-	if (axis[i].y < 0.05)
-		axis[i].y = 0;
+	if (fabs(axis[i].x) < 0.05)
+		axis[i].x = 0.0;
+	if (fabs(axis[i].y) < 0.05)
+		axis[i].y = 0.0;
 	return axis[i];
 }
 
