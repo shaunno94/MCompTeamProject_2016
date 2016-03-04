@@ -48,9 +48,9 @@ void SoundManager::DeleteSounds()
 
 void SoundManager::LoadAssets()
 {
-	AddSound(AUDIO_DIR"misc/bang.wav", GUN);
-	AddSound(AUDIO_DIR"misc/bang.wav", WALK);
-	AddSound(AUDIO_DIR"music/votives.wav", SONG);
+	AddSound(AUDIO_DIR"misc/bang.wav", BANG);
+	AddSound(AUDIO_DIR"music/Red_Doors_2_Norm.wav", SONG);
+	AddSound(AUDIO_DIR"music/votives.ogg", SONG2);
 	AddSound(AUDIO_DIR"car/engine_idle.wav", ENGINE_IDLE);
 	AddSound(AUDIO_DIR"car/engine_rev.wav", ENGINE_REV);
 }

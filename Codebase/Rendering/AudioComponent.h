@@ -33,6 +33,9 @@ public:
 	virtual ~AudioCompCar(){}
 
 	virtual void Update() override;
+
+protected:
+	float m_Pitch;
 };
 
 class AudioCompCarLitener : public AudioCompCar {

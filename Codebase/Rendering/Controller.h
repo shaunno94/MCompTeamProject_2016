@@ -7,5 +7,10 @@ public:
 	void setObject(ControllerComponent* object){ this->object = object; }
 protected:
 	ControllerComponent* object;
+
+	const float accel = 14;
+	const float rotAccel = 13;
+	const float airAccel = 13;
+	const float jump = 15;
 };
 

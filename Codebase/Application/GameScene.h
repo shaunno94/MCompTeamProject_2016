@@ -30,6 +30,7 @@ const std::string POINTLIGHTSHADER_FRAG = SHADER_DIR"2dShadowLightfragment.sb";
 
 #endif
 #include "BulletCollision\CollisionDispatch\btCollisionWorld.h"
+#include "Helpers\DeltaTimer.h"
 
 struct GameCollisionFilter;
 
@@ -47,12 +48,14 @@ public:
 	void DrawGUI();
 	void SetControllerActor();
 
-	void IncrementScore(int team) {
-		scores[team % 2]++;
-		std::cout << "TEAM " << team + 1 << " SCORED!" << std::endl;
-		std::cout << scores[0] << " - " << scores[1] << std::endl;
-	}
-	void ResetScene();
+	void IncrementScore(int team);
+
+	virtual void UpdateScene(float dt) override;
+
+	void TriggerExplosion();
+
+	void SetGoalScored(int goal) { goalScored = goal; }
+	int GetGoalScored() { return goalScored; }
 
 protected:
 	ControllerManager* myControllers;
@@ -60,6 +63,8 @@ protected:
 	int scores[2];
 
 	void ResetObjects();
+
+	void applyImpulseFromExplosion(CarGameObject* car);
 
 	GameObject* ball;
 	GameObject* light1;
@@ -94,6 +99,9 @@ protected:
 	int ballID;
 	int goal1ID;
 	int goal2ID;
+
+	float timerCount = 0.0f;
+	int goalScored = 0;
 };
 
 struct GameCollisionFilter : public btOverlapFilterCallback
@@ -106,8 +114,11 @@ public:
 	int m_goal2ID = 0;
 	GameScene* m_scene;
 
-	GameCollisionFilter(GameScene* scene) : m_scene(scene) {
+	//DeltaTimer<float> timer = DeltaTimer<float>();
+	float timerCount = 0.0f;
+	int test;
 
+	GameCollisionFilter(GameScene* scene) : m_scene(scene) {
 	}
 
 
@@ -134,20 +145,13 @@ public:
 		if ((proxy0->getUid() == m_ballID && proxy1->getUid() == m_goal1ID) ||
 			(proxy1->getUid() == m_ballID && proxy0->getUid() == m_goal1ID))
 		{
-			//Increment goals for team 1
-			m_scene->IncrementScore(0);
-			//TODO: Reset Scene
-			m_scene->ResetScene();
+			m_scene->SetGoalScored(1);
 		}
 		else if ((proxy0->getUid() == m_ballID && proxy1->getUid() == m_goal2ID) ||
 			(proxy1->getUid() == m_ballID && proxy0->getUid() == m_goal2ID))
 		{
-			//Increment goals for team 2
-			m_scene->IncrementScore(1);
-			//TODO: Reset Scene
-			m_scene->ResetScene();
+			m_scene->SetGoalScored(2);
 		}
 		return true;
 	}
 };
-
