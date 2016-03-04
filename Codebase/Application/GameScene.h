@@ -11,6 +11,7 @@
 #include "Rendering\WheelObject.h"
 #include "CarGameObject.h"
 #include "Audio\SoundSystem.h"
+#include "Rendering\ParticleManager.h"
 
 #ifndef ORBIS
 #include "Rendering\KeyboardController.h"
@@ -38,7 +39,14 @@ public:
 	GameScene(ControllerManager* controller);
 	~GameScene();
 
+	void LoadAudio();
+	void SetupGameObjects();
+	void SetupShaders();
+	void SetupMaterials();
+	void SetupControls();
+	void DrawGUI();
 	void SetControllerActor();
+
 	void IncrementScore(int team) {
 		scores[team % 2]++;
 		std::cout << "TEAM " << team + 1 << " SCORED!" << endl;
@@ -57,6 +65,40 @@ protected:
 	int scores[2];
 
 	void ResetObjects();
+
+	GameObject* ball;
+	GameObject* light1;
+	GameObject* light2;
+	GameObject* player;
+	GameObject* shooterAI;
+	GameObject* goalieAI;
+	GameObject* stadium;
+	GameObject* goal1;
+	GameObject* goal2;
+
+	RigidPhysicsObject* ballPhysics;
+	RigidPhysicsObject* goalBox;
+	RigidPhysicsObject* goalBox2;
+
+	BaseShader* simpleShader;
+	BaseShader* pointlightShader;
+	BaseShader* orthoShader;
+
+	LightMaterial* lightMaterial;
+
+	Material* material;
+	Material* ballMaterial;
+	Material* netMaterial;
+	Material* playerMaterial;
+	Material* aiMaterial;
+	Material* ai2Material;
+	Material* particleMaterial;
+
+	ControllerComponent* cc;
+
+	int ballID;
+	int goal1ID;
+	int goal2ID;
 };
 
 struct GameCollisionFilter : public btOverlapFilterCallback
@@ -113,3 +155,4 @@ public:
 		return true;
 	}
 };
+

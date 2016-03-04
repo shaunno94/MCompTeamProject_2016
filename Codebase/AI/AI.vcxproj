@@ -167,9 +167,12 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="ArenaHalfTrigger.cpp" />
     <ClCompile Include="ClearGoalState.cpp" />
+    <ClCompile Include="DefenceState.cpp" />
     <ClCompile Include="DistanceTrigger.cpp" />
     <ClCompile Include="GuardGoalState.cpp" />
+    <ClCompile Include="TimingTrigger.cpp" />
     <ClCompile Include="OnTargetTrigger.cpp" />
     <ClCompile Include="PositionState.cpp" />
     <ClCompile Include="ShootState.cpp" />
@@ -178,7 +181,10 @@
     <ClCompile Include="Trigger.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="AdvanceState.h" />
+    <ClInclude Include="ArenaHalfTrigger.h" />
     <ClInclude Include="ClearGoalState.h" />
+    <ClInclude Include="DefenseState.h" />
     <ClInclude Include="DistanceTrigger.h" />
     <ClInclude Include="GuardGoalState.h" />
     <ClInclude Include="OnTargetTrigger.h" />
@@ -186,7 +192,11 @@
     <ClInclude Include="ShootState.h" />
     <ClInclude Include="State.h" />
     <ClInclude Include="StateMachine.h" />
+    <ClInclude Include="TimingTrigger.h" />
     <ClInclude Include="Trigger.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="ClassDiagram.cd" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

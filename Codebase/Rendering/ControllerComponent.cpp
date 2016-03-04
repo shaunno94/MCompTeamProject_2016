@@ -40,7 +40,7 @@ void ControllerComponent::updateObject(float dt)
 		m_inactiveFramesUpsideDown = 0;
 	}
 
-	if (m_inactiveFramesUpsideDown > 120) {
+	if (m_inactiveFramesUpsideDown > 60) {
 		reset();
 		m_inactiveFramesUpsideDown = 0;
 	}
