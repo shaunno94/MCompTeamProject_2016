@@ -16,25 +16,6 @@
 #include "CubeMaterial.h"
 #include <vector>
 
-//#define OPENGL_DEBUGGING
-
-/// @ingroup Rendering
-/// <summary>
-///
-/// </summary>
-static const float biasValues[16] =
-{
-	0.5, 0.0, 0.0, 0.0,
-	0.0, 0.5, 0.0, 0.0,
-	0.0, 0.0, 0.5, 0.0,
-	0.5, 0.5, 0.5, 1.0
-};
-/// @ingroup Rendering
-/// <summary>
-///
-/// </summary>
-static const Mat4Graphics biasMatrix(biasValues);
-
 class OGLShader;
 class GameObject;
 class Renderer;

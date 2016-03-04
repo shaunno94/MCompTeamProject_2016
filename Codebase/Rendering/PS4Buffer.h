@@ -17,7 +17,7 @@ enum Displayable
 class PS4Buffer : PS4Memory
 {
 public:
-	PS4Buffer(const uint width, const uint height, sce::Gnmx::Toolkit::StackAllocator& allocator, const uint numRTargets, const int videoHandle, bool genStencil, Displayable display);
+	PS4Buffer(const uint width, const uint height, sce::Gnmx::Toolkit::StackAllocator& allocator, const uint numRTargets, bool genStencil, Displayable display);
 	void ClearBuffer(sce::Gnmx::GnmxGfxContext& context);
 	void SetRenderTargets(sce::Gnmx::GnmxGfxContext& context);
 

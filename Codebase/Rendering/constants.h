@@ -1,5 +1,5 @@
 #pragma once
-
+#include <Math\Matrix4Simple.h>
 /** @defgroup Rendering Rendering
 *  Rendering related functionality.
 *  @{
@@ -14,6 +14,23 @@
 
 //size of shadow textures, TODO - smaller?
 #define SHADOWSIZE 4096
+
+/// @ingroup Rendering
+/// <summary>
+///
+/// </summary>
+static const float biasValues[16] =
+{
+	0.5, 0.0, 0.0, 0.0,
+	0.0, 0.5, 0.0, 0.0,
+	0.0, 0.0, 0.5, 0.0,
+	0.5, 0.5, 0.5, 1.0
+};
+/// @ingroup Rendering
+/// <summary>
+///
+/// </summary>
+static const Matrix4Simple biasMatrix(biasValues);
 
 //A handy enumerator, to determine which member of the bufferObject array
 //holds which data

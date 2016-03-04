@@ -60,7 +60,7 @@ protected:
 	void DrawShadowCube(GameObject* light);
 	void CombineBuffers();
 	void SwapBuffers();
-	void InitCMD();
+	void InitCMD(PS4Buffer* buffer);
 	
 	void SetCullFace(CULL c);
 	
@@ -71,6 +71,7 @@ protected:
 	PS4Shader* currentShader;
 
 	sce::Gnm::Sampler trilinearSampler;
+	sce::Gnm::Sampler shadowSampler;
 	sce::Gnm::PrimitiveSetup primitiveSetup;
 	sce::Gnm::DepthStencilControl dsc;
 	sce::Gnm::BlendControl blendControl;
@@ -90,6 +91,7 @@ private:
 	std::vector<PS4Buffer*> frameBuffers;
 	PS4Buffer* G_buffer;
 	PS4Buffer* light_buffer;
+	PS4Buffer* shadow_buffer;
 	const uint width = 1920;
 	const uint height = 1080;
 	const uint MAX_TARGETS_PER_BUFFER = 2;
@@ -120,6 +122,13 @@ private:
 	void SwapScreenBuffer();
 
 	GameObject* fullScreenQuad;
-	Matrix4Simple textureMatrix;
+
+	//FBO Texture locations
+	PS4ShaderResourceLocations specularLoc;
+	PS4ShaderResourceLocations emissiveLoc;
+	PS4ShaderResourceLocations diffuseLoc;
+	PS4ShaderResourceLocations shadowLoc;
+	PS4ShaderResourceLocations normalLoc;
+	PS4ShaderResourceLocations depthLoc;
 };
 #endif

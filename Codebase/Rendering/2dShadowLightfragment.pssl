@@ -1,4 +1,5 @@
 SamplerState samp0			: register(s0);
+SamplerComparisonState samp1 : register(s1);
 
 Texture2D depthTex			: register(t0);
 Texture2D normTex			: register(t1);
@@ -79,13 +80,19 @@ PS_OUTPUT main(VS_OUTPUT In) : S_TARGET_OUTPUT
 	float4 shadowProj = mul(shadowBias, float4(pos + (normal * 1.5), 1.0));
 	if(shadowProj.w > 0.0)
 	{
-		//Not sure how this will be handled in PSSL
+		float4 s4 = shadowTex.GatherCmp(samp1, (shadowProj.xy / shadowProj.w), (shadowProj.z / shadowProj.w));	 
+		//float3 s3 = shadowTex.Sample(samp0, shadowProj.xy).xyz;
+		float3 shadowPos =  (2.0 * shadowProj.xyz / shadowProj.w) - 1.0;
+		shadow = (s4.x + s4.y + s4.z + s4.w) /* 0.25f*/;
+		shadow *= saturate(1.0 - pow(shadowPos.x * shadowPos.x + shadowPos.y * shadowPos.y, 8));
 	}
-
+	
 	lambert *= shadow;
 	sFactor *= shadow;
 
 	Output.emissive = float4(lightColour.xyz * lambert * atten, 1.0);
+	//Output.emissive = shadowTex.Sample(samp0, shadowProj.xy );
+	//Output.emissive = s4;
 	Output.specular = float4(lightColour.xyz * sFactor * atten * 0.33, 1.0);
 
 	return Output;

@@ -5,7 +5,7 @@
 unsigned int PS4Buffer::ID = 0;
 
 PS4Buffer::PS4Buffer(const uint width, const uint height, sce::Gnmx::Toolkit::StackAllocator& allocator,
-	const uint numRTargets, const int videoHandle, bool genStencil, Displayable display)
+	const uint numRTargets, bool genStencil, Displayable display)
 {
 	buffer = new ScreenBuffer();
 	buffer->renderTargets.resize(numRTargets);
@@ -49,6 +49,9 @@ void PS4Buffer::GenerateRenderTarget(uint width, uint height, sce::Gnmx::Toolkit
 		"Target" + *std::to_string(ID).c_str(), sce::Gnm::kResourceTypeDepthRenderTargetBaseAddress, 0);
 
 	buffer->renderTargets[targetID].setAddresses(colourMemory, nullptr, nullptr);
+
+	textures[COLOUR + targetID].initFromRenderTarget(&buffer->renderTargets[targetID], false);
+	textures[COLOUR + targetID].setResourceMemoryType(sce::Gnm::kResourceMemoryTypeRO);
 }
 
 void PS4Buffer::GenerateDepthTarget(uint width, uint height, sce::Gnmx::Toolkit::StackAllocator& allocator)
@@ -78,6 +81,9 @@ void PS4Buffer::GenerateDepthTarget(uint width, uint height, sce::Gnmx::Toolkit:
 		"Stencil", sce::Gnm::kResourceTypeDepthRenderTargetBaseAddress, 0);
 	}
 	buffer->depthTarget.setAddresses(depthMemory, stencilMemory);
+
+	textures[DEPTH].initFromDepthRenderTarget(&buffer->depthTarget, false);
+	textures[DEPTH].setResourceMemoryType(sce::Gnm::kResourceMemoryTypeRO);
 }
 
 void PS4Buffer::ClearBuffer(sce::Gnmx::GnmxGfxContext& context)
@@ -95,9 +101,11 @@ void PS4Buffer::ClearBuffer(sce::Gnmx::GnmxGfxContext& context)
 
 void PS4Buffer::SetRenderTargets(sce::Gnmx::GnmxGfxContext& context)
 {
-	ClearBuffer(context);
+	if (numRenderTargets == 0)
+		context.setRenderTargetMask(0x0);
+	else
+		context.setRenderTargetMask(0xFF);
 
-	context.setRenderTargetMask(0xFF);
 	for (uint i = 0; i < numRenderTargets; ++i)
 	{
 		context.setRenderTarget(i, &buffer->renderTargets[i]);
