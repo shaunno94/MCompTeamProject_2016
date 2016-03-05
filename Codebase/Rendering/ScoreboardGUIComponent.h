@@ -19,4 +19,8 @@ protected:
 	RenderComponent* text_renderComp;
 
 	Font* font;
+
+	int timeRem;
+	int min;
+	int sec;
 };

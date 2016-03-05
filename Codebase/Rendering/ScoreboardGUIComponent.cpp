@@ -16,7 +16,7 @@ ScoreboardGUIComponent::ScoreboardGUIComponent(Material* material, Texture* text
 	text = new GameObject("text");
 	text_renderComp = new RenderComponent(m_Material, m_Mesh);
 	text->SetRenderComponent(text_renderComp);
-
+	m_Children.push_back(text);
 	text->SetWorldTransform(Mat4Graphics::Translation(Vec3Graphics(350,700, 0)) * Mat4Graphics::Scale(Vec3Graphics(40, 40, 1)));
 }
 
@@ -32,9 +32,9 @@ void ScoreboardGUIComponent::Update()
 
 void ScoreboardGUIComponent::Update(int& scoreA, int& scoreB, float& time)
 {
-	float timeRem = 180 - time;
-	int min = (int)timeRem / 60;
-	int sec = (int)timeRem % 60;
+	timeRem = 180 - (int) time;
+	min = timeRem / 60;
+	sec = timeRem % 60;
 
 	m_Mesh = Mesh::GenerateTextQuad(std::to_string(scoreA) + " - " + 
 		std::to_string(min) + ":" + (sec < 10 ? "0" : "") + std::to_string(sec) + " - " +
@@ -46,6 +46,8 @@ void ScoreboardGUIComponent::Update(int& scoreA, int& scoreB, float& time)
 
 void ScoreboardGUIComponent::Render()
 {
-	text->GetRenderComponent()->Draw();
+	for (int i = 0; i < m_Children.size(); i++)
+		m_Children[i]->GetRenderComponent()->Draw();
+	//text->GetRenderComponent()->Draw();
 }
 
