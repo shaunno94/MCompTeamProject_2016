@@ -28,7 +28,7 @@ void ControllerComponent::updateObject(float dt)
 	if (m_updateState)
 	{
 		auto rigid = static_cast<RigidPhysicsObject*>(m_parent->GetPhysicsComponent())->GetPhysicsBody();
-		btVector3 oldOrigin = rigid->getWorldTransform().getOrigin;
+		btVector3 oldOrigin = rigid->getWorldTransform().getOrigin();
 		btVector3 newOrigin = btVector3(m_position.x, m_position.y, m_position.z);
 		btVector3 originDiff = oldOrigin - newOrigin;
 

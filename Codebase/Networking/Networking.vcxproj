@@ -74,6 +74,13 @@
     <ClInclude Include="NetSession.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Net.cpp" />
+    <ClCompile Include="NetClient.cpp" />
+    <ClCompile Include="NetMessaging.cpp" />
+    <ClCompile Include="NetServer.cpp" />
+    <ClCompile Include="NetSession.cpp" />
+  </ItemGroup>
+  <ItemGroup>
     <ProjectReference Include="..\enet\enet.vcxproj">
       <Project>{da0db155-241d-4870-9d96-a5e19f002aa5}</Project>
     </ProjectReference>
@@ -83,13 +90,6 @@
     <ProjectReference Include="..\Math\Math.vcxproj">
       <Project>{bbdee9f7-c011-44dc-a8f4-86cc2b87adc7}</Project>
     </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
-    <ClCompile Include="Net.cpp" />
-    <ClCompile Include="NetClient.cpp" />
-    <ClCompile Include="NetMessaging.cpp" />
-    <ClCompile Include="NetServer.cpp" />
-    <ClCompile Include="NetSession.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

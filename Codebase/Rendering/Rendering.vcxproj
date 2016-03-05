@@ -81,7 +81,7 @@
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>NOMINMAX;SFML_STATIC;GLEW_STATIC;_MBCS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>..\BulletPhysics\src;$(SolutionDir)Dependencies\SFML-2.3.2\include;$(SolutionDir);$(SolutionDir)Dependencies;$(SolutionDir)Dependencies\glew-1.13.0\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\BulletPhysics\src;$(SolutionDir)Dependencies\SFML-2.3.2\include;$(SolutionDir);$(SolutionDir)Dependencies;$(SolutionDir)Dependencies\glew-1.13.0\include;$(SolutionDir)enet\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <IntrinsicFunctions>false</IntrinsicFunctions>
     </ClCompile>
     <Link>
@@ -119,7 +119,7 @@
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>NOMINMAX;NDEBUG;SFML_STATIC;GLEW_STATIC;_MBCS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>..\BulletPhysics\src;$(SolutionDir)Dependencies\SFML-2.3.2\include;$(SolutionDir);$(SolutionDir)Dependencies;$(SolutionDir)Dependencies\glew-1.13.0\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\BulletPhysics\src;$(SolutionDir)Dependencies\SFML-2.3.2\include;$(SolutionDir);$(SolutionDir)Dependencies;$(SolutionDir)Dependencies\glew-1.13.0\include;$(SolutionDir)enet\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
@@ -285,6 +285,9 @@
     </ProjectReference>
     <ProjectReference Include="..\Memory\Memory.vcxproj">
       <Project>{84f8e699-7dc9-4e84-9677-c38fb5f2bf2f}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\Networking\Networking.vcxproj">
+      <Project>{3d0273ae-8c72-430c-a0e5-5968cf2eab39}</Project>
     </ProjectReference>
     <ProjectReference Include="..\PhysicsEngine\PhysicsEngine.vcxproj">
       <Project>{2cc601e3-e95d-4c55-b786-474f898780f5}</Project>
