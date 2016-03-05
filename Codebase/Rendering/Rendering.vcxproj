@@ -154,6 +154,7 @@
   <ItemGroup>
     <ClInclude Include="AIControllerComponent.h" />
     <ClInclude Include="AudioComponent.h" />
+    <ClInclude Include="Button.h" />
     <ClInclude Include="Camera.h" />
     <ClInclude Include="constants.h" />
     <ClInclude Include="Controller.h" />
@@ -213,6 +214,7 @@
   <ItemGroup>
     <ClCompile Include="AIControllerComponent.cpp" />
     <ClCompile Include="AudioComponent.cpp" />
+    <ClCompile Include="Button.cpp" />
     <ClCompile Include="Camera.cpp" />
     <ClCompile Include="ControllerComponent.cpp" />
     <ClCompile Include="ControllerManager.cpp" />

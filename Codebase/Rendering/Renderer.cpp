@@ -132,3 +132,8 @@ void Renderer::OnRenderLights()
 		light->OnRenderObject();
 	}
 }
+
+void Renderer::SwitchScene()
+{
+
+}

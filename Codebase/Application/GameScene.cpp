@@ -41,6 +41,7 @@ GameScene::GameScene(ControllerManager* controller)
 GameScene::~GameScene()
 {
 	PhysicsEngineInstance::Release();
+	SoundSystem::Release();
 	GUISystem::Destroy();
 	ParticleManager::Destroy();
 
@@ -80,7 +81,7 @@ void GameScene::UpdateScene(float dt)
 	}
 	currentTime += dt / 1000.0f;
 
-	if (currentTime - lastTime > 1)
+	if (currentTime < 181)
 	{
 		lastTime = currentTime;
 		scoreboardComponent->Update(scores[0], scores[1], currentTime);
