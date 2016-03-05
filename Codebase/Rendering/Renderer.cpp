@@ -78,9 +78,16 @@ void Renderer::RenderScene(float msec)
 		FillBuffers(); //First Pass
 		DrawPointLights(); //Second Pass
 		CombineBuffers(); //Final Pass
-		GUISystem::GetInstance().Render();
+		RenderGUI();
 	}
 	SwapBuffers();
+}
+
+void Renderer::RenderGUI()
+{
+	viewMatrix.ToIdentity();
+	projMatrix = Mat4Graphics::Orthographic(-1, 1, (float)width, -1, (float)height, -1);
+	GUISystem::GetInstance().Render();
 }
 
 void Renderer::OnUpdateScene(Frustum& frustum, Vec3Graphics camPos)

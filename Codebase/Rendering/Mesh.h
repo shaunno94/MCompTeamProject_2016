@@ -21,6 +21,7 @@ _-_-_-_-_-_-_-""  ""
 #include "Math/nclglMath.h"
 #include "constants.h"
 #include "Texture.h"
+#include "Font.h"
 #include <cstdint>
 
 class Material;
@@ -72,6 +73,7 @@ public:
 
 	// Draw quad between 4 vertices (Created for Stadium walls)
 	static Mesh*	GenerateQuad(Vec3Graphics* vertices, Vec2Graphics texCoords = Vec2Graphics(1.0f, 1.0f));
+	static Mesh*	GenerateTextQuad(const std::string& text, Font* font);
 
 	static Mesh*	GenerateQuadAlt();
 	//Generates a coloured quad, going from -1 to 1 on the x and z axis, with adjustable texture coords.

@@ -168,6 +168,7 @@ Mesh* Mesh::GenerateQuad(Vec2Graphics texCoords)
 	return m;
 }
 
+
 Mesh* Mesh::GenerateQuad(Vec3Graphics* vertices, Vec2Graphics texCoords /* = Vec2Graphics(1.0f, 1.0f) */)
 {
 #ifndef ORBIS
@@ -207,6 +208,57 @@ Mesh* Mesh::GenerateQuad(Vec3Graphics* vertices, Vec2Graphics texCoords /* = Vec
 	m->BufferData();
 	return m;
 }
+
+
+
+Mesh* Mesh::GenerateTextQuad(const std::string& text, Font* font)
+{
+#ifndef ORBIS
+	Mesh* m = new OGLMesh();
+#else
+	Mesh* m = new PS4Mesh();
+#endif
+
+	m->SetPrimitiveType(TRIANGLE_STRIP);
+	m->m_NumVertices = text.length() * 4;
+	m->m_NumIndices = text.length()* 4;
+
+	m->m_Vertices = new Vec3Graphics[m->m_NumVertices];
+	m->m_TextureCoords = new Vec2Graphics[m->m_NumVertices];
+	m->m_Indices = new uint32_t[m->m_NumIndices];
+	m->m_Normals = new Vec3Graphics[m->m_NumVertices];
+	m->m_Tangents = new Vec3Graphics[m->m_NumVertices];
+
+	float texelWidth = 1.0f / font->getXCount();
+	float texelHeight = 1.0f / font->getYCount();
+
+	for (unsigned int i = 0; i < text.length(); ++i)
+	{
+		unsigned int c = (unsigned int)text[i];
+		float x = (float)(c%font->getXCount());
+		float y = (float)((c / font->getXCount()) % font->getYCount());
+
+		m->m_Vertices[(i * 4)] =	 Vec3Graphics((float)i,		 0, 0);
+		m->m_Vertices[(i * 4) + 1] = Vec3Graphics((float)i,		-1, 0);
+		m->m_Vertices[(i * 4) + 2] = Vec3Graphics((float)i + 1,  0, 0);
+		m->m_Vertices[(i * 4) + 3] = Vec3Graphics((float)i + 1, -1, 0);
+
+		m->m_TextureCoords[(i * 4)] =	  Vec2Graphics(x*texelWidth			,(y)*texelHeight);
+		m->m_TextureCoords[(i * 4) + 1] = Vec2Graphics(x*texelWidth			,(y + 1) * texelHeight);
+		m->m_TextureCoords[(i * 4) + 2] = Vec2Graphics((x + 1)*texelWidth	,(y)*texelHeight);
+		m->m_TextureCoords[(i * 4) + 3] = Vec2Graphics((x + 1)*texelWidth	,(y + 1) * texelHeight);
+
+		for (int i = 0; i < m->m_NumIndices; ++i)
+		{
+			m->m_Normals[i] = Vec3Graphics(0.0f, 0.0f, -1.0f);
+			m->m_Tangents[i] = Vec3Graphics(1.0f, 0.0f, 0.0f);
+			m->m_Indices[i] = i;
+		}
+	}
+
+	m->BufferData();
+	return m;
+};
 
 Mesh* Mesh::GenerateQuadAlt()
 {

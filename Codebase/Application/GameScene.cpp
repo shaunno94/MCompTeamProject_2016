@@ -29,7 +29,7 @@ GameScene::GameScene(ControllerManager* controller)
 	DebugDraw::Context(Renderer::GetInstance());
 #endif
 #endif
-	
+
 	SetupShaders();
 	SetupMaterials();
 	SetupGameObjects();
@@ -71,10 +71,25 @@ void GameScene::IncrementScore(int team)
 	mod.isGlobal = true;
 	SoundSystem::Instance()->Play(SoundManager::GetSound(BANG), mod);
 #endif
+	scoreboardComponent->Update(scores[0], scores[1], currentTime);
 }
 
 void GameScene::UpdateScene(float dt)
 {
+	if (currentTime > 180)
+	{
+		//TODO: Proceed to end game screen
+		currentTime = 0;
+		lastTime = 0;
+	}
+	currentTime += dt / 1000.0f;
+
+	if (currentTime - lastTime > 1)
+	{
+		lastTime = currentTime;
+		scoreboardComponent->Update(scores[0], scores[1], currentTime);
+	}
+
 	if (goalScored > 0) {
 		if (timerCount == 0)
 		{
@@ -153,7 +168,6 @@ void GameScene::SetupGameObjects()
 	goalBallFilter->m_goal2ID = goal2ID;
 
 	PhysicsEngineInstance::Instance()->getPairCache()->setOverlapFilterCallback(goalBallFilter);
-
 	addGameObject(stadium);
 	addGameObject(player);
 	addGameObject(ball);
@@ -200,7 +214,7 @@ void GameScene::SetupShaders()
 #ifndef ORBIS
 	simpleShader = new OGLShader(SIMPLESHADER_VERT, SIMPLESHADER_FRAG);
 	pointlightShader = new OGLShader(POINTLIGHTSHADER_VERT, POINTLIGHTSHADER_FRAG);
-	orthoShader = new OGLShader(GUI_VERT, SIMPLESHADER_FRAG);
+	orthoShader = new OGLShader(GUI_VERT, GUI_FRAG);
 	//BaseShader* pointlightShader = new OGLShader(SHADER_DIR"CubeShadowLightvertex.glsl", SHADER_DIR"CubeShadowLightfragment.glsl");
 #else
 	simpleShader = new PS4Shader(SIMPLESHADER_VERT, SIMPLESHADER_FRAG);
@@ -220,20 +234,23 @@ void GameScene::SetupMaterials()
 	lightMaterial = new LightMaterial(pointlightShader);
 	lightMaterial->shadowType = _2D;
 
-
 	material = new Material(simpleShader);
 	ballMaterial = new Material(simpleShader);
 	netMaterial = new Material(simpleShader, true);
 	aiMaterial = new Material(simpleShader);
 	particleMaterial = new Material(simpleShader);
 	ai2Material = new Material(simpleShader);
-	playerMaterial = new Material(simpleShader);
-	//Material* guiMaterial = new Material(orthoShader);
+	guiMaterial = new Material(orthoShader);
+	textMaterial = new Material(orthoShader);
 
 #ifndef ORBIS
 	ballMaterial->Set(ReservedMeshTextures.DIFFUSE.name, Texture::Get(TEXTURE_DIR"football.png", true));
+	playerMaterial = new Material(simpleShader);
+
 	aiMaterial->Set(ReservedMeshTextures.DIFFUSE.name, Texture::Get(MODEL_DIR"car/body1.bmp", true));
+
 	ai2Material->Set(ReservedMeshTextures.DIFFUSE.name, Texture::Get(MODEL_DIR"car/body2.bmp", true));
+
 	//particleMaterial->Set(ReservedMeshTextures.DIFFUSE.name, Texture::Get(TEXTURE_DIR"particle.tga", true));
 #else
 	ballMaterial->Set(ReservedMeshTextures.DIFFUSE.name, Texture::Get(TEXTURE_DIR"football.gnf", true));
@@ -245,10 +262,15 @@ void GameScene::SetupMaterials()
 
 void GameScene::DrawGUI()
 {
-	////Define Orthographic Component
-	//OrthoComponent* hudUI = new OrthoComponent(1.0f);
-	////Add child GUI components, while defining materials, texture, and depth
-	//hudUI->AddGUIComponent(new ScoreboardGUIComponent(guiMaterial, Texture::Get(TEXTURE_DIR"blue3.png"), 1.0));
+
+	//Define Orthographic Component
+	hudOrtho = new OrthoComponent(1.0f);
+	//Add child GUI components, while defining materials, texture, and depth
+	scoreboardComponent = new ScoreboardGUIComponent(guiMaterial, Texture::Get(TEXTURE_DIR"tahoma.tga"), 1.0);
+	hudOrtho->AddGUIComponent(scoreboardComponent);
+
+	//Add Orthographic component to GUISystem
+	GUISystem::GetInstance().AddOrthoComponent(hudOrtho);
 
 	////Add Orthographic component to GUISystem
 	//GUISystem::GetInstance().AddOrthoComponent(hudUI);
@@ -257,11 +279,8 @@ void GameScene::DrawGUI()
 void GameScene::SetupControls()
 {
 	cc = new ControllerComponent(player);
-#ifndef ORBIS
-	myControllers->setProducer(player);
-#else
-	myControllers->setProducer(player);
-#endif
+	myControllers->setProducer(player, 0);
+
 	attachCam(player);
 }
 
