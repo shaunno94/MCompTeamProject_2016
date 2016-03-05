@@ -207,9 +207,6 @@
     <ClInclude Include="AIControllerComponent.h">
       <Filter>Header Files\Input</Filter>
     </ClInclude>
-    <ClInclude Include="CubeMaterial.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="resource.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -236,6 +233,9 @@
     </ClInclude>
     <ClInclude Include="PS4Buffer.h">
       <Filter>Header Files\GNM_API</Filter>
+    </ClInclude>
+    <ClInclude Include="CubeMaterial.h">
+      <Filter>Header Files\Material</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -353,9 +353,6 @@
     <ClCompile Include="AIControllerComponent.cpp">
       <Filter>Source Files\Input</Filter>
     </ClCompile>
-    <ClCompile Include="CubeMaterial.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="OrthoComponent.cpp">
       <Filter>Source Files\UI</Filter>
     </ClCompile>
@@ -377,6 +374,9 @@
     <ClCompile Include="ParticleManager.cpp">
       <Filter>Source Files\Particle System</Filter>
     </ClCompile>
+    <ClCompile Include="CubeMaterial.cpp">
+      <Filter>Source Files\Material</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <OrbisWavePsslc Include="textureVertex.pssl">
@@ -395,6 +395,12 @@
       <Filter>PS4Shaders</Filter>
     </OrbisWavePsslc>
     <OrbisWavePsslc Include="combineFrag.pssl">
+      <Filter>PS4Shaders</Filter>
+    </OrbisWavePsslc>
+    <OrbisWavePsslc Include="skyboxVertex.pssl">
+      <Filter>PS4Shaders</Filter>
+    </OrbisWavePsslc>
+    <OrbisWavePsslc Include="skyboxFrag.pssl">
       <Filter>PS4Shaders</Filter>
     </OrbisWavePsslc>
   </ItemGroup>

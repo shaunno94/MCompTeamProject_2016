@@ -1,0 +1,14 @@
+
+SamplerState samp0	: register(s0);
+TextureCube cubeTex : register(t0);
+
+struct VS_OUTPUT
+{
+	float4 position	: S_POSITION;
+	float3 normal	: NORMAL;
+};
+
+float4 main(VS_OUTPUT In) : S_TARGET_OUTPUT
+{
+	return cubeTex.Sample(samp0, normalize(In.normal));
+}

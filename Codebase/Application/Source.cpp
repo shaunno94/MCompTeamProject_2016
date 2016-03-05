@@ -2,7 +2,6 @@
 #include "Rendering\GameTimer.h"
 #include "GameScene.h"
 
-
 const float TIME_STEP = 1.0f / 120.0f;
 const unsigned int SUB_STEPS = 4;
 
@@ -17,7 +16,6 @@ const unsigned int SCREEN_WIDTH = 1920;
 //System Variables
 unsigned int sceLibcHeapExtendedAlloc = 1;			/* Switch to dynamic allocation */
 size_t sceLibcHeapSize = 512 * 1024 * 1024;			/* Set up heap area upper limit as 256 MiB */
-//int sceUserMainThreadPriority = SCE_KERNEL_DEFAULT_PRIORITY_USER;
 #endif
 
 int main(void)

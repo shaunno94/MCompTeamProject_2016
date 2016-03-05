@@ -22,6 +22,11 @@ enum BACK_BUFFERS
 	BACK_BUFFER1, BACK_BUFFER2, BACK_BUFFER3, MAX_BACK_BUFFER
 };
 
+enum FBO
+{
+	G_BUFFER, LIGHT_BUFFER, SHADOW_BUFFER, MAX_FBO
+};
+
 class Renderer;
 class GameObject;
 class PS4Mesh;
@@ -59,6 +64,7 @@ protected:
 	void DrawShadow2D(GameObject* light);
 	void DrawShadowCube(GameObject* light);
 	void CombineBuffers();
+	void DrawSkyBox();
 	void SwapBuffers();
 	void InitCMD(PS4Buffer* buffer);
 	
@@ -70,15 +76,6 @@ protected:
 	static Renderer* child;
 	PS4Shader* currentShader;
 
-	sce::Gnm::Sampler trilinearSampler;
-	sce::Gnm::Sampler shadowSampler;
-	sce::Gnm::PrimitiveSetup primitiveSetup;
-	sce::Gnm::DepthStencilControl dsc;
-	sce::Gnm::BlendControl blendControl;
-	sce::Gnm::DepthEqaaControl dEqaaControl;
-	sce::Gnm::ClipControl cc;
-	sce::Gnm::DbRenderControl dbRenderControl;
-
 private:	
 	//VIDEO SYSTEM VARIABLES
 	int videoHandle;	
@@ -88,10 +85,8 @@ private:
 	//SCREEN BUFFER VARIABLES
 	int	currentScreenBuffer;
 	int	prevScreenBuffer;
-	std::vector<PS4Buffer*> frameBuffers;
-	PS4Buffer* G_buffer;
-	PS4Buffer* light_buffer;
-	PS4Buffer* shadow_buffer;
+	std::vector<PS4Buffer*> screenBuffers;
+	std::vector<PS4Buffer*> offScreenBuffers;
 	const uint width = 1920;
 	const uint height = 1080;
 	const uint MAX_TARGETS_PER_BUFFER = 2;
@@ -112,7 +107,7 @@ private:
 	void	InitialiseMemoryAllocators();
 	void	InitialiseVideoSystem();
 	void	InitialiseGCMRendering();
-	void	RegisterTargets(const uint targetIndex);
+	void	RegisterTargets(const uint targetIndex, std::vector<PS4Buffer*>& buffer);
 
 	void	DestroyMemoryAllocators();
 	void	DestroyVideoSystem();
@@ -122,6 +117,7 @@ private:
 	void SwapScreenBuffer();
 
 	GameObject* fullScreenQuad;
+	GameObject* skyQuad;
 
 	//FBO Texture locations
 	PS4ShaderResourceLocations specularLoc;
@@ -130,6 +126,16 @@ private:
 	PS4ShaderResourceLocations shadowLoc;
 	PS4ShaderResourceLocations normalLoc;
 	PS4ShaderResourceLocations depthLoc;
+
+	//Control objects
+	sce::Gnm::Sampler trilinearSampler;
+	sce::Gnm::Sampler shadowSampler;
+	sce::Gnm::PrimitiveSetup primitiveSetup;
+	sce::Gnm::DepthStencilControl dsc;
+	sce::Gnm::BlendControl blendControl;
+	sce::Gnm::DepthEqaaControl dEqaaControl;
+	sce::Gnm::ClipControl cc;
+	sce::Gnm::DbRenderControl dbRenderControl;
 
 	//Shadow Projection matrix
 	Matrix4Simple shadowProj = Matrix4Simple::Perspective(50.0f, 15000.0f, 1.0f, 45.0f);

@@ -320,6 +320,22 @@
       <OutputFileName Condition="'$(Configuration)|$(Platform)'=='Release|ORBIS'">$(SolutionDir)\Application\Assets\PS4Shaders\%(FileName).sb</OutputFileName>
       <SdbCache Condition="'$(Configuration)|$(Platform)'=='Debug|ORBIS'">Cache</SdbCache>
     </OrbisWavePsslc>
+    <OrbisWavePsslc Include="skyboxFrag.pssl">
+      <Profile Condition="'$(Configuration)|$(Platform)'=='Debug|ORBIS'">sce_ps_orbis</Profile>
+      <Profile Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">sce_ps_orbis</Profile>
+      <Profile Condition="'$(Configuration)|$(Platform)'=='Release|ORBIS'">sce_ps_orbis</Profile>
+      <Profile Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">sce_ps_orbis</Profile>
+      <SdbCache Condition="'$(Configuration)|$(Platform)'=='Debug|ORBIS'">Cache</SdbCache>
+      <OutputFileName Condition="'$(Configuration)|$(Platform)'=='Debug|ORBIS'">$(SolutionDir)\Application\Assets\PS4Shaders\%(FileName).sb</OutputFileName>
+    </OrbisWavePsslc>
+    <OrbisWavePsslc Include="skyboxVertex.pssl">
+      <Profile Condition="'$(Configuration)|$(Platform)'=='Debug|ORBIS'">sce_vs_vs_orbis</Profile>
+      <Profile Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">sce_vs_vs_orbis</Profile>
+      <Profile Condition="'$(Configuration)|$(Platform)'=='Release|ORBIS'">sce_vs_vs_orbis</Profile>
+      <Profile Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">sce_vs_vs_orbis</Profile>
+      <OutputFileName Condition="'$(Configuration)|$(Platform)'=='Debug|ORBIS'">$(SolutionDir)\Application\Assets\PS4Shaders\%(FileName).sb</OutputFileName>
+      <SdbCache Condition="'$(Configuration)|$(Platform)'=='Debug|ORBIS'">Cache</SdbCache>
+    </OrbisWavePsslc>
     <OrbisWavePsslc Include="textureFragment.pssl">
       <Profile Condition="'$(Configuration)|$(Platform)'=='Debug|ORBIS'">sce_ps_orbis</Profile>
       <Profile Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">sce_ps_orbis</Profile>

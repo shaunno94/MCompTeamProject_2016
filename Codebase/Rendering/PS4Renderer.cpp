@@ -26,7 +26,6 @@ PS4Renderer::PS4Renderer()
 	trilinearSampler.setXyFilterMode(sce::Gnm::kFilterModeAnisoBilinear, sce::Gnm::kFilterModeAnisoBilinear);
 	trilinearSampler.setAnisotropyRatio(sce::Gnm::kAnisotropyRatio16);
 	trilinearSampler.setWrapMode(sce::Gnm::kWrapModeWrap, sce::Gnm::kWrapModeWrap, sce::Gnm::kWrapModeWrap);
-	//trilinearSampler.setWrapMode(sce::Gnm::kWrapModeMirror, sce::Gnm::kWrapModeMirror, sce::Gnm::kWrapModeMirror);
 
 	shadowSampler.init();
 	shadowSampler.setMipFilterMode(sce::Gnm::kMipFilterModeLinear);
@@ -72,6 +71,11 @@ PS4Renderer::PS4Renderer()
 	shadowLoc.id = 2;
 	shadowLoc.stage = sce::Gnm::kShaderStagePs;
 
+	//Skybox setup
+	skyQuad = new GameObject();
+	skyQuad->SetRenderComponent(new RenderComponent(new Material(new PS4Shader(SHADER_DIR"skyboxVertex.sb", SHADER_DIR"skyboxFrag.sb")), Mesh::GenerateQuad()));
+	skyQuad->GetRenderComponent()->m_Material->Set(ReservedOtherTextures.CUBE.name, Texture::Get(TEXTURE_DIR"skybox.gnf", true));
+
 	//quad for final render
 	fullScreenQuad = new GameObject();
 	fullScreenQuad->SetRenderComponent(new RenderComponent(new LightMaterial(new PS4Shader(SHADER_DIR"combineVert.sb", SHADER_DIR"combineFrag.sb")), Mesh::GenerateQuad()));
@@ -79,45 +83,56 @@ PS4Renderer::PS4Renderer()
 
 	if (!fullScreenQuad->GetRenderComponent()->m_Material->GetShader()->IsOperational())
 	{
-		std::cerr << "Combine Shader is not operational" << std::endl;
+		std::cerr << "Combine Shader is not operational..." << std::endl;
 		init = false;
 	}
-
+	if (!skyQuad->GetRenderComponent()->m_Material->GetShader()->IsOperational())
+	{
+		std::cerr << "Skybox Shader is not operational..." << std::endl;
+		init = false;
+	}
 	SwapBuffers();	
 }
 
 void PS4Renderer::InitialiseVideoSystem()
 {
+	//Initialise buffers - render targets.
+	offScreenBuffers.resize(MAX_FBO);
+	offScreenBuffers[G_BUFFER] = new PS4Buffer(width, height, stackAllocators[GARLIC], 2, false, NONE);
+	offScreenBuffers[LIGHT_BUFFER] = new PS4Buffer(width, height, stackAllocators[GARLIC], 2, false, NONE);
+	offScreenBuffers[SHADOW_BUFFER] = new PS4Buffer(SHADOWSIZE, SHADOWSIZE, stackAllocators[GARLIC], 0, false, NONE);
+
+	screenBuffers.resize(MAX_BACK_BUFFER);
+	screenBuffers[BACK_BUFFER1] = new PS4Buffer(width, height, stackAllocators[GARLIC], 1, false, FIRST_ONLY);
+	screenBuffers[BACK_BUFFER2] = new PS4Buffer(width, height, stackAllocators[GARLIC], 1, false, FIRST_ONLY);
+	screenBuffers[BACK_BUFFER3] = new PS4Buffer(width, height, stackAllocators[GARLIC], 1, false, FIRST_ONLY);	
+	
 	//open up the video port
 	videoHandle = sceVideoOutOpen(0, SCE_VIDEO_OUT_BUS_TYPE_MAIN, 0, NULL);	
-	
-	G_buffer = new PS4Buffer(width, height, stackAllocators[GARLIC], 2, false, NONE);
-	light_buffer = new PS4Buffer(width, height, stackAllocators[GARLIC], 2, false, NONE);
-	shadow_buffer = new PS4Buffer(SHADOWSIZE, SHADOWSIZE, stackAllocators[GARLIC], 0, false, NONE);
-
-	frameBuffers.resize(MAX_BACK_BUFFER);
-	frameBuffers[BACK_BUFFER1] = new PS4Buffer(width, height, stackAllocators[GARLIC], 1, false, FIRST_ONLY);
-	frameBuffers[BACK_BUFFER2] = new PS4Buffer(width, height, stackAllocators[GARLIC], 1, false, FIRST_ONLY);
-	frameBuffers[BACK_BUFFER3] = new PS4Buffer(width, height, stackAllocators[GARLIC], 1, false, FIRST_ONLY);
 
 	for (uint i = 0; i < MAX_TARGETS_PER_BUFFER; ++i)
 	{
-		RegisterTargets(i);
+		RegisterTargets(i, screenBuffers);
+	}	
+	for (uint i = 0; i < MAX_TARGETS_PER_BUFFER; ++i)
+	{
+		RegisterTargets(i, offScreenBuffers);
 	}
 }
 
-void PS4Renderer::RegisterTargets(const uint targetIndex)
+void PS4Renderer::RegisterTargets(const uint targetIndex, std::vector<PS4Buffer*>& buffer)
 {
 	SceVideoOutBufferAttribute attribute;
 	sceVideoOutSetBufferAttribute(&attribute, SCE_VIDEO_OUT_PIXEL_FORMAT_B8_G8_R8_A8_SRGB, SCE_VIDEO_OUT_TILING_MODE_TILE,
-		SCE_VIDEO_OUT_ASPECT_RATIO_16_9, width, height, (*frameBuffers[0]->GetTarget(targetIndex)).getPitch());
-
-	void* bufferAddresses[MAX_BACK_BUFFER];
-	for (int i = 0; i < MAX_BACK_BUFFER; ++i)
+		SCE_VIDEO_OUT_ASPECT_RATIO_16_9, width, height, (*buffer[0]->GetTarget(targetIndex)).getPitch());
+	
+	std::vector<void*> bufferAddresses;
+	for (int i = 0; i < buffer.size(); ++i)
 	{
-		bufferAddresses[i] = (*frameBuffers[i]->GetTarget(targetIndex)).getBaseAddress();
+		if (buffer[i]->GetTarget(targetIndex))
+			bufferAddresses.push_back((*buffer[i]->GetTarget(targetIndex)).getBaseAddress());
 	}
-	sceVideoOutRegisterBuffers(videoHandle, 0, bufferAddresses, MAX_BACK_BUFFER, &attribute);
+	sceVideoOutRegisterBuffers(videoHandle, 0, bufferAddresses.data(), bufferAddresses.size(), &attribute);
 }
 
 void PS4Renderer::InitialiseGCMRendering()
@@ -158,7 +173,7 @@ void	PS4Renderer::DestroyVideoSystem()
 {
 	for (int i = 0; i < MAX_BACK_BUFFER; ++i)
 	{
-		delete frameBuffers[i];
+		delete screenBuffers[i];
 	}
 	sceVideoOutClose(videoHandle);
 }
@@ -229,18 +244,6 @@ void PS4Renderer::SetCurrentShader(BaseShader* s)
 	currentShader->SubmitShaderSwitch(*currentGFXContext);
 }
 
-void PS4Renderer::FillBuffers()
-{
-	currentFrame->StartFrame();
-	currentGFXContext->waitUntilSafeForRendering(videoHandle, currentGPUBuffer);
-	
-	G_buffer->ClearBuffer(*currentGFXContext);
-	G_buffer->SetRenderTargets(*currentGFXContext);
-	InitCMD(G_buffer);
-
-	child->OnRenderScene();
-}
-
 void PS4Renderer::InitCMD(PS4Buffer* buffer)
 {
 	currentGFXContext->setDbRenderControl(dbRenderControl);
@@ -254,20 +257,47 @@ void PS4Renderer::InitCMD(PS4Buffer* buffer)
 	currentGFXContext->setClipControl(cc);
 }
 
+void PS4Renderer::FillBuffers()
+{
+	currentFrame->StartFrame();
+	currentGFXContext->waitUntilSafeForRendering(videoHandle, currentGPUBuffer);
+	
+	offScreenBuffers[G_BUFFER]->ClearBuffer(*currentGFXContext);
+	offScreenBuffers[G_BUFFER]->SetRenderTargets(*currentGFXContext);
+	
+	DrawSkyBox();
+	
+	InitCMD(offScreenBuffers[G_BUFFER]);
+
+	child->OnRenderScene();
+}
+
+void PS4Renderer::DrawSkyBox()
+{
+	dsc.setDepthEnable(false);
+
+	InitCMD(offScreenBuffers[G_BUFFER]);
+
+	skyQuad->GetRenderComponent()->Draw();
+
+	dsc.setDepthEnable(true);
+	projMatrix = child->localProjMat;
+}
+
 void PS4Renderer::DrawPointLights()
 {
-	light_buffer->ClearBuffer(*currentGFXContext);
-	light_buffer->SetRenderTargets(*currentGFXContext);
+	offScreenBuffers[LIGHT_BUFFER]->ClearBuffer(*currentGFXContext);
+	offScreenBuffers[LIGHT_BUFFER]->SetRenderTargets(*currentGFXContext);
 
 	blendControl.setAlphaEquation(sce::Gnm::kBlendMultiplierOne, sce::Gnm::kBlendFuncAdd, sce::Gnm::kBlendMultiplierOne);
-	InitCMD(light_buffer);
+	InitCMD(offScreenBuffers[LIGHT_BUFFER]);
 	currentGFXContext->setSamplers(sce::Gnm::kShaderStagePs, 1, 1, &shadowSampler);
 	
-	sce::Gnmx::decompressDepthSurface(currentGFXContext, G_buffer->GetDepthTarget());
+	sce::Gnmx::decompressDepthSurface(currentGFXContext, offScreenBuffers[G_BUFFER]->GetDepthTarget());
 	
-	SetTexture(depthLoc, *G_buffer->GetTexture(DEPTH));
-	SetTexture(normalLoc, *G_buffer->GetTexture(COLOUR + 1));	
-	SetTexture(shadowLoc, *shadow_buffer->GetTexture(DEPTH));
+	SetTexture(depthLoc, *offScreenBuffers[G_BUFFER]->GetTexture(DEPTH));
+	SetTexture(normalLoc, *offScreenBuffers[G_BUFFER]->GetTexture(COLOUR + 1));
+	SetTexture(shadowLoc, *offScreenBuffers[SHADOW_BUFFER]->GetTexture(DEPTH));
 	
 	child->OnRenderLights();
 	
@@ -283,9 +313,9 @@ void PS4Renderer::CombineBuffers()
 	projMatrix = Mat4Graphics::Orthographic(-1, 1, 1, -1, 1, -1);
 	InitCMD(currentPS4Buffer);
 
-	SetTexture(diffuseLoc, *G_buffer->GetTexture(COLOUR));
-	SetTexture(emissiveLoc, *light_buffer->GetTexture(COLOUR));
-	SetTexture(specularLoc, *light_buffer->GetTexture(COLOUR + 1));
+	SetTexture(diffuseLoc, *offScreenBuffers[G_BUFFER]->GetTexture(COLOUR));
+	SetTexture(emissiveLoc, *offScreenBuffers[LIGHT_BUFFER]->GetTexture(COLOUR));
+	SetTexture(specularLoc, *offScreenBuffers[LIGHT_BUFFER]->GetTexture(COLOUR + 1));
 
 	fullScreenQuad->GetRenderComponent()->Draw();
 	currentFrame->EndFrame();
@@ -300,14 +330,14 @@ void PS4Renderer::DrawShadow(GameObject* light)
 	default:
 		break;
 	case _2D:
-		shadow_buffer->ClearBuffer(*currentGFXContext);
-		shadow_buffer->SetRenderTargets(*currentGFXContext);
-		InitCMD(shadow_buffer);
+		offScreenBuffers[SHADOW_BUFFER]->ClearBuffer(*currentGFXContext);
+		offScreenBuffers[SHADOW_BUFFER]->SetRenderTargets(*currentGFXContext);
+		InitCMD(offScreenBuffers[SHADOW_BUFFER]);
 		
 		DrawShadow2D(light);
 		
-		light_buffer->SetRenderTargets(*currentGFXContext);
-		InitCMD(light_buffer);
+		offScreenBuffers[LIGHT_BUFFER]->SetRenderTargets(*currentGFXContext);
+		InitCMD(offScreenBuffers[LIGHT_BUFFER]);
 		break;
 	case _CUBE:
 		DrawShadowCube(light);
@@ -332,7 +362,7 @@ void PS4Renderer::DrawShadow2D(GameObject* light)
 
 	child->OnUpdateScene(child->frameFrustrum, child->currentScene->getCamera()->GetPosition());
 
-	sce::Gnmx::decompressDepthSurface(currentGFXContext, shadow_buffer->GetDepthTarget());
+	sce::Gnmx::decompressDepthSurface(currentGFXContext, offScreenBuffers[SHADOW_BUFFER]->GetDepthTarget());
 }
 
 void PS4Renderer::DrawShadowCube(GameObject* light)
@@ -380,7 +410,7 @@ void PS4Renderer::SwapScreenBuffer()
 	currentScreenBuffer = (currentScreenBuffer + 1) % MAX_BACK_BUFFER;
 	sceVideoOutSubmitFlip(videoHandle, prevScreenBuffer, SCE_VIDEO_OUT_FLIP_MODE_VSYNC, 0);
 	
-	currentPS4Buffer = frameBuffers[currentScreenBuffer];
+	currentPS4Buffer = screenBuffers[currentScreenBuffer];
 }
 
 void PS4Renderer::SetCullFace(CULL c)
