@@ -75,6 +75,8 @@ protected:
 	
 	static Renderer* child;
 	PS4Shader* currentShader;
+	const uint width = 1920;
+	const uint height = 1080;
 
 private:	
 	//VIDEO SYSTEM VARIABLES
@@ -87,8 +89,6 @@ private:
 	int	prevScreenBuffer;
 	std::vector<PS4Buffer*> screenBuffers;
 	std::vector<PS4Buffer*> offScreenBuffers;
-	const uint width = 1920;
-	const uint height = 1080;
 	const uint MAX_TARGETS_PER_BUFFER = 2;
 
 	//Per frame pointers.

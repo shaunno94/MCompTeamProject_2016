@@ -74,7 +74,7 @@ PS4Renderer::PS4Renderer()
 	//Skybox setup
 	skyQuad = new GameObject();
 	skyQuad->SetRenderComponent(new RenderComponent(new Material(new PS4Shader(SHADER_DIR"skyboxVertex.sb", SHADER_DIR"skyboxFrag.sb")), Mesh::GenerateQuad()));
-	skyQuad->GetRenderComponent()->m_Material->Set(ReservedOtherTextures.CUBE.name, Texture::Get(TEXTURE_DIR"skybox.gnf", true));
+	skyQuad->GetRenderComponent()->m_Material->Set(ReservedOtherTextures.CUBE.name, Texture::Get(TEXTURE_DIR"skybox", true));
 
 	//quad for final render
 	fullScreenQuad = new GameObject();
@@ -259,9 +259,7 @@ void PS4Renderer::InitCMD(PS4Buffer* buffer)
 
 void PS4Renderer::FillBuffers()
 {
-	currentFrame->StartFrame();
-	currentGFXContext->waitUntilSafeForRendering(videoHandle, currentGPUBuffer);
-	
+	dsc.setDepthEnable(true);
 	offScreenBuffers[G_BUFFER]->ClearBuffer(*currentGFXContext);
 	offScreenBuffers[G_BUFFER]->SetRenderTargets(*currentGFXContext);
 	
@@ -281,7 +279,6 @@ void PS4Renderer::DrawSkyBox()
 	skyQuad->GetRenderComponent()->Draw();
 
 	dsc.setDepthEnable(true);
-	projMatrix = child->localProjMat;
 }
 
 void PS4Renderer::DrawPointLights()
@@ -307,6 +304,7 @@ void PS4Renderer::DrawPointLights()
 
 void PS4Renderer::CombineBuffers()
 {
+	dsc.setDepthEnable(false);
 	currentPS4Buffer->ClearBuffer(*currentGFXContext);
 	currentPS4Buffer->SetRenderTargets(*currentGFXContext);
 
@@ -318,7 +316,6 @@ void PS4Renderer::CombineBuffers()
 	SetTexture(specularLoc, *offScreenBuffers[LIGHT_BUFFER]->GetTexture(COLOUR + 1));
 
 	fullScreenQuad->GetRenderComponent()->Draw();
-	currentFrame->EndFrame();
 }
 
 void PS4Renderer::DrawShadow(GameObject* light)
@@ -385,8 +382,14 @@ void PS4Renderer::SetTexture(const shaderResourceLocation& location, textureHand
 
 void PS4Renderer::SwapBuffers()
 {
+	if (currentFrame)
+		currentFrame->EndFrame();
+
 	SwapScreenBuffer();
 	SwapCommandBuffer();
+
+	currentFrame->StartFrame();
+	currentGFXContext->waitUntilSafeForRendering(videoHandle, currentGPUBuffer);
 }
 
 void PS4Renderer::SwapCommandBuffer()

@@ -9,27 +9,35 @@ int Texture::s_memoryUsage = 0;
 
 Texture* Texture::Make(const std::string& filePath, bool preload)
 {
+	std::string rawPath = filePath;
+#ifdef ORBIS
+	checkPath(rawPath);
+#endif
+
 	Texture* newTexture;
-	std::unordered_map<std::string, std::vector<Texture*>>::iterator match = s_textureRecords.find(filePath);
+	std::unordered_map<std::string, std::vector<Texture*>>::iterator match = s_textureRecords.find(rawPath);
 	if (match != s_textureRecords.end())
 	{
-		newTexture = new Texture(filePath, match->second.size(), preload); 
+		newTexture = new Texture(rawPath, match->second.size(), preload);
 		match->second.push_back(newTexture);
 	}
 	else
 	{
-		newTexture = new Texture(filePath, 0, preload);
-		s_textureRecords.insert(std::pair<std::string, std::vector<Texture*>>(filePath, std::vector<Texture*>())).first->second.push_back(newTexture);
+		newTexture = new Texture(rawPath, 0, preload);
+		s_textureRecords.insert(std::pair<std::string, std::vector<Texture*>>(rawPath, std::vector<Texture*>())).first->second.push_back(newTexture);
 	}
 	return newTexture;
 }
 
 Texture* Texture::Get(const std::string& filePath, bool preload)
 {
-	//filePath.replace(filePath.find_last_of("."), filePath.end(), "gnf");
-	//std::string rawname = filePath.replace(0, lastindex);
+	std::string rawPath = filePath;
+#ifdef ORBIS
+	checkPath(rawPath);
+#endif
+
 	Texture* newTexture;
-	std::unordered_map<std::string, std::vector<Texture*>>::iterator match = s_textureRecords.find(filePath);
+	std::unordered_map<std::string, std::vector<Texture*>>::iterator match = s_textureRecords.find(rawPath);
 	if (match != s_textureRecords.end())
 	{
 		newTexture = match->second.back();
@@ -37,8 +45,8 @@ Texture* Texture::Get(const std::string& filePath, bool preload)
 	}
 	else
 	{
-		newTexture = new Texture(filePath, 0, preload);
-		s_textureRecords.insert(std::pair<std::string, std::vector<Texture*>>(filePath, std::vector<Texture*>())).first->second.push_back(newTexture);
+		newTexture = new Texture(rawPath, 0, preload);
+		s_textureRecords.insert(std::pair<std::string, std::vector<Texture*>>(rawPath, std::vector<Texture*>())).first->second.push_back(newTexture);
 	}
 	return newTexture;
 }
@@ -97,10 +105,7 @@ void Texture::ClearAll()
 
 void Texture::SetTextureParams(unsigned int flags)
 {
-	//if (!textureLoaded)
-		//LoadFromFile();
 	textureFlags = flags;
-	//Renderer::GetInstance()->SetTextureFlags(textureId, flags);
 }
 
 void Texture::MeasureMemoryUsageAdd(textureHandle textureId)
@@ -111,6 +116,16 @@ void Texture::MeasureMemoryUsageAdd(textureHandle textureId)
 void Texture::MeasureMemoryUsageSubtract(textureHandle textureId)
 {
 	s_memoryUsage -= Renderer::GetInstance()->TextureMemoryUsage(textureId);
+}
+
+void Texture::checkPath(std::string& path)
+{
+	size_t pos = path.find_last_of(".");
+	if (pos < path.length())
+	{
+		path.erase(pos, std::string::npos);
+	}
+	path.append(".gnf");
 }
 
 Texture::Texture(const std::string& filepath, size_t index, bool preload) : filePath(filepath)
@@ -196,10 +211,6 @@ void Texture::LoadFromFile()
 	file.read((char*)pixelsAddr, dataParams.m_size);
 
 	textureId = *sce::Gnf::patchTextures(contentsDesc, 0, 1, &pixelsAddr);
-
-	/*tex->width = tex->apiTexture.getWidth();
-	tex->height = tex->apiTexture.getHeight();
-	tex->bpp = tex->apiTexture.getDepth();*/
 
 	textureId.setResourceMemoryType(sce::Gnm::kResourceMemoryTypeRO);
 	file.close();

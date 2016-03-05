@@ -3,7 +3,7 @@ SamplerComparisonState samp1 : register(s1);
 
 Texture2D depthTex			: register(t0);
 Texture2D normTex			: register(t1);
-Texture2D shadowTex			: register(t2); //Texture2DShadow ????
+Texture2D shadowTex			: register(t2);
 
 ConstantBuffer shadowBias
 {

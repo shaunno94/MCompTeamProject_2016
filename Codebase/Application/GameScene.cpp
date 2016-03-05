@@ -215,11 +215,10 @@ void GameScene::SetupShaders()
 	simpleShader = new OGLShader(SIMPLESHADER_VERT, SIMPLESHADER_FRAG);
 	pointlightShader = new OGLShader(POINTLIGHTSHADER_VERT, POINTLIGHTSHADER_FRAG);
 	orthoShader = new OGLShader(GUI_VERT, GUI_FRAG);
-	//BaseShader* pointlightShader = new OGLShader(SHADER_DIR"CubeShadowLightvertex.glsl", SHADER_DIR"CubeShadowLightfragment.glsl");
 #else
 	simpleShader = new PS4Shader(SIMPLESHADER_VERT, SIMPLESHADER_FRAG);
 	pointlightShader = new PS4Shader(POINTLIGHTSHADER_VERT, POINTLIGHTSHADER_FRAG);
-	orthoShader = new PS4Shader(SIMPLESHADER_VERT, SIMPLESHADER_FRAG);
+	orthoShader = new PS4Shader(GUI_VERT, GUI_FRAG);
 #endif
 	if (!pointlightShader->IsOperational())
 		std::cout << "Point light shader not operational!" << std::endl;
@@ -242,22 +241,12 @@ void GameScene::SetupMaterials()
 	ai2Material = new Material(simpleShader);
 	guiMaterial = new Material(orthoShader);
 	textMaterial = new Material(orthoShader);
-
-#ifndef ORBIS
-	ballMaterial->Set(ReservedMeshTextures.DIFFUSE.name, Texture::Get(TEXTURE_DIR"football.png", true));
 	playerMaterial = new Material(simpleShader);
 
+	ballMaterial->Set(ReservedMeshTextures.DIFFUSE.name, Texture::Get(TEXTURE_DIR"football.png", true));
 	aiMaterial->Set(ReservedMeshTextures.DIFFUSE.name, Texture::Get(MODEL_DIR"car/body1.bmp", true));
-
 	ai2Material->Set(ReservedMeshTextures.DIFFUSE.name, Texture::Get(MODEL_DIR"car/body2.bmp", true));
-
 	//particleMaterial->Set(ReservedMeshTextures.DIFFUSE.name, Texture::Get(TEXTURE_DIR"particle.tga", true));
-#else
-	ballMaterial->Set(ReservedMeshTextures.DIFFUSE.name, Texture::Get(TEXTURE_DIR"football.gnf", true));
-	aiMaterial->Set(ReservedMeshTextures.DIFFUSE.name, Texture::Get(MODEL_DIR"car/body1.gnf", true));
-	ai2Material->Set(ReservedMeshTextures.DIFFUSE.name, Texture::Get(MODEL_DIR"car/body2.gnf", true));
-	//particleMaterial->Set(ReservedMeshTextures.DIFFUSE.name, Texture::Get(TEXTURE_DIR"particle.gnfw", true));
-#endif
 }
 
 void GameScene::DrawGUI()
@@ -271,9 +260,6 @@ void GameScene::DrawGUI()
 
 	//Add Orthographic component to GUISystem
 	GUISystem::GetInstance().AddOrthoComponent(hudOrtho);
-
-	////Add Orthographic component to GUISystem
-	//GUISystem::GetInstance().AddOrthoComponent(hudUI);
 }
 
 void GameScene::SetupControls()

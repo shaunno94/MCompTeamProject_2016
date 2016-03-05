@@ -109,7 +109,7 @@
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>NOMINMAX;ORBIS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>$(SCE_ORBIS_SAMPLE_DIR)\;$(IncludePath);..\BulletPhysics\src;$(SolutionDir);$(SolutionDir)Dependencies;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SCE_ORBIS_SAMPLE_DIR)\;$(IncludePath);..\BulletPhysics\src;$(SolutionDir);$(SolutionDir)Dependencies;$(SolutionDir)enet\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <RuntimeTypeInfo>true</RuntimeTypeInfo>
       <CppExceptions>true</CppExceptions>
       <Warnings>WarningsOff</Warnings>
@@ -150,7 +150,7 @@
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>NOMINMAX;ORBIS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>..\BulletPhysics\src;$(SolutionDir);$(SolutionDir)Dependencies;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\BulletPhysics\src;$(SolutionDir);$(SolutionDir)Dependencies;$(SolutionDir)enet\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <RuntimeTypeInfo>true</RuntimeTypeInfo>
       <CppExceptions>true</CppExceptions>
     </ClCompile>

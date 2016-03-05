@@ -30,7 +30,7 @@ void ScoreboardGUIComponent::Update()
 	
 }
 
-void ScoreboardGUIComponent::Update(int& scoreA, int& scoreB, float& time)
+void ScoreboardGUIComponent::Update(int scoreA, int scoreB, float time)
 {
 	float timeRem = 180 - time;
 	int min = (int)timeRem / 60;
@@ -47,5 +47,5 @@ void ScoreboardGUIComponent::Update(int& scoreA, int& scoreB, float& time)
 void ScoreboardGUIComponent::Render()
 {
 	text->GetRenderComponent()->Draw();
-	}
+}
 

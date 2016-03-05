@@ -1,3 +1,4 @@
+#ifndef ORBIS
 #include "NetClientControllerManager.h"
 #include "Networking/Net.h"
 #include "Networking/NetClient.h"
@@ -45,3 +46,4 @@ void NetClientControllerManager::update(float ms)
 		}
 	}
 }
+#endif

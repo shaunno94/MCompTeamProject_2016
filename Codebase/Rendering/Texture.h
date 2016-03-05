@@ -155,7 +155,8 @@ protected:
 	~Texture();
 
 	static std::unordered_map<std::string, std::vector<Texture*>> s_textureRecords;
-
+	
+	static void checkPath(std::string& path);
 	static int s_memoryUsage;
 	void MeasureMemoryUsageAdd(textureHandle textureId);
 	void MeasureMemoryUsageSubtract(textureHandle textureId);

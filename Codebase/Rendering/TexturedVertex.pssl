@@ -1,0 +1,35 @@
+ConstantBuffer modelMatrix
+{
+	column_major matrix modelMatrix;
+};
+ConstantBuffer viewMatrix
+{
+	column_major matrix viewMatrix;
+};
+ConstantBuffer projMatrix
+{
+	column_major matrix projMatrix;
+};
+
+struct VS_INPUT
+{
+	float3 position		: POSITION0;
+	float2 texCoord		: TEXCOORD0;
+};
+
+struct VS_OUTPUT
+{
+	float4 position		: S_POSITION;
+	float2 texCoord		: TEXCOORD0;
+};
+
+VS_OUTPUT main(VS_INPUT Input)
+{
+	VS_OUTPUT Output;
+	
+	float4x4 MVP = mul(mul(projMatrix, viewMatrix), modelMatrix);
+	Output.position = mul(MVP, float4(Input.position.xyz, 1.0));
+	Output.texCoord = float2(Input.texCoord.x, -Input.texCoord.y);
+
+	return Output;
+}
