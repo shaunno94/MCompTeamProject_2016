@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 2013
-VisualStudioVersion = 12.0.21005.1
+VisualStudioVersion = 12.0.40629.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Application", "Application\Application.vcxproj", "{28A90E4B-CBFC-404E-9934-2146F19A8C64}"
 	ProjectSection(ProjectDependencies) = postProject
@@ -43,8 +43,6 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "PhysicsEngine", "PhysicsEng
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "AssetSerializer", "AssetSerializer\AssetSerializer.vcxproj", "{EC4A3A1F-D72F-4713-B6A8-A61DF72D0B76}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Networking", "Networking\Networking.vcxproj", "{3D0273AE-8C72-430C-A0E5-5968CF2EAB39}"
-EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "NetworkingServer", "NetworkingServer\NetworkingServer.vcxproj", "{2364F4FD-144A-42AF-B188-F9DEDD91FA49}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "NetworkingClient", "NetworkingClient\NetworkingClient.vcxproj", "{DD7A5D17-150E-4A4A-86AF-851568A1774A}"
@@ -58,6 +56,8 @@ EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "AI", "AI\AI.vcxproj", "{EA8B500E-59FA-4A79-8398-08F85F821CC7}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Audio", "Audio\Audio.vcxproj", "{2A9D5C1B-7579-4999-B8BB-FDF9718CDA28}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Networking", "Networking\Networking.vcxproj", "{3D0273AE-8C72-430C-A0E5-5968CF2EAB39}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -219,16 +219,6 @@ Global
 		{EC4A3A1F-D72F-4713-B6A8-A61DF72D0B76}.Release|Win32.ActiveCfg = Release|Win32
 		{EC4A3A1F-D72F-4713-B6A8-A61DF72D0B76}.Release|Win32.Build.0 = Release|Win32
 		{EC4A3A1F-D72F-4713-B6A8-A61DF72D0B76}.Release|x64.ActiveCfg = Release|Win32
-		{3D0273AE-8C72-430C-A0E5-5968CF2EAB39}.Debug|Mixed Platforms.ActiveCfg = Debug|Win32
-		{3D0273AE-8C72-430C-A0E5-5968CF2EAB39}.Debug|ORBIS.ActiveCfg = Debug|Win32
-		{3D0273AE-8C72-430C-A0E5-5968CF2EAB39}.Debug|Win32.ActiveCfg = Debug|Win32
-		{3D0273AE-8C72-430C-A0E5-5968CF2EAB39}.Debug|Win32.Build.0 = Debug|Win32
-		{3D0273AE-8C72-430C-A0E5-5968CF2EAB39}.Debug|x64.ActiveCfg = Debug|Win32
-		{3D0273AE-8C72-430C-A0E5-5968CF2EAB39}.Release|Mixed Platforms.ActiveCfg = Release|Win32
-		{3D0273AE-8C72-430C-A0E5-5968CF2EAB39}.Release|ORBIS.ActiveCfg = Release|Win32
-		{3D0273AE-8C72-430C-A0E5-5968CF2EAB39}.Release|Win32.ActiveCfg = Release|Win32
-		{3D0273AE-8C72-430C-A0E5-5968CF2EAB39}.Release|Win32.Build.0 = Release|Win32
-		{3D0273AE-8C72-430C-A0E5-5968CF2EAB39}.Release|x64.ActiveCfg = Release|Win32
 		{2364F4FD-144A-42AF-B188-F9DEDD91FA49}.Debug|Mixed Platforms.ActiveCfg = Debug|Win32
 		{2364F4FD-144A-42AF-B188-F9DEDD91FA49}.Debug|ORBIS.ActiveCfg = Debug|Win32
 		{2364F4FD-144A-42AF-B188-F9DEDD91FA49}.Debug|Win32.ActiveCfg = Debug|Win32
@@ -294,6 +284,18 @@ Global
 		{2A9D5C1B-7579-4999-B8BB-FDF9718CDA28}.Release|Win32.ActiveCfg = Release|Win32
 		{2A9D5C1B-7579-4999-B8BB-FDF9718CDA28}.Release|Win32.Build.0 = Release|Win32
 		{2A9D5C1B-7579-4999-B8BB-FDF9718CDA28}.Release|x64.ActiveCfg = Release|Win32
+		{3D0273AE-8C72-430C-A0E5-5968CF2EAB39}.Debug|Mixed Platforms.ActiveCfg = Debug|Win32
+		{3D0273AE-8C72-430C-A0E5-5968CF2EAB39}.Debug|Mixed Platforms.Build.0 = Debug|Win32
+		{3D0273AE-8C72-430C-A0E5-5968CF2EAB39}.Debug|ORBIS.ActiveCfg = Debug|Win32
+		{3D0273AE-8C72-430C-A0E5-5968CF2EAB39}.Debug|Win32.ActiveCfg = Debug|Win32
+		{3D0273AE-8C72-430C-A0E5-5968CF2EAB39}.Debug|Win32.Build.0 = Debug|Win32
+		{3D0273AE-8C72-430C-A0E5-5968CF2EAB39}.Debug|x64.ActiveCfg = Debug|Win32
+		{3D0273AE-8C72-430C-A0E5-5968CF2EAB39}.Release|Mixed Platforms.ActiveCfg = Release|Win32
+		{3D0273AE-8C72-430C-A0E5-5968CF2EAB39}.Release|Mixed Platforms.Build.0 = Release|Win32
+		{3D0273AE-8C72-430C-A0E5-5968CF2EAB39}.Release|ORBIS.ActiveCfg = Release|Win32
+		{3D0273AE-8C72-430C-A0E5-5968CF2EAB39}.Release|Win32.ActiveCfg = Release|Win32
+		{3D0273AE-8C72-430C-A0E5-5968CF2EAB39}.Release|Win32.Build.0 = Release|Win32
+		{3D0273AE-8C72-430C-A0E5-5968CF2EAB39}.Release|x64.ActiveCfg = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -303,8 +305,8 @@ Global
 		{DC95E089-A36F-E041-A7CD-54DF1737639B} = {CCDD3102-3211-43ED-B109-D80851885894}
 		{E9A76716-EF48-2D48-B6AE-09A54F748CAE} = {CCDD3102-3211-43ED-B109-D80851885894}
 		{2CC601E3-E95D-4C55-B786-474F898780F5} = {CCDD3102-3211-43ED-B109-D80851885894}
+		{DA0DB155-241D-4870-9D96-A5E19F002AA5} = {00F19FE8-3222-4A71-977D-48637DED5B88}
 		{ADCFED9A-E56E-E440-B14B-8DF86A36F142} = {CCDD3102-3211-43ED-B109-D80851885894}
 		{3D0273AE-8C72-430C-A0E5-5968CF2EAB39} = {00F19FE8-3222-4A71-977D-48637DED5B88}
-		{DA0DB155-241D-4870-9D96-A5E19F002AA5} = {00F19FE8-3222-4A71-977D-48637DED5B88}
 	EndGlobalSection
 EndGlobal

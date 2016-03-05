@@ -13,7 +13,7 @@ LocalControlManager::~LocalControlManager()
 {
 }
 
-void LocalControlManager::setProducer(GameObject* g){
+void LocalControlManager::setProducer(GameObject* g, unsigned int type){
 	ControllerComponent* cc = new ControllerComponent(g);
 #ifndef ORBIS
 	controllers.push_back(new KeyboardController(cc));

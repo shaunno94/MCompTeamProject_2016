@@ -14,6 +14,7 @@ ControllerComponent::ControllerComponent(GameObject* parent)
 	dPitch = 0;
 	dYaw = 0;
 	reset();
+	m_updateState = false;
 }
 
 
@@ -23,6 +24,31 @@ ControllerComponent::~ControllerComponent()
 
 void ControllerComponent::updateObject(float dt)
 {
+	//networking
+	if (m_updateState)
+	{
+		auto rigid = static_cast<RigidPhysicsObject*>(m_parent->GetPhysicsComponent())->GetPhysicsBody();
+		btVector3 oldOrigin = rigid->getWorldTransform().getOrigin();
+		btVector3 newOrigin = btVector3(m_position.x, m_position.y, m_position.z);
+		btVector3 originDiff = oldOrigin - newOrigin;
+
+		if (m_linearVelocity.LengthSq() > 0.00001f || m_angularVelocity.LengthSq() > 0.00001f || originDiff.length2() > 0.00001f)
+		{
+			rigid->activate(true);
+			btTransform newWorldTrans;
+			newWorldTrans.setOrigin(newOrigin);
+			newWorldTrans.setRotation(btQuaternion(m_orientation.x, m_orientation.y, m_orientation.z, m_orientation.w));
+			rigid->setWorldTransform(newWorldTrans);
+			//TODO: check if MotionState update is needed?
+			rigid->getMotionState()->setWorldTransform(newWorldTrans);
+
+			rigid->setLinearVelocity(btVector3(m_linearVelocity.x, m_linearVelocity.y, m_linearVelocity.z));
+			rigid->setAngularVelocity(btVector3(m_angularVelocity.x, m_angularVelocity.y, m_angularVelocity.z));
+		}
+
+		m_updateState = false;
+	}
+
 	if (force.LengthSq() > 0.0000001 || torque.LengthSq() > 0.0000001 || impulse.LengthSq() > 0.0000001)
 		dynamic_cast<RigidPhysicsObject*>(m_parent->GetPhysicsComponent())->GetPhysicsBody()->activate();
 
@@ -34,14 +60,17 @@ void ControllerComponent::updateObject(float dt)
 		dynamic_cast<RigidPhysicsObject*>(m_parent->GetPhysicsComponent())->GetPhysicsBody()->applyCentralImpulse(btVector3(impulse.x, impulse.y, impulse.z));
 		m_inactiveFramesUpsideDown = 0;
 	}
-	else if (up.Dot(Vec3(0,1,0)) < 0.5 && !airbourne()) {
+	else if (up.Dot(Vec3(0,1,0)) < 0.5 && !airbourne())
+	{
 		m_inactiveFramesUpsideDown++;
 	}
-	else {
+	else
+	{
 		m_inactiveFramesUpsideDown = 0;
 	}
 
-	if (m_inactiveFramesUpsideDown > 60) {
+	if (m_inactiveFramesUpsideDown > 60)
+	{
 		reset();
 		m_inactiveFramesUpsideDown = 0;
 	}
@@ -95,6 +124,15 @@ void ControllerComponent::AddImpulse(float x, float y, float z)
 	impulse.x = (x);
 	impulse.y = (y);
 	impulse.z = (z);
+}
+
+void ControllerComponent::SetState(const Vec3Physics& pos, const QuatPhysics& orientation, const Vec3Physics& linearVelocity, const Vec3Physics& angularVelocity)
+{
+	m_position = pos;
+	m_orientation = orientation;
+	m_linearVelocity = linearVelocity;
+	m_angularVelocity = angularVelocity;
+	m_updateState = true;
 }
 
 Mat4Physics ControllerComponent::getOrientation()

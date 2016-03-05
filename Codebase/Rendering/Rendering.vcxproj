@@ -81,7 +81,7 @@
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>NOMINMAX;SFML_STATIC;GLEW_STATIC;_MBCS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>..\BulletPhysics\src;$(SolutionDir)Dependencies\SFML-2.3.2\include;$(SolutionDir);$(SolutionDir)Dependencies;$(SolutionDir)Dependencies\glew-1.13.0\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\BulletPhysics\src;$(SolutionDir)Dependencies\SFML-2.3.2\include;$(SolutionDir);$(SolutionDir)Dependencies;$(SolutionDir)Dependencies\glew-1.13.0\include;$(SolutionDir)enet\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <IntrinsicFunctions>false</IntrinsicFunctions>
     </ClCompile>
     <Link>
@@ -119,7 +119,7 @@
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>NOMINMAX;NDEBUG;SFML_STATIC;GLEW_STATIC;_MBCS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>..\BulletPhysics\src;$(SolutionDir)Dependencies\SFML-2.3.2\include;$(SolutionDir);$(SolutionDir)Dependencies;$(SolutionDir)Dependencies\glew-1.13.0\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\BulletPhysics\src;$(SolutionDir)Dependencies\SFML-2.3.2\include;$(SolutionDir);$(SolutionDir)Dependencies;$(SolutionDir)Dependencies\glew-1.13.0\include;$(SolutionDir)enet\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
@@ -176,6 +176,8 @@
     <ClInclude Include="Material.h" />
     <ClInclude Include="Mesh.h" />
     <ClInclude Include="ModelLoader.h" />
+    <ClInclude Include="NetClientControllerManager.h" />
+    <ClInclude Include="NetServerControllerManager.h" />
     <ClInclude Include="NitroGUI.h" />
     <ClInclude Include="OGLMesh.h" />
     <ClInclude Include="OGLRenderer.h" />
@@ -184,6 +186,8 @@
     <ClInclude Include="ParticleEmitter.h" />
     <ClInclude Include="ParticleManager.h" />
     <ClInclude Include="ParticleSystem.h" />
+    <ClInclude Include="PCNetController.h" />
+    <ClInclude Include="PCNetProducerController.h" />
     <ClInclude Include="PhysicsObject.h" />
     <ClInclude Include="PS4Controller.h" />
     <ClInclude Include="PS4Frame.h" />
@@ -226,12 +230,16 @@
     <ClCompile Include="Material.cpp" />
     <ClCompile Include="Mesh.cpp" />
     <ClCompile Include="ModelLoader.cpp" />
+    <ClCompile Include="NetClientControllerManager.cpp" />
+    <ClCompile Include="NetServerControllerManager.cpp" />
     <ClCompile Include="NitroGUI.cpp" />
     <ClCompile Include="OGLMesh.cpp" />
     <ClCompile Include="OGLRenderer.cpp" />
     <ClCompile Include="OrthoComponent.cpp" />
     <ClCompile Include="ParticleManager.cpp" />
     <ClCompile Include="ParticleSystem.cpp" />
+    <ClCompile Include="PCNetController.cpp" />
+    <ClCompile Include="PCNetProducerController.cpp" />
     <ClCompile Include="PhysicsObject.cpp" />
     <ClCompile Include="PS4Controller.cpp" />
     <ClCompile Include="PS4Frame.cpp" />
@@ -277,6 +285,9 @@
     </ProjectReference>
     <ProjectReference Include="..\Memory\Memory.vcxproj">
       <Project>{84f8e699-7dc9-4e84-9677-c38fb5f2bf2f}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\Networking\Networking.vcxproj">
+      <Project>{3d0273ae-8c72-430c-a0e5-5968cf2eab39}</Project>
     </ProjectReference>
     <ProjectReference Include="..\PhysicsEngine\PhysicsEngine.vcxproj">
       <Project>{2cc601e3-e95d-4c55-b786-474f898780f5}</Project>
