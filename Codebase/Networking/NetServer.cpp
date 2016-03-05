@@ -367,9 +367,10 @@ void NetServer::ProcessSessionRunPacket(ENetEvent& netEvent, NetSessionWriter& w
 		}
 		else
 		{
-			SendMsg(m_session->m_members[newMessage->target], newMessage, newMessage->strategy == NetMessageStrategy::NetStackingMessageStrategy);
-			if (newMessage->source != m_sessionMemberId)
+			if (newMessage->target == m_sessionMemberId)
 				writer.AddMessage(newMessage, false);
+			else
+				SendMsg(m_session->m_members[newMessage->target], newMessage, newMessage->strategy == NetMessageStrategy::NetStackingMessageStrategy);
 		}
 
 

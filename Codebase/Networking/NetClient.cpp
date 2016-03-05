@@ -289,8 +289,15 @@ void NetClient::ProcessSessionRunPacket(ENetPacket* packet, NetSessionWriter& wr
 		newMessage->data = new uint8_t[newMessage->size];
 		memcpy(newMessage->data, packet->data + sizeof(NetMessageHeader), newMessage->size);
 
-		if (newMessage->source != m_sessionMemberId)
+		if (newMessage->target == m_session->maxMembers)
+		{
+			if (newMessage->source != m_sessionMemberId)
+				writer.AddGlobalMessage(newMessage, false);
+		}
+		else
+		{
 			writer.AddMessage(newMessage, false);
+		}
 	}
 }
 
