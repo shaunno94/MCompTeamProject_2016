@@ -64,7 +64,5 @@ int main(void)
 
 	delete gameScene;
 
-	SoundSystem::Release();
-
 	return 0;
 }

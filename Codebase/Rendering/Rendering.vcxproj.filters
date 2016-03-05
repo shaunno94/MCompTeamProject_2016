@@ -249,6 +249,9 @@
     <ClInclude Include="PCNetProducerController.h">
       <Filter>Header Files\Input</Filter>
     </ClInclude>
+    <ClInclude Include="Button.h">
+      <Filter>Header Files\UI\HUD_GUI</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Renderer.cpp">
@@ -397,6 +400,9 @@
     </ClCompile>
     <ClCompile Include="PCNetProducerController.cpp">
       <Filter>Source Files\Input</Filter>
+    </ClCompile>
+    <ClCompile Include="Button.cpp">
+      <Filter>Source Files\UI</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

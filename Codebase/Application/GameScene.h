@@ -111,6 +111,8 @@ protected:
 	float currentTime = 0.0f;
 	float lastTime = 0;
 	int goalScored = 0;
+
+	bool gameStart;
 };
 
 struct GameCollisionFilter : public btOverlapFilterCallback

@@ -32,5 +32,5 @@ protected:
 	Texture*	m_Texture;
 
 
-	std::vector<GUIComponent*>	m_Children;
+	std::vector<GUIComponent*>	m_ChildComp;
 };
