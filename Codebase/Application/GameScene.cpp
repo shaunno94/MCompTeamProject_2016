@@ -258,7 +258,7 @@ void GameScene::DrawGUI()
 void GameScene::SetupControls()
 {
 	cc = new ControllerComponent(player);
-	myControllers->setProducer(player);
+	myControllers->setProducer(player, 0);
 
 	attachCam(player);
 }

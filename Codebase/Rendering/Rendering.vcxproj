@@ -176,6 +176,8 @@
     <ClInclude Include="Material.h" />
     <ClInclude Include="Mesh.h" />
     <ClInclude Include="ModelLoader.h" />
+    <ClInclude Include="NetClientControllerManager.h" />
+    <ClInclude Include="NetServerControllerManager.h" />
     <ClInclude Include="NitroGUI.h" />
     <ClInclude Include="OGLMesh.h" />
     <ClInclude Include="OGLRenderer.h" />
@@ -184,6 +186,8 @@
     <ClInclude Include="ParticleEmitter.h" />
     <ClInclude Include="ParticleManager.h" />
     <ClInclude Include="ParticleSystem.h" />
+    <ClInclude Include="PCNetController.h" />
+    <ClInclude Include="PCNetProducerController.h" />
     <ClInclude Include="PhysicsObject.h" />
     <ClInclude Include="PS4Controller.h" />
     <ClInclude Include="PS4Frame.h" />
@@ -226,12 +230,16 @@
     <ClCompile Include="Material.cpp" />
     <ClCompile Include="Mesh.cpp" />
     <ClCompile Include="ModelLoader.cpp" />
+    <ClCompile Include="NetClientControllerManager.cpp" />
+    <ClCompile Include="NetServerControllerManager.cpp" />
     <ClCompile Include="NitroGUI.cpp" />
     <ClCompile Include="OGLMesh.cpp" />
     <ClCompile Include="OGLRenderer.cpp" />
     <ClCompile Include="OrthoComponent.cpp" />
     <ClCompile Include="ParticleManager.cpp" />
     <ClCompile Include="ParticleSystem.cpp" />
+    <ClCompile Include="PCNetController.cpp" />
+    <ClCompile Include="PCNetProducerController.cpp" />
     <ClCompile Include="PhysicsObject.cpp" />
     <ClCompile Include="PS4Controller.cpp" />
     <ClCompile Include="PS4Frame.cpp" />
