@@ -438,9 +438,6 @@ void NetClient::PushUpdates()
 			const NetMessageList* memberMessages = sessionReadMessages->Get(i, j);
 			while (memberMessages)
 			{
-
-				std::cout << "++++++++++++++"LINE_SEPARATOR_DEF;
-
 				SendMsg(m_serverConnection, memberMessages->msg, memberMessages->msg->strategy == NetMessageStrategy::NetStackingMessageStrategy);
 				memberMessages = memberMessages->next;
 			}
@@ -452,9 +449,6 @@ void NetClient::PushUpdates()
 		const NetMessageList* globalMessages = sessionReadMessages->GetGlobal(i);
 		while (globalMessages)
 		{
-
-			std::cout << "----------------"LINE_SEPARATOR_DEF;
-
 			SendMsg(m_serverConnection, globalMessages->msg, globalMessages->msg->strategy == NetMessageStrategy::NetStackingMessageStrategy);
 			globalMessages = globalMessages->next;
 		}
