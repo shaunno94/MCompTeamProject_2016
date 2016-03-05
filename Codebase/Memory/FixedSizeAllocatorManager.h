@@ -18,6 +18,11 @@
 #define ALLOCATOR_BLOCK_SIZES_LARGEST 1024
 
 
+#ifdef _DEBUG
+#define ALOCATOR_TRACK_STATS
+#endif
+
+
 /// @ingroup Memory
 /// <summary>
 /// A suballocator manager class that uses several <see cref="FixedSizeAllocator"/> objects to allocate different size memory blocks.
@@ -28,7 +33,7 @@ private:
 	/// <summary>
 	/// Array of <see cref="FixedSizeAllocator"/> block sizes.
 	/// </summary>
-	static const size_t ALLOCATOR_BLOCK_SIZES[ALLOCATOR_BLOCK_SIZES_SIZE];
+	static const unsigned int ALLOCATOR_BLOCK_SIZES[ALLOCATOR_BLOCK_SIZES_SIZE];
 	/// <summary>
 	/// Mapping memory block sizes to <see cref="FixedSizeAllocator"/> with the closest block size.
 	/// </summary>
@@ -183,6 +188,25 @@ public:
 		p->~T();
 		Free(p, sizeof(T));
 	}
+
+
+#ifdef ALOCATOR_TRACK_STATS
+	inline uint64_t GetAllocatedMemory()
+	{
+		uint64_t result = 0;
+		for (unsigned int i = 0; i < ALLOCATOR_BLOCK_SIZES_SIZE; ++i)
+			result += m_allocators[i].GetAllocatedMemory();
+		return result;
+	}
+
+	inline uint64_t GetUsedMemory()
+	{
+		uint64_t result = 0;
+		for (unsigned int i = 0; i < ALLOCATOR_BLOCK_SIZES_SIZE; ++i)
+			result += m_allocators[i].GetUsedMemory();
+		return result;
+	}
+#endif
 
 };
 #endif

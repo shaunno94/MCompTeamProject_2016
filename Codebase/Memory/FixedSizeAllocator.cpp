@@ -45,7 +45,7 @@ void* FixedSizeAllocator::Allocate()
         PageHeader* newPage = reinterpret_cast<PageHeader*>(new char[m_pageSize]);
         newPage->Next = nullptr;
 
-#if ALOCATOR_TRACK_STATS
+#ifdef ALOCATOR_TRACK_STATS
         ++m_numPages;
         m_numBlocks += m_blocksPerPage;
         m_numFreeBlocks += m_blocksPerPage;
@@ -75,7 +75,7 @@ void* FixedSizeAllocator::Allocate()
     BlockHeader* freeBlock = m_freeList;
     m_freeList = m_freeList->Next;
 
-#if ALOCATOR_TRACK_STATS
+#ifdef ALOCATOR_TRACK_STATS
     --m_numFreeBlocks;
 #endif
 
@@ -99,7 +99,7 @@ void FixedSizeAllocator::Free(void* p)
     block->Next = m_freeList;
     m_freeList = block;
 
-#if ALOCATOR_TRACK_STATS
+#ifdef ALOCATOR_TRACK_STATS
     ++m_numFreeBlocks;
 #endif
 }
@@ -115,7 +115,7 @@ void FixedSizeAllocator::FreeAll(void)
     }
     m_freeList = nullptr;
 
-#if ALOCATOR_TRACK_STATS
+#ifdef ALOCATOR_TRACK_STATS
     // re-init stats
     m_numPages = 0;
     m_numBlocks = 0;
