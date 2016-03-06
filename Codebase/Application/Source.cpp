@@ -46,16 +46,13 @@ int main(void)
 	renderer.SetCurrentScene(gameScene);
 	gameScene->SetControllerActor();
 
-	//TODO: Check if needed: Frame outside was added if UpdateWindow() is a blocking call that syncs to 60fps
-	MEASURING_TIMER_LOG_START("Frame Outside");
-
 #ifndef ORBIS
 	while (Window::GetWindow().UpdateWindow() && !Window::GetKeyboard()->KeyDown(KEYBOARD_ESCAPE))
 #else
 	while (true)
 #endif
 	{
-		MEASURING_TIMER_LOG_START("Frame Inside");
+		MEASURING_TIMER_LOG_START("Frame");
 #ifdef ORBIS
 		input.Poll();
 #endif
@@ -78,12 +75,10 @@ int main(void)
 		MEASURING_TIMER_LOG_END();
 
 		MEASURING_TIMER_LOG_END();//end frame inside
-		MEASURING_TIMER_LOG_END();//end frame outside
 
 		//TODO: Print time steps. Can pass stringstream to get a formated output string
 		//MEASURING_TIMER_PRINT(std::cout);
 		MEASURING_TIMER_CLEAR();
-		MEASURING_TIMER_LOG_START("Frame Outside");
 	}
 
 	delete gameScene;
