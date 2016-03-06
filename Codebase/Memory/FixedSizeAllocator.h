@@ -122,12 +122,12 @@ public:
 	void FreeAll();
 
 #ifdef ALOCATOR_TRACK_STATS
-	inline uint64_t GetAllocatedMemory()
+	inline uint64_t GetAllocatedMemory() const
 	{
 		return static_cast<uint64_t>(m_pageSize)* static_cast<uint64_t>(m_numPages);
 	}
 
-	inline uint64_t GetUsedMemory()
+	inline uint64_t GetUsedMemory() const
 	{
 		return static_cast<uint64_t>(m_numBlocks - m_numFreeBlocks) * static_cast<uint64_t>(m_dataSize);
 	}
@@ -185,7 +185,7 @@ private:
 	/// </returns>
 	inline BlockHeader* NextBlock(BlockHeader* p)
 	{
-		return reinterpret_cast<BlockHeader*> ((uintptr_t)p + m_blockSize);
+		return reinterpret_cast<BlockHeader*> (uintptr_t(p) + m_blockSize);
 	}
 
 	/// <summary>

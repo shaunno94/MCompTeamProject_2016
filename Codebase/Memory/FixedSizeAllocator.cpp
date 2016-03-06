@@ -43,7 +43,6 @@ void* FixedSizeAllocator::Allocate()
     if (!m_freeList) {
         // allocate new page
         PageHeader* newPage = reinterpret_cast<PageHeader*>(new char[m_pageSize]);
-        newPage->Next = nullptr;
 
 #ifdef ALOCATOR_TRACK_STATS
         ++m_numPages;
