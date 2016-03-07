@@ -20,7 +20,7 @@ void KeyboardController::CheckInput(){
 	float turn = 0;
 	bool airbourne = object->airbourne();
 
-	auto forward = object->getForwardVelocity();
+	float forward = object->getForwardVelocity();
 
 	if (Window::GetKeyboard()->KeyDown(KEYBOARD_UP) || Window::GetKeyboard()->KeyDown(KEYBOARD_W))
 	{

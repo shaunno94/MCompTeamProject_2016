@@ -89,7 +89,7 @@ void ControllerComponent::updateObject(float dt)
 	btVector3 fullVelocity = dynamic_cast<RigidPhysicsObject*>(m_parent->GetPhysicsComponent())->GetPhysicsBody()->getLinearVelocity();
 
 	btScalar friction = 0.8;
-	float maxSpeed = 100.0f;
+	//float maxSpeed = 100.0f;
 
 	if (velocity.length2() > 0.0000001)
 	{
