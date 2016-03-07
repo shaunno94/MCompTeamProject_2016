@@ -28,7 +28,6 @@ public:
 		return m_parent;
 	}
 
-	bool adjustForRotation = false;
 protected:
 	GameObject* m_parent;
 	Vec3Physics force;
