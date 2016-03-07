@@ -177,6 +177,7 @@
     <ClInclude Include="Material.h" />
     <ClInclude Include="MenuBackgroundGUI.h" />
     <ClInclude Include="MenuController.h" />
+    <ClInclude Include="MenuGUI.h" />
     <ClInclude Include="Mesh.h" />
     <ClInclude Include="ModelLoader.h" />
     <ClInclude Include="NetClientControllerManager.h" />
@@ -235,6 +236,7 @@
     <ClCompile Include="Material.cpp" />
     <ClCompile Include="MenuBackgroundGUI.cpp" />
     <ClCompile Include="MenuController.cpp" />
+    <ClCompile Include="MenuGUI.cpp" />
     <ClCompile Include="Mesh.cpp" />
     <ClCompile Include="ModelLoader.cpp" />
     <ClCompile Include="NetClientControllerManager.cpp" />

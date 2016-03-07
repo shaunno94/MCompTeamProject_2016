@@ -76,6 +76,12 @@
     <Filter Include="Header Files\UI\Scoretable_GUI">
       <UniqueIdentifier>{fafb15a4-631a-4991-b203-014cb65a0e7f}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\UI\MenuGUI">
+      <UniqueIdentifier>{b40b5df4-e11a-4c18-89e4-2d5133c4ae74}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\UI\MenuGUI">
+      <UniqueIdentifier>{627b3e3e-d3cf-4631-a920-4efafc0ff7c8}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Renderer.h">
@@ -255,11 +261,14 @@
     <ClInclude Include="PS4MenuController.h">
       <Filter>Header Files\Input</Filter>
     </ClInclude>
-    <ClInclude Include="MenuBackgroundGUI.h">
-      <Filter>Header Files\UI</Filter>
-    </ClInclude>
     <ClInclude Include="OrthoComponent.h">
       <Filter>Header Files\UI</Filter>
+    </ClInclude>
+    <ClInclude Include="MenuBackgroundGUI.h">
+      <Filter>Header Files\UI\MenuGUI</Filter>
+    </ClInclude>
+    <ClInclude Include="MenuGUI.h">
+      <Filter>Header Files\UI\MenuGUI</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -420,7 +429,10 @@
       <Filter>Source Files\Input</Filter>
     </ClCompile>
     <ClCompile Include="MenuBackgroundGUI.cpp">
-      <Filter>Source Files\UI</Filter>
+      <Filter>Source Files\UI\MenuGUI</Filter>
+    </ClCompile>
+    <ClCompile Include="MenuGUI.cpp">
+      <Filter>Source Files\UI\MenuGUI</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
