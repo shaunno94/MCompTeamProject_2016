@@ -1,7 +1,7 @@
 #include "MenuScene.h"
 
 
-MenuScene::MenuScene(ControllerManager* controller)
+MenuScene::MenuScene(ControllerManager* controller, bool selected)
 :myControllers(controller)
 {
 	SoundSystem::Initialise();
