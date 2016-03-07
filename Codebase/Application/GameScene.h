@@ -48,7 +48,9 @@ public:
 	void SetupMaterials();
 	void SetupControls();
 	void DrawGUI();
+
 	void SetControllerActor();
+	void SetupAI();
 
 	void IncrementScore(int team);
 
@@ -67,7 +69,6 @@ protected:
 	void ResetObjects();
 
 	void applyImpulseFromExplosion(CarGameObject* car);
-
 	GameObject* ball;
 	GameObject* light1;
 	GameObject* light2;
