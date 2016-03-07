@@ -156,7 +156,7 @@ void AIControllerComponent::AddForce(float x, float y, float z)
 	dot = in.Dot(forward);
 	if (dot >= 0)
 	{
-		force = forward * 180000;
+		force = in * 180000;
 	}
 	else
 	{

@@ -29,7 +29,7 @@ void AggressiveState::Update(float dt)
 
 	btVector3 playerVel = m_playerPhys->GetPhysicsBody()->getLinearVelocity();
 
-	btVector3 desiredPos = playerPos + playerVel;
+	btVector3 desiredPos = playerPos - playerVel;
 
 	btVector3 direction = desiredPos - parentPos;
 
