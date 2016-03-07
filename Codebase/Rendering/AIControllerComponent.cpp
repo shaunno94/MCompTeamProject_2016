@@ -10,6 +10,7 @@
 #include "AI\AdvanceState.h"
 #include "AI\ArenaHalfTrigger.h"
 #include "AI\DefenceState.h"
+#include "AI\AggressiveState.h"
 
 AIControllerComponent::AIControllerComponent(GameObject* parent, unsigned int type) :
 	ControllerComponent(parent),
@@ -23,6 +24,7 @@ AIControllerComponent::~AIControllerComponent()
 
 void AIControllerComponent::setupAI()
 {
+	GameObject* player = Renderer::GetInstance()->GetCurrentScene()->findGameObject("player");
 	GameObject* ball = Renderer::GetInstance()->GetCurrentScene()->findGameObject("ball");
 	GameObject* targetGoal = Renderer::GetInstance()->GetCurrentScene()->findGameObject("goal1");
 	GameObject* teamGoal = Renderer::GetInstance()->GetCurrentScene()->findGameObject("goal2");
@@ -96,6 +98,11 @@ void AIControllerComponent::setupAI()
 	}
 		break;
 	case AGGRESSIVE:
+	{
+					   AggressiveState* aggroState = new AggressiveState(*m_StateMachine, *m_parent, *ball, *player);
+					   m_StateMachine->AddState(AGGRO, aggroState);
+					   m_StateMachine->ChangeState(AGGRO);
+	}
 		break;
 	default:
 		break;

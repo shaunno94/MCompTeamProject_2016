@@ -55,15 +55,14 @@ GameScene::~GameScene()
 
 void GameScene::SetControllerActor()
 {
-	myControllers->setActor(Renderer::GetInstance()->GetCurrentScene()->findGameObject("shooterAI"), 0);
-	myControllers->setActor(Renderer::GetInstance()->GetCurrentScene()->findGameObject("goalieAI"), 1);
+	myControllers->setActor(Renderer::GetInstance()->GetCurrentScene()->findGameObject("shooterAI"), SHOOTER);
+	myControllers->setActor(Renderer::GetInstance()->GetCurrentScene()->findGameObject("goalieAI"), GOALKEEPER);
+	myControllers->setActor(Renderer::GetInstance()->GetCurrentScene()->findGameObject("aggroAI"), AGGRESSIVE);
 }
 
 void GameScene::IncrementScore(int team)
 {
 	scores[team % 2]++;
-	std::cout << "TEAM " << team + 1 << " SCORED!" << endl;
-	std::cout << scores[0] << " - " << scores[1] << endl;
 
 	SoundMOD mod;
 	mod.looping = false;
@@ -128,7 +127,9 @@ void GameScene::SetupGameObjects()
 
 	shooterAI = new CarGameObject(Vec3Physics(-190, 2, 30), QuatPhysics(0, 0, 0, 1), aiMaterial, "shooterAI", COL_AI_CAR);
 
-	goalieAI = new CarGameObject(Vec3Physics(-230, 2, -30), QuatPhysics(0, 0, 0, 1), ai2Material, "goalieAI", COL_AI_CAR);
+	goalieAI = new CarGameObject(Vec3Physics(-230, 2, 0), QuatPhysics(0, 0, 0, 1), aiMaterial, "goalieAI", COL_AI_CAR);
+
+	aggroAI = new CarGameObject(Vec3Physics(-190, 2, -30), QuatPhysics(0, 0, 0, 1), ai2Material, "aggroAI", COL_AI_CAR);
 
 
 	// Create Stadium
@@ -152,6 +153,7 @@ void GameScene::SetupGameObjects()
 	addGameObject(ball);
 	addGameObject(shooterAI);
 	addGameObject(goalieAI);
+	addGameObject(aggroAI);
 	addGameObject(goal1);
 	addGameObject(goal2);
 
@@ -184,6 +186,7 @@ void GameScene::LoadAudio()
 	player->SetAudioComponent(new AudioCompCarLitener(true));
 	shooterAI->SetAudioComponent(new AudioCompCar(false));
 	goalieAI->SetAudioComponent(new AudioCompCar(false));
+	aggroAI->SetAudioComponent(new AudioCompCar(false));
 	//-------- SOUND
 }
 
@@ -292,6 +295,7 @@ void GameScene::ResetObjects()
 
 	ball->GetPhysicsComponent()->GetPhysicsBody()->setWorldTransform(btTransform(btQuaternion(0, 0, 0, 1), zeroVector));
 
+	//TODO: Reset player positions
 }
 
 
