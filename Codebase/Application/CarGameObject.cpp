@@ -9,11 +9,11 @@ CarGameObject::CarGameObject(Vec3Physics& position, QuatPhysics& rotation, Mater
 
 	RigidPhysicsObject* carPhysics = new RigidPhysicsObject();
 	carPhysics->CreateCollisionShape(Vec3Physics(5.2, 2.0, 6.5), CUBOID);
-	carPhysics->CreatePhysicsBody(8.0, position, rotation, Vec3Physics(1, 1, 1));
+	carPhysics->CreatePhysicsBody(90000.0, position, rotation);
 	carPhysics->GetPhysicsBody()->setRestitution(btScalar(0.3));
 	carPhysics->GetPhysicsBody()->setFriction(0.5);
-	carPhysics->GetPhysicsBody()->setRollingFriction(0.5);
-	carPhysics->GetPhysicsBody()->setHitFraction(0.5);
+	carPhysics->GetPhysicsBody()->setRollingFriction(0.7);
+	carPhysics->GetPhysicsBody()->setHitFraction(0.2);
 	carPhysics->GetPhysicsBody()->getBroadphaseProxy()->m_collisionFilterMask = collisionFilterMask;
 
 	this->SetRenderComponent(new RenderComponent(material, carBaseMesh));
