@@ -9,7 +9,7 @@ CarGameObject::CarGameObject(Vec3Physics& position, QuatPhysics& rotation, Mater
 
 	RigidPhysicsObject* carPhysics = new RigidPhysicsObject();
 	carPhysics->CreateCollisionShape(Vec3Physics(5.2, 2.0, 6.5), CUBOID);
-	carPhysics->CreatePhysicsBody(90000.0, position, rotation);
+	carPhysics->CreatePhysicsBody(100000.0, position, rotation);
 	carPhysics->GetPhysicsBody()->setRestitution(btScalar(0.3));
 	carPhysics->GetPhysicsBody()->setFriction(0.5);
 	carPhysics->GetPhysicsBody()->setRollingFriction(0.7);
