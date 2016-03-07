@@ -53,24 +53,31 @@ void ControllerComponent::updateObject(float dt)
 
 	Vec3Physics left = (getOrientation() * Vec3Physics(-1, 0, 0)).Normalize();
 	btVector3 btleft(left.x, left.y, left.z);
-	Vec3Physics forward = (getOrientation() * Vec3Physics(0, 0, -1)).Normalize();
+	Vec3Physics forward = (getOrientation() * Vec3Physics(0, 0, 1)).Normalize();
 	btVector3 btforward(forward.x, forward.y, forward.z);
 	btVector3 velocity = -m_parent->GetPhysicsComponent()->GetPhysicsBody()->getInterpolationLinearVelocity();
 	btScalar friction = 0.5;
 
 	if (velocity.length2() > 0.0000001)
 	{
-		friction = std::abs((2.0 * (velocity.normalize()).dot(btleft.normalize())));
+		float leftDot = (velocity.normalize()).dot(btleft.normalize());
+		friction = std::abs((2.0 * leftDot));
 
 		friction = friction <= 0.8 ? 0.8 : friction;
 
+		if (Window::GetWindow().GetKeyboard()->KeyTriggered(KEYBOARD_H)){
+			int t = 0;
+		}
 
-		/*float dot = velocity.normalize().dot(btforward.normalize());
-		velocity = dynamic_cast<RigidPhysicsObject*>(m_parent->GetPhysicsComponent())->GetPhysicsBody()->getLinearVelocity();
-		float angle = acos(dot);
+		if (!airbourne()){
+			float angle = leftDot * 1.5708;
+			velocity = dynamic_cast<RigidPhysicsObject*>(m_parent->GetPhysicsComponent())->GetPhysicsBody()->getLinearVelocity();
 
-		dynamic_cast<RigidPhysicsObject*>(m_parent->GetPhysicsComponent())->GetPhysicsBody()->setLinearVelocity(velocity * btMatrix3x3(btQuaternion(btVector3(0, 1, 0), angle)));
-	*/}
+			if (getForwardVelocity() < 0)
+				angle = -angle;
+			dynamic_cast<RigidPhysicsObject*>(m_parent->GetPhysicsComponent())->GetPhysicsBody()->setLinearVelocity(velocity * btMatrix3x3(btQuaternion(btVector3(0, 1, 0), -angle)));
+		}
+	}
 
 	m_parent->GetPhysicsComponent()->GetPhysicsBody()->setFriction(friction);
 }
