@@ -29,7 +29,7 @@ VS_OUTPUT main(VS_INPUT Input)
 	
 	float4x4 MVP = mul(mul(projMatrix, viewMatrix), modelMatrix);
 	Output.position = mul(MVP, float4(Input.position.xyz, 1.0));
-	Output.texCoord = float2(Input.texCoord.x, -Input.texCoord.y);
+	Output.texCoord = Input.texCoord;
 
 	return Output;
 }

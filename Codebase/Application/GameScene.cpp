@@ -251,7 +251,6 @@ void GameScene::SetupMaterials()
 
 void GameScene::DrawGUI()
 {
-
 	//Define Orthographic Component
 	hudOrtho = new OrthoComponent(1.0f);
 	//Add child GUI components, while defining materials, texture, and depth

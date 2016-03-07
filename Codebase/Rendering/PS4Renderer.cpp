@@ -196,43 +196,6 @@ void PS4Renderer::SetTextureFlags(textureHandle&, unsigned int flags)
 	{
 		trilinearSampler.setWrapMode(sce::Gnm::kWrapModeClampBorder, sce::Gnm::kWrapModeClampBorder, sce::Gnm::kWrapModeClampBorder);
 	}
-
-	// Filtering options
-	/*if ((flags & NEAREST_NEIGHBOUR_MIN_FILTERING) == NEAREST_NEIGHBOUR_MIN_FILTERING) 
-	{
-		if ((flags & NEAREST_NEIGHBOUR_MAX_FILTERING) == NEAREST_NEIGHBOUR_MAX_FILTERING)
-		{
-			trilinearSampler.setXyFilterMode(sce::Gnm::kFilterModePoint, sce::Gnm::kFilterModePoint);
-			trilinearSampler.setMipFilterMode(sce::Gnm::kMipFilterModePoint);
-		}
-		//mag/min filter
-		trilinearSampler.setXyFilterMode(sce::Gnm::kFilterModeAnisoBilinear, sce::Gnm::kFilterModePoint);
-		trilinearSampler.setMipFilterMode(sce::Gnm::kMipFilterModePoint);
-	}
-	else if ((flags & BILINEAR_MIN_FILTERING) == BILINEAR_MIN_FILTERING) 
-	{
-		if ((flags & BILINEAR_MAX_FILTERING) == BILINEAR_MAX_FILTERING) 
-		{
-			trilinearSampler.setXyFilterMode(sce::Gnm::kFilterModeAnisoBilinear, sce::Gnm::kFilterModeAnisoBilinear);
-			trilinearSampler.setMipFilterMode(sce::Gnm::kMipFilterModePoint);
-		}
-		trilinearSampler.setXyFilterMode(sce::Gnm::kFilterModeAnisoBilinear, sce::Gnm::kFilterModeAnisoBilinear);
-		trilinearSampler.setMipFilterMode(sce::Gnm::kMipFilterModePoint);
-	}
-	else if ((flags & TRILINEAR_MIN_FILTERING) == TRILINEAR_MIN_FILTERING) {
-		trilinearSampler.setXyFilterMode(sce::Gnm::kFilterModeAnisoBilinear, sce::Gnm::kFilterModeAnisoBilinear);
-		trilinearSampler.setMipFilterMode(sce::Gnm::kMipFilterModeLinear);
-	}
-
-
-	else if ((flags & TRILINEAR_MAX_FILTERING) == TRILINEAR_MAX_FILTERING) {
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR_MIPMAP_LINEAR);
-	}*/
-
-	/*if ((flags & ANISOTROPIC_FILTERING) == ANISOTROPIC_FILTERING) {
-		trilinearSampler.setXyFilterMode(sce::Gnm::kFilterModeAnisoBilinear, sce::Gnm::kFilterModeAnisoBilinear);
-		trilinearSampler.setMipFilterMode(sce::Gnm::kMipFilterModeLinear);
-	}*/
 	currentGFXContext->setSamplers(sce::Gnm::kShaderStagePs, 0, 1, &trilinearSampler);
 }
 
@@ -259,7 +222,6 @@ void PS4Renderer::InitCMD(PS4Buffer* buffer)
 
 void PS4Renderer::FillBuffers()
 {
-	dsc.setDepthEnable(true);
 	offScreenBuffers[G_BUFFER]->ClearBuffer(*currentGFXContext);
 	offScreenBuffers[G_BUFFER]->SetRenderTargets(*currentGFXContext);
 	
@@ -304,7 +266,6 @@ void PS4Renderer::DrawPointLights()
 
 void PS4Renderer::CombineBuffers()
 {
-	dsc.setDepthEnable(false);
 	currentPS4Buffer->ClearBuffer(*currentGFXContext);
 	currentPS4Buffer->SetRenderTargets(*currentGFXContext);
 
@@ -373,10 +334,6 @@ void PS4Renderer::SetTexture(const shaderResourceLocation& location, textureHand
 	if (location.id >= 0)
 	{
 		currentGFXContext->setTextures(sce::Gnm::kShaderStagePs, location.id, 1, &handle);
-	}
-	if (location.id > 0)
-	{
-		bool b = true;
 	}
 }
 
