@@ -276,7 +276,7 @@ void GameScene::applyImpulseFromExplosion(CarGameObject* car)
 
 	attenuation = max(1 - (attenuation / (600 * 600)), 0.0f);
 
-	dynamic_cast<RigidPhysicsObject*>(car->GetPhysicsComponent())->GetPhysicsBody()->applyCentralImpulse(ballToCar * attenuation * 1500.0f);
+	dynamic_cast<RigidPhysicsObject*>(car->GetPhysicsComponent())->GetPhysicsBody()->applyCentralImpulse(ballToCar * attenuation * 30000000.0f);
 }
 
 void GameScene::SetupAI()
