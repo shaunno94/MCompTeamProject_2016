@@ -41,7 +41,7 @@ public:
 	{
 		return m_connections.size();
 	}
-	inline NetConnectionData* GetConnection(unsigned int index) const
+	inline NetConnectionDataInternal* GetConnection(unsigned int index) const
 	{
 		return m_connections[index];
 	}
@@ -54,7 +54,7 @@ public:
 		return m_state;
 	}
 
-	bool AddToSession(NetConnectionData* connection);
+	bool AddToSession(NetConnectionDataInternal* connection);
 	//bool RemoveFromSession(unsigned int id);
 
 	bool StartSession();

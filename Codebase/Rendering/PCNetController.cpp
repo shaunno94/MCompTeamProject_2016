@@ -20,7 +20,7 @@ void PCNetController::Sync(NetSessionReader& reader)
 	if (!sessionMessages)
 	return;
 
-	auto* messageList = sessionMessages->Get(m_id, NetReservedPhysicsMessageType);
+	auto* messageList = sessionMessages->Get(m_id, NetReservedPhysicsMessageType + m_id);
 	if (!messageList)
 		return;
 
@@ -62,5 +62,5 @@ void PCNetController::Sync(NetSessionWriter& writer)
 	data.angularVelocity.y = body->getAngularVelocity().y();
 	data.angularVelocity.z = body->getAngularVelocity().z();
 
-	writer.AddGlobalMessage(NetMessage::Make(data, -1, m_id, NetReservedPhysicsMessageType, NetMessageStrategy::NetLatestMessageStrategy));
+	writer.AddGlobalMessage(NetMessage::Make(data, -1, m_id, NetReservedPhysicsMessageType + m_id, NetMessageStrategy::NetLatestMessageStrategy));
 }

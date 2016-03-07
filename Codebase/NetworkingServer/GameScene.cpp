@@ -53,7 +53,7 @@ GameScene::~GameScene()
 
 void GameScene::SetControllerActor()
 {
-	myControllers->setActor(Renderer::GetInstance()->GetCurrentScene()->findGameObject("shooterAI"), 1);
+	myControllers->setActor(Renderer::GetInstance()->GetCurrentScene()->findGameObject("shooterAI"), 2);
 	//myControllers->setActor(Renderer::GetInstance()->GetCurrentScene()->findGameObject("goalieAI"), 1);
 }
 
@@ -259,6 +259,8 @@ void GameScene::SetupControls()
 {
 	cc = new ControllerComponent(player);
 	myControllers->setProducer(player, 0);
+
+	myControllers->setProducer(ball, 1);
 
 	attachCam(player);
 }

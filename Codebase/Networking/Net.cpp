@@ -18,11 +18,17 @@ NetConnectionData::NetConnectionData(ENetPeer* peer)
 	static const size_t CONNECTION_NAME_MAX_LENGTH = 64;
 	char buffer[CONNECTION_NAME_MAX_LENGTH];
 
-	if (!enet_address_get_host_ip(&(peer->address), buffer, CONNECTION_NAME_MAX_LENGTH))
-		m_addressStr.assign(buffer);
-
 	m_peer = peer;
 	isPeer = peer ? true : false;
+	if (isPeer)
+	{
+		if (!enet_address_get_host_ip(&(peer->address), buffer, CONNECTION_NAME_MAX_LENGTH))
+			m_addressStr.assign(buffer);
+	}
+	else
+	{
+		ready = true;
+	}
 }
 NetConnectionData::~NetConnectionData()
 {

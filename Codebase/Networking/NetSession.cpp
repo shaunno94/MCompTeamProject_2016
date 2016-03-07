@@ -1,6 +1,7 @@
 #include "NetSession.h"
 #include <cassert>
 #include "constants.h"
+#include <iostream>
 
 
 NetActorInfo::NetActorInfo()
@@ -269,9 +270,9 @@ NetSessionWriter::~NetSessionWriter()
 		else
 		{
 			messageBuffer->SetInternal(
-				messagePair.second ? messagePair.first->target : messagePair.first->source,
-				messagePair.first
-				);
+			  messagePair.second ? messagePair.first->target : messagePair.first->source,
+			  messagePair.first
+			);
 		}
 	}
 
@@ -286,6 +287,7 @@ void NetSessionWriter::AddMessage(NetMessage* message, bool sending)
 	assert(("NetSessionWriter::AddMemberMessage message member index out of bounds", message->target < m_sessionBuffer->m_messageBuffers[0]->maxMembers));
 	assert(("NetSessionWriter::AddMemberMessage message source out of bounds", message->source < m_sessionBuffer->m_messageBuffers[0]->maxMembers));
 	assert(("NetSessionWriter::AddMemberMessage message type index out of bounds", message->type < m_sessionBuffer->m_messageBuffers[0]->maxMessageTypes));
+
 	m_messages.push_back(std::pair<NetMessage*, bool>(message, sending));
 }
 

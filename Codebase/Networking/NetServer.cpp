@@ -70,14 +70,12 @@ NetServer::~NetServer()
 }
 
 
-bool NetServer::AddToSession(NetConnectionData* connection)
+bool NetServer::AddToSession(NetConnectionDataInternal* connection)
 {
-	//TODO:assign ID
-	//TODO:send a message for the new member about the session
-
 	if (m_session->GetState() != NetSessionInactive)
 		return false;
 
+	//has to be in the connection list
 	auto position = std::find(m_connections.begin(), m_connections.end(), connection);
 	if (position != m_connections.end())
 	{
@@ -92,9 +90,15 @@ bool NetServer::AddToSession(NetConnectionData* connection)
 
 		SendInternal(connection, idMessage, true);
 
-		m_session->m_members.push_back((NetConnectionDataInternal*)connection);
+		m_session->m_members.push_back(connection);
 		++m_version;
-
+		SyncSession();
+	}
+	else if (!connection->isPeer)
+	{
+		connection->id = m_session->m_members.size();
+		m_session->m_members.push_back(connection);
+		++m_version;
 		SyncSession();
 	}
 	return true;
