@@ -3,6 +3,7 @@
 #include "WheelObject.h"
 #include "Renderer.h"
 #include <algorithm>
+#include "Application\GameScene.h"
 
 ControllerComponent::ControllerComponent(GameObject* parent)
 {
@@ -13,6 +14,7 @@ ControllerComponent::ControllerComponent(GameObject* parent)
 	dPitch = 0;
 	dYaw = 0;
 	reset();
+	m_updateState = false;
 }
 
 
@@ -22,6 +24,31 @@ ControllerComponent::~ControllerComponent()
 
 void ControllerComponent::updateObject(float dt)
 {
+	//networking
+	if (m_updateState)
+	{
+		auto rigid = static_cast<RigidPhysicsObject*>(m_parent->GetPhysicsComponent())->GetPhysicsBody();
+		btVector3 oldOrigin = rigid->getWorldTransform().getOrigin();
+		btVector3 newOrigin = btVector3(m_position.x, m_position.y, m_position.z);
+		btVector3 originDiff = oldOrigin - newOrigin;
+
+		if (m_linearVelocity.LengthSq() > 0.00001f || m_angularVelocity.LengthSq() > 0.00001f || originDiff.length2() > 0.00001f)
+		{
+			rigid->activate(true);
+			btTransform newWorldTrans;
+			newWorldTrans.setOrigin(newOrigin);
+			newWorldTrans.setRotation(btQuaternion(m_orientation.x, m_orientation.y, m_orientation.z, m_orientation.w));
+			rigid->setWorldTransform(newWorldTrans);
+			//TODO: check if MotionState update is needed?
+			rigid->getMotionState()->setWorldTransform(newWorldTrans);
+
+			rigid->setLinearVelocity(btVector3(m_linearVelocity.x, m_linearVelocity.y, m_linearVelocity.z));
+			rigid->setAngularVelocity(btVector3(m_angularVelocity.x, m_angularVelocity.y, m_angularVelocity.z));
+		}
+
+		m_updateState = false;
+	}
+
 	if (force.LengthSq() > 0.0000001 || torque.LengthSq() > 0.0000001 || impulse.LengthSq() > 0.0000001)
 		dynamic_cast<RigidPhysicsObject*>(m_parent->GetPhysicsComponent())->GetPhysicsBody()->activate();
 
@@ -36,7 +63,8 @@ void ControllerComponent::updateObject(float dt)
 	else if (up.Dot(Vec3(0, 1, 0)) < 0.5) {
 		m_inactiveFramesUpsideDown++;
 	}
-	else {
+	else
+	{
 		m_inactiveFramesUpsideDown = 0;
 	}
 
@@ -53,22 +81,24 @@ void ControllerComponent::updateObject(float dt)
 
 	Vec3Physics left = (getOrientation() * Vec3Physics(-1, 0, 0)).Normalize();
 	btVector3 btleft(left.x, left.y, left.z);
-	Vec3Physics forward = (getOrientation() * Vec3Physics(0, 0, 1)).Normalize();
-	btVector3 btforward(forward.x, forward.y, forward.z);
 	btVector3 velocity = -m_parent->GetPhysicsComponent()->GetPhysicsBody()->getInterpolationLinearVelocity();
-	btScalar friction = 0.5;
+
+	btVector3 fullVelocity = dynamic_cast<RigidPhysicsObject*>(m_parent->GetPhysicsComponent())->GetPhysicsBody()->getLinearVelocity();
+
+	btScalar friction = 0.8;
+	//float maxSpeed = 100.0f;
 
 	if (velocity.length2() > 0.0000001)
 	{
 		float leftDot = (velocity.normalize()).dot(btleft.normalize());
 		friction = std::abs((2.0 * leftDot));
+		/*if (dynamic_cast<GameScene*>(Renderer::GetInstance()->GetCurrentScene())->GetGoalScored() == 0) {
+			float velocityFactor = (maxSpeed * maxSpeed) / std::max(fullVelocity.length2(), maxSpeed * maxSpeed);
+			dynamic_cast<RigidPhysicsObject*>(m_parent->GetPhysicsComponent())->GetPhysicsBody()->setLinearVelocity(fullVelocity * velocityFactor);
+		}*/
+				friction = friction <= 1 ? 1 : friction;
 
-		friction = friction <= 0.8 ? 0.8 : friction;
-
-		if (Window::GetWindow().GetKeyboard()->KeyTriggered(KEYBOARD_H)){
-			int t = 0;
-		}
-
+		
 		if (!airbourne()){
 			float angle = leftDot * 1.5708;
 			velocity = dynamic_cast<RigidPhysicsObject*>(m_parent->GetPhysicsComponent())->GetPhysicsBody()->getLinearVelocity();
@@ -100,6 +130,15 @@ void ControllerComponent::AddImpulse(float x, float y, float z)
 	impulse.x = (x);
 	impulse.y = (y);
 	impulse.z = (z);
+}
+
+void ControllerComponent::SetState(const Vec3Physics& pos, const QuatPhysics& orientation, const Vec3Physics& linearVelocity, const Vec3Physics& angularVelocity)
+{
+	m_position = pos;
+	m_orientation = orientation;
+	m_linearVelocity = linearVelocity;
+	m_angularVelocity = angularVelocity;
+	m_updateState = true;
 }
 
 Mat4Physics ControllerComponent::getOrientation()

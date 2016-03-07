@@ -51,6 +51,26 @@ void AudioComponent::SetRadius(float rad)
 	}
 }
 
+// Car Audio
+
+#define MAX_REV_VOL 0.5f
+#define MIN_REV_VOL 0.3f
+
+#define MAX_REV_PIT 1.8f
+#define MIN_REV_PIT 0.1f
+
+#define MAX_IDLE_VOL 0.15f
+#define MIN_IDLE_VOL 0.0f
+
+#define REV_SPEED_VOL 50.0f // degree of interpolation
+#define REV_SPEED_PIT 70.0f 
+#define IDLE_SPEED_VOL 15.0f // lower = faster cut off
+
+enum SoundHolder {
+	IDLE,
+	REV
+};
+
 AudioCompCar::AudioCompCar(bool global) : AudioComponent()
 {
 	// idle noise
@@ -65,30 +85,12 @@ AudioCompCar::AudioCompCar(bool global) : AudioComponent()
 
 	m_AudioList.push_back(emt);
 
+	m_Pitch = MIN_REV_PIT;
+
 	AddEmitters();
 
-	SetRadius(200.0f);
+	SetRadius(300.0f);
 }
-
-// Car Audio
-
-#define MAX_REV_VOL 0.5f
-#define MIN_REV_VOL 0.1f
-
-#define MAX_REV_PIT 1.5f
-#define MIN_REV_PIT 0.2f
-
-#define MAX_IDLE_VOL 0.15f
-#define MIN_IDLE_VOL 0.0f
-
-#define REV_SPEED_VOL 50.0f // degree of interpolation
-#define REV_SPEED_PIT 70.0f 
-#define IDLE_SPEED_VOL 15.0f // lower = faster cut off
-
-enum SoundHolder {
-	IDLE,
-	REV
-};
 
 void AudioCompCar::Update()
 {
@@ -113,15 +115,12 @@ void AudioCompCar::Update()
 	speedNorm = fmin(speedNorm, MAX_REV_PIT); // max pitch
 
 	// gear shift
-	if (speedNorm < 0.6f) { // boost pitch when going slow
-		speedNorm += 0.4f;
-	}
-	else if (speedNorm < 0.9f) {
-		speedNorm += 0.2f;
-	}
-
+	m_Pitch += m_Pitch <= speedNorm ? 0.015f : -0.03f;
 	
-	m_AudioList[REV]->SetPitch(speedNorm);
+	m_Pitch = fmin(MAX_REV_PIT, m_Pitch);
+	m_Pitch = fmax(MIN_REV_PIT, m_Pitch);
+	
+	m_AudioList[REV]->SetPitch(m_Pitch);
 }
 
 // Car Audio listener

@@ -1,6 +1,7 @@
 #pragma once
 #include "GUIComponent.h"
 #include "GameObject.h"
+#include "Font.h"
 
 class ScoreboardGUIComponent : public GUIComponent
 {
@@ -11,9 +12,15 @@ public:
 	virtual void Update();
 	virtual void Render();
 
+	void Update(int& scoreA, int& scoreB, float& time);
+
 protected:
-	void Update(int scoreA, int scoreB, int timeRem);
-	int m_ScoreA;
-	int m_ScoreB;
-	int m_TimeRem;
+	GameObject* text;
+	RenderComponent* text_renderComp;
+
+	Font* font;
+
+	int timeRem;
+	int min;
+	int sec;
 };

@@ -66,10 +66,19 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="constants.h" />
     <ClInclude Include="Net.h" />
     <ClInclude Include="NetClient.h" />
+    <ClInclude Include="NetMessaging.h" />
     <ClInclude Include="NetServer.h" />
-    <ClInclude Include="WindowsNetworkSockets.h" />
+    <ClInclude Include="NetSession.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="Net.cpp" />
+    <ClCompile Include="NetClient.cpp" />
+    <ClCompile Include="NetMessaging.cpp" />
+    <ClCompile Include="NetServer.cpp" />
+    <ClCompile Include="NetSession.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\enet\enet.vcxproj">
@@ -81,11 +90,6 @@
     <ProjectReference Include="..\Math\Math.vcxproj">
       <Project>{bbdee9f7-c011-44dc-a8f4-86cc2b87adc7}</Project>
     </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
-    <ClCompile Include="Net.cpp" />
-    <ClCompile Include="NetClient.cpp" />
-    <ClCompile Include="NetServer.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

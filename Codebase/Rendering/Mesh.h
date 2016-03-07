@@ -21,7 +21,12 @@ _-_-_-_-_-_-_-""  ""
 #include "Math/nclglMath.h"
 #include "constants.h"
 #include "Texture.h"
+#include "Font.h"
 #include <cstdint>
+
+#ifdef _DEBUG
+#define MESH_TRACK_STATS
+#endif
 
 class Material;
 
@@ -72,6 +77,7 @@ public:
 
 	// Draw quad between 4 vertices (Created for Stadium walls)
 	static Mesh*	GenerateQuad(Vec3Graphics* vertices, Vec2Graphics texCoords = Vec2Graphics(1.0f, 1.0f));
+	static Mesh*	GenerateTextQuad(const std::string& text, Font* font);
 
 	static Mesh*	GenerateQuadAlt();
 	//Generates a coloured quad, going from -1 to 1 on the x and z axis, with adjustable texture coords.
@@ -136,6 +142,11 @@ public:
 	virtual void BufferData() = 0;
 	virtual void SetPrimitiveType(pType type) = 0;
 
+	static uint64_t GetMemoryFootprint()
+	{
+		return s_memoryFootprint;
+	}
+
 protected:
 	//Helper function for GenerateTangents
 	Vec3Graphics GenerateTangent(const Vec3Graphics& a,const Vec3Graphics& b,const Vec3Graphics& c,const Vec2Graphics& ta,const Vec2Graphics& tb,const Vec2Graphics& tc);
@@ -166,5 +177,7 @@ protected:
 	Vec3Graphics*		m_Tangents;
 	//Pointer to vertex indices attribute data
 	uint32_t*	m_Indices;
+
+	static uint64_t s_memoryFootprint;
 };
 

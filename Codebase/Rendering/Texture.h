@@ -18,6 +18,10 @@
 
 #include <type_traits>
 
+#ifdef _DEBUG
+#define TEXTURE_TRACK_STATS
+#endif
+
 enum TextureFlags
 {
 	REPEATING = 1,
@@ -98,7 +102,7 @@ public:
 		return filePath;
 	}
 
-	static inline int GetMemoryUsage()
+	static inline unsigned int GetMemoryUsage()
 	{
 		return s_memoryUsage;
 	}
@@ -153,14 +157,14 @@ protected:
 
 	static std::unordered_map<std::string, std::vector<Texture*>> s_textureRecords;
 
-	static int s_memoryUsage;
+	static unsigned int s_memoryUsage;
 	void MeasureMemoryUsageAdd(textureHandle textureId);
 	void MeasureMemoryUsageSubtract(textureHandle textureId);
 
-	Texture(const std::string& filepath, size_t textureCopyIndex, bool preload = false);
+	Texture(const std::string& filepath, unsigned int textureCopyIndex, bool preload = false);
 
 	textureHandle textureId;
-	size_t textureCopyIndex;
+	unsigned int textureCopyIndex;
 	std::string filePath;
 	unsigned int m_referenceCount;
 };

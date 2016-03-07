@@ -71,6 +71,8 @@ void OGLMesh::BufferData()
 
 	glBindVertexArray(arrayObject);
 
+	OGLMesh::s_memoryFootprint += m_NumVertices * sizeof(Vec3Graphics);
+
 	//Buffer vertex data
 	glGenBuffers(1, &bufferObject[VERTEX_BUFFER]);
 	glBindBuffer(GL_ARRAY_BUFFER, bufferObject[VERTEX_BUFFER]);
@@ -81,6 +83,8 @@ void OGLMesh::BufferData()
 	//Buffer texture data
 	if (m_TextureCoords)
 	{
+		OGLMesh::s_memoryFootprint += m_NumVertices * sizeof(Vec2Graphics);
+
 		glGenBuffers(1, &bufferObject[TEXTURE_BUFFER]);
 		glBindBuffer(GL_ARRAY_BUFFER, bufferObject[TEXTURE_BUFFER]);
 		glBufferData(GL_ARRAY_BUFFER, m_NumVertices * sizeof(Vec2Graphics), m_TextureCoords, GL_STATIC_DRAW);
@@ -91,6 +95,8 @@ void OGLMesh::BufferData()
 	//Buffer normal data
 	if (m_Normals)
 	{
+		OGLMesh::s_memoryFootprint += m_NumVertices * sizeof(Vec3Graphics);
+
 		glGenBuffers(1, &bufferObject[NORMAL_BUFFER]);
 		glBindBuffer(GL_ARRAY_BUFFER, bufferObject[NORMAL_BUFFER]);
 		glBufferData(GL_ARRAY_BUFFER, m_NumVertices * sizeof(Vec3Graphics), m_Normals, GL_STATIC_DRAW);
@@ -101,6 +107,8 @@ void OGLMesh::BufferData()
 	//Buffer tangent data
 	if (m_Tangents)
 	{
+		OGLMesh::s_memoryFootprint += m_NumVertices * sizeof(Vec3Graphics);
+
 		glGenBuffers(1, &bufferObject[TANGENT_BUFFER]);
 		glBindBuffer(GL_ARRAY_BUFFER, bufferObject[TANGENT_BUFFER]);
 		glBufferData(GL_ARRAY_BUFFER, m_NumVertices * sizeof(Vec3Graphics), m_Tangents, GL_STATIC_DRAW);
@@ -111,10 +119,14 @@ void OGLMesh::BufferData()
 	//buffer index data
 	if (m_Indices)
 	{
+		OGLMesh::s_memoryFootprint += m_NumIndices * sizeof(unsigned int);
+
 		glGenBuffers(1, &bufferObject[INDEX_BUFFER]);
 		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, bufferObject[INDEX_BUFFER]);
 		glBufferData(GL_ELEMENT_ARRAY_BUFFER, m_NumIndices * sizeof(unsigned int), m_Indices, GL_STATIC_DRAW);
 	}
+
+	//TODO:delete mesh data once buffered!
 
 	for (auto& child : m_Children)
 		child->BufferData();

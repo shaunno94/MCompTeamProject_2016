@@ -15,9 +15,6 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="WindowsNetworkSockets.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="Net.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -25,6 +22,15 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="NetServer.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="NetMessaging.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="constants.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="NetSession.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
@@ -36,6 +42,12 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="NetServer.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="NetMessaging.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="NetSession.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

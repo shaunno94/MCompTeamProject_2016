@@ -8,9 +8,9 @@ public:
 protected:
 	ControllerComponent* object;
 
-	const float accel = 14;
-	const float rotAccel = 13;
-	const float airAccel = 13;
-	const float jump = 15;
+	const float accel = 130000;
+	const float rotAccel = 120000;
+	const float airAccel = 120000;
+	const float jump = 150000;
 };
 

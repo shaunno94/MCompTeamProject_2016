@@ -64,9 +64,6 @@
     <Filter Include="Header Files\UI\HUD_GUI">
       <UniqueIdentifier>{9ab7a03a-31e7-41f6-be86-676e9652b272}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Header Files\UI\Scoretable_GUI">
-      <UniqueIdentifier>{fafb15a4-631a-4991-b203-014cb65a0e7f}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Source Files\UI\Scoretable_GUI">
       <UniqueIdentifier>{a0fff451-da59-44be-baad-55106ad8d8f9}</UniqueIdentifier>
     </Filter>
@@ -75,6 +72,9 @@
     </Filter>
     <Filter Include="Source Files\Audio">
       <UniqueIdentifier>{e0bd0d87-accb-46c7-b228-ebd46f8310be}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\UI\Scoretable_GUI">
+      <UniqueIdentifier>{fafb15a4-631a-4991-b203-014cb65a0e7f}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -234,6 +234,24 @@
     <ClInclude Include="ParticleManager.h">
       <Filter>Header Files\Particle System</Filter>
     </ClInclude>
+    <ClInclude Include="Font.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="NetClientControllerManager.h">
+      <Filter>Header Files\Input</Filter>
+    </ClInclude>
+    <ClInclude Include="NetServerControllerManager.h">
+      <Filter>Header Files\Input</Filter>
+    </ClInclude>
+    <ClInclude Include="PCNetController.h">
+      <Filter>Header Files\Input</Filter>
+    </ClInclude>
+    <ClInclude Include="PCNetProducerController.h">
+      <Filter>Header Files\Input</Filter>
+    </ClInclude>
+    <ClInclude Include="Button.h">
+      <Filter>Header Files\UI\HUD_GUI</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Renderer.cpp">
@@ -370,6 +388,21 @@
     </ClCompile>
     <ClCompile Include="ParticleManager.cpp">
       <Filter>Source Files\Particle System</Filter>
+    </ClCompile>
+    <ClCompile Include="NetClientControllerManager.cpp">
+      <Filter>Source Files\Input</Filter>
+    </ClCompile>
+    <ClCompile Include="NetServerControllerManager.cpp">
+      <Filter>Source Files\Input</Filter>
+    </ClCompile>
+    <ClCompile Include="PCNetController.cpp">
+      <Filter>Source Files\Input</Filter>
+    </ClCompile>
+    <ClCompile Include="PCNetProducerController.cpp">
+      <Filter>Source Files\Input</Filter>
+    </ClCompile>
+    <ClCompile Include="Button.cpp">
+      <Filter>Source Files\UI</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

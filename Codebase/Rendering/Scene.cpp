@@ -65,6 +65,10 @@ void Scene::addGameObject(GameObject* obj)
 		ghostObjects.push_back(obj);
 }
 
+void Scene::UpdateScene(float dt) {
+
+}
+
 void Scene::UpdateNodeLists(float dt, Frustum& frustum, Vec3Graphics camPos)
 //TODO - separate Frustum check from OnUpdateObject
 {

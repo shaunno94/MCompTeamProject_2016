@@ -12,6 +12,7 @@
 #include "CarGameObject.h"
 #include "Audio\SoundSystem.h"
 #include "Rendering\ParticleManager.h"
+#include "Rendering\ScoreboardGUIComponent.h"
 
 #ifndef ORBIS
 #include "Rendering\KeyboardController.h"
@@ -19,7 +20,8 @@ const string SIMPLESHADER_VERT = SHADER_DIR"textureVertex.glsl";
 const string SIMPLESHADER_FRAG = SHADER_DIR"textureFragment.glsl";
 const string POINTLIGHTSHADER_VERT = SHADER_DIR"2dShadowLightvertex.glsl";
 const string POINTLIGHTSHADER_FRAG = SHADER_DIR"2dShadowLightfragment.glsl";
-const string GUI_VERT = SHADER_DIR"combineVert.glsl";
+const string GUI_VERT = SHADER_DIR"TexturedVertex.glsl";
+const string GUI_FRAG = SHADER_DIR"TexturedFragment.glsl";
 
 #else
 #include "Rendering\PS4Controller.h"
@@ -30,6 +32,7 @@ const string POINTLIGHTSHADER_FRAG = SHADER_DIR"2dShadowLightfragment.sb";
 
 #endif
 #include "BulletCollision\CollisionDispatch\btCollisionWorld.h"
+#include "Helpers\DeltaTimer.h"
 
 struct GameCollisionFilter;
 
@@ -47,12 +50,14 @@ public:
 	void DrawGUI();
 	void SetControllerActor();
 
-	void IncrementScore(int team) {
-		scores[team % 2]++;
-		std::cout << "TEAM " << team + 1 << " SCORED!" << endl;
-		std::cout << scores[0] << " - " << scores[1] << endl;
-	}
-	void ResetScene();
+	void IncrementScore(int team);
+
+	virtual void UpdateScene(float dt) override;
+
+	void TriggerExplosion();
+
+	void SetGoalScored(int goal) { goalScored = goal; }
+	int GetGoalScored() { return goalScored; }
 
 protected:
 	ControllerManager* myControllers;
@@ -60,6 +65,8 @@ protected:
 	int scores[2];
 
 	void ResetObjects();
+
+	void applyImpulseFromExplosion(CarGameObject* car);
 
 	GameObject* ball;
 	GameObject* light1;
@@ -82,18 +89,25 @@ protected:
 	LightMaterial* lightMaterial;
 
 	Material* material;
-	Material* ballMaterial;
 	Material* netMaterial;
 	Material* playerMaterial;
 	Material* aiMaterial;
 	Material* ai2Material;
 	Material* particleMaterial;
+	Material* guiMaterial;
+	Material* textMaterial;
 
 	ControllerComponent* cc;
 
-	int ballID;
-	int goal1ID;
-	int goal2ID;
+	OrthoComponent* hudOrtho;
+	ScoreboardGUIComponent* scoreboardComponent;
+
+	float timerCount = 0.0f;
+	float currentTime = 0.0f;
+	float lastTime = 0;
+	int goalScored = 0;
+
+	bool gameStart;
 };
 
 struct GameCollisionFilter : public btOverlapFilterCallback
@@ -106,48 +120,12 @@ public:
 	int m_goal2ID = 0;
 	GameScene* m_scene;
 
-	GameCollisionFilter(GameScene* scene) : m_scene(scene) {
+	//DeltaTimer<float> timer = DeltaTimer<float>();
+	float timerCount = 0.0f;
+	int test;
 
-	}
+	GameCollisionFilter(GameScene* scene);
 
 
-	virtual bool needBroadphaseCollision(btBroadphaseProxy* proxy0, btBroadphaseProxy* proxy1) const override
-	{
-		short int combined = COL_CAR | COL_WALL;
-		/*int combinedMask = proxy0->m_collisionFilterMask | proxy1->m_collisionFilterMask;
-		int test1 = (combinedMask & COL_CAR) == COL_CAR;
-		int test2 = (combinedMask & COL_WALL) == COL_WALL;
-		int test3;*/
-		if ((proxy0->m_collisionFilterMask | proxy1->m_collisionFilterMask) & combined == combined)
-		{
-			int test = 0;
-		}
-		else
-		{
-			int test2 = 0;
-		}
-		//if (((combinedMask & COL_CAR) == COL_CAR) && ((combinedMask & COL_WALL) == COL_WALL)) {
-		//	std::cout << "Car and wall collision" << std::endl;
-		//	// sort out car-wall collision
-		//}
-
-		if ((proxy0->getUid() == m_ballID && proxy1->getUid() == m_goal1ID) ||
-			(proxy1->getUid() == m_ballID && proxy0->getUid() == m_goal1ID))
-		{
-			//Increment goals for team 1
-			m_scene->IncrementScore(0);
-			//TODO: Reset Scene
-			m_scene->ResetScene();
-		}
-		else if ((proxy0->getUid() == m_ballID && proxy1->getUid() == m_goal2ID) ||
-			(proxy1->getUid() == m_ballID && proxy0->getUid() == m_goal2ID))
-		{
-			//Increment goals for team 2
-			m_scene->IncrementScore(1);
-			//TODO: Reset Scene
-			m_scene->ResetScene();
-		}
-		return true;
-	}
+	virtual bool needBroadphaseCollision(btBroadphaseProxy* proxy0, btBroadphaseProxy* proxy1) const override;
 };
-
