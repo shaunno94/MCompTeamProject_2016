@@ -213,9 +213,6 @@
     <ClInclude Include="resource.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="OrthoComponent.h">
-      <Filter>Header Files\UI</Filter>
-    </ClInclude>
     <ClInclude Include="WheelObject.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -249,8 +246,20 @@
     <ClInclude Include="PCNetProducerController.h">
       <Filter>Header Files\Input</Filter>
     </ClInclude>
-    <ClInclude Include="Button.h">
-      <Filter>Header Files\UI\HUD_GUI</Filter>
+    <ClInclude Include="ButtonGUI.h">
+      <Filter>Header Files\UI</Filter>
+    </ClInclude>
+    <ClInclude Include="MenuController.h">
+      <Filter>Header Files\Input</Filter>
+    </ClInclude>
+    <ClInclude Include="PS4MenuController.h">
+      <Filter>Header Files\Input</Filter>
+    </ClInclude>
+    <ClInclude Include="MenuBackgroundGUI.h">
+      <Filter>Header Files\UI</Filter>
+    </ClInclude>
+    <ClInclude Include="OrthoComponent.h">
+      <Filter>Header Files\UI</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -401,7 +410,16 @@
     <ClCompile Include="PCNetProducerController.cpp">
       <Filter>Source Files\Input</Filter>
     </ClCompile>
-    <ClCompile Include="Button.cpp">
+    <ClCompile Include="ButtonGUI.cpp">
+      <Filter>Source Files\UI</Filter>
+    </ClCompile>
+    <ClCompile Include="PS4MenuController.cpp">
+      <Filter>Source Files\Input</Filter>
+    </ClCompile>
+    <ClCompile Include="MenuController.cpp">
+      <Filter>Source Files\Input</Filter>
+    </ClCompile>
+    <ClCompile Include="MenuBackgroundGUI.cpp">
       <Filter>Source Files\UI</Filter>
     </ClCompile>
   </ItemGroup>
