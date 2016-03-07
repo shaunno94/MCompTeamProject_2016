@@ -1,5 +1,4 @@
 #include "GameScene.h"
-#include "BallGameObject.h"
 
 GameScene::GameScene(ControllerManager* controller)
 	: myControllers(controller)
@@ -42,7 +41,6 @@ GameScene::GameScene(ControllerManager* controller)
 GameScene::~GameScene()
 {
 	PhysicsEngineInstance::Release();
-	SoundSystem::Release();
 	GUISystem::Destroy();
 	ParticleManager::Destroy();
 
@@ -56,7 +54,7 @@ GameScene::~GameScene()
 void GameScene::SetControllerActor()
 {
 	myControllers->setActor(Renderer::GetInstance()->GetCurrentScene()->findGameObject("shooterAI"), 0);
-	myControllers->setActor(Renderer::GetInstance()->GetCurrentScene()->findGameObject("goalieAI"), 1);
+	//myControllers->setActor(Renderer::GetInstance()->GetCurrentScene()->findGameObject("goalieAI"), 1);
 }
 
 void GameScene::IncrementScore(int team)
@@ -82,7 +80,7 @@ void GameScene::UpdateScene(float dt)
 	}
 	currentTime += dt / 1000.0f;
 
-	if (currentTime < 181)
+	if (currentTime - lastTime > 1)
 	{
 		lastTime = currentTime;
 		scoreboardComponent->Update(scores[0], scores[1], currentTime);
@@ -119,11 +117,23 @@ void GameScene::SetupGameObjects()
 	light2->SetWorldTransform(Mat4Graphics::Translation(Vec3Graphics(600, 900, 600)) *Mat4Graphics::Scale(Vec3Graphics(2400, 2400, 2400)));
 	light2->SetBoundingRadius(2400);
 
-	auto ballMaterial = new Material(simpleShader);
-	ballMaterial->Set(ReservedMeshTextures.DIFFUSE.name, Texture::Get(TEXTURE_DIR"football.png", true));
-	ball = new BallGameObject("ball", ballMaterial);
+	ball = new GameObject("ball");
+	ballPhysics = new RigidPhysicsObject();
+	ballPhysics->CreateCollisionShape(6.0);
+	ballPhysics->CreatePhysicsBody(1.0, Vec3Physics(0, 3, 0), QuatPhysics(0, 0, 0, 1), Vec3Physics(1, 1, 1));
+	ballID = ballPhysics->GetPhysicsBody()->getBroadphaseProxy()->getUid();
 
-	
+	ball->SetRenderComponent(new RenderComponent(ballMaterial, ModelLoader::LoadMGL(MODEL_DIR"Common/sphere.mgl", true)));
+	ball->SetLocalTransform(Mat4Graphics::Scale(Vector3Simple(6, 6, 6)));
+
+
+	ballPhysics->GetPhysicsBody()->getBroadphaseProxy()->m_collisionFilterMask = COL_BALL;
+
+	ball->SetPhysicsComponent(ballPhysics);
+	ball->GetPhysicsComponent()->GetPhysicsBody()->setRestitution(btScalar(1.6));
+	ball->GetPhysicsComponent()->GetPhysicsBody()->setFriction(0.5);
+	ball->GetPhysicsComponent()->GetPhysicsBody()->setRollingFriction(0.5);
+	ball->GetPhysicsComponent()->GetPhysicsBody()->setHitFraction(0.5);
 	player = new CarGameObject(Vec3Physics(100, 2, 0), QuatPhysics(0, 1, 0, 1), playerMaterial, "player");
 
 	shooterAI = new CarGameObject(Vec3Physics(-190, 2, 30), QuatPhysics(0, 0, 0, 1), aiMaterial, "shooterAI", COL_AI_CAR);
@@ -138,15 +148,22 @@ void GameScene::SetupGameObjects()
 	goalBox = new RigidPhysicsObject();
 	goalBox->CreateCollisionShape(Vec3Physics(7.0, 15.0, 35.0) * 1.5f, CUBOID);
 	goalBox->CreatePhysicsBody(0.0, Vec3Physics(268, 17, 0) * 1.5f, QuatPhysics(0, 0, 0, 1), Vec3Physics(1, 1, 1), true);
+	goal1ID = goalBox->GetPhysicsBody()->getBroadphaseProxy()->getUid();
 	goal1->SetPhysicsComponent(goalBox);
 
 	goal2 = new GameObject("goal2");
 	goalBox2 = new RigidPhysicsObject();
 	goalBox2->CreateCollisionShape(Vec3Physics(7.0, 15.0, 35.0) * 1.5f, CUBOID);
 	goalBox2->CreatePhysicsBody(0.0, Vec3Physics(-268, 17, 0) * 1.5f, QuatPhysics(0, 0, 0, 1), Vec3Physics(1, 1, 1), true);
+	goal2ID = goalBox2->GetPhysicsBody()->getBroadphaseProxy()->getUid();
 	goal2->SetPhysicsComponent(goalBox2);
 
+	goalBallFilter = new GameCollisionFilter(this);
+	goalBallFilter->m_ballID = ballID;
+	goalBallFilter->m_goal1ID = goal1ID;
+	goalBallFilter->m_goal2ID = goal2ID;
 
+	PhysicsEngineInstance::Instance()->getPairCache()->setOverlapFilterCallback(goalBallFilter);
 	addGameObject(stadium);
 	addGameObject(player);
 	addGameObject(ball);
@@ -156,9 +173,6 @@ void GameScene::SetupGameObjects()
 	addGameObject(goal2);
 
 	addLightObject(light2);
-
-	goalBallFilter = new GameCollisionFilter(this);
-	PhysicsEngineInstance::Instance()->getPairCache()->setOverlapFilterCallback(goalBallFilter);
 }
 
 void GameScene::LoadAudio()
@@ -209,6 +223,7 @@ void GameScene::SetupMaterials()
 	lightMaterial->shadowType = _2D;
 
 	material = new Material(simpleShader);
+	ballMaterial = new Material(simpleShader);
 	netMaterial = new Material(simpleShader, true);
 	aiMaterial = new Material(simpleShader);
 	particleMaterial = new Material(simpleShader);
@@ -216,6 +231,7 @@ void GameScene::SetupMaterials()
 	guiMaterial = new Material(orthoShader);
 	textMaterial = new Material(orthoShader);
 
+	ballMaterial->Set(ReservedMeshTextures.DIFFUSE.name, Texture::Get(TEXTURE_DIR"football.png", true));
 	playerMaterial = new Material(simpleShader);
 
 	aiMaterial->Set(ReservedMeshTextures.DIFFUSE.name, Texture::Get(MODEL_DIR"car/body1.bmp", true));
@@ -242,7 +258,7 @@ void GameScene::DrawGUI()
 void GameScene::SetupControls()
 {
 	cc = new ControllerComponent(player);
-	myControllers->setProducer(player, 0);
+	myControllers->setProducer(player, 1);
 
 	attachCam(player);
 }
@@ -287,46 +303,4 @@ void GameScene::ResetObjects()
 
 	ball->GetPhysicsComponent()->GetPhysicsBody()->setWorldTransform(btTransform(btQuaternion(0, 0, 0, 1), zeroVector));
 
-}
-
-
-GameCollisionFilter::GameCollisionFilter(GameScene* scene) : m_scene(scene) {
-	static_cast<RigidPhysicsObject*>(scene->findGameObject("ball")->GetPhysicsComponent())->GetPhysicsBody()->getBroadphaseProxy()->m_collisionFilterMask = COL_BALL;
-
-	m_ballID = static_cast<RigidPhysicsObject*>(scene->findGameObject("ball")->GetPhysicsComponent())->GetPhysicsBody()->getBroadphaseProxy()->getUid();
-	m_goal1ID = static_cast<RigidPhysicsObject*>(scene->findGameObject("goal1")->GetPhysicsComponent())->GetPhysicsBody()->getBroadphaseProxy()->getUid();
-	m_goal2ID = static_cast<RigidPhysicsObject*>(scene->findGameObject("goal2")->GetPhysicsComponent())->GetPhysicsBody()->getBroadphaseProxy()->getUid();
-}
-
-bool GameCollisionFilter::needBroadphaseCollision(btBroadphaseProxy* proxy0, btBroadphaseProxy* proxy1) const
-{
-	short int combined = COL_CAR | COL_WALL;
-	/*int combinedMask = proxy0->m_collisionFilterMask | proxy1->m_collisionFilterMask;
-	int test1 = (combinedMask & COL_CAR) == COL_CAR;
-	int test2 = (combinedMask & COL_WALL) == COL_WALL;
-	int test3;*/
-	if ((proxy0->m_collisionFilterMask | proxy1->m_collisionFilterMask) & combined == combined)
-	{
-		int test = 0;
-	}
-	else
-	{
-		int test2 = 0;
-	}
-	//if (((combinedMask & COL_CAR) == COL_CAR) && ((combinedMask & COL_WALL) == COL_WALL)) {
-	//	std::cout << "Car and wall collision" << std::endl;
-	//	// sort out car-wall collision
-	//}
-
-	if ((proxy0->getUid() == m_ballID && proxy1->getUid() == m_goal1ID) ||
-		(proxy1->getUid() == m_ballID && proxy0->getUid() == m_goal1ID))
-	{
-		m_scene->SetGoalScored(1);
-	}
-	else if ((proxy0->getUid() == m_ballID && proxy1->getUid() == m_goal2ID) ||
-		(proxy1->getUid() == m_ballID && proxy0->getUid() == m_goal2ID))
-	{
-		m_scene->SetGoalScored(2);
-	}
-	return true;
 }

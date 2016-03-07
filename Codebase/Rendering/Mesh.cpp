@@ -5,6 +5,10 @@
 #include "PS4Mesh.h"
 #endif
 
+
+uint64_t Mesh::s_memoryFootprint = 0;
+
+
 Mesh::Mesh(void)
 {
 	m_Textures[ReservedMeshTextures.size];
@@ -67,7 +71,7 @@ Mesh::Mesh(uint32_t numVertices, Vec3Graphics* vertices, Vec2Graphics* texCoords
 
 Mesh::~Mesh(void)
 {
-	for (uint32_t i = 0; i < ReservedMeshTextures.size; ++i)
+	for (unsigned int i = 0; i < ReservedMeshTextures.size; ++i)
 	{
 		if (m_Textures[i])
 			m_Textures[i]->Clear();

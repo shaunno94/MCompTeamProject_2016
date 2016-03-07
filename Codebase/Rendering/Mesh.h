@@ -24,6 +24,10 @@ _-_-_-_-_-_-_-""  ""
 #include "Font.h"
 #include <cstdint>
 
+#ifdef _DEBUG
+#define MESH_TRACK_STATS
+#endif
+
 class Material;
 
 /// @ingroup Rendering
@@ -138,6 +142,11 @@ public:
 	virtual void BufferData() = 0;
 	virtual void SetPrimitiveType(pType type) = 0;
 
+	static uint64_t GetMemoryFootprint()
+	{
+		return s_memoryFootprint;
+	}
+
 protected:
 	//Helper function for GenerateTangents
 	Vec3Graphics GenerateTangent(const Vec3Graphics& a,const Vec3Graphics& b,const Vec3Graphics& c,const Vec2Graphics& ta,const Vec2Graphics& tb,const Vec2Graphics& tc);
@@ -168,5 +177,7 @@ protected:
 	Vec3Graphics*		m_Tangents;
 	//Pointer to vertex indices attribute data
 	uint32_t*	m_Indices;
+
+	static uint64_t s_memoryFootprint;
 };
 

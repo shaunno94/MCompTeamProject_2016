@@ -5,7 +5,7 @@
 #include "Renderer.h"
 
 std::unordered_map<std::string, std::vector<Texture*>> Texture::s_textureRecords;
-int Texture::s_memoryUsage = 0;
+unsigned int Texture::s_memoryUsage = 0;
 
 Texture* Texture::Make(const std::string& filePath, bool preload)
 {
@@ -110,7 +110,7 @@ void Texture::MeasureMemoryUsageSubtract(textureHandle textureId)
 	s_memoryUsage -= Renderer::GetInstance()->TextureMemoryUsage(textureId);
 }
 
-Texture::Texture(const std::string& filepath, size_t index, bool preload) : filePath(filepath)
+Texture::Texture(const std::string& filepath, unsigned int index, bool preload) : filePath(filepath)
 {
 	textureId = 0;
 	textureCopyIndex = index;
@@ -122,7 +122,7 @@ Texture::~Texture()
 {
 	if(textureId)
 	{
-#ifdef _DEBUG
+#ifdef TEXTURE_TRACK_STATS
 		MeasureMemoryUsageSubtract(textureId);
 #endif
 #ifndef ORBIS
@@ -133,12 +133,13 @@ Texture::~Texture()
 #endif
 	}
 }
+
 #ifndef ORBIS
 void Texture::LoadFromFile()
 {
 	if (textureId)
 	{
-#ifdef _DEBUG
+#ifdef TEXTURE_TRACK_STATS
 		MeasureMemoryUsageSubtract(textureId);
 #endif
 		glDeleteTextures(1, &textureId);
@@ -155,7 +156,7 @@ void Texture::LoadFromFile()
 
 	if (textureId)
 	{
-#ifdef _DEBUG
+#ifdef TEXTURE_TRACK_STATS
 		MeasureMemoryUsageAdd(textureId);
 #endif
 	}
@@ -196,6 +197,7 @@ void Texture::LoadFromFile()
 
 	textureId = patchTextures(contentsDesc, 0, 1, &pixelsAddr);
 
+	//TODO: add TEXTURE_TRACK_STATS stuff
 	/*tex->width = tex->apiTexture.getWidth();
 	tex->height = tex->apiTexture.getHeight();
 	tex->bpp = tex->apiTexture.getDepth();*/

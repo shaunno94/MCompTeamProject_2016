@@ -12,11 +12,11 @@ MenuScene::MenuScene(ControllerManager* controller, bool selected)
 		std::cout << "GUI not Initialised!" << std::endl;
 	}
 
-	SetupShaders();
-	SetupMaterials();
-	DrawGUI();
-	LoadAudio();
-	SetupControls();
+	//SetupShaders();
+	//SetupMaterials();
+	//DrawGUI();
+	//LoadAudio();
+	//SetupControls();
 
 }
 

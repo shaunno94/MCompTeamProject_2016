@@ -12,13 +12,13 @@
 #ifdef NET_DEBUG
 #define NET_ERROR(message) do { std::cerr << message; } while (0)
 #else
-#define NET_ERROR() ((void)0)
+#define NET_ERROR(message) ((void)0)
 #endif
 
 #ifdef NET_DEBUG
 #define NET_INFO(message) do { std::cerr << message; } while (0)
 #else
-#define NET_INFO() ((void)0)
+#define NET_INFO(message) ((void)0)
 #endif
 
 
