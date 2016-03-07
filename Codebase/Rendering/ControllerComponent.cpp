@@ -33,14 +33,14 @@ void ControllerComponent::updateObject(float dt)
 		dynamic_cast<RigidPhysicsObject*>(m_parent->GetPhysicsComponent())->GetPhysicsBody()->applyCentralImpulse(btVector3(impulse.x, impulse.y, impulse.z));
 		m_inactiveFramesUpsideDown = 0;
 	}
-	else if (up.Dot(Vec3(0,1,0)) < 0.5 && !airbourne()) {
+	else if (up.Dot(Vec3(0, 1, 0)) < 0.5) {
 		m_inactiveFramesUpsideDown++;
 	}
 	else {
 		m_inactiveFramesUpsideDown = 0;
 	}
 
-	if (m_inactiveFramesUpsideDown > 60) {
+	if (m_inactiveFramesUpsideDown > 120) {
 		reset();
 		m_inactiveFramesUpsideDown = 0;
 	}
@@ -49,20 +49,28 @@ void ControllerComponent::updateObject(float dt)
 	impulse.ToZero();
 
 	dynamic_cast<RigidPhysicsObject*>(m_parent->GetPhysicsComponent())->GetPhysicsBody()->applyTorque(btVector3(torque.x, torque.y, torque.z)*dt);
-	//dynamic_cast<RigidPhysicsObject*>(m_parent->GetPhysicsComponent())->GetPhysicsBody()->applyCentralImpulse(btVector3(torque.x, torque.y, torque.z)*dt);
 	torque.ToZero();
 
-	Vec3Physics orientation = (getOrientation() * Vec3Physics(-1, 0, 0)).Normalize();
-	btVector3 btOrientation(orientation.x, orientation.y, orientation.z);
+	Vec3Physics left = (getOrientation() * Vec3Physics(-1, 0, 0)).Normalize();
+	btVector3 btleft(left.x, left.y, left.z);
+	Vec3Physics forward = (getOrientation() * Vec3Physics(0, 0, -1)).Normalize();
+	btVector3 btforward(forward.x, forward.y, forward.z);
 	btVector3 velocity = -m_parent->GetPhysicsComponent()->GetPhysicsBody()->getInterpolationLinearVelocity();
 	btScalar friction = 0.5;
 
 	if (velocity.length2() > 0.0000001)
 	{
-		friction = std::abs((2.0 * (velocity.normalize()).dot(btOrientation.normalize())));
+		friction = std::abs((2.0 * (velocity.normalize()).dot(btleft.normalize())));
 
 		friction = friction <= 0.8 ? 0.8 : friction;
-	}
+
+
+		/*float dot = velocity.normalize().dot(btforward.normalize());
+		velocity = dynamic_cast<RigidPhysicsObject*>(m_parent->GetPhysicsComponent())->GetPhysicsBody()->getLinearVelocity();
+		float angle = acos(dot);
+
+		dynamic_cast<RigidPhysicsObject*>(m_parent->GetPhysicsComponent())->GetPhysicsBody()->setLinearVelocity(velocity * btMatrix3x3(btQuaternion(btVector3(0, 1, 0), angle)));
+	*/}
 
 	m_parent->GetPhysicsComponent()->GetPhysicsBody()->setFriction(friction);
 }

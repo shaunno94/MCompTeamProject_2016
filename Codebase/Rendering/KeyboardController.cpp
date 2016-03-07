@@ -52,7 +52,7 @@ void KeyboardController::CheckInput(){
 	if (Window::GetKeyboard()->KeyDown(KEYBOARD_LEFT) || Window::GetKeyboard()->KeyDown(KEYBOARD_A))
 	{
 		if (airbourne)
-			torque += (orientation *Vec3Physics(0, 0, 1)).Normalize() * airAccel * 0.7f; 
+			torque += (orientation *Vec3Physics(0, 0, 1)).Normalize() * airAccel * 0.7f;
 		else
 		if (forward < 0)
 			torque += (orientation *Vec3Physics(0, 1, 0)).Normalize() * -rotAccel;
