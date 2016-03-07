@@ -76,6 +76,11 @@ void ControllerComponent::updateObject(float dt)
 	force.ToZero();
 	impulse.ToZero();
 
+	float maxSpeed = 100.0f;
+	if (!airbourne() && torque.LengthSq() > 0){
+		float forwardVelocity = getForwardVelocity();
+		torque *= ((1 - (forwardVelocity / maxSpeed)) * 100000) + 80000;
+	}
 	dynamic_cast<RigidPhysicsObject*>(m_parent->GetPhysicsComponent())->GetPhysicsBody()->applyTorque(btVector3(torque.x, torque.y, torque.z)*dt);
 	torque.ToZero();
 
@@ -86,26 +91,29 @@ void ControllerComponent::updateObject(float dt)
 	btVector3 fullVelocity = dynamic_cast<RigidPhysicsObject*>(m_parent->GetPhysicsComponent())->GetPhysicsBody()->getLinearVelocity();
 
 	btScalar friction = 0.8;
-	//float maxSpeed = 100.0f;
 
 	if (velocity.length2() > 0.0000001)
 	{
 		float leftDot = (velocity.normalize()).dot(btleft.normalize());
 		friction = std::abs((2.0 * leftDot));
-		/*if (dynamic_cast<GameScene*>(Renderer::GetInstance()->GetCurrentScene())->GetGoalScored() == 0) {
+		if (dynamic_cast<GameScene*>(Renderer::GetInstance()->GetCurrentScene())->GetGoalScored() == 0) {
 			float velocityFactor = (maxSpeed * maxSpeed) / std::max(fullVelocity.length2(), maxSpeed * maxSpeed);
 			dynamic_cast<RigidPhysicsObject*>(m_parent->GetPhysicsComponent())->GetPhysicsBody()->setLinearVelocity(fullVelocity * velocityFactor);
-		}*/
-				friction = friction <= 1 ? 1 : friction;
-
 		
-		if (!airbourne()){
-			float angle = leftDot * 1.5708;
-			velocity = dynamic_cast<RigidPhysicsObject*>(m_parent->GetPhysicsComponent())->GetPhysicsBody()->getLinearVelocity();
+			/*btVector3 angularV = dynamic_cast<RigidPhysicsObject*>(m_parent->GetPhysicsComponent())->GetPhysicsBody()->getAngularVelocity();
+			velocityFactor = (1.5f * 1.5f) / std::max(angularV.length2(), 1.5f * 1.5f);
+			if (m_parent->GetName() == "player")
+				std::cout << angularV.length() << endl;
+			dynamic_cast<RigidPhysicsObject*>(m_parent->GetPhysicsComponent())->GetPhysicsBody()->setAngularVelocity(angularV * velocityFactor);*/
+		}
+		friction = friction <= 1 ? 1 : friction;
 
-			if (getForwardVelocity() < 0)
+		if (!airbourne()/* && adjustForRotation*/){
+			float angle = leftDot * 1.5708;
+				if (getForwardVelocity() < 0)
 				angle = -angle;
-			dynamic_cast<RigidPhysicsObject*>(m_parent->GetPhysicsComponent())->GetPhysicsBody()->setLinearVelocity(velocity * btMatrix3x3(btQuaternion(btVector3(0, 1, 0), -angle)));
+			dynamic_cast<RigidPhysicsObject*>(m_parent->GetPhysicsComponent())->GetPhysicsBody()->setLinearVelocity(fullVelocity * btMatrix3x3(btQuaternion(btVector3(0, 1, 0), -angle)));
+			adjustForRotation = false;
 		}
 	}
 
