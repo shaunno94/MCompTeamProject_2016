@@ -35,11 +35,11 @@ void GUISystem::RemoveOrthoComponent(OrthoComponent* component)
 	}
 }
 
-void GUISystem::Update()
-{
-	for (unsigned int i = 0; i < m_component.size(); ++i)
-		m_component[i]->Update();
-}
+//void GUISystem::Update()
+//{
+//	for (unsigned int i = 0; i < m_component.size(); ++i)
+//		m_component[i]->Update();
+//}
 
 void GUISystem::Render()
 {
@@ -47,7 +47,6 @@ void GUISystem::Render()
 
 	for (unsigned int i = 0; i < m_component.size(); ++i)
 	{
-		m_component[i]->Update();
 		m_component[i]->Render();
 	}
 }

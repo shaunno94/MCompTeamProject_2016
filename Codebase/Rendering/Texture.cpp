@@ -5,7 +5,7 @@
 #include "Renderer.h"
 
 std::unordered_map<std::string, std::vector<Texture*>> Texture::s_textureRecords;
-int Texture::s_memoryUsage = 0;
+unsigned int Texture::s_memoryUsage = 0;
 
 Texture* Texture::Make(const std::string& filePath, bool preload)
 {
@@ -139,13 +139,16 @@ Texture::Texture(const std::string& filepath, size_t index, bool preload) : file
 
 Texture::~Texture()
 {
-#ifdef _DEBUG
+	if(textureId)
+	{
+#ifdef TEXTURE_TRACK_STATS
 		MeasureMemoryUsageSubtract(textureId);
 #endif
 #ifndef ORBIS
 		glDeleteTextures(1, &textureId);
 		textureId = 0;
 #endif
+	}
 }
 
 #ifndef ORBIS
@@ -153,7 +156,7 @@ void Texture::LoadFromFile()
 {
 	if (textureId)
 	{
-#ifdef _DEBUG
+#ifdef TEXTURE_TRACK_STATS
 		MeasureMemoryUsageSubtract(textureId);
 #endif
 		glDeleteTextures(1, &textureId);
@@ -170,7 +173,7 @@ void Texture::LoadFromFile()
 
 	if (textureId)
 	{
-#ifdef _DEBUG
+#ifdef TEXTURE_TRACK_STATS
 		MeasureMemoryUsageAdd(textureId);
 #endif
 	}

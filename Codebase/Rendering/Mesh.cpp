@@ -47,7 +47,7 @@ Mesh::Mesh(uint32_t numVertices, Vec3Graphics* vertices, Vec2Graphics* texCoords
 		t = nullptr;
 	}
 	for (auto& c : m_Colours)
-	{
+{
 		c = Vec3Graphics::ZEROS;
 	}
 
@@ -78,7 +78,7 @@ Mesh::Mesh(uint32_t numVertices, Vec3Graphics* vertices, Vec2Graphics* texCoords
 
 Mesh::~Mesh(void)
 {
-	for (uint32_t i = 0; i < ReservedMeshTextures.size; ++i)
+	for (unsigned int i = 0; i < ReservedMeshTextures.size; ++i)
 	{
 		if (m_Textures[i])
 			m_Textures[i]->Clear();
@@ -102,19 +102,19 @@ void Mesh::CalcMeshUsage(Mesh* m)
 void Mesh::Clean()
 {
 	if (m_Vertices)
-		delete[] m_Vertices;
+	delete[] m_Vertices;
 
 	if (m_Indices)
-		delete[] m_Indices;
+	delete[] m_Indices;
 
 	if (m_TextureCoords)
-		delete[] m_TextureCoords;
+	delete[] m_TextureCoords;
 
 	if (m_Tangents)
-		delete[] m_Tangents;
+	delete[] m_Tangents;
 
 	if (m_Normals)
-		delete[] m_Normals;
+	delete[] m_Normals;
 }
 
 Mesh* Mesh::GenerateTriangle() {

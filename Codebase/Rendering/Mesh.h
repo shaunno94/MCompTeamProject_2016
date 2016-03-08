@@ -24,6 +24,10 @@ _-_-_-_-_-_-_-""  ""
 #include "Font.h"
 #include <cstdint>
 
+#ifdef _DEBUG
+#define MESH_TRACK_STATS
+#endif
+
 class Material;
 
 /// @ingroup Rendering

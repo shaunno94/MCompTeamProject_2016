@@ -9,6 +9,19 @@
 #include <iostream>
 #include <string>
 
+#ifdef _DEBUG
+#define MEASURING_TIMER_LOG_START(str) MeasuringTimer::Instance.LogStart(str)
+#define MEASURING_TIMER_LOG_END() MeasuringTimer::Instance.LogEnd()
+#define MEASURING_TIMER_PRINT(stream) stream << MeasuringTimer::Instance
+#define MEASURING_TIMER_CLEAR() MeasuringTimer::Instance.Clear()
+#else
+#define MEASURING_TIMER_LOG_START(str)  ((void)0)
+#define MEASURING_TIMER_LOG_END() ((void)0)
+#define MEASURING_TIMER_PRINT(stream) ((void)0)
+MEASURING_TIMER_CLEAR() ((void)0)
+#endif // _DEBUG
+
+
 /// @ingroup Helpers
 /// <summary>
 /// Class for measuring logged time points.
@@ -50,6 +63,11 @@ private:
 	unsigned int m_endIndex;
 
 public:
+	/// <summary>
+	/// A static instance of <see cref="MeasuringTimer"/> class.
+	/// </summary>
+	static MeasuringTimer Instance;
+
 	/// <summary>
 	/// Max number of logs that can be taken.
 	/// </summary>
@@ -113,19 +131,8 @@ public:
 	/// Returns the <see cref="MeasuringTimer::record"/>, identified internally by the given index.
 	/// </summary>
 	/// <param name="index">Index representation of where the record is placed internally.</param>
-	/// <returns>Reference to a <see cref="MeasuringTimer::record"/>.</returns>
-	inline const record& Peek(unsigned int index) const
-	{
-		assert(("MeasuringTimer::peek went out of bounds", index < m_endIndex));
-		return m_logs[index];
-	}
-
-	/// <summary>
-	/// Returns the <see cref="MeasuringTimer::record"/>, identified internally by the given index.
-	/// </summary>
-	/// <param name="index">Index representation of where the record is placed internally.</param>
 	/// <returns>reference to a <see cref="MeasuringTimer::record"/>.</returns>
-	inline record& Get(unsigned int index)
+	inline const record& Get(unsigned int index) const
 	{
 		assert(("MeasuringTimer::get went out of bounds", index < m_endIndex));
 		return m_logs[index];
@@ -141,7 +148,7 @@ public:
 	/// <remarks>
 	///	If parameter maxDepth is 0, only the matched start level will be printed.
 	/// </remarks>
-	void Print(std::ostream& os, unsigned int startLevel, unsigned int maxDepth = UINT_MAX, float timeResolution = 1.0f) const;
+	void Print(std::ostream& os, unsigned int startLevel, unsigned int maxDepth = UINT_MAX, float timeResolution = 1000.0f) const;
 
 	/// <summary>
 	/// Resets the used logging space to indicate an empty collection of logs.

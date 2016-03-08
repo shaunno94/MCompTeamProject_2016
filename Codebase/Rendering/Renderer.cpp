@@ -1,5 +1,6 @@
 #include "Renderer.h"
 #include "GUISystem.h"
+#include "Helpers/MeasuringTimer.h"
 
 Renderer* Renderer::s_renderer = nullptr;
 
@@ -50,7 +51,7 @@ void Renderer::UpdateScene(float msec)
 		currentScene->UpdateNodeLists(msec, frameFrustrum, currentScene->getCamera()->GetPosition());
 	}
 	if (m_UpdateGlobalUniforms)
-	{
+	{	
 		for (unsigned int i = 0; i < currentScene->getNumLightObjects(); ++i)
 		{
 			auto rc = currentScene->getLightObject(i)->GetRenderComponent();
@@ -63,24 +64,35 @@ void Renderer::UpdateScene(float msec)
 void Renderer::RenderScene(float msec)
 {
 	projMatrix = localProjMat;
+	MeasuringTimer::Instance.LogStart("Scene Update");
 	UpdateScene(msec);
+	MeasuringTimer::Instance.LogEnd();
 
 	//Draws all objects attatched to the current scene.
 	if (currentScene)
 	{
-		//Draw
+		MEASURING_TIMER_LOG_START("Fill Buffers");
 		FillBuffers(); //First Pass
+		MEASURING_TIMER_LOG_END();
+		MEASURING_TIMER_LOG_START("Point Lights");
 		DrawPointLights(); //Second Pass
+		MEASURING_TIMER_LOG_END();
+		MEASURING_TIMER_LOG_START("Combine Buffers");
 		CombineBuffers(); //Final Pass
-		RenderGUI(); //GUI Pass
+		MEASURING_TIMER_LOG_END();
+		MEASURING_TIMER_LOG_START("GUI");
+		RenderGUI();
+		MEASURING_TIMER_LOG_END();
 	}
+	MEASURING_TIMER_LOG_START("Swap Buffers");
 	SwapBuffers();
+	MEASURING_TIMER_LOG_END();
 }
 
 void Renderer::RenderGUI()
 {
 	viewMatrix.ToIdentity();
-	projMatrix = Mat4Graphics::Orthographic(-1, 1, (float)width, -1, (float)height, -1);
+	projMatrix = Mat4Graphics::Orthographic(-1, 1, 1, -1, 1, -1);
 	GUISystem::GetInstance().Render();
 }
 
@@ -123,4 +135,9 @@ void Renderer::OnRenderLights()
 
 		light->OnRenderObject();
 	}
+}
+
+void Renderer::SwitchScene()
+{
+
 }

@@ -16,7 +16,7 @@ uniform vec4 lightColour;
 in Vertex {
 	mat4 inverseProjView;
 } IN;
-out vec4 gl_FragColor [2];
+out vec4 colourOut [2];
 
 void main (void) {
 	vec3 pos = vec3 ((gl_FragCoord.x * pixelSize.x), (gl_FragCoord.y * pixelSize.y), 0.0);

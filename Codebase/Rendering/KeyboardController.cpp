@@ -19,7 +19,7 @@ void KeyboardController::CheckInput(){
 	float turn = 0;
 	bool airbourne = object->airbourne();
 
-	auto forward = object->getForwardVelocity();
+	float forward = object->getForwardVelocity();
 
 	if (Window::GetKeyboard()->KeyDown(KEYBOARD_UP) || Window::GetKeyboard()->KeyDown(KEYBOARD_W))
 	{
@@ -39,10 +39,12 @@ void KeyboardController::CheckInput(){
 		if (airbourne)
 			torque += (orientation *Vec3Physics(0, 0, -1)).Normalize() * airAccel * 0.7f;
 		else
-		if (forward < 0)
+		if (forward < 0){
 			torque += (orientation *Vec3Physics(0, -1, 0)).Normalize() * -rotAccel;
-		else
+		}
+		else{
 			torque += (orientation *Vec3Physics(0, -1, 0)).Normalize() * rotAccel;
+		}
 
 		turn++;
 		//force += (orientation * Vec3Physics(0, 0, accel));
@@ -51,12 +53,14 @@ void KeyboardController::CheckInput(){
 	if (Window::GetKeyboard()->KeyDown(KEYBOARD_LEFT) || Window::GetKeyboard()->KeyDown(KEYBOARD_A))
 	{
 		if (airbourne)
-			torque += (orientation *Vec3Physics(0, 0, 1)).Normalize() * airAccel * 0.7f; 
+			torque += (orientation *Vec3Physics(0, 0, 1)).Normalize() * airAccel * 0.7f;
 		else
-		if (forward < 0)
+		if (forward < 0){
 			torque += (orientation *Vec3Physics(0, 1, 0)).Normalize() * -rotAccel;
-		else
+		}
+		else{
 			torque += (orientation *Vec3Physics(0, 1, 0)).Normalize() * rotAccel;
+		}
 
 		turn--;
 		//force += (orientation * Vec3Physics(0, 0, -accel));

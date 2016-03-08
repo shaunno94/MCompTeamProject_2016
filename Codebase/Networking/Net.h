@@ -5,6 +5,7 @@
 #include <future>
 #include <iostream>
 #include "NetSession.h"
+#include "Memory/FixedSizeAllocatorManager.h"
 
 #pragma comment(lib, "ws2_32.lib")
 #pragma comment(lib, "winmm.lib")
@@ -87,6 +88,8 @@ protected:
 	void BroadcastInternal(T& data, bool reliable = false)
 	{
 		assert(("NetHost::BroadcastInternal type is not internal", (data.type & NetMessageInternalTypeFlag) != 0));
+		//TODO: Add ENET_PACKET_FLAG_UNSEQUENCED ?
+
 		ENetPacket* packet = enet_packet_create(
 		                       &data,
 		                       sizeof(T),
@@ -118,5 +121,20 @@ public:
 	static bool Init();
 	static bool s_Initialized;
 	static void Clear();
+
+	inline static uint64_t GetAllocatedMemory()
+	{
+		return s_memManager.GetAllocatedMemory();
+	}
+	inline static uint64_t GetUsedMemory()
+	{
+		return s_memManager.GetUsedMemory();
+	}
+
+private:
+	static FixedSizeAllocatorManager s_memManager;
+
+	static void* ENET_CALLBACK networkMemManagerMalloc(size_t size);
+	static void ENET_CALLBACK networkMemManagerFree(void* memory);
 };
 

@@ -37,5 +37,9 @@ FixedSizeAllocatorManager::FixedSizeAllocatorManager(
 	for (unsigned i = 0; i < ALLOCATOR_NUM_BLOCK_SIZES; ++i) {
 		m_allocators[i].Reset(ALLOCATOR_BLOCK_SIZES[i], pageSize, alignment);
 	}
+
+#ifdef ALOCATOR_TRACK_STATS
+	m_externalMemory = 0;
+#endif
 }
 #endif
