@@ -1,9 +1,9 @@
 #include "MenuControllerComponent.h"
 
-MenuControllerComponent::MenuControllerComponent(GameObject* parent, unsigned int type) :
+MenuControllerComponent::MenuControllerComponent(MenuGUI* parent, unsigned int type) :
 	ControllerComponent(parent)
 {
-//	parent->GetChildren()
+	//parent->GetChildren()[0]
 }
 
 MenuControllerComponent::~MenuControllerComponent()

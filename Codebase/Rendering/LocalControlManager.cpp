@@ -34,13 +34,3 @@ void LocalControlManager::setupActors()
 		ai->setupAI();
 	}
 }
-
-void LocalControlManager::setMenuProducer(GameObject* g, unsigned int type)
-{
-	ControllerComponent* cc = new MenuControllerComponent(g, type);
-#ifndef ORBIS
-	controllers.push_back(new MenuController(cc));
-#else
-	controllers.push_back(new PS4MenuController(cc));
-#endif
-}

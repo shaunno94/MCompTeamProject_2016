@@ -15,7 +15,7 @@ ScoreboardGUIComponent::ScoreboardGUIComponent(Material* material, Texture* text
 	text = new GameObject("text");
 	text_renderComp = new RenderComponent(m_Material, m_Mesh);
 	text->SetRenderComponent(text_renderComp);
-//	text->SetWorldTransform(Mat4Graphics::Translation(Vec3Graphics(350, 700, 0)) * Mat4Graphics::Scale(Vec3Graphics(40, 40, 1)));
+	text->SetWorldTransform(Mat4Graphics::Translation(Vec3Graphics(-0.6f, 0.7f, 0)) * Mat4Graphics::Scale(Vec3Graphics(0.1f, 0.1f, 1)));
 	m_Children.push_back(text);
 }
 
@@ -31,16 +31,16 @@ ScoreboardGUIComponent::~ScoreboardGUIComponent()
 
 void ScoreboardGUIComponent::Update(int& scoreA, int& scoreB, float& time)
 {
-	//delete m_Mesh;
-	//timeRem = 180 - (int) time;
-	//min = timeRem / 60;
-	//sec = timeRem % 60;
-	//m_Mesh = Mesh::GenerateTextQuad(std::to_string(scoreA) + " - " + 
-	//	std::to_string(min) + ":" + (sec < 10 ? "0" : "") + std::to_string(sec) + " - " +
-	//								std::to_string(scoreB), font);
+	delete m_Mesh;
+	timeRem = 180 - (int) time;
+	min = timeRem / 60;
+	sec = timeRem % 60;
+	m_Mesh = Mesh::GenerateTextQuad(std::to_string(scoreA) + " - " + 
+		std::to_string(min) + ":" + (sec < 10 ? "0" : "") + std::to_string(sec) + " - " +
+									std::to_string(scoreB), font);
 
-	//text_renderComp->m_Mesh = m_Mesh;
-	//text->SetRenderComponent(text_renderComp);
+	text_renderComp->m_Mesh = m_Mesh;
+	text->SetRenderComponent(text_renderComp);
 }
 
 void ScoreboardGUIComponent::Render()

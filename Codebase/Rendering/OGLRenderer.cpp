@@ -528,7 +528,7 @@ void OGLRenderer::FillBuffers()
 	//SetCurrentShader(sceneShader);
 	
 	UpdateShaderMatrices();
-	//DrawSky();
+	DrawSky();
 
 #if DEBUG_DRAW
 	PhysicsEngineInstance::Instance()->debugDrawWorld();

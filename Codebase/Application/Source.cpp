@@ -41,9 +41,10 @@ int main(void)
 #endif
 
 	ControllerManager* myControllers = new LocalControlManager;
+	UIControllerManager* uiController = new UIControllerManager();
 	//Create GameScene
 	GameScene* gameScene = new GameScene(myControllers);
-	//MenuScene* menuScene = new MenuScene(myControllers);
+//	MenuScene* menuScene = new MenuScene(uiController);
 	//Set current scene to the game
 	renderer.SetCurrentScene(gameScene);
 	gameScene->SetControllerActor();

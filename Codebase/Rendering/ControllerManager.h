@@ -10,7 +10,6 @@ public:
 
 	virtual void setProducer(GameObject* g, unsigned int type) = 0;
 	virtual void setActor(GameObject* g, unsigned int type) = 0;
-	virtual void setMenuProducer(GameObject* g, unsigned int type) = 0;
 	virtual void update(float ms);
 
 protected:

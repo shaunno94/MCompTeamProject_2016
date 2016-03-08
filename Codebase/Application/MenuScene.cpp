@@ -1,7 +1,7 @@
 #include "MenuScene.h"
 
 
-MenuScene::MenuScene(ControllerManager* controller)
+MenuScene::MenuScene(UIControllerManager* controller)
 :myControllers(controller)
 {
 	SoundSystem::Initialise();
@@ -73,7 +73,7 @@ void MenuScene::LoadAudio()
 
 void MenuScene::SetupControls()
 {
-	myControllers->setMenuProducer(menuGUI,0);
+	myControllers->setProducer(menuGUI,0);
 }
 
 

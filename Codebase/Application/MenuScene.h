@@ -1,6 +1,6 @@
 #pragma once
 #include "Rendering\Scene.h"
-#include "Rendering\LocalControlManager.h"
+#include "Rendering\UIControllerManager.h"
 #include "Rendering\GUISystem.h"
 #include "Rendering\OGLShader.h"
 #include "Rendering\MenuBackgroundGUI.h"
@@ -16,7 +16,7 @@ class MenuScene :
 	public Scene
 {
 public:
-	MenuScene(ControllerManager* controller);
+	MenuScene(UIControllerManager* controller);
 	~MenuScene();
 
 	virtual void UpdateScene(float dt) override;
@@ -29,7 +29,7 @@ public:
 	void SetupControls();
 
 protected:
-	ControllerManager* myControllers;
+	UIControllerManager* myControllers;
 
 	GameObject* test;
 	

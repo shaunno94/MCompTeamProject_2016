@@ -273,6 +273,9 @@
     <ClInclude Include="MenuControllerComponent.h">
       <Filter>Header Files\Input</Filter>
     </ClInclude>
+    <ClInclude Include="UIControllerManager.h">
+      <Filter>Header Files\Input</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Renderer.cpp">
@@ -438,6 +441,9 @@
       <Filter>Source Files\UI\MenuGUI</Filter>
     </ClCompile>
     <ClCompile Include="MenuControllerComponent.cpp">
+      <Filter>Source Files\Input</Filter>
+    </ClCompile>
+    <ClCompile Include="UIControllerManager.cpp">
       <Filter>Source Files\Input</Filter>
     </ClCompile>
   </ItemGroup>

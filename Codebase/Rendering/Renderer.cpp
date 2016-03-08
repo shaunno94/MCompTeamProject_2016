@@ -102,7 +102,7 @@ void Renderer::RenderScene(float msec)
 void Renderer::RenderGUI()
 {
 	viewMatrix.ToIdentity();
-	projMatrix = Mat4Graphics::Orthographic(-1, 1, 1, -1, -1, 1);
+	projMatrix = Mat4Graphics::Orthographic(-1, 1, 1, -1, 1, -1);
 	GUISystem::GetInstance().Render();
 }
 

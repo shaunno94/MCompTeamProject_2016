@@ -213,6 +213,7 @@
     <ClInclude Include="TableBackgroundGUI.h" />
     <ClInclude Include="TextInfoGUI.h" />
     <ClInclude Include="Texture.h" />
+    <ClInclude Include="UIControllerManager.h" />
     <ClInclude Include="WheelObject.h" />
     <ClInclude Include="Window.h" />
   </ItemGroup>
@@ -270,6 +271,7 @@
     <ClCompile Include="TableBackgroundGUI.cpp" />
     <ClCompile Include="TextInfoGUI.cpp" />
     <ClCompile Include="Texture.cpp" />
+    <ClCompile Include="UIControllerManager.cpp" />
     <ClCompile Include="WheelObject.cpp" />
     <ClCompile Include="Window.cpp" />
   </ItemGroup>
