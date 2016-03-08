@@ -1,4 +1,4 @@
-#version 450 core
+#version 150 core
 
 uniform sampler2D depthTex;
 uniform sampler2D normTex;
@@ -54,6 +54,6 @@ void main (void) {
 	lambert *= shadow;
 	sFactor *= shadow;
 	
-	gl_FragColor[0] = vec4(lightColour.xyz * lambert * atten, 1.0);
-	gl_FragColor[1] = vec4(lightColour.xyz * sFactor * atten * 0.33, 1.0);
+	colourOut[0] = vec4(lightColour.xyz * lambert * atten, 1.0);
+	colourOut[1] = vec4(lightColour.xyz * sFactor * atten * 0.33, 1.0);
 }

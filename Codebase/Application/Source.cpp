@@ -89,9 +89,6 @@ int main(void)
 	}
 
 	delete gameScene;
-#ifndef ORBIS
-	SoundSystem::Release();
-#endif
 
 	return 0;
 }

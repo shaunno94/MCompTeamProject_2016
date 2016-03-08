@@ -7,6 +7,8 @@
 #include "Renderer.h"
 #include "OGLShader.h"
 
+unsigned int OGLMesh::s_memoryFootprint;
+
 OGLMesh::OGLMesh(void)
 {
 	for (int i = 0; i < MAX_BUFFER; ++i)
