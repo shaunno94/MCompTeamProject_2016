@@ -23,12 +23,11 @@ public:
 	float getForwardVelocity();
 	void reset();
 
-	inline GameObject* GetParent()
+	GameObject* GetParent()
 	{
 		return m_parent;
 	}
 
-	bool adjustForRotation = false;
 protected:
 	GameObject* m_parent;
 	Vec3Physics force;

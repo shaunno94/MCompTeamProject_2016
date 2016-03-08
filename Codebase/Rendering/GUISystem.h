@@ -1,3 +1,4 @@
+#pragma once
 #include "OrthoComponent.h"
 
 class GUISystem
@@ -9,7 +10,7 @@ public:
 
 	void AddOrthoComponent(OrthoComponent* component);
 	void RemoveOrthoComponent(OrthoComponent* component);
-	void Update();
+	//void Update();
 	void Render();
 
 	bool HasInitialised();
