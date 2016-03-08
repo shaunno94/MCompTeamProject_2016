@@ -49,19 +49,21 @@ void ControllerComponent::updateObject(float dt)
 		m_updateState = false;
 	}
 
+	//wake up object
 	if (force.LengthSq() > 0.0000001 || torque.LengthSq() > 0.0000001 || impulse.LengthSq() > 0.0000001)
 		dynamic_cast<RigidPhysicsObject*>(m_parent->GetPhysicsComponent())->GetPhysicsBody()->activate();
 
 	Vec3 up = getOrientation() * Vec3(0, 1, 0);
 
+	//apply forces
 	if (up.Dot(Vec3(0, 1, 0)) > 0.8 && !airbourne())
 	{
 		dynamic_cast<RigidPhysicsObject*>(m_parent->GetPhysicsComponent())->GetPhysicsBody()->applyCentralForce(btVector3(force.x, force.y, force.z) * dt);
 		dynamic_cast<RigidPhysicsObject*>(m_parent->GetPhysicsComponent())->GetPhysicsBody()->applyCentralImpulse(btVector3(impulse.x, impulse.y, impulse.z));
 		m_inactiveFramesUpsideDown = 0;
 	}
-	else if (up.Dot(Vec3(0, 1, 0)) < 0.5)
-	{
+	//auto reset
+	else if (up.Dot(Vec3(0, 1, 0)) < 0.5) {
 		m_inactiveFramesUpsideDown++;
 	}
 	else
@@ -78,15 +80,19 @@ void ControllerComponent::updateObject(float dt)
 	force.ToZero();
 	impulse.ToZero();
 
+	//clamp speed
 	float maxSpeed = 100.0f;
 	if (!airbourne() && torque.LengthSq() > 0)
 	{
 		float forwardVelocity = getForwardVelocity();
 		torque *= ((1 - (forwardVelocity / maxSpeed)) * 100000) + 80000;
 	}
+
+	//apply torque
 	dynamic_cast<RigidPhysicsObject*>(m_parent->GetPhysicsComponent())->GetPhysicsBody()->applyTorque(btVector3(torque.x, torque.y, torque.z)*dt);
 	torque.ToZero();
 
+	//vary friction
 	Vec3Physics left = (getOrientation() * Vec3Physics(-1, 0, 0)).Normalize();
 	btVector3 btleft(left.x, left.y, left.z);
 	btVector3 velocity = -m_parent->GetPhysicsComponent()->GetPhysicsBody()->getInterpolationLinearVelocity();
@@ -103,22 +109,16 @@ void ControllerComponent::updateObject(float dt)
 		{
 			float velocityFactor = (maxSpeed * maxSpeed) / std::max(fullVelocity.length2(), maxSpeed * maxSpeed);
 			dynamic_cast<RigidPhysicsObject*>(m_parent->GetPhysicsComponent())->GetPhysicsBody()->setLinearVelocity(fullVelocity * velocityFactor);
-
-			/*btVector3 angularV = dynamic_cast<RigidPhysicsObject*>(m_parent->GetPhysicsComponent())->GetPhysicsBody()->getAngularVelocity();
-			velocityFactor = (1.5f * 1.5f) / std::max(angularV.length2(), 1.5f * 1.5f);
-			if (m_parent->GetName() == "player")
-				std::cout << angularV.length() << endl;
-			dynamic_cast<RigidPhysicsObject*>(m_parent->GetPhysicsComponent())->GetPhysicsBody()->setAngularVelocity(angularV * velocityFactor);*/
+		
 		}
 		friction = friction <= 1 ? 1 : friction;
 
-		if (!airbourne()/* && adjustForRotation*/)
-		{
+		//adjust for rotation
+		if (!airbourne()){
 			float angle = leftDot * 1.5708;
-			if (getForwardVelocity() < 0)
+				if (getForwardVelocity() < 0)
 				angle = -angle;
 			dynamic_cast<RigidPhysicsObject*>(m_parent->GetPhysicsComponent())->GetPhysicsBody()->setLinearVelocity(fullVelocity * btMatrix3x3(btQuaternion(btVector3(0, 1, 0), -angle)));
-			adjustForRotation = false;
 		}
 	}
 
@@ -195,22 +195,22 @@ void ControllerComponent::reset()
 {
 	if (m_parent->GetPhysicsComponent())
 	{
-		//return Mat4Physics::Rotation(Renderer::GetInstance()->GetCurrentScene()->getCamera()->GetYaw() + 90, Vec3Physics(0, 1, 0));
-		btVector3 world = m_parent->GetPhysicsComponent()->GetPhysicsBody()->getWorldTransform().getOrigin();
-		//world.SetTranslation(Vec3Physics(0, 0, 0));
+	//return Mat4Physics::Rotation(Renderer::GetInstance()->GetCurrentScene()->getCamera()->GetYaw() + 90, Vec3Physics(0, 1, 0));
+	btVector3 world = m_parent->GetPhysicsComponent()->GetPhysicsBody()->getWorldTransform().getOrigin();
+	//world.SetTranslation(Vec3Physics(0, 0, 0));
 
-		btVector3 worldNorm = world;
-		worldNorm.normalize();
+	btVector3 worldNorm = world;
+	worldNorm.normalize();
 
-		float dot = worldNorm.dot(btVector3(0, 0, 1));
+	float dot = worldNorm.dot(btVector3(0, 0, 1));
 
-		float radians = std::acos(dot);
+	float radians = std::acos(dot);
 
-		if (world.x() < 0)
-			radians = -radians;
-		btTransform transform = btTransform(btQuaternion(btVector3(0, 1, 0), radians), world);
-		m_parent->GetPhysicsComponent()->GetPhysicsBody()->setWorldTransform(transform);
-		dynamic_cast<RigidPhysicsObject*>(m_parent->GetPhysicsComponent())->GetPhysicsBody()->activate();
+	if (world.x() < 0)
+		radians = -radians;
+	btTransform transform = btTransform(btQuaternion(btVector3(0, 1, 0), radians), world);
+	m_parent->GetPhysicsComponent()->GetPhysicsBody()->setWorldTransform(transform);
+	dynamic_cast<RigidPhysicsObject*>(m_parent->GetPhysicsComponent())->GetPhysicsBody()->activate();
 
 	}
 }

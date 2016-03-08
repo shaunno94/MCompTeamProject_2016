@@ -47,6 +47,7 @@ int main(void)
 	//Set current scene to the game
 	renderer.SetCurrentScene(gameScene);
 	gameScene->SetControllerActor();
+	gameScene->SetupAI();
 	//renderer.SetCurrentScene(menuScene);
 
 #ifndef ORBIS

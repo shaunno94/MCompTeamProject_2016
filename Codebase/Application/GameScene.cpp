@@ -276,6 +276,11 @@ void GameScene::applyImpulseFromExplosion(CarGameObject* car)
 	dynamic_cast<RigidPhysicsObject*>(car->GetPhysicsComponent())->GetPhysicsBody()->applyCentralImpulse(ballToCar * attenuation * 30000000.0f);
 }
 
+void GameScene::SetupAI()
+{
+	dynamic_cast<LocalControlManager*>(myControllers)->setupActors();
+}
+
 void GameScene::ResetObjects()
 {
 	btVector3 zeroVector = btVector3(0, 0, 0);

@@ -3,7 +3,7 @@
 MenuControllerComponent::MenuControllerComponent(GameObject* parent, unsigned int type) :
 	ControllerComponent(parent)
 {
-	parent->FindGameObject();
+//	parent->GetChildren()
 }
 
 MenuControllerComponent::~MenuControllerComponent()
