@@ -270,6 +270,9 @@
     <ClInclude Include="MenuGUI.h">
       <Filter>Header Files\UI\MenuGUI</Filter>
     </ClInclude>
+    <ClInclude Include="MenuControllerComponent.h">
+      <Filter>Header Files\Input</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Renderer.cpp">
@@ -433,6 +436,9 @@
     </ClCompile>
     <ClCompile Include="MenuGUI.cpp">
       <Filter>Source Files\UI\MenuGUI</Filter>
+    </ClCompile>
+    <ClCompile Include="MenuControllerComponent.cpp">
+      <Filter>Source Files\Input</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

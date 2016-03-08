@@ -2,6 +2,7 @@
 #include "AIControllerComponent.h"
 #include "PS4Controller.h"
 #include "PS4MenuController.h"
+#include "MenuControllerComponent.h"
 
 LocalControlManager::LocalControlManager()
 {
@@ -30,7 +31,7 @@ void LocalControlManager::setActor(GameObject* g, unsigned int type){
 
 void LocalControlManager::setMenuProducer(GameObject* g, unsigned int type)
 {
-	ControllerComponent* cc = new ControllerComponent(g);
+	ControllerComponent* cc = new MenuControllerComponent(g, type);
 #ifndef ORBIS
 	controllers.push_back(new MenuController(cc));
 #else

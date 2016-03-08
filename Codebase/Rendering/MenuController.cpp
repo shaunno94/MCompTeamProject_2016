@@ -15,18 +15,18 @@ MenuController::~MenuController()
 
 void MenuController::CheckInput()
 {
-	if (Window::GetKeyboard()->KeyDown(KEYBOARD_UP) || Window::GetKeyboard()->KeyDown(KEYBOARD_W))
+	if (Window::GetKeyboard()->KeyTriggered(KEYBOARD_UP) || Window::GetKeyboard()->KeyTriggered(KEYBOARD_W))
 	{
-	//TODO: Check if top reached, if not, move menu selection up
+		std::cout << "UP" << std::endl;
 	}
-	if (Window::GetKeyboard()->KeyDown(KEYBOARD_DOWN) || Window::GetKeyboard()->KeyDown(KEYBOARD_S))
+	if (Window::GetKeyboard()->KeyTriggered(KEYBOARD_DOWN) || Window::GetKeyboard()->KeyTriggered(KEYBOARD_S))
 	{
-	//TODO: Check if bottom reached, if not, move menu selection down
+		std::cout << "DOWN" << std::endl;
 	}
 
 	if (Window::GetKeyboard()->KeyTriggered(KEYBOARD_RETURN))
 	{
-	//TODO: Execute the current selected button
+		std::cout << "RETURN" << std::endl;
 	}
 }
 

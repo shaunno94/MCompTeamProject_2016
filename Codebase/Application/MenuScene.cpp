@@ -1,7 +1,7 @@
 #include "MenuScene.h"
 
 
-MenuScene::MenuScene(ControllerManager* controller, int selected)
+MenuScene::MenuScene(ControllerManager* controller)
 :myControllers(controller)
 {
 	SoundSystem::Initialise();
@@ -51,16 +51,17 @@ void MenuScene::SetupShaders()
 void MenuScene::SetupMaterials()
 {
 	guiMaterial = new Material(orthoShader);
+	bgMaterial = new Material(orthoShader);
 	//textMaterial = new Material(orthoShader);
 }
 
 void MenuScene::DrawGUI()
 {
 	bgOrtho = new OrthoComponent(1.0f);
-	//menuGUI = new MenuBackgroundGUI(guiMaterial, Texture::Get(TEXTURE_DIR"titleScreen.jpg"), 1.0);
-	//bgOrtho->AddGUIComponent(menuGUI);
+	menuBg = new MenuBackgroundGUI(bgMaterial, Texture::Get(TEXTURE_DIR"titleScreen1.jpg"), 1.0);
+	bgOrtho->AddGUIComponent(menuBg);
 
-	menuGUI = new MenuGUI(guiMaterial, Texture::Get(TEXTURE_DIR"bricks1.jpg"), 1.0);
+	menuGUI = new MenuGUI(guiMaterial, Texture::Get(TEXTURE_DIR"bricks1.jpg"), 1.0,"menuGUI");
 	bgOrtho->AddGUIComponent(menuGUI);
 	GUISystem::GetInstance().AddOrthoComponent(bgOrtho);
 }

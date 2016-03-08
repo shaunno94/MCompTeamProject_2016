@@ -60,7 +60,8 @@ void ControllerComponent::updateObject(float dt)
 		dynamic_cast<RigidPhysicsObject*>(m_parent->GetPhysicsComponent())->GetPhysicsBody()->applyCentralImpulse(btVector3(impulse.x, impulse.y, impulse.z));
 		m_inactiveFramesUpsideDown = 0;
 	}
-	else if (up.Dot(Vec3(0, 1, 0)) < 0.5) {
+	else if (up.Dot(Vec3(0, 1, 0)) < 0.5)
+	{
 		m_inactiveFramesUpsideDown++;
 	}
 	else
@@ -68,7 +69,8 @@ void ControllerComponent::updateObject(float dt)
 		m_inactiveFramesUpsideDown = 0;
 	}
 
-	if (m_inactiveFramesUpsideDown > 120) {
+	if (m_inactiveFramesUpsideDown > 120)
+	{
 		reset();
 		m_inactiveFramesUpsideDown = 0;
 	}
@@ -77,7 +79,8 @@ void ControllerComponent::updateObject(float dt)
 	impulse.ToZero();
 
 	float maxSpeed = 100.0f;
-	if (!airbourne() && torque.LengthSq() > 0){
+	if (!airbourne() && torque.LengthSq() > 0)
+	{
 		float forwardVelocity = getForwardVelocity();
 		torque *= ((1 - (forwardVelocity / maxSpeed)) * 100000) + 80000;
 	}
@@ -96,10 +99,11 @@ void ControllerComponent::updateObject(float dt)
 	{
 		float leftDot = (velocity.normalize()).dot(btleft.normalize());
 		friction = std::abs((2.0 * leftDot));
-		if (dynamic_cast<GameScene*>(Renderer::GetInstance()->GetCurrentScene())->GetGoalScored() == 0) {
+		if (dynamic_cast<GameScene*>(Renderer::GetInstance()->GetCurrentScene())->GetGoalScored() == 0)
+		{
 			float velocityFactor = (maxSpeed * maxSpeed) / std::max(fullVelocity.length2(), maxSpeed * maxSpeed);
 			dynamic_cast<RigidPhysicsObject*>(m_parent->GetPhysicsComponent())->GetPhysicsBody()->setLinearVelocity(fullVelocity * velocityFactor);
-		
+
 			/*btVector3 angularV = dynamic_cast<RigidPhysicsObject*>(m_parent->GetPhysicsComponent())->GetPhysicsBody()->getAngularVelocity();
 			velocityFactor = (1.5f * 1.5f) / std::max(angularV.length2(), 1.5f * 1.5f);
 			if (m_parent->GetName() == "player")
@@ -108,9 +112,10 @@ void ControllerComponent::updateObject(float dt)
 		}
 		friction = friction <= 1 ? 1 : friction;
 
-		if (!airbourne()/* && adjustForRotation*/){
+		if (!airbourne()/* && adjustForRotation*/)
+		{
 			float angle = leftDot * 1.5708;
-				if (getForwardVelocity() < 0)
+			if (getForwardVelocity() < 0)
 				angle = -angle;
 			dynamic_cast<RigidPhysicsObject*>(m_parent->GetPhysicsComponent())->GetPhysicsBody()->setLinearVelocity(fullVelocity * btMatrix3x3(btQuaternion(btVector3(0, 1, 0), -angle)));
 			adjustForRotation = false;
@@ -188,22 +193,26 @@ void ControllerComponent::getCameraControl(float& pitch, float& yaw)
 
 void ControllerComponent::reset()
 {
-	//return Mat4Physics::Rotation(Renderer::GetInstance()->GetCurrentScene()->getCamera()->GetYaw() + 90, Vec3Physics(0, 1, 0));
-	btVector3 world = m_parent->GetPhysicsComponent()->GetPhysicsBody()->getWorldTransform().getOrigin();
-	//world.SetTranslation(Vec3Physics(0, 0, 0));
+	if (m_parent->GetPhysicsComponent())
+	{
+		//return Mat4Physics::Rotation(Renderer::GetInstance()->GetCurrentScene()->getCamera()->GetYaw() + 90, Vec3Physics(0, 1, 0));
+		btVector3 world = m_parent->GetPhysicsComponent()->GetPhysicsBody()->getWorldTransform().getOrigin();
+		//world.SetTranslation(Vec3Physics(0, 0, 0));
 
-	btVector3 worldNorm = world;
-	worldNorm.normalize();
+		btVector3 worldNorm = world;
+		worldNorm.normalize();
 
-	float dot = worldNorm.dot(btVector3(0, 0, 1));
+		float dot = worldNorm.dot(btVector3(0, 0, 1));
 
-	float radians = std::acos(dot);
+		float radians = std::acos(dot);
 
-	if (world.x() < 0)
-		radians = -radians;
-	btTransform transform = btTransform(btQuaternion(btVector3(0, 1, 0), radians), world);
-	m_parent->GetPhysicsComponent()->GetPhysicsBody()->setWorldTransform(transform);
-	dynamic_cast<RigidPhysicsObject*>(m_parent->GetPhysicsComponent())->GetPhysicsBody()->activate();
+		if (world.x() < 0)
+			radians = -radians;
+		btTransform transform = btTransform(btQuaternion(btVector3(0, 1, 0), radians), world);
+		m_parent->GetPhysicsComponent()->GetPhysicsBody()->setWorldTransform(transform);
+		dynamic_cast<RigidPhysicsObject*>(m_parent->GetPhysicsComponent())->GetPhysicsBody()->activate();
+
+	}
 }
 
 void ControllerComponent::turnWheels(float prop)

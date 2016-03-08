@@ -12,18 +12,11 @@ const string MENU_VERT = SHADER_DIR"TexturedVertex.glsl";
 const string MENU_FRAG = SHADER_DIR"TexturedFragment.glsl";
 #endif
 
-enum SELECTED
-{
-	SINGLE_PLAYER,
-	MULTIPLAYER,
-	QUIT
-};
-
 class MenuScene :
 	public Scene
 {
 public:
-	MenuScene(ControllerManager* controller, int selected = SINGLE_PLAYER);
+	MenuScene(ControllerManager* controller);
 	~MenuScene();
 
 	virtual void UpdateScene(float dt) override;
@@ -46,9 +39,11 @@ protected:
 
 	Material* guiMaterial;
 	Material* textMaterial;
+	Material* bgMaterial;
 
 	OrthoComponent* bgOrtho;
 	MenuGUI* menuGUI;
+	MenuBackgroundGUI* menuBg;
 
 	unsigned int m_Selected;
 };
