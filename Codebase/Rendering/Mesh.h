@@ -138,6 +138,8 @@ public:
 	virtual void BufferData() = 0;
 	virtual void SetPrimitiveType(pType type) = 0;
 
+	static uint32_t MeshMemoryUsage;
+
 protected:
 	//Helper function for GenerateTangents
 	Vec3Graphics GenerateTangent(const Vec3Graphics& a,const Vec3Graphics& b,const Vec3Graphics& c,const Vec2Graphics& ta,const Vec2Graphics& tb,const Vec2Graphics& tc);
@@ -170,5 +172,6 @@ protected:
 	Vec3Graphics*		m_Tangents;
 	//Pointer to vertex indices attribute data
 	uint32_t*	m_Indices;
-};
 
+	static void CalcMeshUsage(Mesh* m);
+};
