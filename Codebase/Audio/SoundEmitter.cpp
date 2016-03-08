@@ -1,5 +1,23 @@
-#ifndef ORBIS
 #include "SoundEmitter.h"
+
+Emitter::Emitter() {
+	Reset();
+}
+
+void Emitter::Reset() {
+	sound = nullptr;
+	currentSource = nullptr;
+
+	priority = SOUNDPRIORTY_LOW;
+	volume = SOUND_VOLUME;
+	radius = SOUND_RADIUS;
+	pitch = SOUND_PITCH;
+
+	isSingle = false;
+	isLooping = SOUND_LOOP;
+	isGlobal = SOUND_GLOBAL;
+}
+
 
 SoundEmitter::SoundEmitter(void)
 {
@@ -14,17 +32,9 @@ SoundEmitter::SoundEmitter(Sound* s)
 
 void	SoundEmitter::Reset()
 {
-	priority = SOUNDPRIORTY_LOW;
-	pitch = SOUND_PITCH;
-	volume = SOUND_VOLUME;
-	radius = SOUND_RADIUS;
-	timeLeft = 0.0f;
-	isLooping = SOUND_LOOP;
-	oalSource = NULL;
-	sound = NULL;
-	isGlobal = SOUND_GLOBAL;
+	Emitter::Reset();
 
-	isSingle = false;
+	timeLeft = 0.0f;
 
 	// for 3D and doppler
 	position = Vec3();
@@ -66,20 +76,20 @@ void		SoundEmitter::SetSound(Sound* s)
 	}
 }
 
-void		SoundEmitter::AttachSource(OALSource* s)
+void		SoundEmitter::AttachSource(AudioSource* s)
 {
-	oalSource = s;
+	currentSource = s;
 
-	if (!oalSource)
+	if (!currentSource)
 	{
 		return;
 	}
 
-	oalSource->inUse = true;
+	currentSource->inUse = true;
 
-	alSourceStop(oalSource->source);
-	alSourcef(oalSource->source, AL_MAX_DISTANCE, radius);
-	alSourcef(oalSource->source, AL_REFERENCE_DISTANCE, radius * 0.2f);
+	alSourceStop(currentSource->source);
+	alSourcef(currentSource->source, AL_MAX_DISTANCE, radius);
+	alSourcef(currentSource->source, AL_REFERENCE_DISTANCE, radius * 0.2f);
 
 	if (sound->IsStreaming())
 	{
@@ -99,42 +109,42 @@ void		SoundEmitter::AttachSource(OALSource* s)
 				break;
 			}
 		}
-		alSourceQueueBuffers(oalSource->source, numBuffered, &streamBuffers[0]);
+		alSourceQueueBuffers(currentSource->source, numBuffered, &streamBuffers[0]);
 	}
 	else
 	{
-		alSourcei(oalSource->source, AL_BUFFER, sound->GetBuffer());
-		alSourcef(oalSource->source, AL_SEC_OFFSET, (sound->GetLength() / 1000.0) - (timeLeft / 1000.0));
+		alSourcei(currentSource->source, AL_BUFFER, sound->GetBuffer());
+		alSourcef(currentSource->source, AL_SEC_OFFSET, (sound->GetLength() / 1000.0) - (timeLeft / 1000.0));
 	}
 
-	alSourcePlay(oalSource->source);
+	alSourcePlay(currentSource->source);
 }
 
 void		SoundEmitter::DetachSource()
 {
-	if (!oalSource)
+	if (!currentSource)
 	{
 		return;
 	}
 
-	oalSource->inUse = false;
+	currentSource->inUse = false;
 
-	alSourcef(oalSource->source, AL_GAIN, 0.0f);
-	alSourceStop(oalSource->source);
-	alSourcei(oalSource->source, AL_BUFFER, 0);
+	alSourcef(currentSource->source, AL_GAIN, 0.0f);
+	alSourceStop(currentSource->source);
+	alSourcei(currentSource->source, AL_BUFFER, 0);
 
 	if (sound && sound->IsStreaming())
 	{
 		int numProcessed = 0;
 		ALuint tempBuffer;
-		alGetSourcei(oalSource->source, AL_BUFFERS_PROCESSED, &numProcessed);
+		alGetSourcei(currentSource->source, AL_BUFFERS_PROCESSED, &numProcessed);
 		while (numProcessed--)
 		{
-			alSourceUnqueueBuffers(oalSource->source, 1, &tempBuffer);
+			alSourceUnqueueBuffers(currentSource->source, 1, &tempBuffer);
 		}
 	}
 
-	oalSource = NULL;
+	currentSource = NULL;
 }
 
 void		SoundEmitter::Update(float msec)
@@ -152,30 +162,30 @@ void		SoundEmitter::Update(float msec)
 			}
 		}
 
-		if (oalSource)
+		if (currentSource)
 		{
-			alSourcef(oalSource->source, AL_GAIN, volume);
-			alSourcef(oalSource->source, AL_PITCH, pitch);
-			alSourcef(oalSource->source, AL_MAX_DISTANCE, radius);
-			alSourcef(oalSource->source, AL_REFERENCE_DISTANCE, radius * 0.2f);
+			alSourcef(currentSource->source, AL_GAIN, volume);
+			alSourcef(currentSource->source, AL_PITCH, pitch);
+			alSourcef(currentSource->source, AL_MAX_DISTANCE, radius);
+			alSourcef(currentSource->source, AL_REFERENCE_DISTANCE, radius * 0.2f);
 
-			alSourcefv(oalSource->source, AL_POSITION, (float*)&position);
-			alSourcefv(oalSource->source, AL_VELOCITY, (float*)&velocity);
+			alSourcefv(currentSource->source, AL_POSITION, (float*)&position);
+			alSourcefv(currentSource->source, AL_VELOCITY, (float*)&velocity);
 
 			if (sound->IsStreaming())
 			{
 				int numProcessed;
-				alGetSourcei(oalSource->source, AL_BUFFERS_PROCESSED, &numProcessed);
-				alSourcei(oalSource->source, AL_LOOPING, 0);
+				alGetSourcei(currentSource->source, AL_BUFFERS_PROCESSED, &numProcessed);
+				alSourcei(currentSource->source, AL_LOOPING, 0);
 
 				while (numProcessed--/* && streamPos > 0*/)  	//The && prevents clipping at the end of sounds!
 				{
 					ALuint freeBuffer;
 
-					alSourceUnqueueBuffers(oalSource->source, 1, &freeBuffer);
+					alSourceUnqueueBuffers(currentSource->source, 1, &freeBuffer);
 
 					streamPos -= sound->StreamData(freeBuffer, streamPos);
-					alSourceQueueBuffers(oalSource->source, 1, &freeBuffer);
+					alSourceQueueBuffers(currentSource->source, 1, &freeBuffer);
 
 					if (streamPos < 0 && isLooping)
 					{
@@ -185,9 +195,8 @@ void		SoundEmitter::Update(float msec)
 			}
 			else
 			{
-				alSourcei(oalSource->source, AL_LOOPING, isLooping ? 1 : 0);
+				alSourcei(currentSource->source, AL_LOOPING, isLooping ? 1 : 0);
 			}
 		}
 	}
 }
-#endif

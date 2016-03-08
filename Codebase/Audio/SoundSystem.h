@@ -52,9 +52,9 @@ protected:
 
 	void		CullNodes();
 
-	OALSource*	GetSource();
+	AudioSource*	GetSource();
 
-	std::vector<OALSource*>	sources;
+	std::vector<AudioSource*>	sources;
 
 	SoundEmitter* m_Background;
 	int m_MaxDynamicSources;

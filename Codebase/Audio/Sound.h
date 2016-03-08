@@ -14,6 +14,8 @@
 
 typedef unsigned long DWORD;
 #else
+#include <audio3d.h>
+
 typedef unsigned int DWORD;
 #endif
 

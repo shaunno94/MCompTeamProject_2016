@@ -1,4 +1,3 @@
-#ifndef ORBIS
 #include "SoundManager.h"
 #include "Rendering/constants.h"
 
@@ -15,6 +14,7 @@ void SoundManager::AddSound(std::string fileName, unsigned int id)
 		if (extension == "wav")
 		{
 			s->LoadFromWAV(fileName);
+#ifndef ORBIS
 			alGenBuffers(1, &s->buffer);
 			alBufferData(s->buffer, s->GetOALFormat(), s->GetData(), s->GetSize(), (ALsizei)s->GetFrequency());
 		}
@@ -23,6 +23,7 @@ void SoundManager::AddSound(std::string fileName, unsigned int id)
 			ogg->LoadFromOgg(fileName);
 
 			s = ogg;
+#endif
 		}
 		else
 		{
@@ -54,4 +55,3 @@ void SoundManager::LoadAssets()
 	AddSound(AUDIO_DIR"car/engine_idle.wav", ENGINE_IDLE);
 	AddSound(AUDIO_DIR"car/engine_rev.wav", ENGINE_REV);
 }
-#endif

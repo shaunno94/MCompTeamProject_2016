@@ -33,7 +33,7 @@ SoundSystem::SoundSystem(unsigned int channels) {
 		ALenum error = alGetError();
 
 		if (error == AL_NO_ERROR)	{
-			sources.push_back(new OALSource(source));
+			sources.push_back(new AudioSource(source));
 		}
 		else{
 			break;
@@ -156,9 +156,9 @@ void SoundSystem::AttachSources() {
 	}
 }
 
-OALSource*	SoundSystem::GetSource() {
+AudioSource*	SoundSystem::GetSource() {
 	for (auto src : sources) {
-		OALSource* s = src;
+		AudioSource* s = src;
 		if (!s->inUse) {
 			return s;
 		}
@@ -201,7 +201,6 @@ void	SoundSystem::Play(Sound* s, SoundMOD modifier) {
 	n->SetPitch(modifier.pitch);
 	n->SetLooping(modifier.looping);
 	n->SetIsGlobal(modifier.isGlobal);
-	n->SetPosition(modifier.position);
 
 	totalEmitters.push_back(n);
 }
