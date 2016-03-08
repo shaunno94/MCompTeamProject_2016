@@ -108,7 +108,7 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>NOMINMAX;ORBIS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>NOMINMAX;ORBIS;_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <AdditionalIncludeDirectories>$(SCE_ORBIS_SAMPLE_DIR)\;$(IncludePath);..\BulletPhysics\src;$(SolutionDir);$(SolutionDir)Dependencies;$(SolutionDir)enet\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <RuntimeTypeInfo>true</RuntimeTypeInfo>
       <CppExceptions>true</CppExceptions>
@@ -163,6 +163,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="BallGameObject.cpp" />
     <ClCompile Include="CarGameObject.cpp" />
     <ClCompile Include="MenuScene.cpp" />
     <ClCompile Include="Source.cpp" />
@@ -210,6 +211,7 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="BallGameObject.h" />
     <ClInclude Include="MenuScene.h" />
     <ClInclude Include="CarGameObject.h" />
     <ClInclude Include="Stadium.h" />

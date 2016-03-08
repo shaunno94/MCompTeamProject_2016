@@ -154,6 +154,7 @@
   <ItemGroup>
     <ClInclude Include="AIControllerComponent.h" />
     <ClInclude Include="AudioComponent.h" />
+    <ClInclude Include="ButtonGUI.h" />
     <ClInclude Include="Camera.h" />
     <ClInclude Include="constants.h" />
     <ClInclude Include="Controller.h" />
@@ -174,6 +175,10 @@
     <ClInclude Include="LightMaterial.h" />
     <ClInclude Include="LocalControlManager.h" />
     <ClInclude Include="Material.h" />
+    <ClInclude Include="MenuBackgroundGUI.h" />
+    <ClInclude Include="MenuController.h" />
+    <ClInclude Include="MenuControllerComponent.h" />
+    <ClInclude Include="MenuGUI.h" />
     <ClInclude Include="Mesh.h" />
     <ClInclude Include="ModelLoader.h" />
     <ClInclude Include="NetClientControllerManager.h" />
@@ -192,6 +197,7 @@
     <ClInclude Include="PS4Buffer.h" />
     <ClInclude Include="PS4Controller.h" />
     <ClInclude Include="PS4Frame.h" />
+    <ClInclude Include="PS4MenuController.h" />
     <ClInclude Include="PS4Mesh.h" />
     <ClInclude Include="PS4Renderer.h" />
     <ClInclude Include="PS4Shader.h" />
@@ -208,12 +214,14 @@
     <ClInclude Include="TableBackgroundGUI.h" />
     <ClInclude Include="TextInfoGUI.h" />
     <ClInclude Include="Texture.h" />
+    <ClInclude Include="UIControllerManager.h" />
     <ClInclude Include="WheelObject.h" />
     <ClInclude Include="Window.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="AIControllerComponent.cpp" />
     <ClCompile Include="AudioComponent.cpp" />
+    <ClCompile Include="ButtonGUI.cpp" />
     <ClCompile Include="Camera.cpp" />
     <ClCompile Include="ControllerComponent.cpp" />
     <ClCompile Include="ControllerManager.cpp" />
@@ -229,6 +237,10 @@
     <ClCompile Include="LightMaterial.cpp" />
     <ClCompile Include="LocalControlManager.cpp" />
     <ClCompile Include="Material.cpp" />
+    <ClCompile Include="MenuBackgroundGUI.cpp" />
+    <ClCompile Include="MenuController.cpp" />
+    <ClCompile Include="MenuControllerComponent.cpp" />
+    <ClCompile Include="MenuGUI.cpp" />
     <ClCompile Include="Mesh.cpp" />
     <ClCompile Include="ModelLoader.cpp" />
     <ClCompile Include="NetClientControllerManager.cpp" />
@@ -245,6 +257,7 @@
     <ClCompile Include="PS4Buffer.cpp" />
     <ClCompile Include="PS4Controller.cpp" />
     <ClCompile Include="PS4Frame.cpp" />
+    <ClCompile Include="PS4MenuController.cpp" />
     <ClCompile Include="PS4Mesh.cpp" />
     <ClCompile Include="PS4Renderer.cpp" />
     <ClCompile Include="PS4Shader.cpp" />
@@ -260,6 +273,7 @@
     <ClCompile Include="TableBackgroundGUI.cpp" />
     <ClCompile Include="TextInfoGUI.cpp" />
     <ClCompile Include="Texture.cpp" />
+    <ClCompile Include="UIControllerManager.cpp" />
     <ClCompile Include="WheelObject.cpp" />
     <ClCompile Include="Window.cpp" />
   </ItemGroup>

@@ -38,7 +38,8 @@ ConstantBuffer lightColour
 struct VS_OUTPUT
 {
 	float4 position	: S_POSITION;
-	float4x4 inverseProjView;
+	//float4 testPos;
+	float4x4 invProjView;
 };
 
 struct PS_OUTPUT
@@ -51,13 +52,16 @@ PS_OUTPUT main(VS_OUTPUT In) : S_TARGET_OUTPUT
 {
 	PS_OUTPUT Output;
 
+	//float3 pos = float3((In.testPos.x / In.testPos.w),  (In.testPos.y / In.testPos.w), 0.0) * 0.5 + 0.5;
 	float3 pos = float3(In.position.x * pixelSize.x, In.position.y * pixelSize.y, 0.0);
-	pos.z = depthTex.Sample(samp0, pos.xy).r;
+	pos.z = depthTex.Sample(samp0, pos.xy).r;	
 
 	float3 normal = float3(normalize(normTex.Sample(samp0, pos.xy).xyz * 2.0 - 1.0)); 
 
-	float4 clipSpace = mul(In.inverseProjView, float4(pos * 2.0 - 1.0, 1.0));
+	float4 clipSpace = mul(In.invProjView, float4(pos * 2.0 - 1.0, 1.0));
 	pos = clipSpace.xyz / clipSpace.w;	
+
+	float3 lol = pos.xyz;
 
 	float dist = length(lightPos - pos);
 	float atten = 1.0 - saturate(dist / lightRadius); //Same as clamp(x, 0, 1)
@@ -76,24 +80,30 @@ PS_OUTPUT main(VS_OUTPUT In) : S_TARGET_OUTPUT
 	float sFactor = pow(rFactor, 33.0);
 
 	float shadow = 1.0;
-	float4 shadowMapPos = mul(shadowBias, float4(pos + (normal * 1.5), 1.0));
+	float4 shadowMapPos = mul(shadowBias, float4(pos.xyz + (normal.xyz * 1.5), 1.0));
 
 	if(shadowMapPos.w > 0.0)
 	{
 		float3 shadowMapDivide = (shadowMapPos.xyz / shadowMapPos.w);
-		float4 s4 = shadowTex.GatherCmp(samp1, shadowMapDivide.xy, shadowMapDivide.z);	 
+		float4 s4 = shadowTex.GatherCmp(samp1, shadowMapDivide.xy, shadowMapDivide.z);
 		float3 shadowPos =  (2.0 * shadowMapDivide.xyz) - 1.0;
-		shadow = (s4.x + s4.y + s4.z + s4.w) /* 0.25f*/;
-		shadow *= saturate(1.0 - pow(shadowPos.x * shadowPos.x + shadowPos.y * shadowPos.y, 8));
+		shadow = (s4.x + s4.y + s4.z + s4.w) * 0.25f;
+		//shadow *= saturate(1.0 - pow(shadowPos.x * shadowPos.x + shadowPos.y * shadowPos.y, 8));
+
+		//Output.emissive = float4(normalize(shadowMapDivide.xyz), 1);
+
+		//Output.emissive.x = lol.x;
+		//Output.emissive.y = lol.y;
+		//Output.emissive.z = 0.66f;
+		//return Output;
 	}
-	
+
 	lambert *= shadow;
 	sFactor *= shadow;
 
 	Output.emissive = float4(lightColour.xyz * lambert * atten, 1.0);
-	//Output.emissive = shadowTex.Sample(samp0, shadowProj.xy );
-	//Output.emissive = s4;
+	//Output.emissive = float4(lol.xyz, 1);
+	//Output.emissive = shadowTex.Sample(samp0, pos.xy);
 	Output.specular = float4(lightColour.xyz * sFactor * atten * 0.33, 1.0);
-
 	return Output;
 }

@@ -3,6 +3,7 @@
 #include <video_out.h>
 
 unsigned int PS4Buffer::ID = 0;
+uint32_t PS4Buffer::FBOMemUsage = 0;
 
 PS4Buffer::PS4Buffer(const uint width, const uint height, sce::Gnmx::Toolkit::StackAllocator& allocator,
 	const uint numRTargets, bool genStencil, Displayable display)
@@ -14,6 +15,7 @@ PS4Buffer::PS4Buffer(const uint width, const uint height, sce::Gnmx::Toolkit::St
 	for (uint i = 0; i < numRTargets; ++i)
 	{
 		GenerateRenderTarget(width, height, allocator, i, display);
+		ID++;
 	}
 
 	GenerateDepthTarget(width, height, allocator);
@@ -22,7 +24,6 @@ PS4Buffer::PS4Buffer(const uint width, const uint height, sce::Gnmx::Toolkit::St
 	this->width = width;
 	this->height = height;
 	stencil = genStencil;
-	ID++;
 }
 
 PS4Buffer::~PS4Buffer()
@@ -32,6 +33,10 @@ PS4Buffer::~PS4Buffer()
 
 void PS4Buffer::GenerateRenderTarget(uint width, uint height, sce::Gnmx::Toolkit::StackAllocator& allocator, uint targetID, Displayable display)
 {
+	size_t before = allocator.m_size;
+	std::string temp = "Target";
+	temp.append(std::to_string(ID).c_str());
+
 	bool displayable;
 	if (display == NONE || (display == FIRST_ONLY && targetID > 0))
 		displayable = false;
@@ -46,17 +51,22 @@ void PS4Buffer::GenerateRenderTarget(uint width, uint height, sce::Gnmx::Toolkit
 	void* colourMemory = allocator.allocate(colourAlign);
 
 	sce::Gnm::registerResource(nullptr, ownerHandle, colourMemory, colourAlign.m_size,
-		"Target" + *std::to_string(ID).c_str(), sce::Gnm::kResourceTypeDepthRenderTargetBaseAddress, 0);
+		temp.c_str(), sce::Gnm::kResourceTypeRenderTargetBaseAddress, 0);
 
 	buffer->renderTargets[targetID].setAddresses(colourMemory, nullptr, nullptr);
+	size_t after = allocator.m_size;
 
 	textures[COLOUR + targetID].initFromRenderTarget(&buffer->renderTargets[targetID], false);
 	textures[COLOUR + targetID].setResourceMemoryType(sce::Gnm::kResourceMemoryTypeRO);
+
+	FBOMemUsage += (after - before);
+	CalcInternalTexUsage(textures[COLOUR + targetID]);
 }
 
 void PS4Buffer::GenerateDepthTarget(uint width, uint height, sce::Gnmx::Toolkit::StackAllocator& allocator)
 {
-	//Depth Buffer
+	size_t before = allocator.m_size;
+
 	sce::Gnm::DataFormat depthFormat = sce::Gnm::DataFormat::build(sce::Gnm::kZFormat32Float);
 	sce::Gnm::TileMode	depthTileMode;
 
@@ -81,9 +91,22 @@ void PS4Buffer::GenerateDepthTarget(uint width, uint height, sce::Gnmx::Toolkit:
 		"Stencil", sce::Gnm::kResourceTypeDepthRenderTargetBaseAddress, 0);
 	}
 	buffer->depthTarget.setAddresses(depthMemory, stencilMemory);
+	size_t after = allocator.m_size;
 
 	textures[DEPTH].initFromDepthRenderTarget(&buffer->depthTarget, false);
 	textures[DEPTH].setResourceMemoryType(sce::Gnm::kResourceMemoryTypeRO);
+
+	FBOMemUsage += (after - before);
+	CalcInternalTexUsage(textures[DEPTH]);
+}
+
+void PS4Buffer::CalcInternalTexUsage(sce::Gnm::Texture& handle)
+{
+	uint32_t width, height;
+	width = handle.getWidth(); 
+	height = handle.getHeight();
+
+	FBOMemUsage += (width * height * 4.0) / (1024 * 1024);
 }
 
 void PS4Buffer::ClearBuffer(sce::Gnmx::GnmxGfxContext& context)

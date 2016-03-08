@@ -3,6 +3,7 @@
 
 #include "FixedSizeAllocator.h"
 #include <cassert>
+#include <cstdlib>
 
 // Extracting this information from a static array is unreliable, so separate defines were made
 #define ALLOCATOR_BLOCK_SIZES_SIZE 47
@@ -18,6 +19,11 @@
 #define ALLOCATOR_BLOCK_SIZES_LARGEST 1024
 
 
+#ifdef _DEBUG
+#define ALOCATOR_TRACK_STATS
+#endif
+
+
 /// @ingroup Memory
 /// <summary>
 /// A suballocator manager class that uses several <see cref="FixedSizeAllocator"/> objects to allocate different size memory blocks.
@@ -28,7 +34,7 @@ private:
 	/// <summary>
 	/// Array of <see cref="FixedSizeAllocator"/> block sizes.
 	/// </summary>
-	static const size_t ALLOCATOR_BLOCK_SIZES[ALLOCATOR_BLOCK_SIZES_SIZE];
+	static const unsigned int ALLOCATOR_BLOCK_SIZES[ALLOCATOR_BLOCK_SIZES_SIZE];
 	/// <summary>
 	/// Mapping memory block sizes to <see cref="FixedSizeAllocator"/> with the closest block size.
 	/// </summary>
@@ -42,15 +48,19 @@ private:
 	/// </summary>
 	static bool ALLOCATOR_LOOKUP_INITIALIZED;
 
+#ifdef ALOCATOR_TRACK_STATS
+	uint64_t m_externalMemory;
+#endif
+
 public:
 	/// <summary>
 	/// Number of available <see cref="FixedSizeAllocator"/> instances of different block sizes.
 	/// </summary>
-	static const size_t ALLOCATOR_NUM_BLOCK_SIZES;
+	static const unsigned int ALLOCATOR_NUM_BLOCK_SIZES;
 	/// <summary>
 	/// The size of the largest <see cref="FixedSizeAllocator"/> block size.
 	/// </summary>
-	static const size_t ALLOCATOR_MAX_BLOCK_SIZE;
+	static const unsigned int ALLOCATOR_MAX_BLOCK_SIZE;
 	/// <summary>
 	/// Array of <see cref="FixedSizeAllocator"/> of different block sizes.
 	/// </summary>
@@ -70,7 +80,7 @@ public:
 	/// </summary>
 	/// <param name="size">Size of the memory block.</param>
 	/// <returns>Pointer to a <see cref="FixedSizeAllocator"/> for the given block size.</returns>
-	inline FixedSizeAllocator* GetAllocator(size_t size)
+	inline FixedSizeAllocator* GetAllocator(unsigned int size)
 	{
 		assert(("FixedSizeAllocatorManager::GetAllocator provided size was too large", size <= ALLOCATOR_MAX_BLOCK_SIZE));
 		return &m_allocators[ALLOCATOR_BLOCK_SIZE_LOOKUP[size]];
@@ -81,9 +91,17 @@ public:
 	/// </summary>
 	/// <param name="size">Size of a memory block to allocate.</param>
 	/// <returns>Pointer to the new block of memory.</returns>
-	inline void* Allocate(size_t size)
+	inline void* Allocate(unsigned int size)
 	{
-		return GetAllocator(size)->Allocate();
+		if (size <= ALLOCATOR_MAX_BLOCK_SIZE)
+			return GetAllocator(size)->Allocate();
+		else
+		{
+#ifdef ALOCATOR_TRACK_STATS
+			m_externalMemory += size;
+#endif
+			return malloc(size);
+		}
 	}
 
 	/// <summary>
@@ -91,9 +109,17 @@ public:
 	/// </summary>
 	/// <param name="p">Pointer to an object instance.</param>
 	/// <param name="size">Size of the managed memory block to delete.</param>
-	inline void Free(void* p, size_t size)
+	inline void Free(void* p, unsigned int size)
 	{
-		GetAllocator(size)->Free(p);
+		if (size <= ALLOCATOR_MAX_BLOCK_SIZE)
+			GetAllocator(size)->Free(p);
+		else
+		{
+#ifdef ALOCATOR_TRACK_STATS
+			m_externalMemory -= size;
+#endif
+			free(p);
+		}
 	}
 
 
@@ -183,6 +209,25 @@ public:
 		p->~T();
 		Free(p, sizeof(T));
 	}
+
+
+#ifdef ALOCATOR_TRACK_STATS
+	inline uint64_t GetAllocatedMemory() const
+	{
+		uint64_t result = m_externalMemory;
+		for (unsigned int i = 0; i < ALLOCATOR_BLOCK_SIZES_SIZE; ++i)
+			result += m_allocators[i].GetAllocatedMemory();
+		return result;
+	}
+
+	inline uint64_t GetUsedMemory() const
+	{
+		uint64_t result = m_externalMemory;
+		for (unsigned int i = 0; i < ALLOCATOR_BLOCK_SIZES_SIZE; ++i)
+			result += m_allocators[i].GetUsedMemory();
+		return result;
+	}
+#endif
 
 };
 #endif

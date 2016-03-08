@@ -5,6 +5,8 @@
 #include "PS4Mesh.h"
 #endif
 
+uint32_t Mesh::MeshMemoryUsage = 0;
+
 Mesh::Mesh(void)
 {
 	m_Textures[ReservedMeshTextures.size];
@@ -45,13 +47,19 @@ Mesh::Mesh(uint32_t numVertices, Vec3Graphics* vertices, Vec2Graphics* texCoords
 		t = nullptr;
 	}
 	for (auto& c : m_Colours)
-	{
+{
 		c = Vec3Graphics::ZEROS;
 	}
 
 	m_SpecExponent = 0.0f;
-
 	m_NumVertices = 0;
+	m_NumIndices = 0;
+	m_Vertices = nullptr;
+	m_TextureCoords = nullptr;
+	m_Normals = nullptr;
+	m_Tangents = nullptr;
+	m_Indices = nullptr;	
+	m_Children.clear();
 
 	m_Colours[ReservedMeshColours.AMBIENT.index] = Vec3Graphics(0.2f, 0.2f, 0.2f);
 	m_Colours[ReservedMeshColours.DIFFUSE.index] = Vec3Graphics::ONES;
@@ -64,17 +72,31 @@ Mesh::Mesh(uint32_t numVertices, Vec3Graphics* vertices, Vec2Graphics* texCoords
 	m_Normals = normals;
 	m_Tangents = tangents;
 	m_Indices = indices;
-	m_Children.clear();
+
+	CalcMeshUsage(this);
 }
 
 Mesh::~Mesh(void)
 {
-	for (uint32_t i = 0; i < ReservedMeshTextures.size; ++i)
+	for (unsigned int i = 0; i < ReservedMeshTextures.size; ++i)
 	{
 		if (m_Textures[i])
 			m_Textures[i]->Clear();
 	}
 	Clean();
+}
+
+void Mesh::CalcMeshUsage(Mesh* m)
+{
+	MeshMemoryUsage += m->m_NumVertices * sizeof(Vec3Graphics);
+	MeshMemoryUsage += m->m_NumIndices * sizeof(uint32_t);
+
+	if (m->m_TextureCoords)
+		MeshMemoryUsage += m->m_NumVertices * sizeof(Vec2Graphics);
+	if (m->m_Normals)
+		MeshMemoryUsage += m->m_NumVertices * sizeof(Vec3Graphics);
+	if (m->m_Tangents)
+		MeshMemoryUsage += m->m_NumVertices * sizeof(Vec3Graphics);
 }
 
 void Mesh::Clean()
@@ -127,6 +149,7 @@ Mesh* Mesh::GenerateTriangle() {
 	}
 
 	mesh->BufferData();
+	CalcMeshUsage(mesh);
 	return mesh;
 }
 
@@ -165,6 +188,7 @@ Mesh* Mesh::GenerateQuad(Vec2Graphics texCoords)
 		m->m_Indices[i] = i;
 	}
 	m->BufferData();
+	CalcMeshUsage(m);
 	return m;
 }
 
@@ -206,6 +230,7 @@ Mesh* Mesh::GenerateQuad(Vec3Graphics* vertices, Vec2Graphics texCoords /* = Vec
 		m->m_Indices[i] = i;
 	}
 	m->BufferData();
+	CalcMeshUsage(m);
 	return m;
 }
 
@@ -257,6 +282,7 @@ Mesh* Mesh::GenerateTextQuad(const std::string& text, Font* font)
 	}
 
 	m->BufferData();
+	CalcMeshUsage(m);
 	return m;
 };
 
@@ -295,6 +321,7 @@ Mesh* Mesh::GenerateQuadAlt()
 		m->m_Indices[i] = i;
 	}
 	m->BufferData();
+	CalcMeshUsage(m);
 	return m;
 }
 
@@ -333,6 +360,7 @@ Mesh* Mesh::GenerateQuadTexCoordCol(Vec2Graphics scale, Vec2Graphics texCoord, V
 		m->m_Indices[i] = i;
 	}
 	m->BufferData();
+	CalcMeshUsage(m);
 	return m;
 }
 

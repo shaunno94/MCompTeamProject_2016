@@ -19,13 +19,7 @@ m_wallMaterial(wallMaterial)
 	this->SetLocalTransform(Mat4Graphics::Scale(Vec3Physics(SCALE, SCALE, SCALE)) * Mat4Graphics::Translation(Vec3Graphics(6.8, -28.5, 2)) * Mat4Graphics::RotationX(-0.7f) * Mat4Graphics::RotationY(30.5f));
 	this->GetPhysicsComponent()->GetPhysicsBody()->setFriction(1.3);
 	this->GetPhysicsComponent()->GetPhysicsBody()->setHitFraction(0.7);
-
-	
-#ifdef ORBIS
-	m_netTexture = Texture::Get(TEXTURE_DIR"link2.gnf");
-#else
 	m_netTexture = Texture::Get(TEXTURE_DIR"link2.png");
-#endif
 
 	m_netTexture->SetTextureParams(TextureFlags::REPEATING | TextureFlags::ANISOTROPIC_FILTERING);
 	m_wallMaterial->Set("diffuseTex", m_netTexture);

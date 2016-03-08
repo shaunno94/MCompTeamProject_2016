@@ -5,6 +5,7 @@
 #include <utility>
 #include <iostream>
 
+FixedSizeAllocatorManager Network::s_memManager;
 
 NetConnectionData::NetConnectionData(const std::string& address) : m_addressStr(address)
 {
@@ -56,11 +57,35 @@ NetConnectionState NetConnectionData::GetState() const
 
 bool Network::s_Initialized = false;
 
+
+struct NetworkManagedMemoryHeader
+{
+	unsigned int size;
+};
+
+void* ENET_CALLBACK Network::networkMemManagerMalloc(size_t size)
+{
+	NetworkManagedMemoryHeader* newData = reinterpret_cast<NetworkManagedMemoryHeader*>(Network::s_memManager.Allocate(size + sizeof(NetworkManagedMemoryHeader)));
+	newData->size = static_cast<unsigned int>(size);
+	return reinterpret_cast<char*>(newData) + sizeof(NetworkManagedMemoryHeader);
+}
+void ENET_CALLBACK Network::networkMemManagerFree(void* memory)
+{
+	NetworkManagedMemoryHeader* oldData = reinterpret_cast<NetworkManagedMemoryHeader*>(reinterpret_cast<char*>(memory)-sizeof(NetworkManagedMemoryHeader));
+	Network::s_memManager.Free(oldData, oldData->size);
+}
+
+
 bool Network::Init()
 {
 	if (!s_Initialized)
 	{
-		if (enet_initialize() == 0)
+		ENetCallbacks callbacks;
+		memset(&callbacks, 0, sizeof(ENetCallbacks));
+		callbacks.malloc = networkMemManagerMalloc;
+		callbacks.free = networkMemManagerFree;
+
+		if (enet_initialize_with_callbacks(ENET_VERSION, &callbacks) == 0)
 		{
 			atexit(Network::Clear);
 			s_Initialized = true;

@@ -124,7 +124,7 @@ void PS4Renderer::RegisterTargets(const uint targetIndex, std::vector<PS4Buffer*
 {
 	SceVideoOutBufferAttribute attribute;
 	sceVideoOutSetBufferAttribute(&attribute, SCE_VIDEO_OUT_PIXEL_FORMAT_B8_G8_R8_A8_SRGB, SCE_VIDEO_OUT_TILING_MODE_TILE,
-		SCE_VIDEO_OUT_ASPECT_RATIO_16_9, width, height, (*buffer[0]->GetTarget(targetIndex)).getPitch());
+		SCE_VIDEO_OUT_ASPECT_RATIO_16_9, (*buffer[0]->GetTarget(targetIndex)).getWidth(), (*buffer[0]->GetTarget(targetIndex)).getHeight(), (*buffer[0]->GetTarget(targetIndex)).getPitch());
 	
 	std::vector<void*> bufferAddresses;
 	for (int i = 0; i < buffer.size(); ++i)
@@ -253,9 +253,11 @@ void PS4Renderer::DrawPointLights()
 	currentGFXContext->setSamplers(sce::Gnm::kShaderStagePs, 1, 1, &shadowSampler);
 	
 	sce::Gnmx::decompressDepthSurface(currentGFXContext, offScreenBuffers[G_BUFFER]->GetDepthTarget());
-	
 	SetTexture(depthLoc, *offScreenBuffers[G_BUFFER]->GetTexture(DEPTH));
+
 	SetTexture(normalLoc, *offScreenBuffers[G_BUFFER]->GetTexture(COLOUR + 1));
+
+	sce::Gnmx::decompressDepthSurface(currentGFXContext, offScreenBuffers[SHADOW_BUFFER]->GetDepthTarget());
 	SetTexture(shadowLoc, *offScreenBuffers[SHADOW_BUFFER]->GetTexture(DEPTH));
 	
 	child->OnRenderLights();
@@ -285,7 +287,6 @@ void PS4Renderer::DrawShadow(GameObject* light)
 	switch (lm->shadowType)
 	{
 	case _NONE:
-	default:
 		break;
 	case _2D:
 		offScreenBuffers[SHADOW_BUFFER]->ClearBuffer(*currentGFXContext);
@@ -296,6 +297,7 @@ void PS4Renderer::DrawShadow(GameObject* light)
 		
 		offScreenBuffers[LIGHT_BUFFER]->SetRenderTargets(*currentGFXContext);
 		InitCMD(offScreenBuffers[LIGHT_BUFFER]);
+		//currentGFXContext->setSamplers(sce::Gnm::kShaderStagePs, 1, 1, &shadowSampler);
 		break;
 	case _CUBE:
 		DrawShadowCube(light);
@@ -308,7 +310,7 @@ void PS4Renderer::DrawShadow2D(GameObject* light)
 	projMatrix = shadowProj;
 
 	viewMatrix = Mat4Graphics::View(light->GetWorldTransform().GetTranslation(), Vec3Graphics(0, 0, 0));
-	((LightMaterial*)light->GetRenderComponent()->m_Material)->shadowBias = biasMatrix * (projMatrix * viewMatrix);
+	((LightMaterial*)light->GetRenderComponent()->m_Material)->shadowBias = biasMatrix * (projMatrix * viewMatrix); /*(Matrix4Simple::Translation(Vector3Simple(0.5f, 0.5f, 0.5f)) * Matrix4Simple::Scale(Vector3Simple(0.5f, -0.5f, 0.5f)))*/
 
 	child->lightFrustrum.FromMatrix(projMatrix * viewMatrix);
 	child->OnUpdateScene(child->lightFrustrum, light->GetWorldTransform().GetTranslation());
@@ -319,8 +321,7 @@ void PS4Renderer::DrawShadow2D(GameObject* light)
 	projMatrix = child->localProjMat;
 
 	child->OnUpdateScene(child->frameFrustrum, child->currentScene->getCamera()->GetPosition());
-
-	sce::Gnmx::decompressDepthSurface(currentGFXContext, offScreenBuffers[SHADOW_BUFFER]->GetDepthTarget());
+	//sce::Gnmx::decompressDepthSurface(currentGFXContext, offScreenBuffers[SHADOW_BUFFER]->GetDepthTarget());
 }
 
 void PS4Renderer::DrawShadowCube(GameObject* light)
@@ -530,7 +531,7 @@ void PS4Renderer::UpdateShaderMatrices()
 		if (location.id >= 0)
 		{
 			Mat4Graphics* invVP = (Mat4Graphics*)currentGFXContext->allocateFromCommandBuffer(sizeof(Mat4Graphics), sce::Gnm::kEmbeddedDataAlignment4);
-			*invVP = Matrix4Simple::Inverse(projMatrix * viewMatrix);
+			*invVP = Mat4Graphics::Inverse(projMatrix * viewMatrix);
 
 			sce::Gnm::Buffer constantBuffer;
 			constantBuffer.initAsConstantBuffer(invVP, sizeof(Mat4Graphics));
@@ -538,5 +539,15 @@ void PS4Renderer::UpdateShaderMatrices()
 			currentGFXContext->setConstantBuffers(location.stage, location.id, 1, &constantBuffer);
 		}
 	}
+}
+
+unsigned int PS4Renderer::TextureMemoryUsage(sce::Gnm::Texture& id)
+{
+	uint32_t width, height;
+
+	width = id.getWidth();
+	height = id.getHeight();
+
+	return ((width * height) * 4.0f);
 }
 #endif
