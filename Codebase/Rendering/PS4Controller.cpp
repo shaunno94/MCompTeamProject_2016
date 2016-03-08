@@ -29,13 +29,13 @@ void PS4Controller::CheckInput()
 	{
 		force = (orientation * Vec3Physics(0, 0, -PS4Input::getPS4Input()->GetButton(BTN_R2))).Normalize() * accel;
 		force += (orientation * Vec3Physics(0, 0, PS4Input::getPS4Input()->GetButton(BTN_L2))).Normalize() * accel;
-		torque = (Vec3Physics(0, -PS4Input::getPS4Input()->GetAxis(LEFTSTICK).x * rotAccel, 0));
-
 		torque = (Vec3Physics(0, -PS4Input::getPS4Input()->GetAxis(LEFTSTICK).y * rotAccel, 0));
+
+		torque = (Vec3Physics(0, -PS4Input::getPS4Input()->GetAxis(LEFTSTICK).x * rotAccel, 0));
 		if (forward < 0){
 			torque = - torque;
 		}
-		object->turnWheels(PS4Input::getPS4Input()->GetAxis(LEFTSTICK).y);
+		object->turnWheels(PS4Input::getPS4Input()->GetAxis(LEFTSTICK).x);
 
 		if (PS4Input::getPS4Input()->GetButtonDown(BTN_CROSS))
 		{

@@ -43,9 +43,10 @@ GameScene::GameScene(ControllerManager* controller)
 GameScene::~GameScene()
 {
 	PhysicsEngineInstance::Release();
-	SoundSystem::Release();
 	GUISystem::Destroy();
+
 #ifndef ORBIS
+	SoundSystem::Release();
 	ParticleManager::Destroy();
 #endif
 
@@ -230,7 +231,6 @@ void GameScene::SetupMaterials()
 
 	playerMaterial = new Material(simpleShader);
 
-	ballMaterial->Set(ReservedMeshTextures.DIFFUSE.name, Texture::Get(TEXTURE_DIR"football.png", true));
 	aiMaterial->Set(ReservedMeshTextures.DIFFUSE.name, Texture::Get(MODEL_DIR"car/body1.bmp", true));
 	ai2Material->Set(ReservedMeshTextures.DIFFUSE.name, Texture::Get(MODEL_DIR"car/body2.bmp", true));
 	//particleMaterial->Set(ReservedMeshTextures.DIFFUSE.name, Texture::Get(TEXTURE_DIR"particle.tga", true));

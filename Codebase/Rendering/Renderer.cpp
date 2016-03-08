@@ -64,9 +64,9 @@ void Renderer::UpdateScene(float msec)
 void Renderer::RenderScene(float msec)
 {
 	projMatrix = localProjMat;
-	MeasuringTimer::Instance.LogStart("Scene Update");
+	MEASURING_TIMER_LOG_START("Scene Update");
 	UpdateScene(msec);
-	MeasuringTimer::Instance.LogEnd();
+	MEASURING_TIMER_LOG_END();
 
 	//Draws all objects attatched to the current scene.
 	if (currentScene)

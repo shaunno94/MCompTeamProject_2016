@@ -20,7 +20,6 @@ m_wallMaterial(wallMaterial)
 	this->GetPhysicsComponent()->GetPhysicsBody()->setFriction(1.3);
 	this->GetPhysicsComponent()->GetPhysicsBody()->setHitFraction(0.7);
 	m_netTexture = Texture::Get(TEXTURE_DIR"link2.png");
-#endif
 
 	m_netTexture->SetTextureParams(TextureFlags::REPEATING | TextureFlags::ANISOTROPIC_FILTERING);
 	m_wallMaterial->Set("diffuseTex", m_netTexture);

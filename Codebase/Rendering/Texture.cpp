@@ -128,7 +128,7 @@ void Texture::checkPath(std::string& path)
 	path.append(".gnf");
 }
 
-Texture::Texture(const std::string& filepath, size_t index, bool preload) : filePath(filepath)
+Texture::Texture(const std::string& filepath, unsigned int index, bool preload) : filePath(filepath)
 {
 	textureCopyIndex = index;
 	m_referenceCount = 1;
@@ -139,16 +139,16 @@ Texture::Texture(const std::string& filepath, size_t index, bool preload) : file
 
 Texture::~Texture()
 {
-	if(textureId)
-	{
 #ifdef TEXTURE_TRACK_STATS
 		MeasureMemoryUsageSubtract(textureId);
 #endif
 #ifndef ORBIS
+		if (textureId)
+		{
 		glDeleteTextures(1, &textureId);
 		textureId = 0;
+		}
 #endif
-	}
 }
 
 #ifndef ORBIS

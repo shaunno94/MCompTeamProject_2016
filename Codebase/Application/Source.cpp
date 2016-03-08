@@ -40,7 +40,7 @@ int main(void)
 #endif
 
 	ControllerManager* myControllers = new LocalControlManager;
-	UIControllerManager* uiController = new UIControllerManager();
+	//UIControllerManager* uiController = new UIControllerManager();
 	//Create GameScene
 	GameScene* gameScene = new GameScene(myControllers);
 //	MenuScene* menuScene = new MenuScene(uiController);
