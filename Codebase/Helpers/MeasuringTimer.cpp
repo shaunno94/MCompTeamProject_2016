@@ -3,6 +3,7 @@
 #include <vector>
 #include <stack>
 
+MeasuringTimer MeasuringTimer::Instance(100);
 
 inline MeasuringTimer& MeasuringTimer::operator=(const MeasuringTimer& other)
 {
@@ -19,7 +20,6 @@ inline MeasuringTimer& MeasuringTimer::operator=(const MeasuringTimer& other)
 	}
 	return *this;
 }
-
 
 void MeasuringTimer::Print(std::ostream& os, unsigned startLevel, unsigned maxDepth, float timeResolution) const
 {
@@ -63,7 +63,10 @@ void MeasuringTimer::Print(std::ostream& os, unsigned startLevel, unsigned maxDe
 				for(unsigned j = 0; j < indentCount; ++j)
 					os << indentation;
 
-				os << indentCount << '-' << siblingDurationsPerLevel[indentCount]->size() - 1 << " { " << m_logs[i].text << endLine;
+#ifdef MEASURING_TIMER_PRINT_LEVELS
+				os << indentCount << '-' << siblingDurationsPerLevel[indentCount]->size() - 1 << " ";
+#endif
+				os << "{ " << m_logs[i].text << endLine;
 				startTimestamps.push(m_logs[i].timestamp);
 			}
 			++counter; //counting up on start of next periods
@@ -96,6 +99,8 @@ void MeasuringTimer::Print(std::ostream& os, unsigned startLevel, unsigned maxDe
 				siblingDurationsPerLevel[0]->push_back(new std::vector<float>()); //start a separate base sibling group
 		}
 	}
+
+#ifdef MEASURING_TIMER_PRINT_AVERAGES
 	//printing averages for each nested level sibling group
 	//useful for getting average time periods from multiple executions of a performance test
 	if(siblingDurationsPerLevel.size())
@@ -121,11 +126,16 @@ void MeasuringTimer::Print(std::ostream& os, unsigned startLevel, unsigned maxDe
 					for(unsigned i = 0; i < levelIndex; ++i)
 						os << indentation;
 
-					os << levelIndex << '-' << siblingSetIndex << " : " << sum / durationCount << endLine;
+#ifdef MEASURING_TIMER_PRINT_LEVELS
+					os << levelIndex << '-' << siblingSetIndex << " : ";
+#endif
+					os << sum / durationCount << endLine;
 				}
 			}
 		}
 	}
+#endif
+
 	//cleanup
 	siblingDurationsPerLevel;
 	for(auto levelIt = siblingDurationsPerLevel.begin(); levelIt != siblingDurationsPerLevel.end() ; ++levelIt)

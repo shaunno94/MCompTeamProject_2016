@@ -1,13 +1,14 @@
 #include "Renderer.h"
 #include "GUISystem.h"
+#include "Helpers/MeasuringTimer.h"
 
 Renderer* Renderer::s_renderer = nullptr;
 
 Renderer::Renderer(std::string title, int sizeX, int sizeY, bool fullScreen) :
-#ifndef ORBIS 
-OGLRenderer(title, sizeX, sizeY, fullScreen)
+#ifndef ORBIS
+	OGLRenderer(title, sizeX, sizeY, fullScreen)
 #else
-PS4Renderer()
+	PS4Renderer()
 #endif
 {
 	m_UpdateGlobalUniforms = true;
@@ -46,6 +47,7 @@ void Renderer::UpdateScene(float msec)
 	if (currentScene)
 	{
 		currentScene->getCamera()->UpdateCamera(msec);
+		currentScene->UpdateScene(msec);
 		viewMatrix = currentScene->getCamera()->BuildViewMatrix();
 		//Updates all objects in the scene, sorts lists for rendering
 		frameFrustrum.FromMatrix(projMatrix * viewMatrix);
@@ -53,7 +55,7 @@ void Renderer::UpdateScene(float msec)
 	}
 
 	if (m_UpdateGlobalUniforms)
-	{	
+	{
 		for (unsigned int i = 0; i < currentScene->getNumLightObjects(); ++i)
 		{
 			auto rc = currentScene->getLightObject(i)->GetRenderComponent();
@@ -71,19 +73,37 @@ void Renderer::UpdateScene(float msec)
 void Renderer::RenderScene(float msec)
 {
 	projMatrix = localProjMat;
+	MeasuringTimer::Instance.LogStart("Scene Update");
 	UpdateScene(msec);
+	MeasuringTimer::Instance.LogEnd();
 
 	//glUseProgram(currentShader->GetProgram());
 	//Draws all objects attatched to the current scene.
 	if (currentScene)
 	{
-		//Draw
+		MEASURING_TIMER_LOG_START("Fill Buffers");
 		FillBuffers(); //First Pass
+		MEASURING_TIMER_LOG_END();
+		MEASURING_TIMER_LOG_START("Point Lights");
 		DrawPointLights(); //Second Pass
+		MEASURING_TIMER_LOG_END();
+		MEASURING_TIMER_LOG_START("Combine Buffers");
 		CombineBuffers(); //Final Pass
-		GUISystem::GetInstance().Render();
+		MEASURING_TIMER_LOG_END();
+		MEASURING_TIMER_LOG_START("GUI");
+		RenderGUI();
+		MEASURING_TIMER_LOG_END();
 	}
+	MEASURING_TIMER_LOG_START("Swap Buffers");
 	SwapBuffers();
+	MEASURING_TIMER_LOG_END();
+}
+
+void Renderer::RenderGUI()
+{
+	viewMatrix.ToIdentity();
+	projMatrix = Mat4Graphics::Orthographic(-1, 1, (float)width, -1, (float)height, -1);
+	GUISystem::GetInstance().Render();
 }
 
 void Renderer::OnUpdateScene(Frustum& frustum, Vec3Graphics camPos)
@@ -123,4 +143,9 @@ void Renderer::OnRenderLights()
 
 		light->OnRenderObject();
 	}
+}
+
+void Renderer::SwitchScene()
+{
+
 }

@@ -1,7 +1,8 @@
 #include "GameScene.h"
+#include "BallGameObject.h"
 
 GameScene::GameScene(ControllerManager* controller)
-: myControllers(controller)
+	: myControllers(controller)
 {
 	//Initialise Bullet physics engine.
 	PhysicsEngineInstance::Instance()->setGravity(btVector3(0, -9.81, 0));
@@ -41,6 +42,7 @@ GameScene::GameScene(ControllerManager* controller)
 GameScene::~GameScene()
 {
 	PhysicsEngineInstance::Release();
+	SoundSystem::Release();
 	GUISystem::Destroy();
 	ParticleManager::Destroy();
 
@@ -53,8 +55,55 @@ GameScene::~GameScene()
 
 void GameScene::SetControllerActor()
 {
-	myControllers->setActor(Renderer::GetInstance()->GetCurrentScene()->findGameObject("shooterAI"), 0);
-	myControllers->setActor(Renderer::GetInstance()->GetCurrentScene()->findGameObject("goalieAI"), 1);
+	myControllers->setActor(Renderer::GetInstance()->GetCurrentScene()->findGameObject("shooterAI"), SHOOTER);
+	myControllers->setActor(Renderer::GetInstance()->GetCurrentScene()->findGameObject("goalieAI"), GOALKEEPER);
+	myControllers->setActor(Renderer::GetInstance()->GetCurrentScene()->findGameObject("aggroAI"), AGGRESSIVE);
+}
+
+void GameScene::IncrementScore(int team)
+{
+	scores[team % 2]++;
+
+	SoundMOD mod;
+	mod.looping = false;
+	mod.isGlobal = true;
+	SoundSystem::Instance()->Play(SoundManager::GetSound(BANG), mod);
+	scoreboardComponent->Update(scores[0], scores[1], currentTime);
+}
+
+void GameScene::UpdateScene(float dt)
+{
+	if (currentTime > 180)
+	{
+		//TODO: Proceed to end game screen
+		currentTime = 0;
+		lastTime = 0;
+	}
+	currentTime += dt / 1000.0f;
+
+	if (currentTime < 181)
+	{
+		lastTime = currentTime;
+		scoreboardComponent->Update(scores[0], scores[1], currentTime);
+	}
+
+	if (goalScored > 0) {
+		if (timerCount == 0)
+		{
+			IncrementScore(goalScored - 1);
+			TriggerExplosion();
+		}
+
+		timerCount += dt / 1000.0f;
+
+		//Increment goals for team 1
+		if (timerCount > 3.0f)
+		{
+			timerCount = 0;
+			goalScored = false;
+			ResetObjects();
+		}
+	}
 }
 
 void GameScene::SetupGameObjects()
@@ -66,31 +115,21 @@ void GameScene::SetupGameObjects()
 
 	light2 = new GameObject("l");
 	light2->SetRenderComponent(new RenderComponent(lightMaterial, ModelLoader::LoadMGL(MODEL_DIR"Common/ico.mgl", true)));
-	light2->SetWorldTransform(Mat4Graphics::Translation(Vec3Graphics(400, 600, 400)) *Mat4Graphics::Scale(Vec3Graphics(1600, 1600, 1600)));
-	light2->SetBoundingRadius(1600);
+	light2->SetWorldTransform(Mat4Graphics::Translation(Vec3Graphics(600, 900, 600)) *Mat4Graphics::Scale(Vec3Graphics(2400, 2400, 2400)));
+	light2->SetBoundingRadius(2400);
 
-	ball = new GameObject("ball");
-	ballPhysics = new RigidPhysicsObject();
-	ballPhysics->CreateCollisionShape(7.0);
-	ballPhysics->CreatePhysicsBody(1.0, Vec3Physics(0, 3, 0), QuatPhysics(0, 0, 0, 1), Vec3Physics(1, 1, 1));
-	ballID = ballPhysics->GetPhysicsBody()->getBroadphaseProxy()->getUid();
+	auto ballMaterial = new Material(simpleShader);
+	ballMaterial->Set(ReservedMeshTextures.DIFFUSE.name, Texture::Get(TEXTURE_DIR"football.png", true));
+	ball = new BallGameObject("ball", ballMaterial);
 
-	ball->SetRenderComponent(new RenderComponent(ballMaterial, ModelLoader::LoadMGL(MODEL_DIR"Common/sphere.mgl", true)));
-	ball->SetLocalTransform(Mat4Graphics::Scale(Vector3Simple(7, 7, 7)));
+	
+	player = new CarGameObject(Vec3Physics(100, 2, 0), QuatPhysics(0, 1, 0, 1), playerMaterial, "player");
 
+	shooterAI = new CarGameObject(Vec3Physics(-190, 2, 30), QuatPhysics(0, 0, 0, 1), aiMaterial, "shooterAI", COL_AI_CAR);
 
-	ballPhysics->GetPhysicsBody()->getBroadphaseProxy()->m_collisionFilterMask = COL_BALL;
+	goalieAI = new CarGameObject(Vec3Physics(-230, 2, 0), QuatPhysics(0, 0, 0, 1), aiMaterial, "goalieAI", COL_AI_CAR);
 
-	ball->SetPhysicsComponent(ballPhysics);
-	ball->GetPhysicsComponent()->GetPhysicsBody()->setRestitution(btScalar(1.6));
-	ball->GetPhysicsComponent()->GetPhysicsBody()->setFriction(0.5);
-	ball->GetPhysicsComponent()->GetPhysicsBody()->setRollingFriction(0.5);
-	ball->GetPhysicsComponent()->GetPhysicsBody()->setHitFraction(0.5);
-	player = new CarGameObject(Vec3Physics(100, 5, 0), QuatPhysics(0, 1, 0, 1), playerMaterial, "player");
-
-	shooterAI = new CarGameObject(Vec3Physics(-190, 5, 30), QuatPhysics(0, 0, 0, 1), aiMaterial, "shooterAI", COL_AI_CAR);
-
-	goalieAI = new CarGameObject(Vec3Physics(-230, 5, -30), QuatPhysics(0, 0, 0, 1), ai2Material, "goalieAI", COL_AI_CAR);
+	aggroAI = new CarGameObject(Vec3Physics(-190, 2, -30), QuatPhysics(0, 0, 0, 1), ai2Material, "aggroAI", COL_AI_CAR);
 
 
 	// Create Stadium
@@ -98,34 +137,30 @@ void GameScene::SetupGameObjects()
 
 	goal1 = new GameObject("goal1");
 	goalBox = new RigidPhysicsObject();
-	goalBox->CreateCollisionShape(Vec3Physics(7.0, 15.0, 29.0), CUBOID);
-	goalBox->CreatePhysicsBody(0.0, Vec3Physics(268, 17, 0), QuatPhysics(0, 0, 0, 1), Vec3Physics(1, 1, 1), true);
-	goal1ID = goalBox->GetPhysicsBody()->getBroadphaseProxy()->getUid();
+	goalBox->CreateCollisionShape(Vec3Physics(7.0, 15.0, 35.0) * 1.5f, CUBOID);
+	goalBox->CreatePhysicsBody(0.0, Vec3Physics(268, 17, 0) * 1.5f, QuatPhysics(0, 0, 0, 1), Vec3Physics(1, 1, 1), true);
 	goal1->SetPhysicsComponent(goalBox);
 
 	goal2 = new GameObject("goal2");
 	goalBox2 = new RigidPhysicsObject();
-	goalBox2->CreateCollisionShape(Vec3Physics(7.0, 15.0, 29.0), CUBOID);
-	goalBox2->CreatePhysicsBody(0.0, Vec3Physics(-268, 17, 0), QuatPhysics(0, 0, 0, 1), Vec3Physics(1, 1, 1), true);
-	goal2ID = goalBox2->GetPhysicsBody()->getBroadphaseProxy()->getUid();
+	goalBox2->CreateCollisionShape(Vec3Physics(7.0, 15.0, 35.0) * 1.5f, CUBOID);
+	goalBox2->CreatePhysicsBody(0.0, Vec3Physics(-268, 17, 0) * 1.5f, QuatPhysics(0, 0, 0, 1), Vec3Physics(1, 1, 1), true);
 	goal2->SetPhysicsComponent(goalBox2);
 
-	goalBallFilter = new GameCollisionFilter(this);
-	goalBallFilter->m_ballID = ballID;
-	goalBallFilter->m_goal1ID = goal1ID;
-	goalBallFilter->m_goal2ID = goal2ID;
-
-	PhysicsEngineInstance::Instance()->getPairCache()->setOverlapFilterCallback(goalBallFilter);
 
 	addGameObject(stadium);
 	addGameObject(player);
 	addGameObject(ball);
 	addGameObject(shooterAI);
 	addGameObject(goalieAI);
+	addGameObject(aggroAI);
 	addGameObject(goal1);
 	addGameObject(goal2);
 
 	addLightObject(light2);
+
+	goalBallFilter = new GameCollisionFilter(this);
+	PhysicsEngineInstance::Instance()->getPairCache()->setOverlapFilterCallback(goalBallFilter);
 }
 
 void GameScene::LoadAudio()
@@ -151,6 +186,7 @@ void GameScene::LoadAudio()
 	player->SetAudioComponent(new AudioCompCarLitener(true));
 	shooterAI->SetAudioComponent(new AudioCompCar(false));
 	goalieAI->SetAudioComponent(new AudioCompCar(false));
+	aggroAI->SetAudioComponent(new AudioCompCar(false));
 	//-------- SOUND
 }
 
@@ -159,7 +195,7 @@ void GameScene::SetupShaders()
 #ifndef ORBIS
 	simpleShader = new OGLShader(SIMPLESHADER_VERT, SIMPLESHADER_FRAG);
 	pointlightShader = new OGLShader(POINTLIGHTSHADER_VERT, POINTLIGHTSHADER_FRAG);
-	orthoShader = new OGLShader(GUI_VERT, SIMPLESHADER_FRAG);
+	orthoShader = new OGLShader(GUI_VERT, GUI_FRAG);
 	//BaseShader* pointlightShader = new OGLShader(SHADER_DIR"CubeShadowLightvertex.glsl", SHADER_DIR"CubeShadowLightfragment.glsl");
 #else
 	BaseShader* simpleShader = new PS4Shader(SIMPLESHADER_VERT, SIMPLESHADER_FRAG);
@@ -175,16 +211,14 @@ void GameScene::SetupMaterials()
 	lightMaterial = new LightMaterial(pointlightShader);
 	lightMaterial->shadowType = _2D;
 
-
 	material = new Material(simpleShader);
-	ballMaterial = new Material(simpleShader);
 	netMaterial = new Material(simpleShader, true);
 	aiMaterial = new Material(simpleShader);
 	particleMaterial = new Material(simpleShader);
 	ai2Material = new Material(simpleShader);
-	//Material* guiMaterial = new Material(orthoShader);
+	guiMaterial = new Material(orthoShader);
+	textMaterial = new Material(orthoShader);
 
-	ballMaterial->Set(ReservedMeshTextures.DIFFUSE.name, Texture::Get(TEXTURE_DIR"football.png", true));
 	playerMaterial = new Material(simpleShader);
 
 	aiMaterial->Set(ReservedMeshTextures.DIFFUSE.name, Texture::Get(MODEL_DIR"car/body1.bmp", true));
@@ -196,35 +230,64 @@ void GameScene::SetupMaterials()
 
 void GameScene::DrawGUI()
 {
-	////Define Orthographic Component
-	//OrthoComponent* hudUI = new OrthoComponent(1.0f);
-	////Add child GUI components, while defining materials, texture, and depth
-	//hudUI->AddGUIComponent(new ScoreboardGUIComponent(guiMaterial, Texture::Get(TEXTURE_DIR"blue3.png"), 1.0));
 
-	////Add Orthographic component to GUISystem
-	//GUISystem::GetInstance().AddOrthoComponent(hudUI);
+	//Define Orthographic Component
+	hudOrtho = new OrthoComponent(1.0f);
+	//Add child GUI components, while defining materials, texture, and depth
+	scoreboardComponent = new ScoreboardGUIComponent(guiMaterial, Texture::Get(TEXTURE_DIR"tahoma.tga"), 1.0);
+	hudOrtho->AddGUIComponent(scoreboardComponent);
+
+	//Add Orthographic component to GUISystem
+	GUISystem::GetInstance().AddOrthoComponent(hudOrtho);
+
 }
 
 void GameScene::SetupControls()
 {
 	cc = new ControllerComponent(player);
-#ifndef ORBIS
-	myControllers->setProducer(player);
-#else
-	myControllers->setProducer(player);
-#endif
+	myControllers->setProducer(player, 0);
+
 	attachCam(player);
 }
 
-void GameScene::ResetScene()
+void GameScene::TriggerExplosion()
 {
 	// Do other things before resetting scene fully
-	ResetObjects();
+
+	applyImpulseFromExplosion((CarGameObject*)player);
+	applyImpulseFromExplosion((CarGameObject*)shooterAI);
+	applyImpulseFromExplosion((CarGameObject*)goalieAI);
+
+}
+
+void GameScene::applyImpulseFromExplosion(CarGameObject* car)
+{
+	btVector3 ballPos = ball->GetPhysicsComponent()->GetPhysicsBody()->getWorldTransform().getOrigin();
+
+	btVector3 carPos = car->GetPhysicsComponent()->GetPhysicsBody()->getWorldTransform().getOrigin();
+
+	btVector3 ballToCar = carPos - ballPos;
+
+	float attenuation = ballToCar.length2();
+	ballToCar.normalize();
+
+	// 1 at same position
+	// 0 at 200 units away
+
+	attenuation = max(1 - (attenuation / (600 * 600)), 0.0f);
+
+	dynamic_cast<RigidPhysicsObject*>(car->GetPhysicsComponent())->GetPhysicsBody()->applyCentralImpulse(ballToCar * attenuation * 30000000.0f);
+}
+
+void GameScene::SetupAI()
+{
+	dynamic_cast<LocalControlManager*>(myControllers)->setupActors();
 }
 
 void GameScene::ResetObjects()
 {
 	btVector3 zeroVector = btVector3(0, 0, 0);
+	PhysicsEngineInstance::Instance()->clearForces();
 
 	dynamic_cast<RigidPhysicsObject*>(ball->GetPhysicsComponent())->GetPhysicsBody()->clearForces();
 	dynamic_cast<RigidPhysicsObject*>(ball->GetPhysicsComponent())->GetPhysicsBody()->setLinearVelocity(zeroVector);
@@ -232,4 +295,47 @@ void GameScene::ResetObjects()
 
 	ball->GetPhysicsComponent()->GetPhysicsBody()->setWorldTransform(btTransform(btQuaternion(0, 0, 0, 1), zeroVector));
 
+	//TODO: Reset player positions
+}
+
+
+GameCollisionFilter::GameCollisionFilter(GameScene* scene) : m_scene(scene) {
+	static_cast<RigidPhysicsObject*>(scene->findGameObject("ball")->GetPhysicsComponent())->GetPhysicsBody()->getBroadphaseProxy()->m_collisionFilterMask = COL_BALL;
+
+	m_ballID = static_cast<RigidPhysicsObject*>(scene->findGameObject("ball")->GetPhysicsComponent())->GetPhysicsBody()->getBroadphaseProxy()->getUid();
+	m_goal1ID = static_cast<RigidPhysicsObject*>(scene->findGameObject("goal1")->GetPhysicsComponent())->GetPhysicsBody()->getBroadphaseProxy()->getUid();
+	m_goal2ID = static_cast<RigidPhysicsObject*>(scene->findGameObject("goal2")->GetPhysicsComponent())->GetPhysicsBody()->getBroadphaseProxy()->getUid();
+}
+
+bool GameCollisionFilter::needBroadphaseCollision(btBroadphaseProxy* proxy0, btBroadphaseProxy* proxy1) const
+{
+	short int combined = COL_CAR | COL_WALL;
+	/*int combinedMask = proxy0->m_collisionFilterMask | proxy1->m_collisionFilterMask;
+	int test1 = (combinedMask & COL_CAR) == COL_CAR;
+	int test2 = (combinedMask & COL_WALL) == COL_WALL;
+	int test3;*/
+	if ((proxy0->m_collisionFilterMask | proxy1->m_collisionFilterMask) & combined == combined)
+	{
+		int test = 0;
+	}
+	else
+	{
+		int test2 = 0;
+	}
+	//if (((combinedMask & COL_CAR) == COL_CAR) && ((combinedMask & COL_WALL) == COL_WALL)) {
+	//	std::cout << "Car and wall collision" << std::endl;
+	//	// sort out car-wall collision
+	//}
+
+	if ((proxy0->getUid() == m_ballID && proxy1->getUid() == m_goal1ID) ||
+		(proxy1->getUid() == m_ballID && proxy0->getUid() == m_goal1ID))
+	{
+		m_scene->SetGoalScored(1);
+	}
+	else if ((proxy0->getUid() == m_ballID && proxy1->getUid() == m_goal2ID) ||
+		(proxy1->getUid() == m_ballID && proxy0->getUid() == m_goal2ID))
+	{
+		m_scene->SetGoalScored(2);
+	}
+	return true;
 }

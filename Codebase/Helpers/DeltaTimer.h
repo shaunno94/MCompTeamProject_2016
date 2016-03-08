@@ -1,5 +1,6 @@
 #pragma once
 #include "Timer.h"
+#include <type_traits>
 
 template <typename T = float>
 /// @ingroup Helpers

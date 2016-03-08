@@ -6,8 +6,8 @@ uniform vec3 cameraPos ;
 in Vertex {
 	vec3 normal ;
 } IN ;
-out vec4 outFragColor ;
+out vec4 colourOut;
 
 void main ( void ) {
-	outFragColor = texture ( cubeTex , normalize ( IN.normal ));
+	colourOut = texture ( cubeTex , normalize ( IN.normal ));
 }

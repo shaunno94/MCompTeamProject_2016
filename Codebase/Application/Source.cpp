@@ -1,7 +1,7 @@
-#include "Rendering\Renderer.h"
-#include "Rendering\GameTimer.h"
+#include "Rendering/Renderer.h"
+#include "Rendering/GameTimer.h"
 #include "GameScene.h"
-
+#include "Helpers/MeasuringTimer.h"
 
 
 const float TIME_STEP = 1.0f / 120.0f;
@@ -45,6 +45,7 @@ int main(void)
 	//Set current scene to the game
 	renderer.SetCurrentScene(gameScene);
 	gameScene->SetControllerActor();
+	gameScene->SetupAI();
 
 #ifndef ORBIS
 	while (Window::GetWindow().UpdateWindow() && !Window::GetKeyboard()->KeyDown(KEYBOARD_ESCAPE))
@@ -52,20 +53,36 @@ int main(void)
 	while (true)
 #endif
 	{
+		MEASURING_TIMER_LOG_START("Frame");
 #ifdef ORBIS
 		input.Poll();
 #endif
 		float ms = timer.GetTimer()->Get(1000.0f);
-		PhysicsEngineInstance::Instance()->stepSimulation(ms, SUB_STEPS, TIME_STEP);
-		myControllers->update(ms);
 
+		MEASURING_TIMER_LOG_START("Physics");
+		PhysicsEngineInstance::Instance()->stepSimulation(ms, SUB_STEPS, TIME_STEP);
+		MEASURING_TIMER_LOG_END();
+
+		MEASURING_TIMER_LOG_START("Controllers");
+		myControllers->update(ms);
+		MEASURING_TIMER_LOG_END();
+
+		MEASURING_TIMER_LOG_START("Renderer");
 		renderer.RenderScene(ms);
+		MEASURING_TIMER_LOG_END();
+
+		MEASURING_TIMER_LOG_START("Sound System");
 		SoundSystem::Instance()->Update(ms);
+		MEASURING_TIMER_LOG_END();
+
+		MEASURING_TIMER_LOG_END();//end frame inside
+
+		//TODO: Print time steps. Can pass stringstream to get a formated output string
+		//MEASURING_TIMER_PRINT(std::cout);
+		MEASURING_TIMER_CLEAR();
 	}
 
 	delete gameScene;
-
-	SoundSystem::Release();
 
 	return 0;
 }

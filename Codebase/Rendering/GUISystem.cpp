@@ -46,7 +46,10 @@ void GUISystem::Render()
 	std::sort(m_component.begin(), m_component.end());
 
 	for (unsigned int i = 0; i < m_component.size(); ++i)
+	{
+		m_component[i]->Update();
 		m_component[i]->Render();
+	}
 }
 
 void GUISystem::Destroy()

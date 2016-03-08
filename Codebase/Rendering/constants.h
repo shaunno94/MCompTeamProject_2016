@@ -60,7 +60,8 @@ enum AIStates
 	DEFENCE,
 	ADVANCE,
 	GUARD_GOAL,
-	CLEAR_GOAL
+	CLEAR_GOAL,
+	AGGRO
 };
 
 #ifdef _DEBUG

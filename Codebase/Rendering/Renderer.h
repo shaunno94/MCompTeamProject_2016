@@ -31,6 +31,8 @@ public:
 		return currentScene;
 	}
 
+	void SwitchScene();
+
 	Renderer(std::string title, int sizeX, int sizeY, bool fullScreen);
 	virtual ~Renderer(void);
 
@@ -41,6 +43,7 @@ protected:
 	void OnUpdateScene(Frustum& frustum, Vec3Graphics camPos);
 	void OnRenderScene();
 	void OnRenderLights();
+	void RenderGUI();
 
 	Frustum frameFrustrum;
 	Frustum lightFrustrum;

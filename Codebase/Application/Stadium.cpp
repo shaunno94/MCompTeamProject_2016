@@ -2,6 +2,8 @@
 #include <vector>
 #include "Rendering\Renderer.h"
 
+#define SCALE 1.5f
+
 Stadium::Stadium(Material* material, Material* wallMaterial, const std::string& name /*= ""*/) :
 GameObject(name),
 m_wallMaterial(wallMaterial)
@@ -14,10 +16,9 @@ m_wallMaterial(wallMaterial)
 	this->SetRenderComponent(new RenderComponent(material, ModelLoader::LoadMGL(MODEL_DIR"Stadium/Stadium.mgl", true)));
 	this->SetPhysicsComponent(floorPhysics);
 	this->GetPhysicsComponent()->GetPhysicsBody()->setRestitution(0.3);
-	this->SetLocalTransform(Mat4Graphics::Translation(Vec3Graphics(6.8, -28.5, 2)) * Mat4Graphics::RotationX(-0.7f) * Mat4Graphics::RotationY(30.5f));
+	this->SetLocalTransform(Mat4Graphics::Scale(Vec3Physics(SCALE, SCALE, SCALE)) * Mat4Graphics::Translation(Vec3Graphics(6.8, -28.5, 2)) * Mat4Graphics::RotationX(-0.7f) * Mat4Graphics::RotationY(30.5f));
 	this->GetPhysicsComponent()->GetPhysicsBody()->setFriction(1.3);
 	this->GetPhysicsComponent()->GetPhysicsBody()->setHitFraction(0.7);
-
 	m_netTexture = Texture::Get(TEXTURE_DIR"link2.png");
 	m_netTexture->SetTextureParams(TextureFlags::REPEATING | TextureFlags::ANISOTROPIC_FILTERING);
 	m_wallMaterial->Set("diffuseTex", m_netTexture);
@@ -81,6 +82,9 @@ void Stadium::CreateCollisionWalls()
 void Stadium::CreatePlane(std::vector<btConvexHullShape*> &collectionVector, Vec3Physics start, Vec3Physics end)
 {
 
+	start *= SCALE;
+	end *= SCALE;
+
 	Vec3Graphics* points = new Vec3Graphics[4];
 	points[0] = Vec3Graphics(start.x, start.y, start.z);
 	points[1] = Vec3Graphics(start.x, end.y, start.z);
@@ -93,7 +97,7 @@ void Stadium::CreatePlane(std::vector<btConvexHullShape*> &collectionVector, Vec
 
 	GameObject* wall = new GameObject();
 	wall->SetRenderComponent(new RenderComponent(m_wallMaterial, mesh));
-	wall->SetLocalTransform(Mat4Graphics::Inverse(Mat4Graphics::Translation(Vec3Graphics(6.8, -28.5, 2)) * Mat4Graphics::RotationX(-0.7f) * Mat4Graphics::RotationY(30.5f)));
+	wall->SetLocalTransform(Mat4Graphics::Inverse(Mat4Graphics::Scale(Vec3Physics(SCALE, SCALE, SCALE)) * Mat4Graphics::Translation(Vec3Graphics(6.8, -28.5, 2)) * Mat4Graphics::RotationX(-0.7f) * Mat4Graphics::RotationY(30.5f)));
 	this->AddChildObject(wall);
 
 	btConvexHullShape* newShape = new btConvexHullShape();
