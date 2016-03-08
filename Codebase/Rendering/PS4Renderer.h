@@ -14,6 +14,7 @@ enum MemoryLocation
 {
 	GARLIC,
 	ONION,
+	GARLIC_MESH,
 	MEMORYMAX
 };
 

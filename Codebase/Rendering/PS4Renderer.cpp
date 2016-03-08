@@ -152,15 +152,21 @@ void PS4Renderer::InitialiseMemoryAllocators()
 {
 	stackAllocators[GARLIC].init(SCE_KERNEL_WC_GARLIC, _GarlicMemory);
 	stackAllocators[ONION].init(SCE_KERNEL_WB_ONION, _OnionMemory);
+	
+	stackAllocators[GARLIC_MESH].init(SCE_KERNEL_WC_GARLIC, _GarlicMemory);
 
 	this->garlicAllocator = sce::Gnmx::Toolkit::GetInterface(&stackAllocators[GARLIC]);
 	this->onionAllocator = sce::Gnmx::Toolkit::GetInterface(&stackAllocators[ONION]);
+
+	this->meshGarlicAllocator = sce::Gnmx::Toolkit::GetInterface(&stackAllocators[GARLIC_MESH]);
+
 	sce::Gnm::registerOwner(&ownerHandle, "PS4Renderer");
 }
 
 void PS4Renderer::DestroyMemoryAllocators() 
 {
 	stackAllocators[GARLIC].deinit();
+	stackAllocators[GARLIC_MESH].deinit();
 	stackAllocators[ONION].deinit();
 }
 

@@ -16,6 +16,7 @@ protected:
 	static sce::Gnmx::Toolkit::IAllocator	onionAllocator;
 	//Fast bus
 	static sce::Gnmx::Toolkit::IAllocator	garlicAllocator;
+	static sce::Gnmx::Toolkit::IAllocator	meshGarlicAllocator;
 	//Handle
 	static sce::Gnm::OwnerHandle			ownerHandle;
 };

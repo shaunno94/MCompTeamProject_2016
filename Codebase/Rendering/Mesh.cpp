@@ -102,19 +102,31 @@ void Mesh::CalcMeshUsage(Mesh* m)
 void Mesh::Clean()
 {
 	if (m_Vertices)
+	{
 		delete[] m_Vertices;
-
+		m_Vertices = nullptr;
+	}
 	if (m_Indices)
+	{
 		delete[] m_Indices;
-
+		m_Indices = nullptr;
+	}
 	if (m_TextureCoords)
+	{
 		delete[] m_TextureCoords;
-
+		m_TextureCoords = nullptr;
+	}
 	if (m_Tangents)
+	{
 		delete[] m_Tangents;
-
+		m_Tangents = nullptr;
+	}
 	if (m_Normals)
+	{
 		delete[] m_Normals;
+		m_Normals = nullptr;
+	}
+		
 }
 
 Mesh* Mesh::GenerateTriangle() {

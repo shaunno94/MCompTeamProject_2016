@@ -30,8 +30,8 @@ PS4Mesh::PS4Mesh()
 
 PS4Mesh::~PS4Mesh()
 {
-	//garlicAllocator.release(vertexBuffer);
-	//garlicAllocator.release(indexBuffer);
+	meshGarlicAllocator.release(vertexBuffer);
+	meshGarlicAllocator.release(indexBuffer);
 	delete[] attributeBuffers;
 }
 
@@ -56,9 +56,9 @@ void PS4Mesh::BufferData()
 {
 	vertexDataSize = m_NumVertices * sizeof(MeshVertex);
 	indexDataSize = m_NumIndices * sizeof(uint32_t);
-
-	indexBuffer = static_cast<uint32_t*>	(garlicAllocator.allocate(indexDataSize, sce::Gnm::kAlignmentOfBufferInBytes));
-	vertexBuffer = static_cast<MeshVertex*>	(garlicAllocator.allocate(vertexDataSize, sce::Gnm::kAlignmentOfBufferInBytes));
+	
+	indexBuffer = static_cast<uint32_t*>	(meshGarlicAllocator.allocate(indexDataSize, sce::Gnm::kAlignmentOfBufferInBytes));
+	vertexBuffer = static_cast<MeshVertex*>	(meshGarlicAllocator.allocate(vertexDataSize, sce::Gnm::kAlignmentOfBufferInBytes));
 
 	sce::Gnm::registerResource(nullptr, ownerHandle, indexBuffer, indexDataSize, "IndexData", sce::Gnm::kResourceTypeIndexBufferBaseAddress, 0);
 	sce::Gnm::registerResource(nullptr, ownerHandle, vertexBuffer, vertexDataSize, "VertexData", sce::Gnm::kResourceTypeIndexBufferBaseAddress, 0);
@@ -88,7 +88,7 @@ void PS4Mesh::BufferData()
 	InitAttributeBuffer(attributeBuffers[2], sce::Gnm::kDataFormatR32G32B32Float, &(vertexBuffer[0].normal));
 	InitAttributeBuffer(attributeBuffers[3], sce::Gnm::kDataFormatR32G32B32Float, &(vertexBuffer[0].tangent));
 
-	//Clean();
+	Clean();
 
 	for (auto child : m_Children)
 		child->BufferData();
