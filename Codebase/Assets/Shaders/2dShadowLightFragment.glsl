@@ -17,7 +17,7 @@ in Vertex {
 	mat4 inverseProjView ;
 	//vec4 shadowProj;
 } IN;
-out vec4 gl_FragColor [2];
+out vec4 outFragColor [2];
 
 void main ( void ) {
 	vec3 pos = vec3 (( gl_FragCoord . x * pixelSize . x ) ,
@@ -55,7 +55,7 @@ void main ( void ) {
 	lambert *= shadow ;
 	sFactor *= shadow;
 	
-	gl_FragColor [0] = vec4 ( lightColour . xyz * lambert * atten , 1.0);
-	gl_FragColor [1] = vec4 ( lightColour . xyz * sFactor * atten *0.33 ,1.0);
+	outFragColor [0] = vec4 ( lightColour . xyz * lambert * atten , 1.0);
+	outFragColor [1] = vec4 ( lightColour . xyz * sFactor * atten *0.33 ,1.0);
 	//gl_FragColor [1].rgb = normal.rgb;
 }

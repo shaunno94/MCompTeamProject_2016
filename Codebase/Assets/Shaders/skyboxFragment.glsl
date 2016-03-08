@@ -6,8 +6,8 @@ uniform vec3 cameraPos ;
 in Vertex {
 	vec3 normal ;
 } IN ;
-out vec4 gl_FragColor ;
+out vec4 outFragColor ;
 
 void main ( void ) {
-	gl_FragColor = texture ( cubeTex , normalize ( IN.normal ));
+	outFragColor = texture ( cubeTex , normalize ( IN.normal ));
 }
