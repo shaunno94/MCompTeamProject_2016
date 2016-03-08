@@ -1,16 +1,20 @@
 #ifndef ORBIS
 #pragma once
-#include "Controller.h"
+#include "MenuControllerComponent.h"
 #include "Window.h"
 
-class MenuController :
-	public Controller
+
+class MenuController
 {
 public:
-	MenuController(ControllerComponent* object);
+	MenuController(MenuControllerComponent* object);
 	~MenuController();
 
-	virtual void CheckInput();
-};
+	void CheckInput();
+	void setObject(MenuControllerComponent* object){ this->object = object; }
 
+protected:
+	MenuControllerComponent* object;
+
+};
 #endif

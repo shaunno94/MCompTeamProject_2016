@@ -102,10 +102,10 @@ Mesh* Mesh::GenerateQuad(Vec2Graphics texCoords)
 	m->m_Normals = new Vec3Graphics[m->m_NumVertices];
 	m->m_Tangents = new Vec3Graphics[m->m_NumVertices];
 
-	m->m_Vertices[0] = Vec3Graphics(-1.0f, -1.0f, 0.0f);
-	m->m_Vertices[1] = Vec3Graphics(-1.0f, 1.0f, 0.0f);
-	m->m_Vertices[2] = Vec3Graphics(1.0f, -1.0f, 0.0f);
-	m->m_Vertices[3] = Vec3Graphics(1.0f, 1.0f, 0.0f);
+	m->m_Vertices[0] = Vec3Graphics(-1.0f, 1.0f, 0.0f);
+	m->m_Vertices[1] = Vec3Graphics(-1.0f, -1.0f, 0.0f);
+	m->m_Vertices[2] = Vec3Graphics(1.0f, 1.0f, 0.0f);
+	m->m_Vertices[3] = Vec3Graphics(1.0f, -1.0f, 0.0f);
 
 	m->m_TextureCoords[0] = Vec2Graphics(0.0f, texCoords.y);
 	m->m_TextureCoords[1] = Vec2Graphics(0.0f, 0.0f);

@@ -12,7 +12,7 @@ public:
 //	virtual void Update();
 	virtual void Render();
 
-	void Update(int& scoreA, int& scoreB, float& time);
+	void Update(int scoreA, int scoreB, float time);
 
 protected:
 	GameObject* text;

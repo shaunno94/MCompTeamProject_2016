@@ -252,9 +252,6 @@
     <ClInclude Include="PCNetProducerController.h">
       <Filter>Header Files\Input</Filter>
     </ClInclude>
-    <ClInclude Include="ButtonGUI.h">
-      <Filter>Header Files\UI</Filter>
-    </ClInclude>
     <ClInclude Include="MenuController.h">
       <Filter>Header Files\Input</Filter>
     </ClInclude>
@@ -424,9 +421,6 @@
     </ClCompile>
     <ClCompile Include="PCNetProducerController.cpp">
       <Filter>Source Files\Input</Filter>
-    </ClCompile>
-    <ClCompile Include="ButtonGUI.cpp">
-      <Filter>Source Files\UI</Filter>
     </ClCompile>
     <ClCompile Include="PS4MenuController.cpp">
       <Filter>Source Files\Input</Filter>

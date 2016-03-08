@@ -1,15 +1,16 @@
 #include "MenuGUI.h"
 
-MenuGUI::MenuGUI(Material* material, Texture* texture, float z, const std::string& name, unsigned int selected, bool visible) : GUIComponent(material, texture, z, visible)
+MenuGUI::MenuGUI(Material* material, Texture* texture, float z, const std::string& name, bool visible) : GUIComponent(material, texture, z, visible)
 {
 	m_Material = material;
-	m_Texture = texture;
+	m_DefaultTex = texture;
 	m_Depth = z;
 	m_Visible = visible;
-	m_Selection = selected;
 
-	m_Texture->SetTextureParams(ANISOTROPIC_FILTERING);
-	m_Material->Set(ReservedMeshTextures.DIFFUSE.name, m_Texture);
+	m_DefaultTex->SetTextureParams(ANISOTROPIC_FILTERING);
+	m_Material->Set(ReservedMeshTextures.DIFFUSE.name, m_DefaultTex);
+
+	//m_SelectTex = Texture::Get(TEXTURE_DIR"orange.png");
 
 	m_SingleBtn = new GameObject();
 	m_MultiBtn = new GameObject();
@@ -41,6 +42,29 @@ MenuGUI::~MenuGUI()
 	delete m_SingleMesh;
 	delete m_MultiMesh;
 	delete m_ExitMesh;
+}
+
+void MenuGUI::Update()
+{
+	m_Material->Set(ReservedMeshTextures.DIFFUSE.name, m_DefaultTex);
+
+	m_SingleBtn->SetRenderComponent(new RenderComponent(m_Material, m_SingleMesh));
+	m_MultiBtn->SetRenderComponent(new RenderComponent(m_Material, m_MultiMesh));
+	m_ExitBtn->SetRenderComponent(new RenderComponent(m_Material, m_ExitMesh));
+
+	m_Material->Set(ReservedMeshTextures.DIFFUSE.name, m_SelectTex);
+	switch (m_Selection)
+	{
+		case SINGLE_PLAYER:
+			m_SingleBtn->SetRenderComponent(new RenderComponent(m_Material, m_SingleMesh));
+			break;
+		case MULTIPLAYER:
+			m_MultiBtn->SetRenderComponent(new RenderComponent(m_Material, m_MultiMesh));
+			break;
+		case QUIT:
+			m_ExitBtn->SetRenderComponent(new RenderComponent(m_Material, m_ExitMesh));
+			break;
+	}
 }
 
 void MenuGUI::Render()

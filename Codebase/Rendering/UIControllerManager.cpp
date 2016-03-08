@@ -1,6 +1,7 @@
 #include "UIControllerManager.h"
 #include "KeyboardController.h"
 #include "PS4Controller.h"
+#include "MenuControllerComponent.h"
 
 
 UIControllerManager::UIControllerManager()
@@ -20,11 +21,11 @@ void UIControllerManager::update(float ms){
 }
 
 void UIControllerManager::setProducer(MenuGUI* g, unsigned int type){
-	ControllerComponent* cc = new ControllerComponent(g);
+	MenuControllerComponent* cc = new MenuControllerComponent(g,type);
 #ifndef ORBIS
-	controllers.push_back(new KeyboardController(cc));
+	controllers.push_back(new MenuController(cc));
 #else
-	controllers.push_back(new PS4Controller(cc));
+	controllers.push_back(new PS4MenuController(cc));
 #endif
 
 }

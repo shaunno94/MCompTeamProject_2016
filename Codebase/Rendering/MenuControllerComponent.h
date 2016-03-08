@@ -2,14 +2,19 @@
 #include "ControllerComponent.h"
 #include "Rendering\MenuGUI.h"
 
-class MenuControllerComponent :
-	public ControllerComponent
+class MenuControllerComponent
 {
 public:
 	MenuControllerComponent(MenuGUI* parent, unsigned int type);
 	~MenuControllerComponent();
+	void UpdateObject(float dt);
+
+	void SelectNext();
+	void SelectPrevious();
+	void Submit();
+
 
 protected:
-	MenuGUI* menuGUI;
+	MenuGUI* m_parent;
 };
 

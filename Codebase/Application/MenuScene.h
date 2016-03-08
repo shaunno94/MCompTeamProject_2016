@@ -33,8 +33,6 @@ protected:
 
 	GameObject* test;
 	
-	Mesh* bg;
-
 	BaseShader* orthoShader;
 
 	Material* guiMaterial;

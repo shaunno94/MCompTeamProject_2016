@@ -12,7 +12,7 @@ enum SELECTED
 class MenuGUI : public GUIComponent
 {
 public:
-	MenuGUI(Material* material, Texture* texture, float z, const std::string& name="" ,unsigned int selected = SINGLE_PLAYER, bool visible = true);
+	MenuGUI(Material* material, Texture* texture, float z, const std::string& name="" , bool visible = true);
 	virtual ~MenuGUI();
 
 	virtual void Render();
@@ -27,6 +27,8 @@ public:
 		return m_Selection;
 	}
 
+	void Update();
+
 protected:
 	GameObject* m_SingleBtn;
 	GameObject* m_MultiBtn;
@@ -36,6 +38,9 @@ protected:
 	Mesh* m_MultiMesh;
 	Mesh* m_ExitMesh;
 
-	unsigned int m_Selection;
+	Texture* m_DefaultTex;
+	Texture* m_SelectTex;
+
+	unsigned int m_Selection = SINGLE_PLAYER;
 
 };

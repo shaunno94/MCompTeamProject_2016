@@ -1,6 +1,7 @@
 #pragma once
 #include "Rendering\MenuGUI.h"
-#include "Controller.h"
+#include "MenuController.h"
+
 
 class UIControllerManager
 {
@@ -12,5 +13,5 @@ public:
 	virtual void update(float ms);
 
 protected:
-	std::vector<Controller*> controllers;
+	std::vector<MenuController*> controllers;
 };

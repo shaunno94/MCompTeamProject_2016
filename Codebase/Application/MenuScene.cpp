@@ -26,13 +26,13 @@ MenuScene::~MenuScene()
 {
 	SoundSystem::Release();
 	GUISystem::Destroy();
-	delete bg;
 }
 
 
 void MenuScene::UpdateScene(float dt)
 {
-
+	std::cout << menuGUI->GetSelection() << std::endl;
+	menuGUI->Update();
 }
 
 void MenuScene::SetupGameObjects()
