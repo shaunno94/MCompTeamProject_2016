@@ -29,10 +29,13 @@ public:
 	sce::Gnm::Texture* GetTexture(uint i) { return i > (numRenderTargets + 1) ? nullptr : &textures[i]; }
 
 	~PS4Buffer();
+
+	static uint32_t FBOMemUsage;
 	
 private:
 	void GenerateDepthTarget(uint width, uint height, sce::Gnmx::Toolkit::StackAllocator& allocator);
 	void GenerateRenderTarget(uint width, uint height, sce::Gnmx::Toolkit::StackAllocator& allocator, uint targetID, Displayable display);
+	void CalcInternalTexUsage(sce::Gnm::Texture& handle);
 
 	std::vector<sce::Gnm::Texture> textures;
 	uint numRenderTargets;

@@ -1,6 +1,9 @@
-#include "Rendering\Renderer.h"
-#include "Rendering\GameTimer.h"
+#include "Rendering/Renderer.h"
+#include "Rendering/GameTimer.h"
 #include "GameScene.h"
+#include "MenuScene.h"
+#include "Helpers/MeasuringTimer.h"
+
 
 const float TIME_STEP = 1.0f / 120.0f;
 const unsigned int SUB_STEPS = 4;
@@ -26,7 +29,7 @@ int main(void)
 
 	//Initialise Renderer - including the window context if compiling for Windows - PC
 	Renderer renderer("Team Project - 2016", SCREEN_WIDTH, SCREEN_HEIGHT, false);
-	if (!renderer.HasInitialised()) 
+	if (!renderer.HasInitialised())
 	{
 		return -1;
 	}
@@ -37,11 +40,15 @@ int main(void)
 #endif
 
 	ControllerManager* myControllers = new LocalControlManager;
+	//UIControllerManager* uiController = new UIControllerManager();
 	//Create GameScene
 	GameScene* gameScene = new GameScene(myControllers);
+//	MenuScene* menuScene = new MenuScene(uiController);
 	//Set current scene to the game
 	renderer.SetCurrentScene(gameScene);
 	gameScene->SetControllerActor();
+	gameScene->SetupAI();
+	//renderer.SetCurrentScene(menuScene);
 
 #ifndef ORBIS
 	while (Window::GetWindow().UpdateWindow() && !Window::GetKeyboard()->KeyDown(KEYBOARD_ESCAPE))
@@ -49,22 +56,39 @@ int main(void)
 	while (true)
 #endif
 	{
+		MEASURING_TIMER_LOG_START("Frame");
 #ifdef ORBIS
 		input.Poll();
 #endif
 		float ms = timer.GetTimer()->Get(1000.0f);
+
+		MEASURING_TIMER_LOG_START("Physics");
 		PhysicsEngineInstance::Instance()->stepSimulation(ms, SUB_STEPS, TIME_STEP);
+		MEASURING_TIMER_LOG_END();
+
+		MEASURING_TIMER_LOG_START("Controllers");
 		myControllers->update(ms);
+		MEASURING_TIMER_LOG_END();
+
+		MEASURING_TIMER_LOG_START("Renderer");
 		renderer.RenderScene(ms);
+		MEASURING_TIMER_LOG_END();
+
+		MEASURING_TIMER_LOG_START("Sound System");
+		
+		MEASURING_TIMER_LOG_END();
+
+		MEASURING_TIMER_LOG_END();//end frame inside
+
+		//TODO: Print time steps. Can pass stringstream to get a formated output string
+		//MEASURING_TIMER_PRINT(std::cout);
+		MEASURING_TIMER_CLEAR();
 #ifndef ORBIS
 		SoundSystem::Instance()->Update(ms);
 #endif
 	}
 
 	delete gameScene;
-#ifndef ORBIS
-	SoundSystem::Release();
-#endif
 
 	return 0;
 }

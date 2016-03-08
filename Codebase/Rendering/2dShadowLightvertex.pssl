@@ -25,7 +25,8 @@ struct VS_INPUT
 struct VS_OUTPUT
 {
 	float4 position	: S_POSITION;
-	float4x4 inverseProjView; 
+	//float4 testPos;
+	float4x4 invProjView; 
 };
 
 VS_OUTPUT main(VS_INPUT Input)
@@ -35,7 +36,9 @@ VS_OUTPUT main(VS_INPUT Input)
 	float4x4 MVP = mul(mul(projMatrix, viewMatrix), modelMatrix);
 	Output.position = mul(MVP, float4(Input.position.xyz, 1.0));
 	
-	Output.inverseProjView = inverseProjView;
+	Output.invProjView = inverseProjView;
+
+	//Output.testPos =  mul(MVP, float4(Input.position.xyz, 1.0));
 
 	return Output;
 }

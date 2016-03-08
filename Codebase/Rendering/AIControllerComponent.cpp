@@ -12,16 +12,24 @@
 #include "AI\DefenceState.h"
 
 AIControllerComponent::AIControllerComponent(GameObject* parent, unsigned int type) :
-ControllerComponent(parent)
+	ControllerComponent(parent),
+	m_type(type)
 {
+}
 
+AIControllerComponent::~AIControllerComponent()
+{
+}
+
+void AIControllerComponent::setupAI()
+{
 	GameObject* ball = Renderer::GetInstance()->GetCurrentScene()->findGameObject("ball");
 	GameObject* targetGoal = Renderer::GetInstance()->GetCurrentScene()->findGameObject("goal1");
 	GameObject* teamGoal = Renderer::GetInstance()->GetCurrentScene()->findGameObject("goal2");
 
 	m_StateMachine = new StateMachine();
 
-	switch (type)
+	switch (m_type)
 	{
 	case SHOOTER:
 	{
@@ -45,7 +53,7 @@ ControllerComponent(parent)
 		// Set active state
 		m_StateMachine->ChangeState(POSITION);
 	}
-		break;
+	break;
 	case GOALKEEPER:
 	{
 
@@ -85,16 +93,12 @@ ControllerComponent(parent)
 		m_StateMachine->ChangeState(DEFENCE);
 
 	}
-		break;
+	break;
 	case AGGRESSIVE:
 		break;
 	default:
 		break;
 	}
-}
-
-AIControllerComponent::~AIControllerComponent()
-{
 }
 
 void AIControllerComponent::updateObject(float dt)
@@ -138,18 +142,18 @@ void AIControllerComponent::AddForce(float x, float y, float z)
 
 	float dot = in.Dot(left);
 
-	AddTorque(0, 13 * (dot), 0);
+	AddTorque(0, 1 * (dot), 0);
 	turnWheels(-dot);
-	
+
 	dot = in.Dot(forward);
 	if (dot >= 0)
 	{
-		force = forward * 15;
+		force = forward * 180000;
 	}
 	else
 	{
-		force = -forward * 12;
+		force = -forward * 180000;
 	}
-	
+
 	force.y = 0;
 }

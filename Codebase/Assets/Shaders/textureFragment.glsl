@@ -1,4 +1,4 @@
-#version 450 core
+#version 150 core
 
 uniform sampler2D diffuseTex;
 

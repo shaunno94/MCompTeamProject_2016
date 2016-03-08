@@ -52,7 +52,7 @@ public:
 	void UpdateUniform(const shaderResourceLocation& location, int i);
 	void UpdateUniform(const shaderResourceLocation& location, unsigned int u);
 	
-	unsigned int TextureMemoryUsage(sce::Gnm::Texture id){ return 0; }
+	unsigned int TextureMemoryUsage(sce::Gnm::Texture& id);
 	void SetTexture(const shaderResourceLocation& location, textureHandle& handle);
 
 	sce::Gnmx::GnmxGfxContext* GetGFXContext() { return currentGFXContext; }
@@ -139,5 +139,7 @@ private:
 
 	//Shadow Projection matrix
 	Matrix4Simple shadowProj = Matrix4Simple::Perspective(50.0f, 15000.0f, 1.0f, 45.0f);
+
+	bool previousWasShadow = false;
 };
 #endif

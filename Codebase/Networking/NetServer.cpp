@@ -2,6 +2,8 @@
 
 #include "Helpers/common.h"
 #include <algorithm>
+#include <cassert>
+#include <future>
 
 
 
@@ -50,6 +52,7 @@ NetServer::NetServer(unsigned int maxMembers, unsigned int maxMessageTypes, unsi
 	m_session->m_members.push_back(ownConnection);
 
 	m_threadHandle = std::move(std::async(std::launch::async, &NetServer::SessionSetupService, this));
+	m_pendingDisconnectionCount = 0;
 }
 
 NetServer::~NetServer()
@@ -161,15 +164,15 @@ void NetServer::DisconnectService()
 		enet_peer_disconnect(connection->GetPeer(), 0);
 		m_pendingDisconnections.push_back(connection);
 	}
-	size_t pendingDisconnectionCount = 0;
+	m_pendingDisconnectionCount = 0;
 	for (auto connection : m_pendingDisconnections)
 	{
 		if (connection->GetState() != NetPeerDisconnected)
-			++pendingDisconnectionCount;
+			++m_pendingDisconnectionCount;
 	}
 	m_connections.clear();
 	m_timer.Get();
-	while (pendingDisconnectionCount > 0 && m_timer.Peek(1000.0f/*milliseconds*/) < NET_DISCONNECTION_TIMEOUT)
+	while (m_pendingDisconnectionCount > 0 && m_timer.Peek(1000.0f/*milliseconds*/) < NET_DISCONNECTION_TIMEOUT)
 	{
 		ENetEvent event;
 		if (enet_host_service(m_host, &event, 0) <= 0)
@@ -178,7 +181,7 @@ void NetServer::DisconnectService()
 		switch (event.type)
 		{
 		case ENET_EVENT_TYPE_DISCONNECT:
-			--pendingDisconnectionCount;
+			--m_pendingDisconnectionCount;
 			break;
 		case ENET_EVENT_TYPE_RECEIVE:
 			enet_packet_destroy(event.packet);
@@ -270,9 +273,6 @@ void NetServer::PushUpdates()
 			const NetMessageList* memberMessages = sessionReadMessages->Get(i, j);
 			while (memberMessages)
 			{
-
-				std::cout << "++++++++++++++"LINE_SEPARATOR_DEF;
-
 				SendMsg(m_session->m_members[memberMessages->msg->target], memberMessages->msg, memberMessages->msg->strategy == NetMessageStrategy::NetStackingMessageStrategy);
 				memberMessages = memberMessages->next;
 			}
@@ -284,9 +284,6 @@ void NetServer::PushUpdates()
 		const NetMessageList* globalMessages = sessionReadMessages->GetGlobal(i);
 		while (globalMessages)
 		{
-
-			std::cout << "-----------------"LINE_SEPARATOR_DEF;
-
 			BroadcastMsg(globalMessages->msg, globalMessages->msg->strategy == NetMessageStrategy::NetStackingMessageStrategy);
 			globalMessages = globalMessages->next;
 		}
@@ -367,19 +364,20 @@ void NetServer::ProcessSessionRunPacket(ENetEvent& netEvent, NetSessionWriter& w
 		}
 		else
 		{
-			SendMsg(m_session->m_members[newMessage->target], newMessage, newMessage->strategy == NetMessageStrategy::NetStackingMessageStrategy);
-			if (newMessage->source != m_sessionMemberId)
+			if (newMessage->target == m_sessionMemberId)
 				writer.AddMessage(newMessage, false);
+			else
+				SendMsg(m_session->m_members[newMessage->target], newMessage, newMessage->strategy == NetMessageStrategy::NetStackingMessageStrategy);
 		}
 
 
 	}
 }
 
-void NetServer::SessionStartService(unsigned int pendingDisconnectionCount)
+void NetServer::SessionStartService()
 {
 	m_timer.Get();
-	while (pendingDisconnectionCount > 0 && m_timer.Peek(1000.0f/*milliseconds*/) < NET_DISCONNECTION_TIMEOUT)
+	while (m_pendingDisconnectionCount > 0 && m_timer.Peek(1000.0f/*milliseconds*/) < NET_DISCONNECTION_TIMEOUT)
 	{
 		ENetEvent event;
 		if (enet_host_service(m_host, &event, 0) <= 0)
@@ -388,7 +386,7 @@ void NetServer::SessionStartService(unsigned int pendingDisconnectionCount)
 		switch (event.type)
 		{
 		case ENET_EVENT_TYPE_DISCONNECT:
-			--pendingDisconnectionCount;
+			--m_pendingDisconnectionCount;
 			break;
 		case ENET_EVENT_TYPE_RECEIVE:
 			//TODO:still process data
@@ -477,7 +475,7 @@ bool NetServer::StartSession()
 		enet_peer_disconnect(connection->GetPeer(), 0);
 		m_pendingDisconnections.push_back(connection);
 	}
-	size_t pendingDisconnectionCount = 0;
+	unsigned int pendingDisconnectionCount = 0;
 	for (auto connection : m_pendingDisconnections)
 	{
 		if (connection->GetState() != NetPeerDisconnected)
@@ -491,7 +489,7 @@ bool NetServer::StartSession()
 	m_session->m_state = NetSessionActivating;
 	++m_version;
 	m_stopService = false;
-	m_threadHandle = std::move(async(std::launch::async, &NetServer::SessionStartService, this, pendingDisconnectionCount));
+	m_threadHandle = std::move(std::async(std::launch::async, &NetServer::SessionStartService, this));
 
 	return true;
 }

@@ -30,6 +30,8 @@ PS4Mesh::PS4Mesh()
 
 PS4Mesh::~PS4Mesh()
 {
+	//garlicAllocator.release(vertexBuffer);
+	//garlicAllocator.release(indexBuffer);
 	delete[] attributeBuffers;
 }
 

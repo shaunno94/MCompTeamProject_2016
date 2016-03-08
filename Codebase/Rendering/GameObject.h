@@ -154,7 +154,7 @@ protected:
 	AudioComponent*				m_Audio;
 #endif
 
-	float						m_BoundingRadius;	//Unused
+	float						m_BoundingRadius;
 	Mat4Graphics				m_WorldTransform;
 	Mat4Graphics				m_LocalTransform;
 

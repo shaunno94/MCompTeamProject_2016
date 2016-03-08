@@ -1,4 +1,4 @@
-#version 450 core
+#version 150 core
 
 uniform sampler2D depthTex;
 uniform sampler2D normTex;
@@ -16,7 +16,7 @@ uniform vec4 lightColour;
 in Vertex {
 	mat4 inverseProjView;
 } IN;
-out vec4 gl_FragColor [2];
+out vec4 colourOut [2];
 
 void main (void) {
 	vec3 pos = vec3 ((gl_FragCoord.x * pixelSize.x), (gl_FragCoord.y * pixelSize.y), 0.0);
@@ -54,6 +54,6 @@ void main (void) {
 	lambert *= shadow;
 	sFactor *= shadow;
 	
-	gl_FragColor[0] = vec4(lightColour.xyz * lambert * atten, 1.0);
-	gl_FragColor[1] = vec4(lightColour.xyz * sFactor * atten * 0.33, 1.0);
+	colourOut[0] = vec4(lightColour.xyz * lambert * atten, 1.0);
+	colourOut[1] = vec4(lightColour.xyz * sFactor * atten * 0.33, 1.0);
 }
