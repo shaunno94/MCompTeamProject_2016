@@ -26,11 +26,15 @@ public:
 	}
 
 	void SetListenerMatrix(const Mat4& transform);
-	void SetListenerVelocity(const Vec3& vel) {
+	void SetListenerVelocity(const Vec3& vel)
+	{
 		listenerVel = vel;
 	}
 
-	Mat4 GetListenerTransform() { return listenerTransform; }
+	Mat4 GetListenerTransform()
+	{
+		return listenerTransform;
+	}
 
 	void SetBackgroundMusic(Sound* snd);
 

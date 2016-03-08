@@ -50,6 +50,10 @@ public:
 	virtual void Reset();
 	virtual void SetSound(Sound* s) = 0;
 	virtual void Update(float msec) = 0;
+	virtual void AttachSource(AudioSource* s) = 0;
+	virtual void DetachSource() = 0;
+
+	static bool CompareNodesByPriority(Emitter* a, Emitter* b);
 
 	Sound* GetSound()
 	{
@@ -111,7 +115,7 @@ public:
 	{
 		return isSingle;
 	}
-	
+
 	AudioSource* GetSource()
 	{
 		return currentSource;
@@ -142,6 +146,8 @@ public:
 	void Reset();
 	void SetSound(Sound* s);
 	void Update(float msec);
+	void AttachSource(AudioSource* s);
+	void DetachSource();
 
 	void SetPosition(const Vec3& pos)
 	{
@@ -160,11 +166,6 @@ public:
 		return timeLeft;
 	}
 
-	static bool		CompareNodesByPriority(SoundEmitter* a, SoundEmitter* b);
-
-	void			AttachSource(AudioSource* s);
-	void			DetachSource();
-
 protected:
 
 	float timeLeft;
@@ -174,18 +175,37 @@ protected:
 	Vec3 position;
 	Vec3 velocity;
 };
-#else 
+#else
 
 class SoundEmitter : public Emitter
 {
 public:
 	SoundEmitter(void);
 	SoundEmitter(Sound* s);
-	~SoundEmitter(void);
+	~SoundEmitter(void) {}
 
 	void Reset();
+	void SetSound(Sound* s) { sound = s; }
+	void Update(float msec);
+	void AttachSource(AudioSource* s);
+	void DetachSource();
 
-	void SetPosition(const Vec3& pos)
-}
+	void SetPosition(const SceAudio3dPosition& pos)
+	{
+		position = pos;
+	}
+	SceAudio3dPosition GetPosition() const
+	{
+		return position;
+	}
+
+protected:
+	void SampleFromSound(int16_t*output, int samplesPerChannel, int startSample);
+
+	SceAudio3dPosition position;
+	int samplesUsed;
+	SceAudio3dPortId port;
+	float spread;
+};
 
 #endif

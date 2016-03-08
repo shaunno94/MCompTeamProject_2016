@@ -30,6 +30,12 @@ SoundEmitter::SoundEmitter(Sound* s)
 	SetSound(s);
 }
 
+bool		Emitter::CompareNodesByPriority(Emitter* a, Emitter* b)
+{
+	return (a->priority > b->priority) ? true : false;
+}
+
+#ifndef ORBIS
 void	SoundEmitter::Reset()
 {
 	Emitter::Reset();
@@ -51,11 +57,6 @@ void	SoundEmitter::Reset()
 SoundEmitter::~SoundEmitter(void)
 {
 	DetachSource();
-}
-
-bool		SoundEmitter::CompareNodesByPriority(SoundEmitter* a, SoundEmitter* b)
-{
-	return (a->priority > b->priority) ? true : false;
 }
 
 void		SoundEmitter::SetSound(Sound* s)
@@ -200,3 +201,78 @@ void		SoundEmitter::Update(float msec)
 		}
 	}
 }
+#else
+
+#define SAMPLE_GRANULARITY 1024
+
+void SoundEmitter::Reset() {
+	Emitter::Reset();
+	port = 0;
+	spread = 0;
+	position = SceAudio3dPosition();
+}
+
+void SoundEmitter::Update(float msec) {
+	SceAudio3dAttribute sAttributes[5];
+
+	sAttributes[0].uiAttributeId = SCE_AUDIO3D_ATTRIBUTE_GAIN;
+	sAttributes[0].pValue = &volume;
+	sAttributes[0].szValue = sizeof(float);
+
+	sAttributes[1].uiAttributeId = SCE_AUDIO3D_ATTRIBUTE_SPREAD;
+	sAttributes[1].pValue = &spread;
+	sAttributes[1].szValue = sizeof(float);
+
+	sAttributes[2].uiAttributeId = SCE_AUDIO3D_ATTRIBUTE_PRIORITY;
+	sAttributes[2].pValue = &priority;
+	sAttributes[2].szValue = sizeof(int);
+
+	sAttributes[3].uiAttributeId = SCE_AUDIO3D_ATTRIBUTE_POSITION;
+	sAttributes[3].pValue = &position;
+	sAttributes[3].szValue = sizeof(SceAudio3dPosition);
+
+	__attribute__((aligned(64))) int16_t iSampleBuffer[SAMPLE_GRANULARITY];
+	memset(iSampleBuffer, 0, sizeof(iSampleBuffer));
+
+	SceAudio3dPcm sPcm;
+
+	sPcm.eFormat = SCE_AUDIO3D_FORMAT_S16;
+	sPcm.pSampleBuffer = iSampleBuffer;
+	sPcm.uiNumSamples = SAMPLE_GRANULARITY;
+
+	sAttributes[4].uiAttributeId = SCE_AUDIO3D_ATTRIBUTE_PCM;
+	sAttributes[4].pValue = &sPcm;
+	sAttributes[4].szValue = sizeof(sPcm);
+
+	SampleFromSound(iSampleBuffer, SAMPLE_GRANULARITY, samplesUsed);
+	samplesUsed += SAMPLE_GRANULARITY;
+
+	sceAudio3dObjectSetAttributes(port, currentSource->source, 5, sAttributes);
+}
+
+void SoundEmitter::AttachSource(AudioSource* s){
+	currentSource = s;
+}
+
+void SoundEmitter::DetachSource(){
+
+}
+
+void SoundEmitter::SampleFromSound(int16_t* output, int samplesPerChannel, int startSample) {
+	int samplesCopied;
+
+	int currentSamplePos = startSample;
+	currentSamplePos = (currentSamplePos + 1) % (sound->GetSize() / 2);
+
+	int16_t* sData = (int16_t*)sound->GetData();
+
+	for (int i = 0; i < samplesPerChannel; ++i) {
+		*output = sData[currentSamplePos];
+		output++;
+
+		currentSamplePos = (currentSamplePos + 1) % (sound->GetSize() / 2);
+	}
+}
+
+
+#endif // !ORBIS
