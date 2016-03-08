@@ -42,12 +42,12 @@ int main(void)
 
 	ControllerManager* myControllers = new LocalControlManager;
 	//Create GameScene
-	GameScene* gameScene = new GameScene(myControllers);
-//	MenuScene* menuScene = new MenuScene(myControllers);
+	//GameScene* gameScene = new GameScene(myControllers);
+	MenuScene* menuScene = new MenuScene(myControllers);
 	//Set current scene to the game
-	renderer.SetCurrentScene(gameScene);
-	gameScene->SetControllerActor();
-	//renderer.SetCurrentScene(menuScene);
+	//renderer.SetCurrentScene(gameScene);
+	//gameScene->SetControllerActor();
+	renderer.SetCurrentScene(menuScene);
 
 #ifndef ORBIS
 	while (Window::GetWindow().UpdateWindow() && !Window::GetKeyboard()->KeyDown(KEYBOARD_ESCAPE))

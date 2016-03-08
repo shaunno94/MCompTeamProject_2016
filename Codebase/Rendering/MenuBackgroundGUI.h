@@ -13,6 +13,4 @@ public:
 protected:
 	GameObject* background;
 	Mesh* bg;
-	RenderComponent* text_renderComp;
-
 };

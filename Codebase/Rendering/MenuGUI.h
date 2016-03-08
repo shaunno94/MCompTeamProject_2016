@@ -1,4 +1,6 @@
+#pragma once
 #include "GUIComponent.h"
+#include "GameObject.h"
 
 class MenuGUI : public GUIComponent
 {
@@ -9,7 +11,12 @@ public:
 	virtual void Render();
 
 protected:
-	GameObject* background;
-	Mesh* bg;
-	RenderComponent* text_renderComp;
+	GameObject* m_SingleBtn;
+	GameObject* m_MultiBtn;
+	GameObject* m_ExitBtn;
+
+	Mesh* m_SingleMesh;
+	Mesh* m_MultiMesh;
+	Mesh* m_ExitMesh;
+
 };

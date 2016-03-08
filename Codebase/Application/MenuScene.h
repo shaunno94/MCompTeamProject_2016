@@ -4,6 +4,7 @@
 #include "Rendering\GUISystem.h"
 #include "Rendering\OGLShader.h"
 #include "Rendering\MenuBackgroundGUI.h"
+#include "Rendering\MenuGUI.h"
 
 
 #ifndef ORBIS
@@ -22,7 +23,7 @@ class MenuScene :
 	public Scene
 {
 public:
-	MenuScene(ControllerManager* controller, bool selected = SINGLE_PLAYER);
+	MenuScene(ControllerManager* controller, int selected = SINGLE_PLAYER);
 	~MenuScene();
 
 	virtual void UpdateScene(float dt) override;
@@ -47,8 +48,8 @@ protected:
 	Material* textMaterial;
 
 	OrthoComponent* bgOrtho;
-	MenuBackgroundGUI* menuGUI;
+	MenuGUI* menuGUI;
 
-	bool m_Selected;
+	unsigned int m_Selected;
 };
 
