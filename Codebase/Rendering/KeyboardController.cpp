@@ -43,11 +43,9 @@ void KeyboardController::CheckInput(){
 		else
 		if (forward < 0){
 			torque += (orientation *Vec3Physics(0, -1, 0)).Normalize() * -rotAccel;
-			object->adjustForRotation = true;
 		}
 		else{
 			torque += (orientation *Vec3Physics(0, -1, 0)).Normalize() * rotAccel;
-			object->adjustForRotation = true;
 		}
 
 		turn++;
@@ -61,11 +59,9 @@ void KeyboardController::CheckInput(){
 		else
 		if (forward < 0){
 			torque += (orientation *Vec3Physics(0, 1, 0)).Normalize() * -rotAccel;
-			object->adjustForRotation = true;
 		}
 		else{
 			torque += (orientation *Vec3Physics(0, 1, 0)).Normalize() * rotAccel;
-			object->adjustForRotation = true;
 		}
 
 		turn--;

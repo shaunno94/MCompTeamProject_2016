@@ -1,6 +1,7 @@
 #include "Rendering/Renderer.h"
 #include "Rendering/GameTimer.h"
 #include "GameScene.h"
+#include "MenuScene.h"
 #include "Helpers/MeasuringTimer.h"
 
 
@@ -40,12 +41,16 @@ int main(void)
 #endif
 
 	ControllerManager* myControllers = new LocalControlManager;
+	UIControllerManager* uiController = new UIControllerManager();
 	//Create GameScene
 	GameScene* gameScene = new GameScene(myControllers);
+//	MenuScene* menuScene = new MenuScene(uiController);
 	//Set current scene to the game
 	renderer.SetCurrentScene(gameScene);
 	gameScene->SetControllerActor();
 	gameScene->SetupAI();
+	gameScene->SetupAI();
+	//renderer.SetCurrentScene(menuScene);
 
 #ifndef ORBIS
 	while (Window::GetWindow().UpdateWindow() && !Window::GetKeyboard()->KeyDown(KEYBOARD_ESCAPE))
@@ -82,7 +87,7 @@ int main(void)
 		MEASURING_TIMER_CLEAR();
 	}
 
-	delete gameScene;
+	//delete gameScene;
 
 	return 0;
 }

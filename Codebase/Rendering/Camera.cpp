@@ -9,7 +9,7 @@ last frame (default value is for simplicities sake...)
 void Camera::UpdateCamera(float msec)	{
 	if (player){
 		//position = player->GetWorldTransform().GetTranslation() + player->GetWorldTransform().GetRotation() * Vector3Simple(0, 5, -10);
-		position =
+		position = 
 			Mat4Graphics::Translation(player->GetWorldTransform().GetTranslation()) *
 			Mat4Graphics::Rotation(yaw, Vec3Graphics(0, 1, 0)) *
 			Mat4Graphics::Translation(Vector3Simple(0, 15, 25)) *
@@ -19,10 +19,10 @@ void Camera::UpdateCamera(float msec)	{
 		//position.y = 10;
 
 		//Update the mouse by how much
-		player->GetControllerComponent()->getCameraControl(pitch, yaw);
+				player->GetControllerComponent()->getCameraControl(pitch, yaw);
 	}
 
-
+	
 }
 
 /*
@@ -35,7 +35,7 @@ Mat4Graphics Camera::BuildViewMatrix()	{
 
 	/*if (player)
 		return Mat4Graphics::View(position, player->GetWorldTransform().GetTranslation());
-		else*/{
+	else*/{
 
 	//player controled
 	/*return	Mat4Graphics::Rotation(-pitch, Vec3Graphics(1, 0, 0)) *
@@ -46,9 +46,9 @@ Mat4Graphics Camera::BuildViewMatrix()	{
 	GameObject* ball = Renderer::GetInstance()->GetCurrentScene()->findGameObject("ball");
 
 	if (!ball || !player || !autocam)
-	return	Mat4Graphics::Rotation(-pitch, Vec3Graphics(1, 0, 0)) *
-	Mat4Graphics::Rotation(-yaw, Vec3Graphics(0, 1, 0)) *
-	Mat4Graphics::Translation(-position);
+		return	Mat4Graphics::Rotation(-pitch, Vec3Graphics(1, 0, 0)) *
+			Mat4Graphics::Rotation(-yaw, Vec3Graphics(0, 1, 0)) *
+			Mat4Graphics::Translation(-position);
 
 	Vec3Graphics ballPos = ball->GetWorldTransform().GetTranslation();
 	return	 Mat4Graphics::View(GetPosition(), ballPos);
@@ -71,4 +71,4 @@ Vec3Graphics Camera::GetPosition() const
 		return tempPos;
 	}
 	return position;
-}
+	}

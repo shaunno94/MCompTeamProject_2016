@@ -1,6 +1,7 @@
 #pragma once
 #include "ControllerManager.h"
 #include "KeyboardController.h"
+#include "MenuController.h"
 #include "AIControllerComponent.h"
 class LocalControlManager :
 	public ControllerManager

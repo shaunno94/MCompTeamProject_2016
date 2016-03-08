@@ -76,6 +76,12 @@
     <Filter Include="Header Files\UI\Scoretable_GUI">
       <UniqueIdentifier>{fafb15a4-631a-4991-b203-014cb65a0e7f}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\UI\MenuGUI">
+      <UniqueIdentifier>{b40b5df4-e11a-4c18-89e4-2d5133c4ae74}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\UI\MenuGUI">
+      <UniqueIdentifier>{627b3e3e-d3cf-4631-a920-4efafc0ff7c8}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Renderer.h">
@@ -213,9 +219,6 @@
     <ClInclude Include="resource.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="OrthoComponent.h">
-      <Filter>Header Files\UI</Filter>
-    </ClInclude>
     <ClInclude Include="WheelObject.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -249,8 +252,29 @@
     <ClInclude Include="PCNetProducerController.h">
       <Filter>Header Files\Input</Filter>
     </ClInclude>
-    <ClInclude Include="Button.h">
-      <Filter>Header Files\UI\HUD_GUI</Filter>
+    <ClInclude Include="ButtonGUI.h">
+      <Filter>Header Files\UI</Filter>
+    </ClInclude>
+    <ClInclude Include="MenuController.h">
+      <Filter>Header Files\Input</Filter>
+    </ClInclude>
+    <ClInclude Include="PS4MenuController.h">
+      <Filter>Header Files\Input</Filter>
+    </ClInclude>
+    <ClInclude Include="OrthoComponent.h">
+      <Filter>Header Files\UI</Filter>
+    </ClInclude>
+    <ClInclude Include="MenuBackgroundGUI.h">
+      <Filter>Header Files\UI\MenuGUI</Filter>
+    </ClInclude>
+    <ClInclude Include="MenuGUI.h">
+      <Filter>Header Files\UI\MenuGUI</Filter>
+    </ClInclude>
+    <ClInclude Include="MenuControllerComponent.h">
+      <Filter>Header Files\Input</Filter>
+    </ClInclude>
+    <ClInclude Include="UIControllerManager.h">
+      <Filter>Header Files\Input</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -401,8 +425,26 @@
     <ClCompile Include="PCNetProducerController.cpp">
       <Filter>Source Files\Input</Filter>
     </ClCompile>
-    <ClCompile Include="Button.cpp">
+    <ClCompile Include="ButtonGUI.cpp">
       <Filter>Source Files\UI</Filter>
+    </ClCompile>
+    <ClCompile Include="PS4MenuController.cpp">
+      <Filter>Source Files\Input</Filter>
+    </ClCompile>
+    <ClCompile Include="MenuController.cpp">
+      <Filter>Source Files\Input</Filter>
+    </ClCompile>
+    <ClCompile Include="MenuBackgroundGUI.cpp">
+      <Filter>Source Files\UI\MenuGUI</Filter>
+    </ClCompile>
+    <ClCompile Include="MenuGUI.cpp">
+      <Filter>Source Files\UI\MenuGUI</Filter>
+    </ClCompile>
+    <ClCompile Include="MenuControllerComponent.cpp">
+      <Filter>Source Files\Input</Filter>
+    </ClCompile>
+    <ClCompile Include="UIControllerManager.cpp">
+      <Filter>Source Files\Input</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
