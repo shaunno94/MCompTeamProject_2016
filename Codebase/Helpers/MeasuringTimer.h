@@ -18,7 +18,7 @@
 #define MEASURING_TIMER_LOG_START(str)  ((void)0)
 #define MEASURING_TIMER_LOG_END() ((void)0)
 #define MEASURING_TIMER_PRINT(stream) ((void)0)
-MEASURING_TIMER_CLEAR() ((void)0)
+#define MEASURING_TIMER_CLEAR() ((void)0)
 #endif // _DEBUG
 
 

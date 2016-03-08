@@ -28,7 +28,13 @@ Renderer::Renderer(std::string title, int sizeX, int sizeY, bool fullScreen) :
 
 Renderer::~Renderer(void) {}
 
+ void Renderer::Resize(int x, int y){
+	 width = std::max(x, 1);
+	 height = std::max(y, 1);
+	 glViewport(0, 0, width, height);
+	 pixelPitch = Vec2Graphics(1.0f / float(x), 1.0f / float(y));
 
+}
 
 void Renderer::updateGlobalUniforms(Material* material)
 {

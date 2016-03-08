@@ -109,7 +109,7 @@ void ControllerComponent::updateObject(float dt)
 		friction = friction <= 1 ? 1 : friction;
 
 		if (!airbourne()/* && adjustForRotation*/){
-			float angle = leftDot * 1.5708;
+			float angle = leftDot * 1.5708 * 0.0001;
 				if (getForwardVelocity() < 0)
 				angle = -angle;
 			dynamic_cast<RigidPhysicsObject*>(m_parent->GetPhysicsComponent())->GetPhysicsBody()->setLinearVelocity(fullVelocity * btMatrix3x3(btQuaternion(btVector3(0, 1, 0), -angle)));
@@ -169,6 +169,7 @@ void ControllerComponent::setCameraControl(float pitch, float yaw)
 	dPitch += pitch;
 	dYaw += yaw;
 }
+
 void ControllerComponent::getCameraControl(float& pitch, float& yaw)
 {
 	pitch -= dPitch;

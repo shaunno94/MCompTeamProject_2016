@@ -1,6 +1,8 @@
+#ifndef ORBIS
+
 #pragma once
 #include "InputBase.h"
-#include<windows.h>
+#include <windows.h>
 
 #ifndef HID_USAGE_PAGE_GENERIC
 #define HID_USAGE_PAGE_GENERIC			((USHORT) 0x01)
@@ -22,3 +24,4 @@ public:
 	~WindowsInput();
 };
 
+#endif
