@@ -67,6 +67,7 @@ protected:
 	int scores[2];
 
 	void ResetObjects();
+	void ResetObject(GameObject& object);
 
 	void applyImpulseFromExplosion(CarGameObject* car);
 	GameObject* ball;

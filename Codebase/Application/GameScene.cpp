@@ -286,16 +286,26 @@ void GameScene::SetupAI()
 
 void GameScene::ResetObjects()
 {
-	btVector3 zeroVector = btVector3(0, 0, 0);
 	PhysicsEngineInstance::Instance()->clearForces();
 
-	dynamic_cast<RigidPhysicsObject*>(ball->GetPhysicsComponent())->GetPhysicsBody()->clearForces();
-	dynamic_cast<RigidPhysicsObject*>(ball->GetPhysicsComponent())->GetPhysicsBody()->setLinearVelocity(zeroVector);
-	dynamic_cast<RigidPhysicsObject*>(ball->GetPhysicsComponent())->GetPhysicsBody()->setAngularVelocity(zeroVector);
-
-	ball->GetPhysicsComponent()->GetPhysicsBody()->setWorldTransform(btTransform(btQuaternion(0, 0, 0, 1), zeroVector));
-
 	//TODO: Reset player positions
+	ResetObject(*ball);
+	ResetObject(*player);
+	ResetObject(*shooterAI);
+	ResetObject(*goalieAI);
+	ResetObject(*aggroAI);
+}
+
+void GameScene::ResetObject(GameObject& object) {
+
+	btVector3 zeroVector = btVector3(0, 0, 0);
+	dynamic_cast<RigidPhysicsObject*>(object.GetPhysicsComponent())->GetPhysicsBody()->clearForces();
+	dynamic_cast<RigidPhysicsObject*>(object.GetPhysicsComponent())->GetPhysicsBody()->setLinearVelocity(zeroVector);
+	dynamic_cast<RigidPhysicsObject*>(object.GetPhysicsComponent())->GetPhysicsBody()->setAngularVelocity(zeroVector);
+
+	object.GetPhysicsComponent()->GetPhysicsBody()->setWorldTransform(btTransform(btQuaternion(0, 0, 0, 1), btVector3(object.GetSpawnPoint().x, object.GetSpawnPoint().y, object.GetSpawnPoint().z)));
+	if (object.GetControllerComponent()) 
+		object.GetControllerComponent()->reset();
 }
 
 
