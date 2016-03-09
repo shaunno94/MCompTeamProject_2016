@@ -8,10 +8,7 @@ GameObject::GameObject(const std::string& name)
 	m_Name = name;
 	m_PhysicsObj = nullptr;
 	m_RenderComponent = nullptr;
-
-#ifndef ORBIS
 	m_Audio = nullptr;
-#endif
 
 	m_BoundingRadius = 1.0f;
 	m_CamDist = 0.0f;
@@ -41,13 +38,12 @@ GameObject::~GameObject()
 		delete m_Controller;
 		m_Controller = nullptr;
 	}
-#ifndef ORBIS
 	if (m_Audio)
 	{
 		delete m_Audio;
 		m_Audio = nullptr;
 	}
-#endif
+
 }
 
 GameObject*	GameObject::FindGameObject(const std::string& name)
@@ -94,10 +90,8 @@ void GameObject::OnUpdateObject(float dt)
 	{
 		child->OnUpdateObject(dt);
 	}
-#ifndef ORBIS
 	if (m_Audio)
 		m_Audio->Update();
-#endif
 
 	UpdateTransform();
 }

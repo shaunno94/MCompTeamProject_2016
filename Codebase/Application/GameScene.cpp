@@ -6,17 +6,16 @@ GameScene::GameScene(ControllerManager* controller)
 {
 	//Initialise Bullet physics engine.
 	PhysicsEngineInstance::Instance()->setGravity(btVector3(0, -9.81, 0));
+	SoundSystem::Initialise();
 
 #ifndef ORBIS
-	SoundSystem::Initialise();
-#endif
 	ParticleManager::Initialise();
 
 	if (ParticleManager::GetManager().HasInitialised())
 	{
 		std::cout << "Particle Manager not Initialised" << std::endl;
 	}
-
+#endif
 	GUISystem::Initialise();
 	if (!GUISystem::GetInstance().HasInitialised())
 	{
@@ -25,7 +24,7 @@ GameScene::GameScene(ControllerManager* controller)
 	scores[0] = 0;
 	scores[1] = 0;
 
-#if DEBUG_DRAW 
+#if DEBUG_DRAW
 	PhysicsEngineInstance::Instance()->setDebugDrawer(DebugDraw::Instance());
 	DebugDraw::Context(Renderer::GetInstance());
 #endif
@@ -169,7 +168,7 @@ void GameScene::SetupGameObjects()
 
 void GameScene::LoadAudio()
 {
-#ifndef ORBIS
+//#ifndef ORBIS
 	//-------- SOUND
 	// load in files
 	SoundManager::LoadAssets();
@@ -181,19 +180,13 @@ void GameScene::LoadAudio()
 	SoundSystem::Instance()->SetBackgroundMusic(SoundManager::GetSound(SONG));
 	SoundSystem::Instance()->SetBackgroundVolume(0.4f); // can be used for mute / unmute
 
-	//modify sound values (for later)
-	SoundMOD mod = SoundMOD();
-	mod.isGlobal = true;
-	mod.looping = false;
-	mod.volume = 0.45f;
-
 	// create audio components
 	player->SetAudioComponent(new AudioCompCarLitener(true));
 	shooterAI->SetAudioComponent(new AudioCompCar(false));
 	goalieAI->SetAudioComponent(new AudioCompCar(false));
 	aggroAI->SetAudioComponent(new AudioCompCar(false));
 	//-------- SOUND
-#endif
+//#endif
 }
 
 void GameScene::SetupShaders()

@@ -1,4 +1,3 @@
-#ifndef ORBIS
 #pragma once
 
 #include "SoundEmitter.h"
@@ -22,15 +21,22 @@ public:
 
 	void AddSoundEmitter(SoundEmitter* s)
 	{
+#ifdef ORBIS
+		s->SetPort(audioPort);
+#endif
 		totalEmitters.push_back(s);
 	}
 
 	void SetListenerMatrix(const Mat4& transform);
-	void SetListenerVelocity(const Vec3& vel) {
+	void SetListenerVelocity(const Vec3& vel)
+	{
 		listenerVel = vel;
 	}
 
-	Mat4 GetListenerTransform() { return listenerTransform; }
+	Mat4 GetListenerTransform()
+	{
+		return listenerTransform;
+	}
 
 	void SetBackgroundMusic(Sound* snd);
 
@@ -52,9 +58,9 @@ protected:
 
 	void		CullNodes();
 
-	OALSource*	GetSource();
+	AudioSource*	GetSource();
 
-	std::vector<OALSource*>	sources;
+	std::vector<AudioSource*>	sources;
 
 	SoundEmitter* m_Background;
 	int m_MaxDynamicSources;
@@ -66,11 +72,14 @@ protected:
 	Vec3 listenerPos = Vec3(); // position
 	Vec3 listenerVel = Vec3(); // velocity
 
+#ifndef ORBIS
 	ALCcontext*			context;
 	ALCdevice*			device;
+#else
+	SceAudio3dPortId	audioPort;
+#endif
 
 	float				masterVolume;
 
 	static SoundSystem* instance;
 };
-#endif

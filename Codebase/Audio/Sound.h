@@ -1,4 +1,3 @@
-#ifndef ORBIS
 #pragma once
 
 #include <string>
@@ -7,12 +6,18 @@
 
 #include "Math/nclglMath.h"
 
+#ifndef ORBIS
 #include "OpenAL 1.1 SDK/include/al.h"
 #include "OpenAL 1.1 SDK/include/alc.h"
 
 #pragma comment(lib, "OpenAL 1.1 SDK/libs/Win32/OpenAL32.lib")
 
 typedef unsigned long DWORD;
+#else
+#include <audio3d.h>
+
+typedef unsigned int DWORD;
+#endif
 
 struct FMTCHUNK
 {
@@ -24,10 +29,9 @@ struct FMTCHUNK
 	short samp;
 };
 
-class Sound
+class BasicSound
 {
 
-	friend class SoundManager;
 public:
 	char*			GetData()
 	{
@@ -49,39 +53,58 @@ public:
 	{
 		return size;
 	}
-	ALuint			GetBuffer()
+	double			GetLength()
 	{
-		return buffer;
+		return length;
 	}
-	bool IsStreaming()
-	{
-		return streaming;
-	}
-	virtual double StreamData(ALuint buffer, double timeleft)
-	{
-		return 0.0f;
-	}
-
-	ALenum			GetOALFormat();
-	double			GetLength();
 
 protected:
-	Sound();
-	virtual ~Sound(void);
+	BasicSound();
+	virtual ~BasicSound(void);
 
 	void			LoadFromWAV(std::string filename);
 	void			LoadWAVChunkInfo(std::ifstream& file, std::string& name, unsigned int& size);
 
 	char*			data;
-	ALuint			buffer;
-
-	bool streaming;
 
 	float			freqRate;
 	double			length;
 	unsigned int	bitRate;
 	unsigned int	size;
 	unsigned int	channels;
-
 };
-#endif
+
+// win32 one
+#ifndef ORBIS
+class Sound : public BasicSound
+{
+	friend class SoundManager;
+
+public:
+	ALuint			GetBuffer()
+	{
+		return buffer;
+	}
+	virtual double StreamData(unsigned int buffer, double timeleft)
+	{
+		return 0.0f;
+	}
+	bool IsStreaming()
+	{
+		return streaming;
+	}
+	ALenum			GetOALFormat();
+protected:
+	Sound();
+	virtual ~Sound(void);
+
+	ALuint			buffer;
+	bool streaming;
+};
+#else
+class Sound : public BasicSound
+{
+	friend class SoundManager;
+};
+#endif // !ORBIS
+
