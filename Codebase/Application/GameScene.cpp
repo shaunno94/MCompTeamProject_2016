@@ -330,24 +330,6 @@ GameCollisionFilter::GameCollisionFilter(GameScene* scene) : m_scene(scene) {
 
 bool GameCollisionFilter::needBroadphaseCollision(btBroadphaseProxy* proxy0, btBroadphaseProxy* proxy1) const
 {
-	short int combined = COL_CAR | COL_WALL;
-	/*int combinedMask = proxy0->m_collisionFilterMask | proxy1->m_collisionFilterMask;
-	int test1 = (combinedMask & COL_CAR) == COL_CAR;
-	int test2 = (combinedMask & COL_WALL) == COL_WALL;
-	int test3;*/
-	if ((proxy0->m_collisionFilterMask | proxy1->m_collisionFilterMask) & combined == combined)
-	{
-		int test = 0;
-	}
-	else
-	{
-		int test2 = 0;
-	}
-	//if (((combinedMask & COL_CAR) == COL_CAR) && ((combinedMask & COL_WALL) == COL_WALL)) {
-	//	std::cout << "Car and wall collision" << std::endl;
-	//	// sort out car-wall collision
-	//}
-
 	if ((proxy0->getUid() == m_ballID && proxy1->getUid() == m_goal1ID) ||
 		(proxy1->getUid() == m_ballID && proxy0->getUid() == m_goal1ID))
 	{
