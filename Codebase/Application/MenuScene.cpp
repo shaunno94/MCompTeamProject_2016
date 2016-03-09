@@ -2,11 +2,13 @@
 
 
 MenuScene::MenuScene(UIControllerManager* controller)
-	:myControllers(controller)
+:myControllers(controller)
 {
+#ifndef ORBIS
 	SoundSystem::Initialise();
+#endif
 	GUISystem::Initialise();
-
+	
 	if (!GUISystem::GetInstance().HasInitialised())
 	{
 		std::cout << "GUI not Initialised!" << std::endl;
@@ -24,7 +26,9 @@ MenuScene::MenuScene(UIControllerManager* controller)
 
 MenuScene::~MenuScene()
 {
+#ifndef ORBIS
 	SoundSystem::Release();
+#endif
 	GUISystem::Destroy();
 }
 
@@ -42,7 +46,11 @@ void MenuScene::SetupGameObjects()
 
 void MenuScene::SetupShaders()
 {
+#ifndef ORBIS
 	orthoShader = new OGLShader(MENU_VERT, MENU_FRAG);
+#else
+
+#endif
 
 	if (!orthoShader->IsOperational())
 		std::cout << "Shader not opertational!" << std::endl;

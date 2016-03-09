@@ -7,15 +7,16 @@ GameScene::GameScene(ControllerManager* controller)
 	//Initialise Bullet physics engine.
 	PhysicsEngineInstance::Instance()->setGravity(btVector3(0, -9.81, 0));
 
+#ifndef ORBIS
 	SoundSystem::Initialise();
-	GUISystem::Initialise();
 	ParticleManager::Initialise();
 
 	if (ParticleManager::GetManager().HasInitialised())
 	{
 		std::cout << "Particle Manager not Initialised" << std::endl;
 	}
-
+#endif
+	GUISystem::Initialise();
 	if (!GUISystem::GetInstance().HasInitialised())
 	{
 		std::cout << "GUI not Initialised!" << std::endl;
@@ -42,9 +43,12 @@ GameScene::GameScene(ControllerManager* controller)
 GameScene::~GameScene()
 {
 	PhysicsEngineInstance::Release();
-	SoundSystem::Release();
 	GUISystem::Destroy();
+
+#ifndef ORBIS
+	SoundSystem::Release();
 	ParticleManager::Destroy();
+#endif
 
 #if DEBUG_DRAW
 #ifndef ORBIS
@@ -154,7 +158,7 @@ void GameScene::SetupGameObjects()
 
 
 	// Create Stadium
-	stadium = new Stadium(material, netMaterial, "stadium");
+	stadium = new Stadium(material, netMaterial, postMaterial, "stadium");
 
 	goal1 = new GameObject("goal1");
 	goalBox = new RigidPhysicsObject();
@@ -186,6 +190,7 @@ void GameScene::SetupGameObjects()
 
 void GameScene::LoadAudio()
 {
+#ifndef ORBIS
 	//-------- SOUND
 	// load in files
 	SoundManager::LoadAssets();
@@ -209,6 +214,7 @@ void GameScene::LoadAudio()
 	goalieAI->SetAudioComponent(new AudioCompCar(false));
 	aggroAI->SetAudioComponent(new AudioCompCar(false));
 	//-------- SOUND
+#endif
 }
 
 void GameScene::SetupShaders()
@@ -217,14 +223,17 @@ void GameScene::SetupShaders()
 	simpleShader = new OGLShader(SIMPLESHADER_VERT, SIMPLESHADER_FRAG);
 	pointlightShader = new OGLShader(POINTLIGHTSHADER_VERT, POINTLIGHTSHADER_FRAG);
 	orthoShader = new OGLShader(GUI_VERT, GUI_FRAG);
-	//BaseShader* pointlightShader = new OGLShader(SHADER_DIR"CubeShadowLightvertex.glsl", SHADER_DIR"CubeShadowLightfragment.glsl");
 #else
-	BaseShader* simpleShader = new PS4Shader(SIMPLESHADER_VERT, SIMPLESHADER_FRAG);
-	BaseShader* pointlightShader = new PS4Shader(POINTLIGHTSHADER_VERT, POINTLIGHTSHADER_FRAG);
+	simpleShader = new PS4Shader(SIMPLESHADER_VERT, SIMPLESHADER_FRAG);
+	pointlightShader = new PS4Shader(POINTLIGHTSHADER_VERT, POINTLIGHTSHADER_FRAG);
+	orthoShader = new PS4Shader(GUI_VERT, GUI_FRAG);
 #endif
-
-	if (!pointlightShader->IsOperational() || !simpleShader->IsOperational() || !orthoShader->IsOperational())
-		std::cout << "Shader not operational!" << std::endl;
+	if (!pointlightShader->IsOperational())
+		std::cout << "Point light shader not operational!" << std::endl;
+	if(!simpleShader->IsOperational())
+		std::cout << "Simple shader not operational!" << std::endl;
+	if(!orthoShader->IsOperational())
+		std::cout << "ortho shader not operational!" << std::endl;
 }
 
 void GameScene::SetupMaterials()
@@ -234,24 +243,23 @@ void GameScene::SetupMaterials()
 
 	material = new Material(simpleShader);
 	netMaterial = new Material(simpleShader, true);
+	postMaterial = new Material(simpleShader, true);
 	aiMaterial = new Material(simpleShader);
 	particleMaterial = new Material(simpleShader);
 	ai2Material = new Material(simpleShader);
 	guiMaterial = new Material(orthoShader);
 	textMaterial = new Material(orthoShader);
+	playerMaterial = new Material(simpleShader);
 
 	playerMaterial = new Material(simpleShader);
 
 	aiMaterial->Set(ReservedMeshTextures.DIFFUSE.name, Texture::Get(MODEL_DIR"car/body1.bmp", true));
-
 	ai2Material->Set(ReservedMeshTextures.DIFFUSE.name, Texture::Get(MODEL_DIR"car/body2.bmp", true));
-
 	//particleMaterial->Set(ReservedMeshTextures.DIFFUSE.name, Texture::Get(TEXTURE_DIR"particle.tga", true));
 }
 
 void GameScene::DrawGUI()
 {
-
 	//Define Orthographic Component
 	hudOrtho = new OrthoComponent(1.0f);
 	//Add child GUI components, while defining materials, texture, and depth
@@ -268,7 +276,6 @@ void GameScene::DrawGUI()
 
 	//Add Orthographic component to GUISystem
 	GUISystem::GetInstance().AddOrthoComponent(hudOrtho);
-
 }
 
 void GameScene::SetupControls()
@@ -303,7 +310,7 @@ void GameScene::applyImpulseFromExplosion(CarGameObject* car)
 	// 1 at same position
 	// 0 at 200 units away
 
-	attenuation = max(1 - (attenuation / (600 * 600)), 0.0f);
+	attenuation = fmax(1 - (attenuation / (600 * 600)), 0.0f);
 
 	dynamic_cast<RigidPhysicsObject*>(car->GetPhysicsComponent())->GetPhysicsBody()->applyCentralImpulse(ballToCar * attenuation * 30000000.0f);
 }
@@ -314,17 +321,31 @@ void GameScene::SetupAI()
 }
 
 void GameScene::ResetObjects()
+//reset the positions and forces of objects in the scene
 {
-	btVector3 zeroVector = btVector3(0, 0, 0);
 	PhysicsEngineInstance::Instance()->clearForces();
 
-	dynamic_cast<RigidPhysicsObject*>(ball->GetPhysicsComponent())->GetPhysicsBody()->clearForces();
-	dynamic_cast<RigidPhysicsObject*>(ball->GetPhysicsComponent())->GetPhysicsBody()->setLinearVelocity(zeroVector);
-	dynamic_cast<RigidPhysicsObject*>(ball->GetPhysicsComponent())->GetPhysicsBody()->setAngularVelocity(zeroVector);
-
-	ball->GetPhysicsComponent()->GetPhysicsBody()->setWorldTransform(btTransform(btQuaternion(0, 0, 0, 1), zeroVector));
-
 	//TODO: Reset player positions
+	ResetObject(*ball);
+	ResetObject(*player);
+	ResetObject(*shooterAI);
+	ResetObject(*goalieAI);
+	ResetObject(*aggroAI);
+
+	player->SetWorldTransform(Mat4Graphics::RotationY(-90) * Mat4Graphics::Translation(Vec3Graphics(100, 2, 0)));//have to reset this world transform too, for the camera
+	cam->reset();
+}
+
+void GameScene::ResetObject(GameObject& object) {
+
+	btVector3 zeroVector = btVector3(0, 0, 0);
+	dynamic_cast<RigidPhysicsObject*>(object.GetPhysicsComponent())->GetPhysicsBody()->clearForces();
+	dynamic_cast<RigidPhysicsObject*>(object.GetPhysicsComponent())->GetPhysicsBody()->setLinearVelocity(zeroVector);
+	dynamic_cast<RigidPhysicsObject*>(object.GetPhysicsComponent())->GetPhysicsBody()->setAngularVelocity(zeroVector);
+
+	object.GetPhysicsComponent()->GetPhysicsBody()->setWorldTransform(btTransform(btQuaternion(0, 0, 0, 1), btVector3(object.GetSpawnPoint().x, object.GetSpawnPoint().y, object.GetSpawnPoint().z)));
+	if (object.GetControllerComponent()) 
+		object.GetControllerComponent()->reset();
 }
 
 
@@ -338,24 +359,6 @@ GameCollisionFilter::GameCollisionFilter(GameScene* scene) : m_scene(scene) {
 
 bool GameCollisionFilter::needBroadphaseCollision(btBroadphaseProxy* proxy0, btBroadphaseProxy* proxy1) const
 {
-	short int combined = COL_CAR | COL_WALL;
-	/*int combinedMask = proxy0->m_collisionFilterMask | proxy1->m_collisionFilterMask;
-	int test1 = (combinedMask & COL_CAR) == COL_CAR;
-	int test2 = (combinedMask & COL_WALL) == COL_WALL;
-	int test3;*/
-	if ((proxy0->m_collisionFilterMask | proxy1->m_collisionFilterMask) & combined == combined)
-	{
-		int test = 0;
-	}
-	else
-	{
-		int test2 = 0;
-	}
-	//if (((combinedMask & COL_CAR) == COL_CAR) && ((combinedMask & COL_WALL) == COL_WALL)) {
-	//	std::cout << "Car and wall collision" << std::endl;
-	//	// sort out car-wall collision
-	//}
-
 	if ((proxy0->getUid() == m_ballID && proxy1->getUid() == m_goal1ID) ||
 		(proxy1->getUid() == m_ballID && proxy0->getUid() == m_goal1ID))
 	{

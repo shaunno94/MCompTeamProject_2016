@@ -22,14 +22,14 @@ const string POINTLIGHTSHADER_VERT = SHADER_DIR"2dShadowLightvertex.glsl";
 const string POINTLIGHTSHADER_FRAG = SHADER_DIR"2dShadowLightfragment.glsl";
 const string GUI_VERT = SHADER_DIR"TexturedVertex.glsl";
 const string GUI_FRAG = SHADER_DIR"TexturedFragment.glsl";
-
 #else
 #include "Rendering\PS4Controller.h"
-const string SIMPLESHADER_VERT = SHADER_DIR"textureVertex.sb";
-const string SIMPLESHADER_FRAG = SHADER_DIR"textureFragment.sb";
-const string POINTLIGHTSHADER_VERT = SHADER_DIR"2dShadowLightvertex.sb";
-const string POINTLIGHTSHADER_FRAG = SHADER_DIR"2dShadowLightfragment.sb";
-
+const std::string SIMPLESHADER_VERT = SHADER_DIR"textureVertex.sb";
+const std::string SIMPLESHADER_FRAG = SHADER_DIR"textureFragment.sb";
+const std::string POINTLIGHTSHADER_VERT = SHADER_DIR"2dShadowLightvertex.sb";
+const std::string POINTLIGHTSHADER_FRAG = SHADER_DIR"2dShadowLightfragment.sb";
+const std::string GUI_VERT = SHADER_DIR"TexturedVertex.sb";
+const std::string GUI_FRAG = SHADER_DIR"TexturedFragment.sb";
 #endif
 #include "BulletCollision\CollisionDispatch\btCollisionWorld.h"
 #include "Helpers\DeltaTimer.h"
@@ -67,6 +67,7 @@ protected:
 	int scores[2];
 
 	void ResetObjects();
+	void ResetObject(GameObject& object);
 
 	void applyImpulseFromExplosion(CarGameObject* car);
 	GameObject* ball;
@@ -96,6 +97,8 @@ protected:
 
 	Material* material;
 	Material* netMaterial;
+	Material* postMaterial;
+
 	Material* playerMaterial;
 	Material* aiMaterial;
 	Material* ai2Material;

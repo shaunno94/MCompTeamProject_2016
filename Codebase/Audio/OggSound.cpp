@@ -1,3 +1,4 @@
+#ifndef ORBIS
 #include "OggSound.h"
 
 OggSound::OggSound(void)	{
@@ -66,3 +67,4 @@ double	OggSound::StreamData(ALuint	buffer, double timeLeft) {
 
 	return (float)read / (channels * freqRate * (bitRate / 8.0)) * 1000.0f;
 }
+#endif

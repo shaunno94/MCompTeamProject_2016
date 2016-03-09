@@ -1,3 +1,4 @@
+#ifndef ORBIS
 #pragma once
 
 #include "Networking/Net.h"
@@ -26,3 +27,4 @@ protected:
 	int m_id;
 };
 
+#endif

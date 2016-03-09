@@ -21,14 +21,13 @@ void RenderComponent::Draw()
 		return;
 
 	Renderer::GetInstance()->SetCurrentShader(m_Material->GetShader());
-
 	//model matrix
-	Renderer::UpdateUniform(m_Material->GetShader()->GetResourceByName("modelMatrix"), m_GameObject->GetWorldTransform());
-
-	//reset reserved mesh texture uniforms to use the right texture unit
-	for (int i = 0; i < ReservedMeshTextures.size; ++i)
-		Renderer::UpdateUniform(m_Material->GetShader()->GetReservedMeshTextureUniformLocation(i), i);
+	Renderer::GetInstance()->UpdateUniform(m_Material->GetShader()->GetModelMatrixLocation(), m_GameObject->GetWorldTransform());
 	
+	//Inverse, transposed model matrix
+	if(m_Material->GetShader()->GetInverseModelMatrixLocation().id >= 0)
+		Renderer::GetInstance()->UpdateUniform(m_Material->GetShader()->GetInverseModelMatrixLocation(), Matrix4Simple::Inverse(Matrix4Simple::Transpose(m_GameObject->GetWorldTransform())));
+
 	m_Mesh->Draw(m_Material);	
 }
 

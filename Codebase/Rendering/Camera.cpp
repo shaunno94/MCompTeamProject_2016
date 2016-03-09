@@ -20,6 +20,8 @@ void Camera::UpdateCamera(float msec)	{
 
 		//Update the mouse by how much
 				player->GetControllerComponent()->getCameraControl(pitch, yaw);
+				
+		//std::cout << yaw << std::endl;
 	}
 
 	

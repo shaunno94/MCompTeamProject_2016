@@ -63,7 +63,7 @@ public:
 private:
 
 	void SessionSetupService();
-	void SessionStartService(unsigned int pendingDisconnectionCount);
+	void SessionStartService();
 	void SessionRunService();
 	void DisconnectService();
 	void ProcessDisconnections();
@@ -82,6 +82,7 @@ private:
 	std::vector<NetConnectionDataInternal*> m_connections;
 	std::vector<NetConnectionDataInternal*> m_pendingDisconnections;
 
+	unsigned int m_pendingDisconnectionCount;
 	//for session sync?
 	//bool m_sessionUpdated;
 };

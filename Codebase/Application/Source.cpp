@@ -19,7 +19,6 @@ const unsigned int SCREEN_WIDTH = 1920;
 //System Variables
 unsigned int sceLibcHeapExtendedAlloc = 1;			/* Switch to dynamic allocation */
 size_t sceLibcHeapSize = 512 * 1024 * 1024;			/* Set up heap area upper limit as 256 MiB */
-//int sceUserMainThreadPriority = SCE_KERNEL_DEFAULT_PRIORITY_USER;
 #endif
 
 int main(void)
@@ -43,13 +42,13 @@ int main(void)
 	ControllerManager* myControllers = new LocalControlManager;
 	UIControllerManager* uiController = new UIControllerManager();
 	//Create GameScene
-	GameScene* gameScene = new GameScene(myControllers);
-//	MenuScene* menuScene = new MenuScene(uiController);
+	//GameScene* gameScene = new GameScene(myControllers);
+	MenuScene* menuScene = new MenuScene(uiController);
 	//Set current scene to the game
-	renderer.SetCurrentScene(gameScene);
-	gameScene->SetControllerActor();
-	gameScene->SetupAI();
-//	renderer.SetCurrentScene(menuScene);
+	//renderer.SetCurrentScene(gameScene);
+	//gameScene->SetControllerActor();
+	//gameScene->SetupAI();
+	renderer.SetCurrentScene(menuScene);
 
 #ifndef ORBIS
 	while (Window::GetWindow().UpdateWindow() && !Window::GetKeyboard()->KeyDown(KEYBOARD_ESCAPE))
@@ -80,12 +79,15 @@ int main(void)
 
 		CLEAR_DEBUG_STREAM();
 		MEASURING_TIMER_PRINT(GET_DEBUG_STREAM());
-		
+
 		MEASURING_TIMER_CLEAR();
+#ifndef ORBIS
+		SoundSystem::Instance()->Update(ms);
+#endif
 	}
 
-	//delete menuScene;
-	delete gameScene;
+	delete menuScene;
+	//delete gameScene;
 
 	return 0;
 }

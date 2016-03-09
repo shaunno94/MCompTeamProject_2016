@@ -1,3 +1,4 @@
+#ifndef ORBIS
 #pragma once
 
 #include "SoundManager.h"
@@ -156,3 +157,4 @@ protected:
 	Vec3 position;
 	Vec3 velocity;
 };
+#endif

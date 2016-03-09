@@ -47,6 +47,8 @@ void PS4Input::InitController() {
 void PS4Input::Poll() {
 	ScePadData data;
 
+	UpdateHolds();
+
 	int ret = scePadReadState(padHandle, &data);
 
 	if (ret == SCE_OK) {

@@ -157,9 +157,9 @@ class Matrix4Simple	{
 	//'up' as the...up axis (pointing towards the top of the screen)
 	static Matrix4Simple View(const Vector3Simple& from, const Vector3Simple& lookingAt, const Vector3Simple up = Vector3Simple(0,1,0));
 
-	Matrix4Simple& Transpose();
+	static Matrix4Simple Transpose(const Matrix4Simple& a);
 
-	static Matrix4Simple Inverse(Matrix4Simple& a);
+	static Matrix4Simple Inverse(const Matrix4Simple& a);
 
 
 	//Handy string output for the matrix. Can get a bit messy, but better than nothing!

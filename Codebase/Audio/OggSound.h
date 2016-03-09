@@ -1,3 +1,4 @@
+#ifndef ORBIS
 #pragma once
 #include "sound.h"
 
@@ -24,4 +25,4 @@ protected:
 	FILE*			fileHandle;
 	OggVorbis_File	streamHandle;
 };
-
+#endif

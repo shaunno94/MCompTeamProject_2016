@@ -42,7 +42,9 @@ public:
 	//Buffers all VBO data into graphics memory. Required before drawing!
 	void BufferData() override;
 	void SetPrimitiveType(pType type) override;
+
 protected:
+	static unsigned int s_memoryFootprint;
 	//VAO for this mesh
 	GLuint	arrayObject;
 	//VBOs for this mesh

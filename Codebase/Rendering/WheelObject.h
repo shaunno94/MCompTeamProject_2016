@@ -7,7 +7,7 @@ public:
 	WheelObject(const std::string& name = "");
 	~WheelObject();
 
-	void WheelObject::OnUpdateObject(float dt) override;
+	void OnUpdateObject(float dt) override;
 	void SetLocalTransform(const Mat4Graphics& transform) override
 	{
 		LocalTrasformWORotate = transform;
