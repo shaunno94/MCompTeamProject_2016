@@ -60,7 +60,7 @@ Mat4Graphics Camera::BuildViewMatrix()	{
 Vec3Graphics Camera::GetPosition() const
 {
 	GameObject* ball = Renderer::GetInstance()->GetCurrentScene()->findGameObject("ball");
-	if (!ball || autocam)
+	if (ball && autocam)
 	{
 		Vec3Graphics ballPos = ball->GetWorldTransform().GetTranslation();
 		Vec3Graphics playerPos = player->GetWorldTransform().GetTranslation() + Vec3Graphics(0, 15, 0);

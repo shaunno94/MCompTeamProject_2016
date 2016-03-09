@@ -16,7 +16,7 @@ public:
 	}
 
 	//virtual void Update() = 0;
-	void Render()
+	virtual void Render()
 	{
 		GetRenderComponent()->Draw();
 	};

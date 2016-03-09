@@ -1,38 +1,28 @@
 #include "ScoreboardGUIComponent.h"
 
-ScoreboardGUIComponent::ScoreboardGUIComponent(Material* material, bool visible) : GUIComponent(material, visible)
+ScoreboardGUIComponent::ScoreboardGUIComponent(Material* material, const std::string& text, Vec3Graphics pos, Vec3Graphics scale, bool visible)
+: TextGUIComponent(material, text, pos, scale, visible)
 {
-	m_Texture = Texture::Get(TEXTURE_DIR"tahoma.tga");
-	m_Material->Set(ReservedMeshTextures.DIFFUSE.name, m_Texture);
-
-	font = new Font(m_Texture, 16, 16);
-
-	m_Mesh = Mesh::GenerateTextQuad(std::to_string(0) + " - " + "3:00" + " - 0", font);
-	renderComp = new RenderComponent(m_Material, m_Mesh);
-	SetRenderComponent(renderComp);
-	SetWorldTransform(Mat4Graphics::Translation(Vec3Graphics(-0.6f, 0.7f, 0)) * Mat4Graphics::Scale(Vec3Graphics(0.1f, 0.1f, 1)));
+	
 }
 
 ScoreboardGUIComponent::~ScoreboardGUIComponent()
 {
-	delete renderComp;
-	delete m_Mesh;
-	delete m_NewMesh;
-	delete font;
-
 }
 
 void ScoreboardGUIComponent::Update(int scoreA, int scoreB, float time)
 {
-	delete m_NewMesh;
+	delete m_Mesh;
 	timeRem = 180 - (int) time;
 	min = timeRem / 60;
 	sec = timeRem % 60;
-	m_NewMesh = Mesh::GenerateTextQuad(std::to_string(scoreA) + " - " +
+	m_Mesh = Mesh::GenerateTextQuad(std::to_string(scoreA) + " - " +
 		std::to_string(min) + ":" + (sec < 10 ? "0" : "") + std::to_string(sec) + " - " +
-									std::to_string(scoreB), font);
+									std::to_string(scoreB), m_Font);
 
-	renderComp->m_Mesh = m_NewMesh;
-	SetRenderComponent(renderComp);
+	m_RenderComp->m_Mesh = m_Mesh;
+	SetRenderComponent(m_RenderComp);
+
 }
+
 

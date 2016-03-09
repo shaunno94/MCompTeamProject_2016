@@ -247,7 +247,7 @@ void GameScene::DrawGUI()
 	//Define Orthographic Component
 	hudOrtho = new OrthoComponent(1.0f);
 	//Add child GUI components, while defining materials, texture, and depth
-	scoreboardComponent = new ScoreboardGUIComponent(guiMaterial, 1.0);
+	scoreboardComponent = new ScoreboardGUIComponent(guiMaterial, std::to_string(0) + " - " + "3:00" + " - 0", Vec3Graphics(-0.6f, 0.7f, 0), Vec3Graphics(0.1f, 0.1f, 1));
 	hudOrtho->AddGUIComponent(scoreboardComponent);
 
 	//Add Orthographic component to GUISystem

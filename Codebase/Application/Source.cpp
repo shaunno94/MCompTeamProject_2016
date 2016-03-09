@@ -29,7 +29,7 @@ int main(void)
 	//-------------------
 
 	//Initialise Renderer - including the window context if compiling for Windows - PC
-	Renderer renderer("Team Project - 2016", SCREEN_WIDTH, SCREEN_HEIGHT, true);
+	Renderer renderer("Team Project - 2016", SCREEN_WIDTH, SCREEN_HEIGHT, false);
 	if (!renderer.HasInitialised())
 	{
 		return -1;
@@ -57,7 +57,7 @@ int main(void)
 	while (true)
 #endif
 	{
-		MEASURING_TIMER_LOG_START("Frame");
+	
 #ifdef ORBIS
 		input.Poll();
 #endif
@@ -67,23 +67,20 @@ int main(void)
 		PhysicsEngineInstance::Instance()->stepSimulation(ms, SUB_STEPS, TIME_STEP);
 		MEASURING_TIMER_LOG_END();
 
-		MEASURING_TIMER_LOG_START("Controllers");
 		myControllers->update(ms);
 		uiController->update(ms);
-		MEASURING_TIMER_LOG_END();
+
 
 		MEASURING_TIMER_LOG_START("Renderer");
 		renderer.RenderScene(ms);
 		MEASURING_TIMER_LOG_END();
 
-		MEASURING_TIMER_LOG_START("Sound System");
 		SoundSystem::Instance()->Update(ms);
-		MEASURING_TIMER_LOG_END();
 
-		MEASURING_TIMER_LOG_END();//end frame inside
 
-		//TODO: Print time steps. Can pass stringstream to get a formated output string
-		//MEASURING_TIMER_PRINT(std::cout);
+		CLEAR_DEBUG_STREAM();
+		MEASURING_TIMER_PRINT(GET_DEBUG_STREAM());
+		
 		MEASURING_TIMER_CLEAR();
 	}
 

@@ -79,30 +79,25 @@ void Renderer::UpdateScene(float msec)
 void Renderer::RenderScene(float msec)
 {
 	projMatrix = localProjMat;
-	MeasuringTimer::Instance.LogStart("Scene Update");
 	UpdateScene(msec);
-	MeasuringTimer::Instance.LogEnd();
 
 	//glUseProgram(currentShader->GetProgram());
 	//Draws all objects attatched to the current scene.
 	if (currentScene)
 	{
-		MEASURING_TIMER_LOG_START("Fill Buffers");
+
 		FillBuffers(); //First Pass
-		MEASURING_TIMER_LOG_END();
-		MEASURING_TIMER_LOG_START("Point Lights");
+
 		DrawPointLights(); //Second Pass
-		MEASURING_TIMER_LOG_END();
-		MEASURING_TIMER_LOG_START("Combine Buffers");
+
 		CombineBuffers(); //Final Pass
-		MEASURING_TIMER_LOG_END();
-		MEASURING_TIMER_LOG_START("GUI");
+
 		RenderGUI();
-		MEASURING_TIMER_LOG_END();
+
 	}
-	MEASURING_TIMER_LOG_START("Swap Buffers");
+
 	SwapBuffers();
-	MEASURING_TIMER_LOG_END();
+
 }
 
 void Renderer::RenderGUI()

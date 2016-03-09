@@ -23,7 +23,7 @@ inline MeasuringTimer& MeasuringTimer::operator=(const MeasuringTimer& other)
 
 void MeasuringTimer::Print(std::ostream& os, unsigned startLevel, unsigned maxDepth, float timeResolution) const
 {
-	os << "Scale: 1/" << timeResolution << " sec" << LINE_SEPARATOR << LINE_SEPARATOR;
+	//os << "Scale: 1/" << timeResolution << " sec" << LINE_SEPARATOR << LINE_SEPARATOR;
 	//collection for calculating average durations per sibling group in a level
 	//[level][sibling group][duration]
 	std::vector<std::vector<std::vector<float>*>*> siblingDurationsPerLevel;

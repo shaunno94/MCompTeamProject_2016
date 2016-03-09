@@ -106,6 +106,9 @@ protected:
 	ControllerComponent* cc;
 
 	OrthoComponent* hudOrtho;
+	TextGUIComponent* FPSDebugTextComponent;
+	TextGUIComponent* physicsDebugTextComponent;
+	TextGUIComponent* graphicsDebugTextComponent;
 	ScoreboardGUIComponent* scoreboardComponent;
 
 	float timerCount = 0.0f;

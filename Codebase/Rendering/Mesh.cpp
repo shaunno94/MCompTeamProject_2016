@@ -191,11 +191,12 @@ Mesh* Mesh::GenerateTextQuad(const std::string& text, Font* font)
 		unsigned int c = (unsigned int)text[i];
 		float x = (float)(c%font->getXCount());
 		float y = (float)((c / font->getXCount()) % font->getYCount());
+		float size = 1;
 
 		m->m_Vertices[(i * 4)] =	 Vec3Graphics((float)i,		 0, 0);
-		m->m_Vertices[(i * 4) + 1] = Vec3Graphics((float)i,		-1, 0);
-		m->m_Vertices[(i * 4) + 2] = Vec3Graphics((float)i + 1,  0, 0);
-		m->m_Vertices[(i * 4) + 3] = Vec3Graphics((float)i + 1, -1, 0);
+		m->m_Vertices[(i * 4) + 1] = Vec3Graphics((float)i, -size, 0);
+		m->m_Vertices[(i * 4) + 2] = Vec3Graphics((float)i + size, 0, 0);
+		m->m_Vertices[(i * 4) + 3] = Vec3Graphics((float)i + size, -size, 0);
 
 		m->m_TextureCoords[(i * 4)] =	  Vec2Graphics(x*texelWidth			,(y)*texelHeight);
 		m->m_TextureCoords[(i * 4) + 1] = Vec2Graphics(x*texelWidth			,(y + 1) * texelHeight);

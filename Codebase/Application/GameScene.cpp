@@ -74,7 +74,7 @@ void GameScene::IncrementScore(int team)
 
 void GameScene::UpdateScene(float dt)
 {
-	if (currentTime > 180)
+		if (currentTime > 180)
 	{
 		//TODO: Proceed to end game screen
 		currentTime = 0;
@@ -82,10 +82,30 @@ void GameScene::UpdateScene(float dt)
 	}
 	currentTime += dt / 1000.0f;
 
-	if (currentTime < 181)
+	if (currentTime - lastTime > 1)
 	{
 		lastTime = currentTime;
 		scoreboardComponent->Update(scores[0], scores[1], currentTime);
+		//GET_DEBUG_STREAM().str().substr()
+
+#ifdef _DEBUG
+		
+		vector<std::string>tokens;
+		std::string t;
+		while (std::getline(GET_DEBUG_STREAM(), t, '\n')) {
+			tokens.push_back(t.substr(2, std::string::npos));
+		}
+
+		float fpsStep = 1/(std::stof(tokens[1]) + std::stof(tokens[3])) * 1000;
+		float physicsStep = std::stof(tokens[1]);
+		std::string fps = "FPS: " + std::to_string(fpsStep).substr(0,5);
+		std::string physics = "Physics: " + tokens[1].substr(0, 5);
+		std::string graphics = "Graphics: " + tokens[3].substr(0, 5);
+
+		FPSDebugTextComponent->Update(fps);
+		physicsDebugTextComponent->Update(physics);
+		graphicsDebugTextComponent->Update(graphics);
+#endif
 	}
 
 	if (goalScored > 0) {
@@ -105,6 +125,7 @@ void GameScene::UpdateScene(float dt)
 			ResetObjects();
 		}
 	}
+
 }
 
 void GameScene::SetupGameObjects()
@@ -234,8 +255,16 @@ void GameScene::DrawGUI()
 	//Define Orthographic Component
 	hudOrtho = new OrthoComponent(1.0f);
 	//Add child GUI components, while defining materials, texture, and depth
-	scoreboardComponent = new ScoreboardGUIComponent(guiMaterial, 1.0);
+
+	scoreboardComponent = new ScoreboardGUIComponent(guiMaterial, std::to_string(0) + " - " + "3:00" + " - 0", Vec3Graphics(-0.6f, 0.7f, 0), Vec3Graphics(0.1f, 0.1f, 1));
 	hudOrtho->AddGUIComponent(scoreboardComponent);
+
+	FPSDebugTextComponent = new TextGUIComponent(guiMaterial, GET_DEBUG_STREAM().str(), Vec3Graphics(-1.0f, -0.7f, 0), Vec3Graphics(0.04f, 0.04f, 1));
+	hudOrtho->AddGUIComponent(FPSDebugTextComponent);
+	physicsDebugTextComponent = new TextGUIComponent(guiMaterial, GET_DEBUG_STREAM().str(), Vec3Graphics(-1.0f, -0.8f, 0), Vec3Graphics(0.04f, 0.04f, 1));
+	hudOrtho->AddGUIComponent(physicsDebugTextComponent);
+	graphicsDebugTextComponent = new TextGUIComponent(guiMaterial, GET_DEBUG_STREAM().str(), Vec3Graphics(-1.0f, -0.9f, 0), Vec3Graphics(0.04f, 0.04f, 1));
+	hudOrtho->AddGUIComponent(graphicsDebugTextComponent);
 
 	//Add Orthographic component to GUISystem
 	GUISystem::GetInstance().AddOrthoComponent(hudOrtho);
