@@ -111,8 +111,6 @@ void ControllerComponent::updateObject(float dt)
 			//clamp speed
 			float velocityFactor = (maxSpeed * maxSpeed) / std::max(fullVelocity.length2(), maxSpeed * maxSpeed);
 			dynamic_cast<RigidPhysicsObject*>(m_parent->GetPhysicsComponent())->GetPhysicsBody()->setLinearVelocity(fullVelocity * velocityFactor);
-			if (m_parent->GetName() == "player")
-			std::cout << getForwardVelocity() << endl;
 		}
 		friction = friction <= 1 ? 1 : friction;
 

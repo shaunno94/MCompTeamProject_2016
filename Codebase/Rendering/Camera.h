@@ -46,8 +46,14 @@ public:
 	~Camera(void){};
 
 	void reset(){
-		pitch = 0.0;
+		pitch = -10.0;
 		yaw = 90.0;
+		if (player){
+			yaw = acos((player->GetWorldTransform().GetRotation() * Vec3Graphics(1, 0, 0)).Normalize().Dot(Vec3Graphics(1, 0, 0)))* 57.2958;
+
+			if ((player->GetWorldTransform().GetRotation() * Vec3Graphics(0, 0, 1)).Normalize().Dot(Vec3Graphics(1, 0, 0)) < 0)
+				yaw = 360 - yaw;		
+		}
 	}
 
 	void UpdateCamera(float msec = 10.0f);
@@ -78,5 +84,4 @@ protected:
 	float	pitch;
 	Vec3Graphics position;
 	GameObject* player;
-	//ControllerComponent* controller;
 };

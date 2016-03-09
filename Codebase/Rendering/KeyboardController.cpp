@@ -87,6 +87,7 @@ void KeyboardController::CheckInput(){
 	if (Window::GetKeyboard()->KeyTriggered(KEYBOARD_C))
 	{
 		Renderer::GetInstance()->GetCurrentScene()->getCamera()->autocam = !Renderer::GetInstance()->GetCurrentScene()->getCamera()->autocam;
+		Renderer::GetInstance()->GetCurrentScene()->getCamera()->reset();
 	}
 
 	//------camera control-------//
