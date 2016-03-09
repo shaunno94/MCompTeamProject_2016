@@ -1,5 +1,6 @@
 #ifdef ORBIS
 #include "PS4Controller.h"
+#include "Renderer.h"
 
 
 PS4Controller::PS4Controller(ControllerComponent* object)
@@ -49,6 +50,13 @@ void PS4Controller::CheckInput()
 	{
 		object->reset();
 	}
+
+	if (PS4Input::getPS4Input()->GetButtonDown(BTN_R3))
+	{
+		Renderer::GetInstance()->GetCurrentScene()->getCamera()->autocam = !Renderer::GetInstance()->GetCurrentScene()->getCamera()->autocam;
+		Renderer::GetInstance()->GetCurrentScene()->getCamera()->reset();
+	}
+
 	float pitch = (PS4Input::getPS4Input()->GetAxis(RIGHTSTICK).y);
 	float yaw = (PS4Input::getPS4Input()->GetAxis(RIGHTSTICK).x);
 	object->setCameraControl(pitch, yaw);
