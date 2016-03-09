@@ -29,7 +29,7 @@ int main(void)
 	//-------------------
 
 	//Initialise Renderer - including the window context if compiling for Windows - PC
-	Renderer renderer("Team Project - 2016", SCREEN_WIDTH, SCREEN_HEIGHT, true);
+	Renderer renderer("Team Project - 2016", SCREEN_WIDTH, SCREEN_HEIGHT, false);
 	if (!renderer.HasInitialised())
 	{
 		return -1;

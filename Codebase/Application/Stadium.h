@@ -12,7 +12,7 @@ public:
 
 private:
 	void CreateCollisionWalls();
-	void CreatePlane(std::vector<btConvexHullShape*> &collectionVector, Vec3Physics start, Vec3Physics end);
+	void CreatePlane(std::vector<btConvexHullShape*> &collectionVector, Vec3Physics start, Vec3Physics end, bool roof = false);
 
 	std::vector<btConvexHullShape*> m_collisionWalls;
 
