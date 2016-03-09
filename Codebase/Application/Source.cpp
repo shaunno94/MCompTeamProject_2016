@@ -83,9 +83,8 @@ int main(void)
 		//TODO: Print time steps. Can pass stringstream to get a formated output string
 		//MEASURING_TIMER_PRINT(std::cout);
 		MEASURING_TIMER_CLEAR();
-#ifndef ORBIS
+
 		SoundSystem::Instance()->Update(ms);
-#endif
 	}
 
 	delete gameScene;

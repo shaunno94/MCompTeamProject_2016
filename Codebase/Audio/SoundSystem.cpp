@@ -1,6 +1,7 @@
-#ifndef ORBIS
 #include "SoundSystem.h"
-
+#ifdef ORBIS
+#include <libsysmodule.h>
+#endif
 SoundSystem* SoundSystem::instance = NULL;
 
 SoundSystem::SoundSystem(unsigned int channels)
@@ -8,6 +9,8 @@ SoundSystem::SoundSystem(unsigned int channels)
 	masterVolume = 1.0f;
 
 	std::cout << "Creating SoundSystem!" << std::endl;
+
+#ifndef ORBIS
 	std::cout << "Found the following devices: " << alcGetString(NULL, ALC_DEVICE_SPECIFIER) << std::endl;	//outputs all OAL devices
 
 	device = alcOpenDevice(NULL);	//Open the 'best' device
@@ -44,6 +47,32 @@ SoundSystem::SoundSystem(unsigned int channels)
 			break;
 		}
 	}
+#else
+	sceSysmoduleLoadModule(SCE_SYSMODULE_AUDIO_3D);
+
+	sceAudio3dInitialize(0);
+
+	SceAudio3dOpenParameters sParameters;
+	sceAudio3dGetDefaultOpenParameters(&sParameters);
+	sParameters.uiGranularity = 1024;
+	sParameters.uiMaxObjects = channels;
+	sParameters.uiQueueDepth = 1;
+
+	SceUserServiceUserId userId;
+	int ret = sceUserServiceGetInitialUser(&userId);
+
+	ret = sceAudio3dPortOpen(SCE_USER_SERVICE_USER_ID_SYSTEM, &sParameters, &audioPort);
+
+	for (int i = 0; i < channels; ++i) {
+		SceAudio3dPortId id;
+		ret = sceAudio3dObjectReserve(audioPort, &id);
+
+		AudioSource src = AudioSource(id);
+
+		sources.push_back(new AudioSource(src));
+	}
+
+#endif
 
 	m_MaxDynamicSources = channels - 1;
 
@@ -62,6 +91,7 @@ SoundSystem::~SoundSystem(void)
 	}
 	delete m_Background;
 
+#ifndef ORBIS
 	for (auto src : sources)
 	{
 		alDeleteSources(1, &src->source);
@@ -71,6 +101,7 @@ SoundSystem::~SoundSystem(void)
 	alcMakeContextCurrent(NULL);
 	alcDestroyContext(context);
 	alcCloseDevice(device);
+#endif
 }
 
 void SoundSystem::SetListenerMatrix(const Mat4& transform)
@@ -94,9 +125,11 @@ void SoundSystem::SetBackgroundVolume(float val)
 void		SoundSystem::Update(float msec)
 {
 	UpdateListener(); // update listener position
-
+	CullNodes();	//First off, remove nodes that are too far away
+	std::sort(totalEmitters.begin(), totalEmitters.end(), SoundEmitter::CompareNodesByPriority);	//Then sort by priority
+	AttachSources(); // add playable sounds
 	//Update values for every node, whether in range or not
-	for (auto emitter : totalEmitters)
+	for (auto emitter : emitters)
 	{
 		if (emitter->GetIsGlobal())
 		{
@@ -106,10 +139,6 @@ void		SoundSystem::Update(float msec)
 	}
 
 	m_Background->Update(msec); // update background music
-
-	CullNodes();	//First off, remove nodes that are too far away
-	std::sort(totalEmitters.begin(), totalEmitters.end(), SoundEmitter::CompareNodesByPriority);	//Then sort by priority
-	AttachSources(); // add playable sounds
 
 	emitters.clear();	//done for this frame
 }
@@ -193,7 +222,7 @@ AudioSource*	SoundSystem::GetSource()
 void	SoundSystem::SetMasterVolume(float value)
 {
 	masterVolume = value;
-	alListenerf(AL_GAIN, masterVolume);
+	//alListenerf(AL_GAIN, masterVolume);
 }
 
 void	SoundSystem::UpdateListener()
@@ -208,9 +237,11 @@ void	SoundSystem::UpdateListener()
 	dirup[0].Normalize();
 	dirup[1].Normalize();
 
+#ifndef ORBIS
 	alListenerfv(AL_POSITION, (float*)&listenerPos);
 	alListenerfv(AL_VELOCITY, (float*)&listenerVel);
 	alListenerfv(AL_ORIENTATION, (float*)&dirup);
+#endif // !ORBIS
 }
 
 void	SoundSystem::Play(Sound* s, SoundMOD modifier)
@@ -228,4 +259,3 @@ void	SoundSystem::Play(Sound* s, SoundMOD modifier)
 
 	totalEmitters.push_back(n);
 }
-#endif

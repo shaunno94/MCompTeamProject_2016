@@ -8,7 +8,7 @@ void Emitter::Reset() {
 	sound = nullptr;
 	currentSource = nullptr;
 
-	priority = SOUNDPRIORTY_LOW;
+	priority = SOUNDPRIORITY_MEDIUM;
 	volume = SOUND_VOLUME;
 	radius = SOUND_RADIUS;
 	pitch = SOUND_PITCH;
@@ -16,6 +16,10 @@ void Emitter::Reset() {
 	isSingle = false;
 	isLooping = SOUND_LOOP;
 	isGlobal = SOUND_GLOBAL;
+
+	// for 3D and doppler
+	position = Vec3();
+	velocity = Vec3();
 }
 
 
@@ -41,10 +45,6 @@ void	SoundEmitter::Reset()
 	Emitter::Reset();
 
 	timeLeft = 0.0f;
-
-	// for 3D and doppler
-	position = Vec3();
-	velocity = Vec3();
 
 	// for streaming
 	streamPos = 0;
@@ -207,14 +207,14 @@ void		SoundEmitter::Update(float msec)
 
 void SoundEmitter::Reset() {
 	Emitter::Reset();
-	port = 0;
-	spread = 0;
-	position = SceAudio3dPosition();
+	port = 0.0f;
+	spread = 0.0f;
 }
 
 void SoundEmitter::Update(float msec) {
 	SceAudio3dAttribute sAttributes[5];
 
+	// set attributes
 	sAttributes[0].uiAttributeId = SCE_AUDIO3D_ATTRIBUTE_GAIN;
 	sAttributes[0].pValue = &volume;
 	sAttributes[0].szValue = sizeof(float);
@@ -227,10 +227,15 @@ void SoundEmitter::Update(float msec) {
 	sAttributes[2].pValue = &priority;
 	sAttributes[2].szValue = sizeof(int);
 
-	sAttributes[3].uiAttributeId = SCE_AUDIO3D_ATTRIBUTE_POSITION;
-	sAttributes[3].pValue = &position;
-	sAttributes[3].szValue = sizeof(SceAudio3dPosition);
+	SceAudio3dPosition pos;
+	pos.fX = position.x;
+	pos.fY = position.y;
+	pos.fZ = position.z;
 
+	sAttributes[3].uiAttributeId = SCE_AUDIO3D_ATTRIBUTE_POSITION;
+	sAttributes[3].pValue = &pos;
+	sAttributes[3].szValue = sizeof(SceAudio3dPosition);
+	
 	__attribute__((aligned(64))) int16_t iSampleBuffer[SAMPLE_GRANULARITY];
 	memset(iSampleBuffer, 0, sizeof(iSampleBuffer));
 
@@ -273,6 +278,4 @@ void SoundEmitter::SampleFromSound(int16_t* output, int samplesPerChannel, int s
 		currentSamplePos = (currentSamplePos + 1) % (sound->GetSize() / 2);
 	}
 }
-
-
 #endif // !ORBIS

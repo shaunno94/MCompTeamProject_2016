@@ -124,7 +124,7 @@ public:
 	{
 		return m_PhysicsObj;
 	}
-#ifndef ORBIS
+
 	void SetAudioComponent(AudioComponent* comp)
 	{
 		m_Audio = comp;
@@ -135,7 +135,7 @@ public:
 	{
 		return m_Audio;
 	}
-#endif
+
 
 protected:
 	virtual void OnRenderObject();			//Handles OpenGL calls to Render the object
@@ -150,9 +150,9 @@ protected:
 	PhysicsObject*				m_PhysicsObj;
 	ControllerComponent*		m_Controller;
 
-#ifndef ORBIS
+
 	AudioComponent*				m_Audio;
-#endif
+
 
 	float						m_BoundingRadius;
 	Mat4Graphics				m_WorldTransform;

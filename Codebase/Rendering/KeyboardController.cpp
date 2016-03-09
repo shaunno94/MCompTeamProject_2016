@@ -1,5 +1,6 @@
 #ifndef ORBIS
 #include "KeyboardController.h"
+#include "Audio/SoundSystem.h"
 
 KeyboardController::KeyboardController(ControllerComponent* object)
 {
@@ -68,9 +69,14 @@ void KeyboardController::CheckInput(){
 
 	object->turnWheels(turn);
 
-	if (Window::GetKeyboard()->KeyTriggered(KEYBOARD_SPACE))
+	if (!airbourne && Window::GetKeyboard()->KeyTriggered(KEYBOARD_SPACE))
 	{
 		impulse += (orientation * Vec3Physics(0, jump, -jump *.5));
+		SoundMOD mod;
+		mod.isGlobal = true;
+		mod.looping = false;
+		mod.volume = 0.2f;
+		SoundSystem::Instance()->Play(SoundManager::GetSound(BOOST), mod);
 	}
 
 	object->AddForce(force.x, force.y, force.z);

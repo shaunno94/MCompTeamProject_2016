@@ -54,4 +54,5 @@ void SoundManager::LoadAssets()
 	AddSound(AUDIO_DIR"music/votives.ogg", SONG2);
 	AddSound(AUDIO_DIR"car/engine_idle.wav", ENGINE_IDLE);
 	AddSound(AUDIO_DIR"car/engine_rev.wav", ENGINE_REV);
+	AddSound(AUDIO_DIR"car/launch.wav", BOOST);
 }

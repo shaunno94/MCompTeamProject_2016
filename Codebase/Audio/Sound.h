@@ -105,10 +105,6 @@ protected:
 class Sound : public BasicSound
 {
 	friend class SoundManager;
-
-protected:
-	Sound();
-	virtual ~Sound(void);
 };
 #endif // !ORBIS
 

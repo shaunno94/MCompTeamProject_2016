@@ -115,40 +115,6 @@ public:
 	{
 		return isSingle;
 	}
-
-	AudioSource* GetSource()
-	{
-		return currentSource;
-	}
-
-protected:
-	Sound*			sound;
-	AudioSource*	currentSource;
-
-	SoundPriority	priority;
-	float			volume;
-	float			radius;
-	float			pitch;
-
-	bool			isSingle;
-	bool			isLooping;
-	bool			isGlobal;
-};
-
-#ifndef ORBIS
-class SoundEmitter : public Emitter
-{
-public:
-	SoundEmitter(void);
-	SoundEmitter(Sound* s);
-	~SoundEmitter(void);
-
-	void Reset();
-	void SetSound(Sound* s);
-	void Update(float msec);
-	void AttachSource(AudioSource* s);
-	void DetachSource();
-
 	void SetPosition(const Vec3& pos)
 	{
 		position = pos;
@@ -165,15 +131,47 @@ public:
 	{
 		return timeLeft;
 	}
+	AudioSource* GetSource()
+	{
+		return currentSource;
+	}
 
 protected:
+	Sound*			sound;
+	AudioSource*	currentSource;
 
-	float timeLeft;
-	double streamPos;
-	ALuint streamBuffers[NUM_STREAM_BUFFERS];
+	SoundPriority	priority;
+	float			volume;
+	float			radius;
+	float			pitch;
+	float			timeLeft;
+
+	bool			isSingle;
+	bool			isLooping;
+	bool			isGlobal;
 
 	Vec3 position;
 	Vec3 velocity;
+};
+
+#ifndef ORBIS
+class SoundEmitter : public Emitter
+{
+public:
+	SoundEmitter(void);
+	SoundEmitter(Sound* s);
+	~SoundEmitter(void);
+
+	void Reset();
+	void SetSound(Sound* s);
+	void Update(float msec);
+	void AttachSource(AudioSource* s);
+	void DetachSource();
+
+protected:
+
+	double streamPos;
+	ALuint streamBuffers[NUM_STREAM_BUFFERS];
 };
 #else
 
@@ -190,22 +188,16 @@ public:
 	void AttachSource(AudioSource* s);
 	void DetachSource();
 
-	void SetPosition(const SceAudio3dPosition& pos)
+	void SetPort(SceAudio3dPortId val)
 	{
-		position = pos;
-	}
-	SceAudio3dPosition GetPosition() const
-	{
-		return position;
+		port = val;
 	}
 
 protected:
-	void SampleFromSound(int16_t*output, int samplesPerChannel, int startSample);
+	void SampleFromSound(int16_t* output, int samplesPerChannel, int startSample);
 
-	SceAudio3dPosition position;
+	float spread;
 	int samplesUsed;
 	SceAudio3dPortId port;
-	float spread;
 };
-
 #endif
