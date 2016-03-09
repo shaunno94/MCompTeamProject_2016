@@ -20,16 +20,16 @@ void PS4Controller::CheckInput()
 	Vec3Physics impulse(0, 0, 0);
 	Mat4Physics orientation = object->getOrientation();
 	float forward = object->getForwardVelocity();
-
+	
 	if (object->airbourne())
 	{
-		torque += (/*orientation **/Vec3Physics(0, 0, -PS4Input::getPS4Input()->GetAxis(LEFTSTICK).y)).Normalize() * airAccel * 0.7f;
-		torque += (/*orientation **/Vec3Physics(-PS4Input::getPS4Input()->GetAxis(LEFTSTICK).x, 0, 0)).Normalize() * airAccel;
+		torque += (orientation *Vec3Physics(0, 0, -1)).Normalize() * PS4Input::getPS4Input()->GetAxis(LEFTSTICK).x * airAccel * 0.7f;
+		torque += (orientation *Vec3Physics(1, 0, 0)).Normalize() * PS4Input::getPS4Input()->GetAxis(LEFTSTICK).y * airAccel;
 	}
 	else
 	{
-		force = (orientation * Vec3Physics(0, 0, -PS4Input::getPS4Input()->GetButton(BTN_R2))).Normalize() * accel;
-		force += (orientation * Vec3Physics(0, 0, PS4Input::getPS4Input()->GetButton(BTN_L2))).Normalize() * accel;
+		force = (orientation * Vec3Physics(0, 0, -1)).Normalize() * PS4Input::getPS4Input()->GetButton(BTN_R2)* accel;
+		force += (orientation * Vec3Physics(0, 0, 1)).Normalize() * PS4Input::getPS4Input()->GetButton(BTN_L2)* accel;
 		torque = (Vec3Physics(0, -PS4Input::getPS4Input()->GetAxis(LEFTSTICK).y * rotAccel, 0));
 
 		torque = (Vec3Physics(0, -PS4Input::getPS4Input()->GetAxis(LEFTSTICK).x * rotAccel, 0));
