@@ -33,7 +33,7 @@ int main(void)
 	{
 		return -1;
 	}
-
+	PhysicsEngineInstance::Instance();
 	GameTimer timer;
 #ifdef ORBIS
 	PS4Input input = PS4Input();

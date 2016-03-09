@@ -14,6 +14,8 @@ BallGameObject::BallGameObject(const std::string& name, Material* material) : Ga
 	body->setFriction(0.5);
 	body->setRollingFriction(0.5);
 	body->setHitFraction(0.5);
+	ballPhysics->GetPhysicsBody()->getBroadphaseProxy()->m_collisionFilterGroup = COL_GROUP_DEFAULT;
+	ballPhysics->GetPhysicsBody()->getBroadphaseProxy()->m_collisionFilterMask = COL_BALL;
 	SetPhysicsComponent(ballPhysics);
 
 	m_spawnPoint = Vec3Graphics(0,0,0);

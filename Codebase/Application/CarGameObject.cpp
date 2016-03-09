@@ -1,7 +1,8 @@
 #include "CarGameObject.h"
+#include "BoostPickupGameObject.h"
 
 
-CarGameObject::CarGameObject(const Vec3Physics& position, const QuatPhysics& rotation, Material* material, const std::string name /* = "" */, unsigned int collisionFilterMask /* = COL_CAR */) :
+CarGameObject::CarGameObject(const Vec3Physics& position, const QuatPhysics& rotation, Material* material, const std::string& name /* = "" */, unsigned int collisionFilterMask) :
 	GameObject(name)
 {
 	Mesh* carBaseMesh = ModelLoader::LoadMGL(MODEL_DIR"Car/car_base.mgl", true);
@@ -15,6 +16,7 @@ CarGameObject::CarGameObject(const Vec3Physics& position, const QuatPhysics& rot
 	carPhysics->GetPhysicsBody()->setRollingFriction(0.7);
 	carPhysics->GetPhysicsBody()->setHitFraction(0.2);
 	carPhysics->GetPhysicsBody()->getBroadphaseProxy()->m_collisionFilterMask = collisionFilterMask;
+	carPhysics->GetPhysicsBody()->getBroadphaseProxy()->m_collisionFilterGroup = COL_GROUP_DEFAULT;
 	carPhysics->GetPhysicsBody()->setDamping(0.3, 0.5);
 
 	m_spawnPoint = position;
@@ -42,6 +44,8 @@ CarGameObject::CarGameObject(const Vec3Physics& position, const QuatPhysics& rot
 	wheel->SetRenderComponent(new RenderComponent(material, wheelMesh));
 	wheel->SetLocalTransform(Mat4Graphics::Translation(Vec3Graphics(0.45, 0.17, 0.45))* Mat4Graphics::Scale(Vector3Simple(-1, -1, -1))) /*Mat4Graphics::Scale(Vector3Simple(10, 10, 10)))*/;
 	this->AddChildObject(wheel);
+
+	PhysicsEngineInstance::GetFilter().steps.push_back(new BoostPickupCollisionFilterStep(this));
 }
 
 

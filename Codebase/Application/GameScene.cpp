@@ -1,5 +1,8 @@
 #include "GameScene.h"
 #include "BallGameObject.h"
+#include "GoalCollisionFilterStep.h"
+#include "PickupManager.h"
+#include "AI/constants.h"
 
 GameScene::GameScene(ControllerManager* controller)
 	: myControllers(controller)
@@ -49,6 +52,8 @@ GameScene::~GameScene()
 	SoundSystem::Release();
 	ParticleManager::Destroy();
 #endif
+
+	delete pickupManager;
 
 #if DEBUG_DRAW
 #ifndef ORBIS
@@ -129,10 +134,15 @@ void GameScene::SetupGameObjects()
 
 	player = new CarGameObject(Vec3Physics(100, 2, 0), QuatPhysics(0, 1, 0, 1), playerMaterial, "player");
 
-	shooterAI = new CarGameObject(Vec3Physics(-190, 2, 30), QuatPhysics(0, 0, 0, 1), aiMaterial, "shooterAI", COL_AI_CAR);
+	shooterAI = new CarGameObject(Vec3Physics(-190, 2, 30), QuatPhysics::IDENTITY, aiMaterial, "shooterAI", COL_AI_CAR);
 
-	goalieAI = new CarGameObject(Vec3Physics(-230, 2, 0), QuatPhysics(0, 0, 0, 1), aiMaterial, "goalieAI", COL_AI_CAR);
+	goalieAI = new CarGameObject(Vec3Physics(-230, 2, 0), QuatPhysics::IDENTITY, aiMaterial, "goalieAI", COL_AI_CAR);
 
+	pickupManager = new PickupManager(material);
+	for (auto pickupMapping : *(pickupManager->GetPickups()))
+	{
+		addGameObject(pickupMapping.second);
+	}
 	aggroAI = new CarGameObject(Vec3Physics(-190, 2, -30), QuatPhysics(0, 0, 0, 1), ai2Material, "aggroAI", COL_AI_CAR);
 
 
@@ -142,13 +152,17 @@ void GameScene::SetupGameObjects()
 	goal1 = new GameObject("goal1");
 	goalBox = new RigidPhysicsObject();
 	goalBox->CreateCollisionShape(Vec3Physics(7.0, 15.0, 35.0) * 1.5f, CUBOID);
-	goalBox->CreatePhysicsBody(0.0, Vec3Physics(268, 17, 0) * 1.5f, QuatPhysics(0, 0, 0, 1), Vec3Physics(1, 1, 1), true);
+	goalBox->CreatePhysicsBody(0.0, Vec3Physics(268, 17, 0) * 1.5f, QuatPhysics::IDENTITY, Vec3Physics::ONES, true);
+	goalBox->GetPhysicsBody()->getBroadphaseProxy()->m_collisionFilterGroup = COL_GROUP_DEFAULT;
+	goalBox->GetPhysicsBody()->getBroadphaseProxy()->m_collisionFilterMask = COL_GOAL1;
 	goal1->SetPhysicsComponent(goalBox);
 
 	goal2 = new GameObject("goal2");
 	goalBox2 = new RigidPhysicsObject();
 	goalBox2->CreateCollisionShape(Vec3Physics(7.0, 15.0, 35.0) * 1.5f, CUBOID);
-	goalBox2->CreatePhysicsBody(0.0, Vec3Physics(-268, 17, 0) * 1.5f, QuatPhysics(0, 0, 0, 1), Vec3Physics(1, 1, 1), true);
+	goalBox2->CreatePhysicsBody(0.0, Vec3Physics(-268, 17, 0) * 1.5f, QuatPhysics::IDENTITY, Vec3Physics::ONES, true);
+	goalBox2->GetPhysicsBody()->getBroadphaseProxy()->m_collisionFilterGroup = COL_GROUP_DEFAULT;
+	goalBox2->GetPhysicsBody()->getBroadphaseProxy()->m_collisionFilterMask = COL_GOAL2;
 	goal2->SetPhysicsComponent(goalBox2);
 
 
@@ -163,8 +177,7 @@ void GameScene::SetupGameObjects()
 
 	addLightObject(light2);
 
-	goalBallFilter = new GameCollisionFilter(this);
-	PhysicsEngineInstance::Instance()->getPairCache()->setOverlapFilterCallback(goalBallFilter);
+	PhysicsEngineInstance::GetFilter().steps.push_back(new GoalCollisionFilterStep());
 }
 
 void GameScene::LoadAudio()
@@ -313,32 +326,9 @@ void GameScene::ResetObject(GameObject& object) {
 	dynamic_cast<RigidPhysicsObject*>(object.GetPhysicsComponent())->GetPhysicsBody()->clearForces();
 	dynamic_cast<RigidPhysicsObject*>(object.GetPhysicsComponent())->GetPhysicsBody()->setLinearVelocity(zeroVector);
 	dynamic_cast<RigidPhysicsObject*>(object.GetPhysicsComponent())->GetPhysicsBody()->setAngularVelocity(zeroVector);
-
+	
 	object.GetPhysicsComponent()->GetPhysicsBody()->setWorldTransform(btTransform(btQuaternion(0, 0, 0, 1), btVector3(object.GetSpawnPoint().x, object.GetSpawnPoint().y, object.GetSpawnPoint().z)));
-	if (object.GetControllerComponent()) 
+	if (object.GetControllerComponent())
 		object.GetControllerComponent()->reset();
-}
 
-
-GameCollisionFilter::GameCollisionFilter(GameScene* scene) : m_scene(scene) {
-	static_cast<RigidPhysicsObject*>(scene->findGameObject("ball")->GetPhysicsComponent())->GetPhysicsBody()->getBroadphaseProxy()->m_collisionFilterMask = COL_BALL;
-
-	m_ballID = static_cast<RigidPhysicsObject*>(scene->findGameObject("ball")->GetPhysicsComponent())->GetPhysicsBody()->getBroadphaseProxy()->getUid();
-	m_goal1ID = static_cast<RigidPhysicsObject*>(scene->findGameObject("goal1")->GetPhysicsComponent())->GetPhysicsBody()->getBroadphaseProxy()->getUid();
-	m_goal2ID = static_cast<RigidPhysicsObject*>(scene->findGameObject("goal2")->GetPhysicsComponent())->GetPhysicsBody()->getBroadphaseProxy()->getUid();
-}
-
-bool GameCollisionFilter::needBroadphaseCollision(btBroadphaseProxy* proxy0, btBroadphaseProxy* proxy1) const
-{
-	if ((proxy0->getUid() == m_ballID && proxy1->getUid() == m_goal1ID) ||
-		(proxy1->getUid() == m_ballID && proxy0->getUid() == m_goal1ID))
-	{
-		m_scene->SetGoalScored(1);
-	}
-	else if ((proxy0->getUid() == m_ballID && proxy1->getUid() == m_goal2ID) ||
-		(proxy1->getUid() == m_ballID && proxy0->getUid() == m_goal2ID))
-	{
-		m_scene->SetGoalScored(2);
-	}
-	return true;
 }

@@ -28,6 +28,8 @@ public:
 		return m_parent;
 	}
 
+	float boost;
+
 protected:
 	GameObject* m_parent;
 	Vec3Physics force;
