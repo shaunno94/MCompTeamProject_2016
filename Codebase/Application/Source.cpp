@@ -3,7 +3,7 @@
 #include "GameScene.h"
 #include "MenuScene.h"
 #include "Helpers/MeasuringTimer.h"
-
+//#include "Networking\Net.h"
 
 const float TIME_STEP = 1.0f / 120.0f;
 const unsigned int SUB_STEPS = 4;
@@ -33,7 +33,7 @@ int main(void)
 	{
 		return -1;
 	}
-
+	PhysicsEngineInstance::Instance();
 	GameTimer timer;
 #ifdef ORBIS
 	PS4Input input = PS4Input();
@@ -55,6 +55,12 @@ int main(void)
 	//renderer.SetCurrentScene(gameScene);
 	//gameScene->SetControllerActor();
 	//gameScene->SetupAI();
+
+#ifdef _DEBUG
+	std::cout << "Renderer Memory Usage: " << renderer.GetRendererMemUsage() / (1024 * 1024) << " (MB)" << std::endl;
+	std::cout << "Texture Memory Usage: " << Texture::GetMemoryUsage() / (1024 * 1024) << " (MB)" << std::endl;
+	std::cout << "Mesh Memory Usage: " << Mesh::GetMeshMemUsage() / (1024 * 1024) << " (MB)" << std::endl;
+#endif
 
 #ifndef ORBIS
 	while (Window::GetWindow().UpdateWindow() && !Window::GetKeyboard()->KeyDown(KEYBOARD_ESCAPE))
@@ -87,9 +93,8 @@ int main(void)
 		MEASURING_TIMER_PRINT(GET_DEBUG_STREAM());
 
 		MEASURING_TIMER_CLEAR();
-#ifndef ORBIS
+
 		SoundSystem::Instance()->Update(ms);
-#endif
 	}
 
 	SoundSystem::Instance()->Release();

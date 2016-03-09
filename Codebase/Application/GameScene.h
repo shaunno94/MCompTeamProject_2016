@@ -13,6 +13,7 @@
 #include "Audio\SoundSystem.h"
 #include "Rendering\ParticleManager.h"
 #include "Rendering\ScoreboardGUIComponent.h"
+#include "PickupManager.h"
 
 #ifndef ORBIS
 #include "Rendering\KeyboardController.h"
@@ -61,10 +62,13 @@ public:
 	void SetGoalScored(int goal) { goalScored = goal; }
 	int GetGoalScored() { return goalScored; }
 
+	PickupManager* GetPickupManager() {
+		return pickupManager;
+	}
+
 protected:
 	
 	ControllerManager* myControllers;
-	GameCollisionFilter* goalBallFilter;
 	int scores[2];
 
 	void ResetObjects();
@@ -107,6 +111,8 @@ protected:
 	Material* guiMaterial;
 	Material* textMaterial;
 
+	PickupManager* pickupManager;
+
 	ControllerComponent* cc;
 
 	OrthoComponent* hudOrtho;
@@ -123,22 +129,3 @@ protected:
 	bool gameStart;
 };
 
-struct GameCollisionFilter : public btOverlapFilterCallback
-{
-
-public:
-
-	int m_ballID = 0;
-	int m_goal1ID = 0;
-	int m_goal2ID = 0;
-	GameScene* m_scene;
-
-	//DeltaTimer<float> timer = DeltaTimer<float>();
-	float timerCount = 0.0f;
-	int test;
-
-	GameCollisionFilter(GameScene* scene);
-
-
-	virtual bool needBroadphaseCollision(btBroadphaseProxy* proxy0, btBroadphaseProxy* proxy1) const override;
-};

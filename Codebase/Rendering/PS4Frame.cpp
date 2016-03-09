@@ -2,6 +2,8 @@
 #include "PS4Frame.h"
 #include <gnmx\basegfxcontext.h>
 
+uint64_t PS4Frame::CMDMemUsage = 0;
+
 enum FrameState 
 {
 	FRAME_READY,
@@ -30,6 +32,7 @@ PS4Frame::PS4Frame()
 		"FrameConstantUpdateEngine", sce::Gnm::kResourceTypeDrawCommandBufferBaseAddress, 0);
 	sce::Gnm::registerResource(nullptr, ownerHandle, constantCommandBuffer, bufferBytes,
 		"FrameConstantCommandBuffer", sce::Gnm::kResourceTypeDrawCommandBufferBaseAddress, 0);
+	CMDMemUsage += (bufferBytes + cueHeapSize);
 }
 
 PS4Frame::~PS4Frame() {}

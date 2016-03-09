@@ -10,6 +10,7 @@
 #include "AI\AdvanceState.h"
 #include "AI\ArenaHalfTrigger.h"
 #include "AI\DefenceState.h"
+#include "AI\constants.h"
 #include "AI\AggressiveState.h"
 
 AIControllerComponent::AIControllerComponent(GameObject* parent, unsigned int type) :

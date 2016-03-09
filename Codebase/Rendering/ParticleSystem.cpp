@@ -1,4 +1,3 @@
-#ifndef ORBIS
 #include "ParticleSystem.h"
 
 ParticleSystem::ParticleSystem(ParticleEmitter* emitter, Material* material, Texture* texture, unsigned int numParticles)
@@ -86,4 +85,3 @@ void ParticleSystem::Render()
 {
 	
 }
-#endif

@@ -1,4 +1,3 @@
-#ifndef ORBIS
 #pragma once
 #include "GameObject.h"
 
@@ -25,4 +24,3 @@ public:
 	float m_Size;
 	float m_Age;
 };
-#endif

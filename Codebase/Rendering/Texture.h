@@ -105,9 +105,9 @@ public:
 		return filePath;
 	}
 
-	static inline unsigned int GetMemoryUsage()
+	static inline uint64_t GetMemoryUsage()
 	{
-		return s_memoryUsage;
+		return textureMemoryUsage;
 	}
 
 	Texture& operator=(const Texture&) = delete;
@@ -161,7 +161,7 @@ protected:
 	static std::unordered_map<std::string, std::vector<Texture*>> s_textureRecords;
 
 	static void checkPath(std::string& path);
-	static unsigned int s_memoryUsage;
+	static uint64_t textureMemoryUsage;
 	void MeasureMemoryUsageAdd(textureHandle textureId);
 	void MeasureMemoryUsageSubtract(textureHandle textureId);
 

@@ -1,4 +1,3 @@
-#ifndef ORBIS
 #pragma once
 
 #include <vector>
@@ -13,7 +12,8 @@ enum SoundAssets {
 	SONG,
 	SONG2,
 	ENGINE_IDLE,
-	ENGINE_REV
+	ENGINE_REV,
+	BOOST
 };
 
 class SoundManager
@@ -31,4 +31,4 @@ protected:
 	static std::map<unsigned int, Sound*> soundAssets;
 
 };
-#endif
+

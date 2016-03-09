@@ -18,6 +18,7 @@ _-_-_-_-_-_-_-""  ""
 #include "constants.h"
 #include "Renderer.h"
 #include "OGLShader.h"
+#include "DebugDraw.h"
 
 /*
 Creates an OpenGL 3.2 CORE PROFILE rendering context. Sets itself
@@ -26,6 +27,7 @@ way to do it - but it kept the Tutorial code down to a minimum!
 */
 
 Renderer* OGLRenderer::child = nullptr;
+uint64_t OGLRenderer::rendererMemUsage = 0;
 
 OGLRenderer::OGLRenderer(std::string title, int sizeX, int sizeY, bool fullScreen)
 {
@@ -523,6 +525,7 @@ void OGLRenderer::GenerateScreenTexture(GLuint& into, bool depth)
 		GL_UNSIGNED_BYTE, NULL);
 
 	glBindTexture(GL_TEXTURE_2D, 0);
+	rendererMemUsage += TextureMemoryUsage(into);
 }
 
 void OGLRenderer::FillBuffers()
@@ -538,6 +541,7 @@ void OGLRenderer::FillBuffers()
 	
 #if DEBUG_DRAW
 	PhysicsEngineInstance::Instance()->debugDrawWorld();
+	DebugDraw::Instance()->RenderLine();
 #endif
 	child->OnRenderScene();
 
