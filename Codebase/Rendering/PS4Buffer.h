@@ -23,14 +23,13 @@ public:
 
 	uint32_t GetBufferHeight() const { return height; }
 	uint32_t GetBufferWidth() const  { return width; }
+	static uint64_t GetFBOMemUsage() { return FBOMemUsage; }
 
 	sce::Gnm::RenderTarget* GetTarget(uint i) { return i > numRenderTargets ? nullptr : &buffer->renderTargets[i]; }
 	sce::Gnm::DepthRenderTarget* GetDepthTarget() { return &buffer->depthTarget; }
 	sce::Gnm::Texture* GetTexture(uint i) { return i > (numRenderTargets + 1) ? nullptr : &textures[i]; }
 
 	~PS4Buffer();
-
-	static uint32_t FBOMemUsage;
 	
 private:
 	void GenerateDepthTarget(uint width, uint height, sce::Gnmx::Toolkit::StackAllocator& allocator);
@@ -43,6 +42,7 @@ private:
 	bool stencil;
 
 	static unsigned int ID;
+	static uint64_t FBOMemUsage;
 
 	struct ScreenBuffer
 	{

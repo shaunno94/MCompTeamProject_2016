@@ -1,5 +1,6 @@
 #pragma once
-#include <Math\nclglMath.h>
+#include <Math\Matrix4Simple.h>
+#include <cinttypes>
 /** @defgroup Rendering Rendering
 *  Rendering related functionality.
 *  @{
@@ -30,7 +31,7 @@ static const float biasValues[16] =
 /// <summary>
 ///
 /// </summary>
-static const Mat4Graphics biasMatrix(biasValues);
+static const Matrix4Simple biasMatrix(biasValues);
 
 //A handy enumerator, to determine which member of the bufferObject array
 //holds which data

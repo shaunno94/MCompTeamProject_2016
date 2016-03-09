@@ -3,7 +3,7 @@
 #include "GameScene.h"
 #include "MenuScene.h"
 #include "Helpers/MeasuringTimer.h"
-
+//#include "Networking\Net.h"
 
 const float TIME_STEP = 1.0f / 120.0f;
 const unsigned int SUB_STEPS = 4;
@@ -50,6 +50,12 @@ int main(void)
 	gameScene->SetupAI();
 	//renderer.SetCurrentScene(menuScene);
 
+#ifdef _DEBUG
+	std::cout << "Renderer Memory Usage: " << renderer.GetRendererMemUsage() / (1024 * 1024) << " (MB)" << std::endl;
+	std::cout << "Texture Memory Usage: " << Texture::GetMemoryUsage() / (1024 * 1024) << " (MB)" << std::endl;
+	std::cout << "Mesh Memory Usage: " << Mesh::GetMeshMemUsage() / (1024 * 1024) << " (MB)" << std::endl;
+#endif
+
 #ifndef ORBIS
 	while (Window::GetWindow().UpdateWindow() && !Window::GetKeyboard()->KeyDown(KEYBOARD_ESCAPE))
 #else
@@ -83,9 +89,8 @@ int main(void)
 		//TODO: Print time steps. Can pass stringstream to get a formated output string
 		//MEASURING_TIMER_PRINT(std::cout);
 		MEASURING_TIMER_CLEAR();
-#ifndef ORBIS
+
 		SoundSystem::Instance()->Update(ms);
-#endif
 	}
 
 	delete gameScene;
