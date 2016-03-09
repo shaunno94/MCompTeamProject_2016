@@ -33,7 +33,7 @@ using namespace std;
 
 /// @ingroup Rendering
 /// <summary>
-/// 
+///
 /// </summary>
 class OGLShader : public BaseShader
 {
@@ -54,18 +54,28 @@ public:
 	{
 		return m_ModelMatrixLocation;
 	}
-	inline GLint GetReservedMeshTextureUniformLocation(size_t index) const override
+	inline shaderResourceLocation GetReservedMeshTextureUniformLocation(unsigned int index) const override
 	{
-		return m_ReservedMeshTextureLocations[index];
+		return { m_ReservedMeshTextureLocations[index] };
 	}
-	inline GLint GetReservedMeshColourUniformLocation(size_t index) const
+	inline shaderResourceLocation GetReservedMeshColourUniformLocation(unsigned int index) const override
 	{
-		return m_ReservedMeshColourLocations[index];
+		return { m_ReservedMeshColourLocations[index] };
 	}
 
-	int GetResourceByName(const std::string& name) const override
+	shaderResourceLocation GetResourceByName(const std::string& name) const override
 	{
-		return glGetUniformLocation(program, name.c_str());
+		return { glGetUniformLocation(program, name.c_str()) };
+	}
+
+	shaderResourceLocation GetModelMatrixLocation() const override
+	{
+		return { m_ModelMatrixLocation };
+	}
+
+	shaderResourceLocation GetInverseModelMatrixLocation() const override
+	{
+		return { m_InvModelMatrixLocation };
 	}
 
 protected:
@@ -78,6 +88,7 @@ protected:
 	GLuint program;
 
 	GLint m_ModelMatrixLocation;
+	GLint m_InvModelMatrixLocation;
 	GLint m_ReservedMeshTextureLocations[ReservedMeshTextures.size];
 	GLint m_ReservedMeshColourLocations[ReservedMeshColours.size];
 };

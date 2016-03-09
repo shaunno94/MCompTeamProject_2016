@@ -64,6 +64,9 @@
     <Filter Include="Header Files\UI\HUD_GUI">
       <UniqueIdentifier>{9ab7a03a-31e7-41f6-be86-676e9652b272}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\UI\Scoretable_GUI">
+      <UniqueIdentifier>{fafb15a4-631a-4991-b203-014cb65a0e7f}</UniqueIdentifier>
+    </Filter>
     <Filter Include="Source Files\UI\Scoretable_GUI">
       <UniqueIdentifier>{a0fff451-da59-44be-baad-55106ad8d8f9}</UniqueIdentifier>
     </Filter>
@@ -213,9 +216,6 @@
     <ClInclude Include="AIControllerComponent.h">
       <Filter>Header Files\Input</Filter>
     </ClInclude>
-    <ClInclude Include="CubeMaterial.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="resource.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -236,6 +236,12 @@
     </ClInclude>
     <ClInclude Include="ParticleManager.h">
       <Filter>Header Files\Particle System</Filter>
+    </ClInclude>
+    <ClInclude Include="PS4Buffer.h">
+      <Filter>Header Files\GNM_API</Filter>
+    </ClInclude>
+    <ClInclude Include="CubeMaterial.h">
+      <Filter>Header Files\Material</Filter>
     </ClInclude>
     <ClInclude Include="Font.h">
       <Filter>Header Files</Filter>
@@ -392,9 +398,6 @@
     <ClCompile Include="AIControllerComponent.cpp">
       <Filter>Source Files\Input</Filter>
     </ClCompile>
-    <ClCompile Include="CubeMaterial.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="OrthoComponent.cpp">
       <Filter>Source Files\UI</Filter>
     </ClCompile>
@@ -404,6 +407,9 @@
     <ClCompile Include="PS4Controller.cpp">
       <Filter>Source Files\Input</Filter>
     </ClCompile>
+    <ClCompile Include="PS4Buffer.cpp">
+      <Filter>Source Files\GNM_API</Filter>
+    </ClCompile>
     <ClCompile Include="AudioComponent.cpp">
       <Filter>Source Files\Audio</Filter>
     </ClCompile>
@@ -412,6 +418,9 @@
     </ClCompile>
     <ClCompile Include="ParticleManager.cpp">
       <Filter>Source Files\Particle System</Filter>
+    </ClCompile>
+    <ClCompile Include="CubeMaterial.cpp">
+      <Filter>Source Files\Material</Filter>
     </ClCompile>
     <ClCompile Include="NetClientControllerManager.cpp">
       <Filter>Source Files\Input</Filter>
@@ -458,6 +467,24 @@
       <Filter>PS4Shaders</Filter>
     </OrbisWavePsslc>
     <OrbisWavePsslc Include="2dShadowLightfragment.pssl">
+      <Filter>PS4Shaders</Filter>
+    </OrbisWavePsslc>
+    <OrbisWavePsslc Include="combineVert.pssl">
+      <Filter>PS4Shaders</Filter>
+    </OrbisWavePsslc>
+    <OrbisWavePsslc Include="combineFrag.pssl">
+      <Filter>PS4Shaders</Filter>
+    </OrbisWavePsslc>
+    <OrbisWavePsslc Include="skyboxVertex.pssl">
+      <Filter>PS4Shaders</Filter>
+    </OrbisWavePsslc>
+    <OrbisWavePsslc Include="skyboxFrag.pssl">
+      <Filter>PS4Shaders</Filter>
+    </OrbisWavePsslc>
+    <OrbisWavePsslc Include="TexturedFragment.pssl">
+      <Filter>PS4Shaders</Filter>
+    </OrbisWavePsslc>
+    <OrbisWavePsslc Include="TexturedVertex.pssl">
       <Filter>PS4Shaders</Filter>
     </OrbisWavePsslc>
   </ItemGroup>

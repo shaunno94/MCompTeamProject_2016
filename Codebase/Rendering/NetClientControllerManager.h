@@ -1,3 +1,4 @@
+#ifndef ORBIS
 #pragma once
 #include "ControllerManager.h"
 #include "Networking/Net.h"
@@ -21,4 +22,4 @@ protected:
 	std::vector<PCNetProducerController*> m_producingControllers;
 	std::vector<PCNetController*> m_actorControllers;
 };
-
+#endif

@@ -1,0 +1,30 @@
+ConstantBuffer viewMatrix
+{
+	column_major matrix viewMatrix;
+};
+ConstantBuffer projMatrix
+{
+	column_major matrix projMatrix;
+};
+
+struct VS_INPUT
+{
+	float3 position	: POSITION0;
+};
+
+struct VS_OUTPUT
+{
+	float4 position	: S_POSITION;
+	float3 normal	: NORMAL;
+};
+
+VS_OUTPUT main(VS_INPUT Input)
+{
+	VS_OUTPUT Output;
+
+	float3 tempPos = Input.position - float3(0, 0, 1);
+	Output.normal = mul(transpose(float3x3(viewMatrix)), normalize(tempPos));
+	Output.position = mul(projMatrix, float4(tempPos.xyz, 1.0));
+
+	return Output;
+}

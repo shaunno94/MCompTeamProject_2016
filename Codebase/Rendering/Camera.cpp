@@ -20,8 +20,10 @@ void Camera::UpdateCamera(float msec)	{
 
 		//Update the mouse by how much
 				player->GetControllerComponent()->getCameraControl(pitch, yaw);
+				
+		//std::cout << yaw << std::endl;
 	}
-
+	
 	
 }
 
@@ -54,13 +56,13 @@ Mat4Graphics Camera::BuildViewMatrix()	{
 	return	 Mat4Graphics::View(GetPosition(), ballPos);
 
 }
-}
+	}
 
 
 Vec3Graphics Camera::GetPosition() const
 {
 	GameObject* ball = Renderer::GetInstance()->GetCurrentScene()->findGameObject("ball");
-	if (!ball || autocam)
+	if (ball && autocam)
 	{
 		Vec3Graphics ballPos = ball->GetWorldTransform().GetTranslation();
 		Vec3Graphics playerPos = player->GetWorldTransform().GetTranslation() + Vec3Graphics(0, 15, 0);

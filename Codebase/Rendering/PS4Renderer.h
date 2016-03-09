@@ -1,12 +1,8 @@
 #pragma once
 #ifdef ORBIS
-#include <gnm.h>
-#include <gnmx\fetchshaderhelper.h>
-#include <..\samples\sample_code\graphics\api_gnm\toolkit\toolkit.h>
-
+#include "PS4Buffer.h"
 #include "Helpers/common.h"
 #include "LightMaterial.h"
-#include "PS4Shader.h"
 #include "PS4Frame.h"
 
 enum CULL
@@ -18,22 +14,23 @@ enum MemoryLocation
 {
 	GARLIC,
 	ONION,
+	GARLIC_MESH,
 	MEMORYMAX
 };
 
-struct PS4ScreenBuffer 
+enum BACK_BUFFERS
 {
-	sce::Gnm::RenderTarget		colourTarget;
-	sce::Gnm::DepthRenderTarget depthTarget;
+	BACK_BUFFER1, BACK_BUFFER2, BACK_BUFFER3, MAX_BACK_BUFFER
+};
 
-	//uint width;
-	//uint height;
-	//sce::Gnmx::Toolkit::Timers   m_timers; ?????
+enum FBO
+{
+	G_BUFFER, LIGHT_BUFFER, SHADOW_BUFFER, MAX_FBO
 };
 
 class Renderer;
 class GameObject;
-class Renderer;
+class PS4Mesh;
 
 class PS4Renderer : public PS4Memory
 {
@@ -41,79 +38,109 @@ public:
 	PS4Renderer();
 	~PS4Renderer();
 
-	void UpdateShaderMatrices(){}
+	void UpdateShaderMatrices();
 	bool HasInitialised() const { return init; }
-	void SetTextureFlags(const sce::Gnm::Texture*, unsigned int flags);
+	void SetTextureFlags(textureHandle&, unsigned int flags);
 	void SetCurrentShader(BaseShader* s);
 
-	static void UpdateUniform(int location, const Mat4Graphics& mat4){}
-	static void UpdateUniform(int location, const Mat3Graphics& mat3){}
-	static void UpdateUniform(int location, const Vec4Graphics& vec4){}
-	static void UpdateUniform(int location, const Vec3Graphics& vec3){}
-	static void UpdateUniform(int location, const Vec2Graphics& vec2){}
-	static void UpdateUniform(int location, float f){}
-	static void UpdateUniform(int location, double d){}
-	static void UpdateUniform(int location, int i){}
-	static void UpdateUniform(int location, unsigned int u){}
+	void UpdateUniform(const shaderResourceLocation& location, const Mat4Graphics& mat4);
+	void UpdateUniform(const shaderResourceLocation& location, const Mat3Graphics& mat3);
+	void UpdateUniform(const shaderResourceLocation& location, const Vec4Graphics& vec4);
+	void UpdateUniform(const shaderResourceLocation& location, const Vec3Graphics& vec3);
+	void UpdateUniform(const shaderResourceLocation& location, const Vec2Graphics& vec2);
+	void UpdateUniform(const shaderResourceLocation& location, float f);
+	void UpdateUniform(const shaderResourceLocation& location, double d);
+	void UpdateUniform(const shaderResourceLocation& location, int i);
+	void UpdateUniform(const shaderResourceLocation& location, unsigned int u);
 	
-	unsigned int TextureMemoryUsage(const sce::Gnm::Texture* id){ return 0; }
+	unsigned int TextureMemoryUsage(sce::Gnm::Texture& id);
+	void SetTexture(const shaderResourceLocation& location, textureHandle& handle);
+
+	sce::Gnmx::GnmxGfxContext* GetGFXContext() { return currentGFXContext; }
+
 protected:	
 	void FillBuffers();
 	void DrawPointLights();
 	void DrawShadow(GameObject* light);
+	void DrawShadow2D(GameObject* light);
+	void DrawShadowCube(GameObject* light);
 	void CombineBuffers();
+	void DrawSkyBox();
 	void SwapBuffers();
+	void InitCMD(PS4Buffer* buffer);
 	
 	void SetCullFace(CULL c);
 	
 	Mat4Graphics projMatrix;	//Projection matrix
 	Mat4Graphics viewMatrix;	//View matrix
-	Mat4Graphics textureMatrix;	//Texture matrix
 	
 	static Renderer* child;
 	PS4Shader* currentShader;
+	const uint width = 1920;
+	const uint height = 1080;
 
-	//Per frame pointers.
-	PS4ScreenBuffer* currentPS4Buffer;  //Pointer to whichever buffer we're currently using...
-	sce::Gnmx::GnmxGfxContext*	currentGFXContext;
-	PS4Frame* currentFrame;
-	PS4Frame* frames;
-	int framesSubmitted;
-
+private:	
+	//VIDEO SYSTEM VARIABLES
+	int videoHandle;	
 	int currentGPUBuffer;
 	const int _MaxCMDBufferCount = 3;
 
-	//VIDEO SYSTEM VARIABLES
-	int videoHandle;
-
 	//SCREEN BUFFER VARIABLES
-	const int _bufferCount = 3;	//How many screen buffers should we have
 	int	currentScreenBuffer;
 	int	prevScreenBuffer;
-	PS4ScreenBuffer** screenBuffers;	//Pointer to our screen buffers
+	std::vector<PS4Buffer*> screenBuffers;
+	std::vector<PS4Buffer*> offScreenBuffers;
+	const uint MAX_TARGETS_PER_BUFFER = 2;
+
+	//Per frame pointers.
+	PS4Buffer* currentPS4Buffer;
+	sce::Gnmx::GnmxGfxContext*	currentGFXContext;
+	PS4Frame* currentFrame;
+	PS4Frame* frames;
 
 	//Memory Allocation
 	const int _GarlicMemory = (1024 * 1024 * 512);
 	const int _OnionMemory = (1024 * 1024 * 256);
 	sce::Gnmx::Toolkit::StackAllocator	stackAllocators[MEMORYMAX];
-	
+
 	bool init = false;
 
-private:
 	void	InitialiseMemoryAllocators();
 	void	InitialiseVideoSystem();
 	void	InitialiseGCMRendering();
+	void	RegisterTargets(const uint targetIndex, std::vector<PS4Buffer*>& buffer);
 
 	void	DestroyMemoryAllocators();
 	void	DestroyVideoSystem();
 	void	DestroyGCMRendering();
-
-	void	SetRenderBuffer(PS4ScreenBuffer* buffer, bool clearColour, bool clearDepth, bool clearStencil);
-	void	ClearBuffer(bool colour, bool depth, bool stencil);
 	
 	void SwapCommandBuffer();
 	void SwapScreenBuffer();
 
-	PS4ScreenBuffer* GenerateScreenBuffer(uint width, uint height, bool colour = true, bool depth = true, bool stencil = false);
+	GameObject* fullScreenQuad;
+	GameObject* skyQuad;
+
+	//FBO Texture locations
+	PS4ShaderResourceLocations specularLoc;
+	PS4ShaderResourceLocations emissiveLoc;
+	PS4ShaderResourceLocations diffuseLoc;
+	PS4ShaderResourceLocations shadowLoc;
+	PS4ShaderResourceLocations normalLoc;
+	PS4ShaderResourceLocations depthLoc;
+
+	//Control objects
+	sce::Gnm::Sampler trilinearSampler;
+	sce::Gnm::Sampler shadowSampler;
+	sce::Gnm::PrimitiveSetup primitiveSetup;
+	sce::Gnm::DepthStencilControl dsc;
+	sce::Gnm::BlendControl blendControl;
+	sce::Gnm::DepthEqaaControl dEqaaControl;
+	sce::Gnm::ClipControl cc;
+	sce::Gnm::DbRenderControl dbRenderControl;
+
+	//Shadow Projection matrix
+	Matrix4Simple shadowProj = Matrix4Simple::Perspective(50.0f, 15000.0f, 1.0f, 45.0f);
+
+	bool previousWasShadow = false;
 };
 #endif

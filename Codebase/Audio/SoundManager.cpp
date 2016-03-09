@@ -1,3 +1,4 @@
+#ifndef ORBIS
 #include "SoundManager.h"
 #include "Rendering/constants.h"
 
@@ -53,3 +54,4 @@ void SoundManager::LoadAssets()
 	AddSound(AUDIO_DIR"car/engine_idle.wav", ENGINE_IDLE);
 	AddSound(AUDIO_DIR"car/engine_rev.wav", ENGINE_REV);
 }
+#endif

@@ -9,7 +9,7 @@ class CarGameObject :
 	public GameObject
 {
 public:
-	CarGameObject(Vec3Physics& position, QuatPhysics& rotation, Material* material, const std::string& name = "", unsigned int collisionMask = COL_CAR);
+	CarGameObject(const Vec3Physics& position, const QuatPhysics& rotation, Material* material, const std::string name = "", unsigned int collisionMask = COL_CAR);
 	~CarGameObject();
 };
 

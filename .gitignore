@@ -244,3 +244,7 @@ Codebase/ORBIS_Debug/2dShadowLightvertex.sb
 *.o-bebc4921
 Codebase/ORBIS_Debug/2dShadowLightfragment.sb
 *.sb
+*.obj
+Codebase/Application/Assets/Shaders/Debug/Fragment.glsl
+*.sdb
+Codebase/Rendering/vqgycdvw.t11

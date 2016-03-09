@@ -32,6 +32,7 @@ protected:
 	AXIS	axis[MAX_AXIS];
 	float   buttons[MAX_BUTTONS];
 	float   buttonsHeld[MAX_BUTTONS];
+	void	UpdateHolds();
 };
 
 

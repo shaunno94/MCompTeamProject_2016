@@ -23,17 +23,15 @@ m_wallMaterial(wallMaterial)
 
 
 	m_netTexture = Texture::Get(TEXTURE_DIR"link2.png");
+
 	m_netTexture->SetTextureParams(TextureFlags::REPEATING | TextureFlags::ANISOTROPIC_FILTERING);
 	m_wallMaterial->Set("diffuseTex", m_netTexture);
 
 
 	CreateCollisionWalls();
-
 }
 
-Stadium::~Stadium()
-{
-}
+Stadium::~Stadium(){}
 
 void Stadium::CreateCollisionWalls()
 {

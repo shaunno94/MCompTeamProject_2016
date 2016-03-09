@@ -50,7 +50,7 @@ class GameObject
 	friend class Scene;
 
 public:
-	GameObject(const std::string& name = "");
+	GameObject(const std::string& name = std::to_string(id));
 	virtual ~GameObject();
 
 	const std::string& GetName()
@@ -124,7 +124,7 @@ public:
 	{
 		return m_PhysicsObj;
 	}
-
+#ifndef ORBIS
 	void SetAudioComponent(AudioComponent* comp)
 	{
 		m_Audio = comp;
@@ -135,16 +135,7 @@ public:
 	{
 		return m_Audio;
 	}
-
-	void SetParticleSystem(ParticleSystem* system)
-	{
-		m_ParticleSystem = system;
-	}
-
-	ParticleSystem* GetParticleSystem() const
-	{
-		return m_ParticleSystem;
-	}
+#endif
 
 	Vec3Graphics GetSpawnPoint() const { return m_spawnPoint; }
 protected:
@@ -160,14 +151,17 @@ protected:
 	PhysicsObject*				m_PhysicsObj;
 	ControllerComponent*		m_Controller;
 
+#ifndef ORBIS
 	AudioComponent*				m_Audio;
-	ParticleSystem*				m_ParticleSystem;
+#endif
 
-	float						m_BoundingRadius;	//Unused
+	float						m_BoundingRadius;
 	Mat4Graphics				m_WorldTransform;
 	Mat4Graphics				m_LocalTransform;
 
 	Vec3Graphics				m_spawnPoint;
 
 	float m_CamDist; //For ordering of rendering lists.
+
+	static unsigned int id;
 };

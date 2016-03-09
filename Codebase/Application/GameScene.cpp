@@ -7,15 +7,16 @@ GameScene::GameScene(ControllerManager* controller)
 	//Initialise Bullet physics engine.
 	PhysicsEngineInstance::Instance()->setGravity(btVector3(0, -9.81, 0));
 
+#ifndef ORBIS
 	SoundSystem::Initialise();
-	GUISystem::Initialise();
 	ParticleManager::Initialise();
 
 	if (ParticleManager::GetManager().HasInitialised())
 	{
 		std::cout << "Particle Manager not Initialised" << std::endl;
 	}
-
+#endif
+	GUISystem::Initialise();
 	if (!GUISystem::GetInstance().HasInitialised())
 	{
 		std::cout << "GUI not Initialised!" << std::endl;
@@ -42,9 +43,12 @@ GameScene::GameScene(ControllerManager* controller)
 GameScene::~GameScene()
 {
 	PhysicsEngineInstance::Release();
-	SoundSystem::Release();
 	GUISystem::Destroy();
+
+#ifndef ORBIS
+	SoundSystem::Release();
 	ParticleManager::Destroy();
+#endif
 
 #if DEBUG_DRAW
 #ifndef ORBIS
@@ -165,6 +169,7 @@ void GameScene::SetupGameObjects()
 
 void GameScene::LoadAudio()
 {
+#ifndef ORBIS
 	//-------- SOUND
 	// load in files
 	SoundManager::LoadAssets();
@@ -188,6 +193,7 @@ void GameScene::LoadAudio()
 	goalieAI->SetAudioComponent(new AudioCompCar(false));
 	aggroAI->SetAudioComponent(new AudioCompCar(false));
 	//-------- SOUND
+#endif
 }
 
 void GameScene::SetupShaders()
@@ -196,14 +202,17 @@ void GameScene::SetupShaders()
 	simpleShader = new OGLShader(SIMPLESHADER_VERT, SIMPLESHADER_FRAG);
 	pointlightShader = new OGLShader(POINTLIGHTSHADER_VERT, POINTLIGHTSHADER_FRAG);
 	orthoShader = new OGLShader(GUI_VERT, GUI_FRAG);
-	//BaseShader* pointlightShader = new OGLShader(SHADER_DIR"CubeShadowLightvertex.glsl", SHADER_DIR"CubeShadowLightfragment.glsl");
 #else
-	BaseShader* simpleShader = new PS4Shader(SIMPLESHADER_VERT, SIMPLESHADER_FRAG);
-	BaseShader* pointlightShader = new PS4Shader(POINTLIGHTSHADER_VERT, POINTLIGHTSHADER_FRAG);
+	simpleShader = new PS4Shader(SIMPLESHADER_VERT, SIMPLESHADER_FRAG);
+	pointlightShader = new PS4Shader(POINTLIGHTSHADER_VERT, POINTLIGHTSHADER_FRAG);
+	orthoShader = new PS4Shader(GUI_VERT, GUI_FRAG);
 #endif
-
-	if (!pointlightShader->IsOperational() || !simpleShader->IsOperational() || !orthoShader->IsOperational())
-		std::cout << "Shader not operational!" << std::endl;
+	if (!pointlightShader->IsOperational())
+		std::cout << "Point light shader not operational!" << std::endl;
+	if(!simpleShader->IsOperational())
+		std::cout << "Simple shader not operational!" << std::endl;
+	if(!orthoShader->IsOperational())
+		std::cout << "ortho shader not operational!" << std::endl;
 }
 
 void GameScene::SetupMaterials()
@@ -218,19 +227,17 @@ void GameScene::SetupMaterials()
 	ai2Material = new Material(simpleShader);
 	guiMaterial = new Material(orthoShader);
 	textMaterial = new Material(orthoShader);
+	playerMaterial = new Material(simpleShader);
 
 	playerMaterial = new Material(simpleShader);
 
 	aiMaterial->Set(ReservedMeshTextures.DIFFUSE.name, Texture::Get(MODEL_DIR"car/body1.bmp", true));
-
 	ai2Material->Set(ReservedMeshTextures.DIFFUSE.name, Texture::Get(MODEL_DIR"car/body2.bmp", true));
-
 	//particleMaterial->Set(ReservedMeshTextures.DIFFUSE.name, Texture::Get(TEXTURE_DIR"particle.tga", true));
 }
 
 void GameScene::DrawGUI()
 {
-
 	//Define Orthographic Component
 	hudOrtho = new OrthoComponent(1.0f);
 	//Add child GUI components, while defining materials, texture, and depth
@@ -239,7 +246,6 @@ void GameScene::DrawGUI()
 
 	//Add Orthographic component to GUISystem
 	GUISystem::GetInstance().AddOrthoComponent(hudOrtho);
-
 }
 
 void GameScene::SetupControls()
@@ -274,7 +280,7 @@ void GameScene::applyImpulseFromExplosion(CarGameObject* car)
 	// 1 at same position
 	// 0 at 200 units away
 
-	attenuation = max(1 - (attenuation / (600 * 600)), 0.0f);
+	attenuation = fmax(1 - (attenuation / (600 * 600)), 0.0f);
 
 	dynamic_cast<RigidPhysicsObject*>(car->GetPhysicsComponent())->GetPhysicsBody()->applyCentralImpulse(ballToCar * attenuation * 30000000.0f);
 }
@@ -285,6 +291,7 @@ void GameScene::SetupAI()
 }
 
 void GameScene::ResetObjects()
+//reset the positions and forces of objects in the scene
 {
 	PhysicsEngineInstance::Instance()->clearForces();
 
@@ -294,6 +301,9 @@ void GameScene::ResetObjects()
 	ResetObject(*shooterAI);
 	ResetObject(*goalieAI);
 	ResetObject(*aggroAI);
+
+	player->SetWorldTransform(Mat4Graphics::RotationY(-90) * Mat4Graphics::Translation(Vec3Graphics(100, 2, 0)));//have to reset this world transform too, for the camera
+	cam->reset();
 }
 
 void GameScene::ResetObject(GameObject& object) {
