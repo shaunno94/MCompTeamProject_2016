@@ -15,6 +15,8 @@ GameObject::GameObject(const std::string& name)
 	m_Controller = nullptr;
 	id++;
 
+	m_spawnPoint = Vec3Graphics(0, 0, 0);
+
 	m_LocalTransform.ToIdentity();
 	m_WorldTransform.ToIdentity();
 }

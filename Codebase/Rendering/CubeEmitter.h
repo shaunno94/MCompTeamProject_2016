@@ -1,4 +1,3 @@
-#ifndef ORBIS
 #pragma once
 #include "ParticleEmitter.h"
 
@@ -28,4 +27,3 @@ public:
 	Vec3Graphics   Origin;
 
 };
-#endif

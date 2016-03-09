@@ -1,5 +1,6 @@
 #pragma once
 #include <Math\Matrix4Simple.h>
+#include <cinttypes>
 /** @defgroup Rendering Rendering
 *  Rendering related functionality.
 *  @{
@@ -77,7 +78,8 @@ enum AIStates
 	DEFENCE,
 	ADVANCE,
 	GUARD_GOAL,
-	CLEAR_GOAL
+	CLEAR_GOAL,
+	AGGRO
 };
 
 #ifdef _DEBUG

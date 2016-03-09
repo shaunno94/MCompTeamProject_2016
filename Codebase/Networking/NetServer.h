@@ -82,7 +82,7 @@ private:
 	std::vector<NetConnectionDataInternal*> m_connections;
 	std::vector<NetConnectionDataInternal*> m_pendingDisconnections;
 
-	unsigned int m_pendingDisconnectionCount
+	unsigned int m_pendingDisconnectionCount;
 	//for session sync?
 	//bool m_sessionUpdated;
 };

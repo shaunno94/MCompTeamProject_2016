@@ -1,5 +1,6 @@
 #ifndef ORBIS
 #include "KeyboardController.h"
+#include "Renderer.h"
 #include "Audio/SoundSystem.h"
 
 KeyboardController::KeyboardController(ControllerComponent* object)
@@ -75,7 +76,7 @@ void KeyboardController::CheckInput(){
 		SoundMOD mod;
 		mod.isGlobal = true;
 		mod.looping = false;
-		mod.volume = 0.2f;
+		mod.volume = 0.4f;
 		SoundSystem::Instance()->Play(SoundManager::GetSound(BOOST), mod);
 	}
 
@@ -88,9 +89,20 @@ void KeyboardController::CheckInput(){
 		object->reset();
 	}
 
+	if (Window::GetKeyboard()->KeyTriggered(KEYBOARD_C))
+	{
+		Renderer::GetInstance()->GetCurrentScene()->getCamera()->autocam = !Renderer::GetInstance()->GetCurrentScene()->getCamera()->autocam;
+		Renderer::GetInstance()->GetCurrentScene()->getCamera()->reset();
+	}
+
 	//------camera control-------//
 	float pitch = (Window::GetMouse()->GetRelativePosition().y);
 	float yaw = (Window::GetMouse()->GetRelativePosition().x);
 	object->setCameraControl(pitch, yaw);
+
+	if (Window::GetKeyboard()->KeyTriggered(KEYBOARD_Q))
+	{
+		Renderer::GetInstance()->GetCurrentScene()->getCamera()->reset();
+	}
 }
 #endif

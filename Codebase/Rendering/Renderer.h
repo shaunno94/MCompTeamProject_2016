@@ -1,6 +1,6 @@
 #pragma once
 #include "Scene.h"
-#define DEBUG_DRAW 0
+#define DEBUG_DRAW 1
 /// @ingroup Rendering
 /// <summary>
 /// Non-platform specific functionality for rendering a <see cref="Scene"/>.
@@ -44,6 +44,8 @@ protected:
 	void OnRenderScene();
 	void OnRenderLights();
 	void RenderGUI();
+
+	//virtual void Resize(int x, int y)override;
 
 	Frustum frameFrustrum;
 	Frustum lightFrustrum;

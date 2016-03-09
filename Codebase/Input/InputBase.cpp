@@ -60,3 +60,11 @@ bool	InputBase::GetButtonHeld(unsigned int i) {
 	}
 	return buttonsHeld[i] > 0.5f ? true : false;
 }
+
+void InputBase::UpdateHolds()	{
+	//memcpy(buttonsHeld, buttons, MAX_BUTTONS * sizeof(float));
+	for (int i = 0; i < MAX_BUTTONS; i++)
+	{
+		buttonsHeld[i] = buttons[i];
+	}
+}

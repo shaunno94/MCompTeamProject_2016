@@ -10,6 +10,7 @@ public:
 	~PS4Frame();
 
 	sce::Gnmx::GnmxGfxContext& GetCommandBuffer() { return commandBuffer; }
+	static uint64_t GetCMDMemUsage() { return CMDMemUsage; }
 
 	void BlockUntilReady();
 	void StartFrame();
@@ -18,5 +19,6 @@ public:
 protected:
 	sce::Gnmx::GnmxGfxContext commandBuffer;
 	uint64_t frameTag;
+	static uint64_t CMDMemUsage;
 };
 #endif

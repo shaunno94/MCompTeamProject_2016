@@ -25,12 +25,10 @@ bool ArenaHalfTrigger::HasTriggered()
 	if (m_triggerInTeamHalf) {
 		if ((goalPos.x() < 0) 
 			&& (ballPos.x() < 0)) {
-			std::cout << m_parent->GetName() << ": ADVANCE -> DEFENCE " << std::endl;
 			return true;
 		}
 		else if ((goalPos.x() > 0) 
 			&& (ballPos.x() > 0)) {
-			std::cout << m_parent->GetName() << ": ADVANCE -> DEFENCE " << std::endl;
 			return true;
 		}
 	}

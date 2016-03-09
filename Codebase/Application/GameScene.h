@@ -67,14 +67,20 @@ protected:
 	int scores[2];
 
 	void ResetObjects();
+	void ResetObject(GameObject& object);
 
 	void applyImpulseFromExplosion(CarGameObject* car);
 	GameObject* ball;
+	
 	GameObject* light1;
 	GameObject* light2;
+	
 	GameObject* player;
+	
 	GameObject* shooterAI;
 	GameObject* goalieAI;
+	GameObject* aggroAI;
+
 	GameObject* stadium;
 	GameObject* goal1;
 	GameObject* goal2;

@@ -1,5 +1,4 @@
 #pragma once
-#ifndef ORBIS
 #include "Math/nclglMath.h"
 #include "Particle.h"
 #include "ParticleEmitter.h"
@@ -36,4 +35,3 @@ private:
 	Material*				m_Material;
 	Texture*				m_texture;
 };
-#endif

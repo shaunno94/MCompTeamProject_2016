@@ -14,6 +14,7 @@ enum MemoryLocation
 {
 	GARLIC,
 	ONION,
+	GARLIC_MESH,
 	MEMORYMAX
 };
 
@@ -56,6 +57,8 @@ public:
 	void SetTexture(const shaderResourceLocation& location, textureHandle& handle);
 
 	sce::Gnmx::GnmxGfxContext* GetGFXContext() { return currentGFXContext; }
+
+	uint64_t GetRendererMemUsage() const { return PS4Buffer::GetFBOMemUsage() + PS4Frame::GetCMDMemUsage(); }
 
 protected:	
 	void FillBuffers();

@@ -1,0 +1,28 @@
+ConstantBuffer viewMatrix
+{
+	column_major matrix viewMatrix;
+};
+ConstantBuffer projMatrix
+{
+	column_major matrix projMatrix;
+};
+
+struct VS_INPUT
+{
+	float3 position		: POSITION0;
+};
+
+struct VS_OUTPUT
+{
+	float4 position		: S_POSITION;
+};
+
+VS_OUTPUT main(VS_INPUT Input)
+{
+	VS_OUTPUT Output;
+
+	float4x4 VP = mul(projMatrix, viewMatrix);
+	Output.position = mul(VP, float4(Input.position.xyz, 1.0));
+
+	return Output;
+}

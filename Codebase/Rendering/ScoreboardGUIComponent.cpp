@@ -31,16 +31,16 @@ ScoreboardGUIComponent::~ScoreboardGUIComponent()
 	
 void ScoreboardGUIComponent::Update(int scoreA, int scoreB, float time)
 {
-	//delete m_Mesh;
+	delete m_Mesh;
 	timeRem = 180 - (int) time;
 	min = timeRem / 60;
 	sec = timeRem % 60;
-	/*m_Mesh = Mesh::GenerateTextQuad(std::to_string(scoreA) + " - " + 
+	m_Mesh = Mesh::GenerateTextQuad(std::to_string(scoreA) + " - " + 
 		std::to_string(min) + ":" + (sec < 10 ? "0" : "") + std::to_string(sec) + " - " +
-									std::to_string(scoreB), font);*/
+									std::to_string(scoreB), font);
 
-	//text_renderComp->m_Mesh = m_Mesh;
-	//text->SetRenderComponent(text_renderComp);
+	text_renderComp->m_Mesh = m_Mesh;
+	text->SetRenderComponent(text_renderComp);
 }
 
 void ScoreboardGUIComponent::Render()

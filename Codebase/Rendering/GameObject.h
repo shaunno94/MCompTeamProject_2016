@@ -137,6 +137,7 @@ public:
 	}
 
 
+	Vec3Graphics GetSpawnPoint() const { return m_spawnPoint; }
 protected:
 	virtual void OnRenderObject();			//Handles OpenGL calls to Render the object
 	virtual void OnUpdateObject(float dt);	//Override to handle things like AI etc on update loop
@@ -157,6 +158,8 @@ protected:
 	float						m_BoundingRadius;
 	Mat4Graphics				m_WorldTransform;
 	Mat4Graphics				m_LocalTransform;
+
+	Vec3Graphics				m_spawnPoint;
 
 	float m_CamDist; //For ordering of rendering lists.
 

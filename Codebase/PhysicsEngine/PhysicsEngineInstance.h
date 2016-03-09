@@ -3,19 +3,6 @@
 #include <mutex>
 #include <btBulletDynamicsCommon.h>
 
-//Collision callback which should return false if the entity is a particle i.e. group ID == 0 and mask == 0.
-//This will tell bullet to not consider particles in collision detection / response (hopefully - untested) 
-struct ParticleFilterCallback : public btOverlapFilterCallback
-{
-	virtual bool needBroadphaseCollision(btBroadphaseProxy* proxy0, btBroadphaseProxy* proxy1) const override
-	{
-		bool collides = (proxy0->m_collisionFilterGroup & proxy1->m_collisionFilterMask) != 0;
-		collides = collides && (proxy1->m_collisionFilterGroup & proxy0->m_collisionFilterMask);
-
-		return collides;
-	}
-};
-
 class PhysicsEngineInstance
 {	
 public:
@@ -41,9 +28,6 @@ public:
 
 				//Physics world object
 				m_pInstance = new btSoftRigidDynamicsWorld(dispatcher, bf, solver, collisionConfiguration, softSolver);
-
-				filter = new ParticleFilterCallback();
-				//m_pInstance->getPairCache()->setOverlapFilterCallback(filter);
 			}
 		}
 		return m_pInstance;
@@ -62,13 +46,12 @@ public:
 			delete dispatcher;
 			delete solver;
 			delete softSolver;
-			delete filter;
 			bf = nullptr;
 			collisionConfiguration = nullptr;
 			dispatcher = nullptr;
 			solver = nullptr;
-			filter = nullptr;
 			m_pInstance = nullptr;
+		
 		}
 	}
 
@@ -91,5 +74,4 @@ private:
 	static btCollisionDispatcher* dispatcher;
 	static btSequentialImpulseConstraintSolver* solver;
 	static btSoftBodySolver* softSolver;
-	static ParticleFilterCallback* filter;
 };

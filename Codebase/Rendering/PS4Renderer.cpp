@@ -3,6 +3,7 @@
 #include <video_out.h>	//Video System
 #include <gnmx\basegfxcontext.h>
 #include "Renderer.h"
+#include "DebugDraw.h"
 
 Renderer* PS4Renderer::child = nullptr;
 
@@ -152,15 +153,21 @@ void PS4Renderer::InitialiseMemoryAllocators()
 {
 	stackAllocators[GARLIC].init(SCE_KERNEL_WC_GARLIC, _GarlicMemory);
 	stackAllocators[ONION].init(SCE_KERNEL_WB_ONION, _OnionMemory);
+	
+	stackAllocators[GARLIC_MESH].init(SCE_KERNEL_WC_GARLIC, _GarlicMemory);
 
 	this->garlicAllocator = sce::Gnmx::Toolkit::GetInterface(&stackAllocators[GARLIC]);
 	this->onionAllocator = sce::Gnmx::Toolkit::GetInterface(&stackAllocators[ONION]);
+
+	this->meshGarlicAllocator = sce::Gnmx::Toolkit::GetInterface(&stackAllocators[GARLIC_MESH]);
+
 	sce::Gnm::registerOwner(&ownerHandle, "PS4Renderer");
 }
 
 void PS4Renderer::DestroyMemoryAllocators() 
 {
 	stackAllocators[GARLIC].deinit();
+	stackAllocators[GARLIC_MESH].deinit();
 	stackAllocators[ONION].deinit();
 }
 
@@ -228,6 +235,11 @@ void PS4Renderer::FillBuffers()
 	DrawSkyBox();
 	
 	InitCMD(offScreenBuffers[G_BUFFER]);
+
+#if DEBUG_DRAW
+	PhysicsEngineInstance::Instance()->debugDrawWorld();
+	DebugDraw::Instance()->RenderLine();
+#endif
 
 	child->OnRenderScene();
 }

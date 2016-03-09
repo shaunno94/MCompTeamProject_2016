@@ -3,7 +3,7 @@
 #include <video_out.h>
 
 unsigned int PS4Buffer::ID = 0;
-uint32_t PS4Buffer::FBOMemUsage = 0;
+uint64_t PS4Buffer::FBOMemUsage = 0;
 
 PS4Buffer::PS4Buffer(const uint width, const uint height, sce::Gnmx::Toolkit::StackAllocator& allocator,
 	const uint numRTargets, bool genStencil, Displayable display)
@@ -33,7 +33,6 @@ PS4Buffer::~PS4Buffer()
 
 void PS4Buffer::GenerateRenderTarget(uint width, uint height, sce::Gnmx::Toolkit::StackAllocator& allocator, uint targetID, Displayable display)
 {
-	size_t before = allocator.m_size;
 	std::string temp = "Target";
 	temp.append(std::to_string(ID).c_str());
 
@@ -54,19 +53,16 @@ void PS4Buffer::GenerateRenderTarget(uint width, uint height, sce::Gnmx::Toolkit
 		temp.c_str(), sce::Gnm::kResourceTypeRenderTargetBaseAddress, 0);
 
 	buffer->renderTargets[targetID].setAddresses(colourMemory, nullptr, nullptr);
-	size_t after = allocator.m_size;
 
 	textures[COLOUR + targetID].initFromRenderTarget(&buffer->renderTargets[targetID], false);
 	textures[COLOUR + targetID].setResourceMemoryType(sce::Gnm::kResourceMemoryTypeRO);
 
-	FBOMemUsage += (after - before);
+	FBOMemUsage += ((width * height) * 4.0f);;
 	CalcInternalTexUsage(textures[COLOUR + targetID]);
 }
 
 void PS4Buffer::GenerateDepthTarget(uint width, uint height, sce::Gnmx::Toolkit::StackAllocator& allocator)
 {
-	size_t before = allocator.m_size;
-
 	sce::Gnm::DataFormat depthFormat = sce::Gnm::DataFormat::build(sce::Gnm::kZFormat32Float);
 	sce::Gnm::TileMode	depthTileMode;
 
@@ -91,12 +87,11 @@ void PS4Buffer::GenerateDepthTarget(uint width, uint height, sce::Gnmx::Toolkit:
 		"Stencil", sce::Gnm::kResourceTypeDepthRenderTargetBaseAddress, 0);
 	}
 	buffer->depthTarget.setAddresses(depthMemory, stencilMemory);
-	size_t after = allocator.m_size;
 
 	textures[DEPTH].initFromDepthRenderTarget(&buffer->depthTarget, false);
 	textures[DEPTH].setResourceMemoryType(sce::Gnm::kResourceMemoryTypeRO);
 
-	FBOMemUsage += (after - before);
+	FBOMemUsage += ((width * height) * 4.0f);
 	CalcInternalTexUsage(textures[DEPTH]);
 }
 
