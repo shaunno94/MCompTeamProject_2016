@@ -154,7 +154,7 @@
   <ItemGroup>
     <ClInclude Include="AIControllerComponent.h" />
     <ClInclude Include="AudioComponent.h" />
-    <ClInclude Include="ButtonGUI.h" />
+    <ClInclude Include="ButtonGUIComponent.h" />
     <ClInclude Include="Camera.h" />
     <ClInclude Include="constants.h" />
     <ClInclude Include="Controller.h" />
@@ -211,6 +211,7 @@
     <ClInclude Include="ScoretableGUI.h" />
     <ClInclude Include="SoftPhysicsObject.h" />
     <ClInclude Include="TableBackgroundGUI.h" />
+    <ClInclude Include="TextGUIComponent.h" />
     <ClInclude Include="TextInfoGUI.h" />
     <ClInclude Include="Texture.h" />
     <ClInclude Include="UIControllerManager.h" />
@@ -220,7 +221,7 @@
   <ItemGroup>
     <ClCompile Include="AIControllerComponent.cpp" />
     <ClCompile Include="AudioComponent.cpp" />
-    <ClCompile Include="ButtonGUI.cpp" />
+    <ClCompile Include="ButtonGUIComponent.cpp" />
     <ClCompile Include="Camera.cpp" />
     <ClCompile Include="ControllerComponent.cpp" />
     <ClCompile Include="ControllerManager.cpp" />
@@ -269,6 +270,7 @@
     <ClCompile Include="ScoretableGUI.cpp" />
     <ClCompile Include="SoftPhysicsObject.cpp" />
     <ClCompile Include="TableBackgroundGUI.cpp" />
+    <ClCompile Include="TextGUIComponent.cpp" />
     <ClCompile Include="TextInfoGUI.cpp" />
     <ClCompile Include="Texture.cpp" />
     <ClCompile Include="UIControllerManager.cpp" />

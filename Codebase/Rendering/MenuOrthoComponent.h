@@ -1,6 +1,6 @@
 #pragma once
 #include "OrthoComponent.h"
-#include "ButtonGUI.h"
+#include "ButtonGUIComponent.h"
 
 enum SELECTED
 {
@@ -9,13 +9,13 @@ enum SELECTED
 	QUIT
 };
 
-class MenuOrthoComponent : public OrthoComponent
+class MenuOrthoComponent: public OrthoComponent
 {
 public:
-	MenuOrthoComponent(ButtonGUI* single, ButtonGUI* multi, ButtonGUI* exit, float z);
+	MenuOrthoComponent(float z);
 	virtual ~MenuOrthoComponent();
 
-	virtual void Render();
+	virtual void Render() override;
 
 	void SetSelection(unsigned int selection)
 	{
@@ -27,13 +27,9 @@ public:
 		return m_Selection;
 	}
 
-	void Update();
+	int Update();
 
 protected:
-
-	ButtonGUI* m_SingleBtn;
-	ButtonGUI* m_MultiBtn;
-	ButtonGUI* m_ExitBtn;
 
 	unsigned int m_Selection = SINGLE_PLAYER;
 };

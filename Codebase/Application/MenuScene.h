@@ -45,10 +45,10 @@ protected:
 	MenuOrthoComponent* menuOrtho;
 
 	MenuBackgroundGUI* menuBg;
-	ButtonGUI* singleBtn;
-	ButtonGUI* multiBtn;
-	ButtonGUI* exitBtn;
+	ButtonGUIComponent* singleBtn;
+	ButtonGUIComponent* multiBtn;
+	ButtonGUIComponent* exitBtn;
 
-	unsigned int m_Selected;
+	int m_Selected;
 };
 

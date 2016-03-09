@@ -270,10 +270,13 @@
     <ClInclude Include="UIControllerManager.h">
       <Filter>Header Files\Input</Filter>
     </ClInclude>
-    <ClInclude Include="ButtonGUI.h">
+    <ClInclude Include="MenuOrthoComponent.h">
       <Filter>Header Files\UI\MenuGUI</Filter>
     </ClInclude>
-    <ClInclude Include="MenuOrthoComponent.h">
+    <ClInclude Include="TextGUIComponent.h">
+      <Filter>Header Files\UI</Filter>
+    </ClInclude>
+    <ClInclude Include="ButtonGUIComponent.h">
       <Filter>Header Files\UI\MenuGUI</Filter>
     </ClInclude>
   </ItemGroup>
@@ -440,10 +443,13 @@
     <ClCompile Include="UIControllerManager.cpp">
       <Filter>Source Files\Input</Filter>
     </ClCompile>
-    <ClCompile Include="ButtonGUI.cpp">
+    <ClCompile Include="MenuOrthoComponent.cpp">
       <Filter>Source Files\UI\MenuGUI</Filter>
     </ClCompile>
-    <ClCompile Include="MenuOrthoComponent.cpp">
+    <ClCompile Include="TextGUIComponent.cpp">
+      <Filter>Source Files\UI</Filter>
+    </ClCompile>
+    <ClCompile Include="ButtonGUIComponent.cpp">
       <Filter>Source Files\UI\MenuGUI</Filter>
     </ClCompile>
   </ItemGroup>

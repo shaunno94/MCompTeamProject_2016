@@ -20,7 +20,7 @@ void UIControllerManager::update(float ms){
 	}
 }
 
-void UIControllerManager::setProducer(MenuGUI* g, unsigned int type){
+void UIControllerManager::setProducer(MenuOrthoComponent* g, unsigned int type){
 	MenuControllerComponent* cc = new MenuControllerComponent(g,type);
 #ifndef ORBIS
 	controllers.push_back(new MenuController(cc));

@@ -4,8 +4,11 @@
 class MenuBackgroundGUI : public GUIComponent
 {
 public:
-	MenuBackgroundGUI(Material* material, Texture* texture, float z, bool visible = true);
+	MenuBackgroundGUI(Material* material,  bool visible = true);
 	virtual ~MenuBackgroundGUI();
 
 	virtual void Render();
+protected:
+	Texture* m_Texture;
+	Mesh* m_Mesh;
 };

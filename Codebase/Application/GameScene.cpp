@@ -231,7 +231,7 @@ void GameScene::DrawGUI()
 	//Define Orthographic Component
 	hudOrtho = new OrthoComponent(1.0f);
 	//Add child GUI components, while defining materials, texture, and depth
-	scoreboardComponent = new ScoreboardGUIComponent(guiMaterial, Texture::Get(TEXTURE_DIR"tahoma.tga"), 1.0);
+	scoreboardComponent = new ScoreboardGUIComponent(guiMaterial, 1.0);
 	hudOrtho->AddGUIComponent(scoreboardComponent);
 
 	//Add Orthographic component to GUISystem

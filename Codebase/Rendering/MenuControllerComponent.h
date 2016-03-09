@@ -1,11 +1,11 @@
 #pragma once
 #include "ControllerComponent.h"
-#include "Rendering\MenuGUI.h"
+#include "Rendering\MenuOrthoComponent.h"
 
 class MenuControllerComponent
 {
 public:
-	MenuControllerComponent(MenuGUI* parent, unsigned int type);
+	MenuControllerComponent(MenuOrthoComponent* parent, unsigned int type);
 	~MenuControllerComponent();
 	void UpdateObject(float dt);
 
@@ -15,6 +15,6 @@ public:
 
 
 protected:
-	MenuGUI* m_parent;
+	MenuOrthoComponent* m_parent;
 };
 

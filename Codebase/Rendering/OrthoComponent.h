@@ -1,3 +1,4 @@
+#pragma once
 #include "GUIComponent.h"
 
 class OrthoComponent
@@ -10,7 +11,7 @@ public:
 	void RemoveGUIComponent(GUIComponent* element);
 
 	void Update();
-	void Render();
+	virtual void Render();
 
 	bool operator<(const OrthoComponent &rhs) const { return depth < rhs.depth; };
 

@@ -1,7 +1,8 @@
 #include "ScoreboardGUIComponent.h"
 
-ScoreboardGUIComponent::ScoreboardGUIComponent(Material* material, Texture* texture, float z, bool visible) : GUIComponent(material, texture, z, visible)
+ScoreboardGUIComponent::ScoreboardGUIComponent(Material* material, bool visible) : GUIComponent(material, visible)
 {
+	m_Texture = Texture::Get(TEXTURE_DIR"tahoma.tga");
 	m_Material->Set(ReservedMeshTextures.DIFFUSE.name, m_Texture);
 
 	font = new Font(m_Texture, 16, 16);
@@ -15,6 +16,10 @@ ScoreboardGUIComponent::ScoreboardGUIComponent(Material* material, Texture* text
 ScoreboardGUIComponent::~ScoreboardGUIComponent()
 {
 	delete renderComp;
+	delete m_Mesh;
+	delete m_NewMesh;
+	delete font;
+
 }
 
 void ScoreboardGUIComponent::Update(int scoreA, int scoreB, float time)
@@ -29,14 +34,5 @@ void ScoreboardGUIComponent::Update(int scoreA, int scoreB, float time)
 
 	renderComp->m_Mesh = m_NewMesh;
 	SetRenderComponent(renderComp);
-}
-
-void ScoreboardGUIComponent::Render()
-{
-	//for (int i = 0; i < m_Children.size(); i++)
-	//{
-	//	m_Children[i]->GetRenderComponent()->Draw();
-	//}
-	GetRenderComponent()->Draw();
 }
 

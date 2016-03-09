@@ -1,6 +1,6 @@
 #include "MenuControllerComponent.h"
 
-MenuControllerComponent::MenuControllerComponent(MenuGUI* parent, unsigned int type)
+MenuControllerComponent::MenuControllerComponent(MenuOrthoComponent* parent, unsigned int type)
 {
 	m_parent = parent;
 }

@@ -43,13 +43,13 @@ int main(void)
 	ControllerManager* myControllers = new LocalControlManager;
 	UIControllerManager* uiController = new UIControllerManager();
 	//Create GameScene
-	//GameScene* gameScene = new GameScene(myControllers);
-	MenuScene* menuScene = new MenuScene(uiController);
+	GameScene* gameScene = new GameScene(myControllers);
+//	MenuScene* menuScene = new MenuScene(uiController);
 	//Set current scene to the game
-	//renderer.SetCurrentScene(gameScene);
-	//gameScene->SetControllerActor();
-	//gameScene->SetupAI();
-	renderer.SetCurrentScene(menuScene);
+	renderer.SetCurrentScene(gameScene);
+	gameScene->SetControllerActor();
+	gameScene->SetupAI();
+//	renderer.SetCurrentScene(menuScene);
 
 #ifndef ORBIS
 	while (Window::GetWindow().UpdateWindow() && !Window::GetKeyboard()->KeyDown(KEYBOARD_ESCAPE))
@@ -87,8 +87,8 @@ int main(void)
 		MEASURING_TIMER_CLEAR();
 	}
 
-	delete menuScene;
-	//delete gameScene;
+	//delete menuScene;
+	delete gameScene;
 
 	return 0;
 }

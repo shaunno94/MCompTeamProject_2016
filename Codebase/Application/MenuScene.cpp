@@ -2,11 +2,11 @@
 
 
 MenuScene::MenuScene(UIControllerManager* controller)
-:myControllers(controller)
+	:myControllers(controller)
 {
 	SoundSystem::Initialise();
 	GUISystem::Initialise();
-	
+
 	if (!GUISystem::GetInstance().HasInitialised())
 	{
 		std::cout << "GUI not Initialised!" << std::endl;
@@ -31,8 +31,8 @@ MenuScene::~MenuScene()
 
 void MenuScene::UpdateScene(float dt)
 {
-	std::cout << menuOrtho->GetSelection() << std::endl;
-	menuOrtho->Update();
+	//std::cout << menuOrtho->GetSelection() << std::endl;
+	m_Selected = menuOrtho->Update();
 }
 
 void MenuScene::SetupGameObjects()
@@ -60,15 +60,20 @@ void MenuScene::SetupMaterials()
 void MenuScene::DrawGUI()
 {
 	bgOrtho = new OrthoComponent(1.0f);
-	menuBg = new MenuBackgroundGUI(bgMaterial, Texture::Get(TEXTURE_DIR"titleScreen1.jpg"), 1.0);
+	menuBg = new MenuBackgroundGUI(bgMaterial,  1.0);
 	bgOrtho->AddGUIComponent(menuBg);
 
-	singleBtn = new ButtonGUI();
-	menuOrtho = new MenuOrthoComponent();
+	menuOrtho = new MenuOrthoComponent(0.5);
+	singleBtn = new ButtonGUIComponent(btnMaterial, selectBtnMaterial, Vec3Graphics(-0.7f, 0.7f, 0), Vec2Graphics(0.2f, 0.1f));
+	multiBtn = new ButtonGUIComponent(btnMaterial, selectBtnMaterial, Vec3Graphics(-0.7f, 0.4f, 0), Vec2Graphics(0.2f, 0.1f));
+	exitBtn = new ButtonGUIComponent(btnMaterial, selectBtnMaterial, Vec3Graphics(-0.7f, 0.1f, 0), Vec2Graphics(0.2f, 0.1f));
 
-	//menuGUI = new MenuGUI(guiMaterial, Texture::Get(TEXTURE_DIR"bricks1.jpg"), 1.0,"menuGUI");
-	//bgOrtho->AddGUIComponent(menuGUI);
+	menuOrtho->AddGUIComponent(singleBtn);
+	menuOrtho->AddGUIComponent(multiBtn);
+	menuOrtho->AddGUIComponent(exitBtn);
+
 	GUISystem::GetInstance().AddOrthoComponent(bgOrtho);
+	GUISystem::GetInstance().AddOrthoComponent(menuOrtho);
 }
 
 void MenuScene::LoadAudio()
@@ -78,7 +83,7 @@ void MenuScene::LoadAudio()
 
 void MenuScene::SetupControls()
 {
-	myControllers->setProducer(menuGUI,0);
+	myControllers->setProducer(menuOrtho,0);
 }
 
 

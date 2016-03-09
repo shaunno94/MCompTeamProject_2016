@@ -1,5 +1,5 @@
 #pragma once
-#include "Rendering\MenuGUI.h"
+#include "Rendering\MenuOrthoComponent.h"
 #include "MenuController.h"
 
 
@@ -9,7 +9,7 @@ public:
 	UIControllerManager();
 	~UIControllerManager();
 
-	virtual void setProducer(MenuGUI* g, unsigned int type);
+	virtual void setProducer(MenuOrthoComponent* g, unsigned int type);
 	virtual void update(float ms);
 
 protected:
