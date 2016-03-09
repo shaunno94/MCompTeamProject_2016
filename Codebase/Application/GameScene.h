@@ -97,6 +97,8 @@ protected:
 
 	Material* material;
 	Material* netMaterial;
+	Material* postMaterial;
+
 	Material* playerMaterial;
 	Material* aiMaterial;
 	Material* ai2Material;

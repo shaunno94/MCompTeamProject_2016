@@ -137,7 +137,7 @@ void GameScene::SetupGameObjects()
 
 
 	// Create Stadium
-	stadium = new Stadium(material, netMaterial, "stadium");
+	stadium = new Stadium(material, netMaterial, postMaterial, "stadium");
 
 	goal1 = new GameObject("goal1");
 	goalBox = new RigidPhysicsObject();
@@ -222,6 +222,7 @@ void GameScene::SetupMaterials()
 
 	material = new Material(simpleShader);
 	netMaterial = new Material(simpleShader, true);
+	postMaterial = new Material(simpleShader, true);
 	aiMaterial = new Material(simpleShader);
 	particleMaterial = new Material(simpleShader);
 	ai2Material = new Material(simpleShader);
