@@ -6,5 +6,4 @@ btBroadphaseInterface* PhysicsEngineInstance::bf = nullptr;
 btDefaultCollisionConfiguration* PhysicsEngineInstance::collisionConfiguration = nullptr;
 btCollisionDispatcher* PhysicsEngineInstance::dispatcher = nullptr;
 btSequentialImpulseConstraintSolver* PhysicsEngineInstance::solver = nullptr;
-ParticleFilterCallback* PhysicsEngineInstance::filter = nullptr;
 btSoftBodySolver* PhysicsEngineInstance::softSolver = nullptr;

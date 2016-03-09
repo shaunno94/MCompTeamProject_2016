@@ -3,6 +3,7 @@
 #include <video_out.h>	//Video System
 #include <gnmx\basegfxcontext.h>
 #include "Renderer.h"
+#include "DebugDraw.h"
 
 Renderer* PS4Renderer::child = nullptr;
 
@@ -234,6 +235,11 @@ void PS4Renderer::FillBuffers()
 	DrawSkyBox();
 	
 	InitCMD(offScreenBuffers[G_BUFFER]);
+
+#if DEBUG_DRAW
+	PhysicsEngineInstance::Instance()->debugDrawWorld();
+	DebugDraw::Instance()->RenderLine();
+#endif
 
 	child->OnRenderScene();
 }

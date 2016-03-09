@@ -5,7 +5,7 @@
 #include "Renderer.h"
 
 std::unordered_map<std::string, std::vector<Texture*>> Texture::s_textureRecords;
-unsigned int Texture::s_memoryUsage = 0;
+uint64_t Texture::textureMemoryUsage = 0;
 
 Texture* Texture::Make(const std::string& filePath, bool preload)
 {
@@ -110,12 +110,12 @@ void Texture::SetTextureParams(unsigned int flags)
 
 void Texture::MeasureMemoryUsageAdd(textureHandle textureId)
 {
-	s_memoryUsage += Renderer::GetInstance()->TextureMemoryUsage(textureId);
+	textureMemoryUsage += Renderer::GetInstance()->TextureMemoryUsage(textureId);
 }
 
 void Texture::MeasureMemoryUsageSubtract(textureHandle textureId)
 {
-	s_memoryUsage -= Renderer::GetInstance()->TextureMemoryUsage(textureId);
+	textureMemoryUsage -= Renderer::GetInstance()->TextureMemoryUsage(textureId);
 }
 
 void Texture::checkPath(std::string& path)
@@ -219,6 +219,10 @@ void Texture::LoadFromFile()
 	file.close();
 	delete rawContents;
 	textureLoaded = true;
+
+#ifdef TEXTURE_TRACK_STATS
+	MeasureMemoryUsageAdd(textureId);
+#endif
 }
 #endif
 

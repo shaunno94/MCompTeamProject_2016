@@ -24,11 +24,9 @@ GameScene::GameScene(ControllerManager* controller)
 	scores[0] = 0;
 	scores[1] = 0;
 
-#if DEBUG_DRAW
-#ifndef ORBIS
+#if DEBUG_DRAW 
 	PhysicsEngineInstance::Instance()->setDebugDrawer(DebugDraw::Instance());
 	DebugDraw::Context(Renderer::GetInstance());
-#endif
 #endif
 
 	SetupShaders();

@@ -282,6 +282,12 @@
     <ClInclude Include="UIControllerManager.h">
       <Filter>Header Files\Input</Filter>
     </ClInclude>
+    <ClInclude Include="DebugDrawPS4.h">
+      <Filter>Header Files\GNM_API</Filter>
+    </ClInclude>
+    <ClInclude Include="DebugDrawOGL.h">
+      <Filter>Header Files\OGL_API</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Renderer.cpp">
@@ -455,6 +461,12 @@
     <ClCompile Include="UIControllerManager.cpp">
       <Filter>Source Files\Input</Filter>
     </ClCompile>
+    <ClCompile Include="DebugDrawPS4.cpp">
+      <Filter>Source Files\GNM_API</Filter>
+    </ClCompile>
+    <ClCompile Include="DebugDrawOGL.cpp">
+      <Filter>Source Files\OGL_API</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <OrbisWavePsslc Include="textureVertex.pssl">
@@ -485,6 +497,12 @@
       <Filter>PS4Shaders</Filter>
     </OrbisWavePsslc>
     <OrbisWavePsslc Include="TexturedVertex.pssl">
+      <Filter>PS4Shaders</Filter>
+    </OrbisWavePsslc>
+    <OrbisWavePsslc Include="DebugVertex.pssl">
+      <Filter>PS4Shaders</Filter>
+    </OrbisWavePsslc>
+    <OrbisWavePsslc Include="DebugFrag.pssl">
       <Filter>PS4Shaders</Filter>
     </OrbisWavePsslc>
   </ItemGroup>

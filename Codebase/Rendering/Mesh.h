@@ -142,7 +142,7 @@ public:
 	virtual void BufferData() = 0;
 	virtual void SetPrimitiveType(pType type) = 0;
 
-	static uint32_t MeshMemoryUsage;
+	static uint64_t GetMeshMemUsage() { return MeshMemoryUsage; }
 
 protected:
 	//Helper function for GenerateTangents
@@ -178,4 +178,5 @@ protected:
 	uint32_t*	m_Indices;
 
 	static void CalcMeshUsage(Mesh* m);
+	static uint64_t MeshMemoryUsage;
 };

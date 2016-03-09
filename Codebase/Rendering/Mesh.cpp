@@ -5,7 +5,7 @@
 #include "PS4Mesh.h"
 #endif
 
-uint32_t Mesh::MeshMemoryUsage = 0;
+uint64_t Mesh::MeshMemoryUsage = 0;
 
 Mesh::Mesh(void)
 {

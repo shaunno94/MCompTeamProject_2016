@@ -1,5 +1,6 @@
 #pragma once
 #include <Math\Matrix4Simple.h>
+#include <cinttypes>
 /** @defgroup Rendering Rendering
 *  Rendering related functionality.
 *  @{

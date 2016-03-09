@@ -56,9 +56,11 @@ public:
 	void UpdateUniform(const shaderResourceLocation& location, int i);
 	void UpdateUniform(const shaderResourceLocation& location, unsigned int u);
 	void UpdateShaderMatrices();
+
 	void SetTextureFlags(unsigned int id, unsigned int flags);
 	unsigned int TextureMemoryUsage(unsigned int id);
 	void SetTexture(const shaderResourceLocation& id, textureHandle handle);
+	uint64_t GetRendererMemUsage() const { return rendererMemUsage; }
 
 protected:
 	virtual void	Resize(int x, int y);
@@ -111,5 +113,7 @@ protected:
 
 	GameObject* quad;
 	static Renderer* child;
+
+	static uint64_t rendererMemUsage;
 };
 #endif

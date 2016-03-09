@@ -88,7 +88,6 @@ public:
 		return m_softBodies;
 	}
 
-
 	virtual void rayTest(const btVector3& rayFromWorld, const btVector3& rayToWorld, RayResultCallback& resultCallback) const; 
 
 	/// rayTestSingle performs a raycast call and calls the resultCallback. It is used internally by rayTest.

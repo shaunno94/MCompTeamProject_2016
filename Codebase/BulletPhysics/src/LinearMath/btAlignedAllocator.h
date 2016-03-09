@@ -54,7 +54,6 @@ void btAlignedAllocSetCustom(btAllocFunc *allocFunc, btFreeFunc *freeFunc);
 ///If the developer has already an custom aligned allocator, then btAlignedAllocSetCustomAligned can be used. The default aligned allocator pre-allocates extra memory using the non-aligned allocator, and instruments it.
 void btAlignedAllocSetCustomAligned(btAlignedAllocFunc *allocFunc, btAlignedFreeFunc *freeFunc);
 
-
 ///The btAlignedAllocator is a portable class for aligned memory allocations.
 ///Default implementations for unaligned and aligned allocations can be overridden by a custom allocator using btAlignedAllocSetCustom and btAlignedAllocSetCustomAligned.
 template < typename T , unsigned Alignment >
