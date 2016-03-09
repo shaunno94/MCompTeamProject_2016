@@ -62,6 +62,7 @@ public:
 	int GetGoalScored() { return goalScored; }
 
 protected:
+	
 	ControllerManager* myControllers;
 	GameCollisionFilter* goalBallFilter;
 	int scores[2];

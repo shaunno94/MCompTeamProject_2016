@@ -16,8 +16,8 @@ GameScene::GameScene(ControllerManager* controller)
 		std::cout << "Particle Manager not Initialised" << std::endl;
 	}
 #endif
-	GUISystem::Initialise();
-	if (!GUISystem::GetInstance().HasInitialised())
+	guiSystem = new GUISystem();
+	if (!guiSystem->HasInitialised())
 	{
 		std::cout << "GUI not Initialised!" << std::endl;
 	}
@@ -43,10 +43,9 @@ GameScene::GameScene(ControllerManager* controller)
 GameScene::~GameScene()
 {
 	PhysicsEngineInstance::Release();
-	GUISystem::Destroy();
+	delete guiSystem;
 
 #ifndef ORBIS
-	SoundSystem::Release();
 	ParticleManager::Destroy();
 #endif
 
@@ -275,7 +274,7 @@ void GameScene::DrawGUI()
 	hudOrtho->AddGUIComponent(graphicsDebugTextComponent);
 
 	//Add Orthographic component to GUISystem
-	GUISystem::GetInstance().AddOrthoComponent(hudOrtho);
+	guiSystem->AddOrthoComponent(hudOrtho);
 }
 
 void GameScene::SetupControls()

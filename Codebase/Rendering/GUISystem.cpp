@@ -1,19 +1,16 @@
 #include "GUISystem.h"
 
-GUISystem* GUISystem::guiSystem;
 
 GUISystem::GUISystem()
 {
 	init = true;
 }
 
-bool GUISystem::Initialise()	{
-	guiSystem = new GUISystem();
-
-	if (!guiSystem->HasInitialised()) {
-		return false;
-	}
-	return true;
+GUISystem::~GUISystem()
+{
+	for (auto& guiComp : m_component)
+		delete guiComp;
+	m_component.clear();
 }
 
 bool GUISystem::HasInitialised()
@@ -49,9 +46,4 @@ void GUISystem::Render()
 	{
 		m_component[i]->Render();
 	}
-}
-
-void GUISystem::Destroy()
-{
-	guiSystem->m_component.clear();
 }

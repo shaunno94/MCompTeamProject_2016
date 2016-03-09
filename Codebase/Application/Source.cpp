@@ -39,16 +39,22 @@ int main(void)
 	PS4Input input = PS4Input();
 #endif
 
-	ControllerManager* myControllers = new LocalControlManager;
+	ControllerManager* myControllers = new LocalControlManager();
 	UIControllerManager* uiController = new UIControllerManager();
+	vector<Scene*> scenes;
 	//Create GameScene
-	//GameScene* gameScene = new GameScene(myControllers);
+	GameScene* gameScene = new GameScene(myControllers);
 	MenuScene* menuScene = new MenuScene(uiController);
+	scenes.push_back(menuScene);
+	scenes.push_back(gameScene);
+
+	uiController->SetAvailableScene(scenes);
+	
 	//Set current scene to the game
+	renderer.SetCurrentScene(menuScene);
 	//renderer.SetCurrentScene(gameScene);
 	//gameScene->SetControllerActor();
 	//gameScene->SetupAI();
-	renderer.SetCurrentScene(menuScene);
 
 #ifndef ORBIS
 	while (Window::GetWindow().UpdateWindow() && !Window::GetKeyboard()->KeyDown(KEYBOARD_ESCAPE))
@@ -86,8 +92,9 @@ int main(void)
 #endif
 	}
 
-	delete menuScene;
-	//delete gameScene;
+	SoundSystem::Instance()->Release();
+	//delete menuScene;
+	delete gameScene;
 
 	return 0;
 }

@@ -31,8 +31,6 @@ public:
 		return currentScene;
 	}
 
-	void SwitchScene();
-
 	Renderer(std::string title, int sizeX, int sizeY, bool fullScreen);
 	virtual ~Renderer(void);
 

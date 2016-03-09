@@ -12,7 +12,7 @@ public:
 
 	virtual ~GUIComponent()
 	{
-		delete m_Material;
+		
 	}
 
 	//virtual void Update() = 0;

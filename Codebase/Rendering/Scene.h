@@ -4,6 +4,7 @@
 #include "Camera.h"
 #include "Helpers\collections.h"
 #include "Frustum.h"
+#include "GUISystem.h"
 
 class Renderer;
 
@@ -31,6 +32,7 @@ public:
 	unsigned int getNumLightObjects() { return lightObjects.size(); }
 	const char** getCubeMapDir()	{ return cubemapDir; }
 	unsigned int getNumGhostObjects() { return ghostObjects.size(); }
+	GUISystem* getGUISystem() { return guiSystem; }
 
 	Camera* getCamera(){ return cam; }
 
@@ -62,5 +64,6 @@ protected:
 	std::vector<GameObject*> ghostObjects;
 	Camera* cam;
 	const char** cubemapDir;
+	GUISystem* guiSystem;
 };
 

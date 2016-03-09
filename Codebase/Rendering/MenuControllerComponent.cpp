@@ -1,4 +1,7 @@
 #include "MenuControllerComponent.h"
+#include "Renderer.h"
+#include "GUISystem.h"
+#include "Application\GameScene.h"
 
 MenuControllerComponent::MenuControllerComponent(MenuOrthoComponent* parent, unsigned int type)
 {
@@ -29,7 +32,22 @@ void MenuControllerComponent::SelectPrevious()
 	m_parent->SetSelection(selection);
 }
 
-void MenuControllerComponent::Submit()
+void MenuControllerComponent::Submit(std::vector<Scene*>& scene)
 {
-	//TODO: Submit the selection
+
+	switch (m_parent->GetSelection())
+	{
+	case SINGLE_PLAYER:
+		Renderer::GetInstance()->GetCurrentScene()->getGUISystem();
+		Renderer::GetInstance()->SetCurrentScene(scene[1]);
+		dynamic_cast<GameScene*>(Renderer::GetInstance()->GetCurrentScene())->SetControllerActor();
+		dynamic_cast<GameScene*>(Renderer::GetInstance()->GetCurrentScene())->SetupAI();
+		break;
+	case MULTIPLAYER:
+		break;
+	case QUIT:
+		break;
+	default:
+		std::cout << "Selection Invalid!";
+	}
 }

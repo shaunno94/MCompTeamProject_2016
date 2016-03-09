@@ -7,7 +7,7 @@ GameScene::GameScene(ControllerManager* controller)
 	PhysicsEngineInstance::Instance()->setGravity(btVector3(0, -9.81, 0));
 
 	SoundSystem::Initialise();
-	GUISystem::Initialise();
+	guiSystem = new GUISystem();
 	ParticleManager::Initialise();
 
 	if (ParticleManager::GetManager().HasInitialised())
@@ -15,7 +15,7 @@ GameScene::GameScene(ControllerManager* controller)
 		std::cout << "Particle Manager not Initialised" << std::endl;
 	}
 
-	if (!GUISystem::GetInstance().HasInitialised())
+	if (!guiSystem->HasInitialised())
 	{
 		std::cout << "GUI not Initialised!" << std::endl;
 	}
@@ -41,7 +41,7 @@ GameScene::GameScene(ControllerManager* controller)
 GameScene::~GameScene()
 {
 	PhysicsEngineInstance::Release();
-	GUISystem::Destroy();
+	delete guiSystem;
 	ParticleManager::Destroy();
 
 #if DEBUG_DRAW
@@ -251,7 +251,7 @@ void GameScene::DrawGUI()
 	hudOrtho->AddGUIComponent(scoreboardComponent);
 
 	//Add Orthographic component to GUISystem
-	GUISystem::GetInstance().AddOrthoComponent(hudOrtho);
+	guiSystem->AddOrthoComponent(hudOrtho);
 
 }
 

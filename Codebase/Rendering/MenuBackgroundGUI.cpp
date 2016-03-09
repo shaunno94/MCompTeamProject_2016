@@ -7,21 +7,21 @@ MenuBackgroundGUI::MenuBackgroundGUI(Material* material, bool visible) : GUIComp
 
 	m_Mesh = Mesh::GenerateQuad();
 	SetRenderComponent(new RenderComponent(m_Material, m_Mesh));
-//	background->SetWorldTransform(Mat4Graphics::Translation(Vec3Graphics(350, 700, 0)) * Mat4Graphics::Scale(Vec3Graphics(40, 40, 1)));
 }
 
 MenuBackgroundGUI::~MenuBackgroundGUI()
 {
 	delete m_Mesh;
+	m_Texture->ClearAll();
 }
 
 
 void MenuBackgroundGUI::Render()
 {
-	//for (int i = 0; i < m_Children.size(); i++)
-	//{
-	//	m_Children[i]->GetRenderComponent()->Draw();
-	//}
+	for (int i = 0; i < m_Children.size(); i++)
+	{
+		m_Children[i]->GetRenderComponent()->Draw();
+	}
 
 	GetRenderComponent()->Draw();
 

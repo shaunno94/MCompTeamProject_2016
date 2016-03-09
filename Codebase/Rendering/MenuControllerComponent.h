@@ -11,7 +11,7 @@ public:
 
 	void SelectNext();
 	void SelectPrevious();
-	void Submit();
+	void Submit(std::vector<Scene*>& scenes);
 
 
 protected:

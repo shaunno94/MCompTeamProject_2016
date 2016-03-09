@@ -18,7 +18,6 @@ TextGUIComponent::~TextGUIComponent()
 {
 	delete m_Font;
 	delete m_Mesh;
-	delete m_RenderComp;
 }
 
 void TextGUIComponent::Update(const std::string& text)

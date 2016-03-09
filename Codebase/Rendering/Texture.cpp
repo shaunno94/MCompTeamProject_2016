@@ -181,7 +181,7 @@ void Texture::LoadFromFile()
 	{
 		std::stringstream message;
 		message << "SOIL loading error: '" << SOIL_last_result() << "' (" << filePath << ")";
-		//std::cout << "SOIL loading error: '" << SOIL_last_result() << "' (" << filePath << ")";
+		std::cout << "SOIL loading error: '" << SOIL_last_result() << "' (" << filePath << ")";
 		throw std::ios_base::failure(message.str());
 	}
 	textureLoaded = true;

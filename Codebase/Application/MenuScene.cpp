@@ -7,9 +7,9 @@ MenuScene::MenuScene(UIControllerManager* controller)
 #ifndef ORBIS
 	SoundSystem::Initialise();
 #endif
-	GUISystem::Initialise();
+	guiSystem = new GUISystem();
 	
-	if (!GUISystem::GetInstance().HasInitialised())
+	if (!guiSystem->HasInitialised())
 	{
 		std::cout << "GUI not Initialised!" << std::endl;
 	}
@@ -26,10 +26,8 @@ MenuScene::MenuScene(UIControllerManager* controller)
 
 MenuScene::~MenuScene()
 {
-#ifndef ORBIS
-	SoundSystem::Release();
-#endif
-	GUISystem::Destroy();
+	delete btnMaterial;
+	delete guiSystem;
 }
 
 
@@ -80,8 +78,8 @@ void MenuScene::DrawGUI()
 	menuOrtho->AddGUIComponent(multiBtn);
 	menuOrtho->AddGUIComponent(exitBtn);
 
-	GUISystem::GetInstance().AddOrthoComponent(bgOrtho);
-	GUISystem::GetInstance().AddOrthoComponent(menuOrtho);
+	guiSystem->AddOrthoComponent(bgOrtho);
+	guiSystem->AddOrthoComponent(menuOrtho);
 }
 
 void MenuScene::LoadAudio()

@@ -13,7 +13,7 @@ MenuController::~MenuController()
 
 }
 
-void MenuController::CheckInput()
+void MenuController::CheckInput(std::vector<Scene*>& scenes)
 {
 	if (Window::GetKeyboard()->KeyTriggered(KEYBOARD_UP) || Window::GetKeyboard()->KeyTriggered(KEYBOARD_W))
 	{
@@ -29,7 +29,7 @@ void MenuController::CheckInput()
 
 	if (Window::GetKeyboard()->KeyTriggered(KEYBOARD_RETURN))
 	{
-		object->Submit();
+		object->Submit(scenes);
 	//	std::cout << "RETURN" << std::endl;
 	}
 }

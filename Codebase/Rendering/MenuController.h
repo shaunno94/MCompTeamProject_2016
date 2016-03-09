@@ -10,7 +10,7 @@ public:
 	MenuController(MenuControllerComponent* object);
 	~MenuController();
 
-	void CheckInput();
+	void CheckInput(std::vector<Scene*>& scenes);
 	void setObject(MenuControllerComponent* object){ this->object = object; }
 
 protected:
