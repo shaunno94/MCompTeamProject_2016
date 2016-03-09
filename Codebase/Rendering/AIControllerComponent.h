@@ -14,6 +14,8 @@ public:
 
 	virtual void updateObject(float dt) override;
 
+//	void CreateForce(btVector3& parentPos, btVector3& dest);
+
 protected:
 	unsigned int m_type;
 	StateMachine* m_StateMachine;

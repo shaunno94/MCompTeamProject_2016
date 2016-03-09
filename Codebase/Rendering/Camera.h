@@ -45,6 +45,11 @@ public:
 
 	~Camera(void){};
 
+	void reset(){
+		pitch = 0.0;
+		yaw = 90.0;
+	}
+
 	void UpdateCamera(float msec = 10.0f);
 
 	//Builds a view matrix for the current camera variables, suitable for sending straight
@@ -52,7 +57,7 @@ public:
 	Mat4Graphics BuildViewMatrix();
 
 	//Gets position in world space
-	Vec3Graphics GetPosition() const { return position;}
+	Vec3Graphics GetPosition() const;
 	//Sets position in world space
 	void	SetPosition(Vec3Graphics val) { position = val;}
 
@@ -65,6 +70,8 @@ public:
 	float	GetPitch() const { return pitch;}
 	//Sets pitch, in degrees
 	void	SetPitch(float p) {pitch = p;}
+
+	bool autocam = false;
 
 protected:
 	float	yaw;

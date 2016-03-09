@@ -45,6 +45,8 @@ protected:
 	void OnRenderLights();
 	void RenderGUI();
 
+	virtual void Resize(int x, int y)override;
+
 	Frustum frameFrustrum;
 	Frustum lightFrustrum;
 	static Renderer* s_renderer;

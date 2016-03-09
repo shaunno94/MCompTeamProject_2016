@@ -63,12 +63,11 @@ void PositionState::Update(float dt)
 
 	btVector3 dest = ballPos - controlPoint2 * 5.0f;
 
-
 	controlPoint1 *= 2.0f;
 	controlPoint2 *= 2.0f;
 
-	float x = hermiteCurveDerivativeUsingTangents(start.x(), controlPoint1.x(), controlPoint2.x(), dest.x(), 0.01f);
-	float z = hermiteCurveDerivativeUsingTangents(start.z(), controlPoint1.z(), controlPoint2.z(), dest.z(), 0.01f);
+	float x = hermiteCurveDerivativeUsingTangents(start.x(), controlPoint1.x(), controlPoint2.x(), dest.x(), 0.3f);
+	float z = hermiteCurveDerivativeUsingTangents(start.z(), controlPoint1.z(), controlPoint2.z(), dest.z(), 0.3f);
 
 	m_parent->GetControllerComponent()->AddForce(x, 0.0f, z);
 }
