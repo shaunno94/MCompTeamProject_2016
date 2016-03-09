@@ -121,7 +121,7 @@ void GameScene::SetupGameObjects()
 	auto ballMaterial = new Material(simpleShader);
 	ballMaterial->Set(ReservedMeshTextures.DIFFUSE.name, Texture::Get(TEXTURE_DIR"football.png", true));
 	ball = new BallGameObject("ball", ballMaterial);
-	
+
 	player = new CarGameObject(Vec3Physics(100, 2, 0), QuatPhysics(0, 1, 0, 1), playerMaterial, "player");
 
 	shooterAI = new CarGameObject(Vec3Physics(-190, 2, 30), QuatPhysics(0, 0, 0, 1), aiMaterial, "shooterAI", COL_AI_CAR);

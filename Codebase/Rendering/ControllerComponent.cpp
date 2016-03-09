@@ -80,8 +80,9 @@ void ControllerComponent::updateObject(float dt)
 	force.ToZero();
 	impulse.ToZero();
 
-	//clamp speed
-	float maxSpeed = 100.0f;
+	float maxSpeed = 100;
+
+	//adjust torque relative to speed
 	if (!airbourne() && torque.LengthSq() > 0)
 	{
 		float forwardVelocity = getForwardVelocity();
@@ -92,7 +93,7 @@ void ControllerComponent::updateObject(float dt)
 	dynamic_cast<RigidPhysicsObject*>(m_parent->GetPhysicsComponent())->GetPhysicsBody()->applyTorque(btVector3(torque.x, torque.y, torque.z)*dt);
 	torque.ToZero();
 
-	//vary friction
+	//vary friction relative to direction
 	Vec3Physics left = (getOrientation() * Vec3Physics(-1, 0, 0)).Normalize();
 	btVector3 btleft(left.x, left.y, left.z);
 	btVector3 velocity = -m_parent->GetPhysicsComponent()->GetPhysicsBody()->getInterpolationLinearVelocity();
@@ -107,15 +108,17 @@ void ControllerComponent::updateObject(float dt)
 		friction = std::abs((2.0 * leftDot));
 		if (dynamic_cast<GameScene*>(Renderer::GetInstance()->GetCurrentScene())->GetGoalScored() == 0)
 		{
+			//clamp speed
 			float velocityFactor = (maxSpeed * maxSpeed) / std::max(fullVelocity.length2(), maxSpeed * maxSpeed);
 			dynamic_cast<RigidPhysicsObject*>(m_parent->GetPhysicsComponent())->GetPhysicsBody()->setLinearVelocity(fullVelocity * velocityFactor);
-		
+			if (m_parent->GetName() == "player")
+			std::cout << getForwardVelocity() << endl;
 		}
 		friction = friction <= 1 ? 1 : friction;
 
 		//adjust for rotation
 		if (!airbourne()){
-			float angle = leftDot * 1.5708;
+			float angle = leftDot * 1.5708 * 0.02;
 				if (getForwardVelocity() < 0)
 				angle = -angle;
 			dynamic_cast<RigidPhysicsObject*>(m_parent->GetPhysicsComponent())->GetPhysicsBody()->setLinearVelocity(fullVelocity * btMatrix3x3(btQuaternion(btVector3(0, 1, 0), -angle)));
