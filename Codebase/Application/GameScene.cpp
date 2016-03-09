@@ -59,21 +59,20 @@ GameScene::~GameScene()
 
 void GameScene::SetControllerActor()
 {
-	myControllers->setActor(Renderer::GetInstance()->GetCurrentScene()->findGameObject("shooterAI"), 0);
-	myControllers->setActor(Renderer::GetInstance()->GetCurrentScene()->findGameObject("goalieAI"), 1);
+	myControllers->setActor(Renderer::GetInstance()->GetCurrentScene()->findGameObject("shooterAI"), SHOOTER);
+	myControllers->setActor(Renderer::GetInstance()->GetCurrentScene()->findGameObject("goalieAI"), GOALKEEPER);
+	//myControllers->setActor(Renderer::GetInstance()->GetCurrentScene()->findGameObject("aggroAI"), AGGRESSIVE);
+	myControllers->setActor(Renderer::GetInstance()->GetCurrentScene()->findGameObject("aggroAI"), SHOOTER); // Whilst debugging
 }
 
 void GameScene::IncrementScore(int team)
 {
 	scores[team % 2]++;
-	std::cout << "TEAM " << team + 1 << " SCORED!" << std::endl;
-	std::cout << scores[0] << " - " << scores[1] << std::endl;
-#ifndef ORBIS
+
 	SoundMOD mod;
 	mod.looping = false;
 	mod.isGlobal = true;
 	SoundSystem::Instance()->Play(SoundManager::GetSound(BANG), mod);
-#endif
 	scoreboardComponent->Update(scores[0], scores[1], currentTime);
 }
 
@@ -128,12 +127,13 @@ void GameScene::SetupGameObjects()
 	ballMaterial->Set(ReservedMeshTextures.DIFFUSE.name, Texture::Get(TEXTURE_DIR"football.png", true));
 	ball = new BallGameObject("ball", ballMaterial);
 
-
 	player = new CarGameObject(Vec3Physics(100, 2, 0), QuatPhysics(0, 1, 0, 1), playerMaterial, "player");
 
 	shooterAI = new CarGameObject(Vec3Physics(-190, 2, 30), QuatPhysics(0, 0, 0, 1), aiMaterial, "shooterAI", COL_AI_CAR);
 
-	goalieAI = new CarGameObject(Vec3Physics(-230, 2, -30), QuatPhysics(0, 0, 0, 1), ai2Material, "goalieAI", COL_AI_CAR);
+	goalieAI = new CarGameObject(Vec3Physics(-230, 2, 0), QuatPhysics(0, 0, 0, 1), aiMaterial, "goalieAI", COL_AI_CAR);
+
+	aggroAI = new CarGameObject(Vec3Physics(-190, 2, -30), QuatPhysics(0, 0, 0, 1), ai2Material, "aggroAI", COL_AI_CAR);
 
 
 	// Create Stadium
@@ -157,6 +157,7 @@ void GameScene::SetupGameObjects()
 	addGameObject(ball);
 	addGameObject(shooterAI);
 	addGameObject(goalieAI);
+	addGameObject(aggroAI);
 	addGameObject(goal1);
 	addGameObject(goal2);
 
@@ -165,7 +166,6 @@ void GameScene::SetupGameObjects()
 	goalBallFilter = new GameCollisionFilter(this);
 	PhysicsEngineInstance::Instance()->getPairCache()->setOverlapFilterCallback(goalBallFilter);
 }
-
 
 void GameScene::LoadAudio()
 {
@@ -191,10 +191,10 @@ void GameScene::LoadAudio()
 	player->SetAudioComponent(new AudioCompCarLitener(true));
 	shooterAI->SetAudioComponent(new AudioCompCar(false));
 	goalieAI->SetAudioComponent(new AudioCompCar(false));
+	aggroAI->SetAudioComponent(new AudioCompCar(false));
 	//-------- SOUND
 #endif
 }
-
 
 void GameScene::SetupShaders()
 {
@@ -293,35 +293,29 @@ void GameScene::SetupAI()
 void GameScene::ResetObjects()
 //reset the positions and forces of objects in the scene
 {
-	btVector3 zeroVector = btVector3(0, 0, 0);
 	PhysicsEngineInstance::Instance()->clearForces();
 
-	dynamic_cast<RigidPhysicsObject*>(ball->GetPhysicsComponent())->GetPhysicsBody()->clearForces();
-	dynamic_cast<RigidPhysicsObject*>(ball->GetPhysicsComponent())->GetPhysicsBody()->setLinearVelocity(zeroVector);
-	dynamic_cast<RigidPhysicsObject*>(ball->GetPhysicsComponent())->GetPhysicsBody()->setAngularVelocity(zeroVector);
+	//TODO: Reset player positions
+	ResetObject(*ball);
+	ResetObject(*player);
+	ResetObject(*shooterAI);
+	ResetObject(*goalieAI);
+	ResetObject(*aggroAI);
 
-	ball->GetPhysicsComponent()->GetPhysicsBody()->setWorldTransform(btTransform(btQuaternion(0, 0, 0, 1), btVector3(0, 100, 0)));
-
-	dynamic_cast<RigidPhysicsObject*>(shooterAI->GetPhysicsComponent())->GetPhysicsBody()->clearForces();
-	dynamic_cast<RigidPhysicsObject*>(shooterAI->GetPhysicsComponent())->GetPhysicsBody()->setLinearVelocity(zeroVector);
-	dynamic_cast<RigidPhysicsObject*>(shooterAI->GetPhysicsComponent())->GetPhysicsBody()->setAngularVelocity(zeroVector);
-
-	shooterAI->GetPhysicsComponent()->GetPhysicsBody()->setWorldTransform(btTransform(btQuaternion(0, -1, 0, 1), btVector3(-190, 2, 30)));
-
-	dynamic_cast<RigidPhysicsObject*>(goalieAI->GetPhysicsComponent())->GetPhysicsBody()->clearForces();
-	dynamic_cast<RigidPhysicsObject*>(goalieAI->GetPhysicsComponent())->GetPhysicsBody()->setLinearVelocity(zeroVector);
-	dynamic_cast<RigidPhysicsObject*>(goalieAI->GetPhysicsComponent())->GetPhysicsBody()->setAngularVelocity(zeroVector);
-
-	goalieAI->GetPhysicsComponent()->GetPhysicsBody()->setWorldTransform(btTransform(btQuaternion(0, -0.5, 0, 1), btVector3(-230, 2, -30)));
-
-	dynamic_cast<RigidPhysicsObject*>(player->GetPhysicsComponent())->GetPhysicsBody()->clearForces();
-	dynamic_cast<RigidPhysicsObject*>(player->GetPhysicsComponent())->GetPhysicsBody()->setLinearVelocity(zeroVector);
-	dynamic_cast<RigidPhysicsObject*>(player->GetPhysicsComponent())->GetPhysicsBody()->setAngularVelocity(zeroVector);
-
-	player->GetPhysicsComponent()->GetPhysicsBody()->setWorldTransform(btTransform(btQuaternion(0, 1, 0, 1), btVector3(100, 2, 0)));
 	player->SetWorldTransform(Mat4Graphics::RotationY(-90) * Mat4Graphics::Translation(Vec3Graphics(100, 2, 0)));//have to reset this world transform too, for the camera
-
 	cam->reset();
+}
+
+void GameScene::ResetObject(GameObject& object) {
+
+	btVector3 zeroVector = btVector3(0, 0, 0);
+	dynamic_cast<RigidPhysicsObject*>(object.GetPhysicsComponent())->GetPhysicsBody()->clearForces();
+	dynamic_cast<RigidPhysicsObject*>(object.GetPhysicsComponent())->GetPhysicsBody()->setLinearVelocity(zeroVector);
+	dynamic_cast<RigidPhysicsObject*>(object.GetPhysicsComponent())->GetPhysicsBody()->setAngularVelocity(zeroVector);
+
+	object.GetPhysicsComponent()->GetPhysicsBody()->setWorldTransform(btTransform(btQuaternion(0, 0, 0, 1), btVector3(object.GetSpawnPoint().x, object.GetSpawnPoint().y, object.GetSpawnPoint().z)));
+	if (object.GetControllerComponent()) 
+		object.GetControllerComponent()->reset();
 }
 
 

@@ -17,6 +17,8 @@ CarGameObject::CarGameObject(const Vec3Physics& position, const QuatPhysics& rot
 	carPhysics->GetPhysicsBody()->getBroadphaseProxy()->m_collisionFilterMask = collisionFilterMask;
 	carPhysics->GetPhysicsBody()->setDamping(0.3, 0.5);
 
+	m_spawnPoint = position;
+
 	this->SetRenderComponent(new RenderComponent(material, carBaseMesh));
 	this->SetLocalTransform(Mat4Graphics::Scale(Vector3Simple(10, 10, 10)) * Mat4Graphics::Translation(Vector3Simple(0, -0.25f, 0)));
 	this->SetPhysicsComponent(carPhysics);

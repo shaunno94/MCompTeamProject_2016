@@ -24,7 +24,6 @@ bool TimingTrigger::HasTriggered()
 
 	if (m_frameCount == m_triggerFrames) {
 		m_frameCount = 0;
-		std::cout << "SHOOT -> POSITION" << std::endl;
 		return true;
 	}
 

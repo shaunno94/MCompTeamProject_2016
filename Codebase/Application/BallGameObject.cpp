@@ -15,6 +15,8 @@ BallGameObject::BallGameObject(const std::string& name, Material* material) : Ga
 	body->setRollingFriction(0.5);
 	body->setHitFraction(0.5);
 	SetPhysicsComponent(ballPhysics);
+
+	m_spawnPoint = Vec3Graphics(0,0,0);
 }
 
 
