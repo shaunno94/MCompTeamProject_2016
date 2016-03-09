@@ -12,7 +12,7 @@ PickupGameObject::PickupGameObject(const std::string& name, float radius, const 
 	broadphaseProxy->m_collisionFilterMask = COL_PICKUP;
 	m_proxyId = broadphaseProxy->getUid();
 	m_disabled = false;
-	
+
 	m_initialPos = GetLocalTransform().GetTranslation();
 }
 
@@ -24,21 +24,26 @@ PickupGameObject::~PickupGameObject()
 
 void PickupGameObject::Disable(float millisec)
 {
-	m_disabled = true;
-	m_timeoutMillisec = millisec;
-	m_lastActiveTransform = GetPhysicsComponent()->GetPhysicsBody()->getWorldTransform();
-	m_lastActiveTransform.setOrigin(btVector3(m_initialPos.x, m_initialPos.y, m_initialPos.z));
-	btTransform temp = m_lastActiveTransform;
-	temp.setOrigin(btVector3(0.0f, -1000.0f, 0.0f));
-	GetPhysicsComponent()->GetPhysicsBody()->setWorldTransform(temp);
-	//static_cast<RigidPhysicsObject*>(GetPhysicsComponent())->GetPhysicsBody()->getMotionState()->setWorldTransform(temp);
-	GetRenderComponent()->disabled = true;
+	if (!m_disabled)
+	{
+		m_disabled = true;
+		m_timeoutMillisec = millisec;
+		m_timer.Get();
+		m_lastActiveTransform = GetPhysicsComponent()->GetPhysicsBody()->getWorldTransform();
+		btTransform temp = m_lastActiveTransform;
+		temp.setOrigin(btVector3(0.0f, -1000.0f, 0.0f));
+		GetPhysicsComponent()->GetPhysicsBody()->setWorldTransform(temp);
+		GetRenderComponent()->disabled = true;
+	}
 }
 void PickupGameObject::Enable()
 {
-	m_disabled = false;
-	GetPhysicsComponent()->GetPhysicsBody()->setWorldTransform(m_lastActiveTransform);
-	GetRenderComponent()->disabled = false;
+	if (m_disabled)
+	{
+		m_disabled = false;
+		GetPhysicsComponent()->GetPhysicsBody()->setWorldTransform(m_lastActiveTransform);
+		GetRenderComponent()->disabled = false;
+	}
 }
 
 
@@ -46,7 +51,7 @@ void PickupGameObject::OnUpdateObject(float dt)
 {
 	if (m_disabled)
 	{
-		if (m_timer.GetMin(m_timeoutMillisec))
+		if (m_timer.GetMin(m_timeoutMillisec, 1000) > 0.0f)
 		{
 			Enable();
 		}
