@@ -1,5 +1,6 @@
 #ifndef ORBIS
 #include "KeyboardController.h"
+#include "Renderer.h"
 
 KeyboardController::KeyboardController(ControllerComponent* object)
 {
@@ -68,9 +69,13 @@ void KeyboardController::CheckInput(){
 
 	object->turnWheels(turn);
 
-	if (Window::GetKeyboard()->KeyTriggered(KEYBOARD_SPACE))
+	if (!airbourne && Window::GetKeyboard()->KeyTriggered(KEYBOARD_SPACE))
 	{
 		impulse += (orientation * Vec3Physics(0, jump, -jump *.5));
+		SoundMOD MOD;
+		MOD.looping = false;
+		MOD.isGlobal = true;
+		SoundSystem::Instance()->Play(SoundManager::GetSound(BANG),MOD);
 	}
 
 	object->AddForce(force.x, force.y, force.z);
@@ -82,9 +87,20 @@ void KeyboardController::CheckInput(){
 		object->reset();
 	}
 
+	if (Window::GetKeyboard()->KeyTriggered(KEYBOARD_C))
+	{
+		Renderer::GetInstance()->GetCurrentScene()->getCamera()->autocam = !Renderer::GetInstance()->GetCurrentScene()->getCamera()->autocam;
+		Renderer::GetInstance()->GetCurrentScene()->getCamera()->reset();
+	}
+
 	//------camera control-------//
 	float pitch = (Window::GetMouse()->GetRelativePosition().y);
 	float yaw = (Window::GetMouse()->GetRelativePosition().x);
 	object->setCameraControl(pitch, yaw);
+
+	if (Window::GetKeyboard()->KeyTriggered(KEYBOARD_Q))
+	{
+		Renderer::GetInstance()->GetCurrentScene()->getCamera()->reset();
+	}
 }
 #endif

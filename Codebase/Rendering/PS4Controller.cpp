@@ -1,5 +1,6 @@
 #ifdef ORBIS
 #include "PS4Controller.h"
+#include "Renderer.h"
 
 
 PS4Controller::PS4Controller(ControllerComponent* object)
@@ -22,18 +23,18 @@ void PS4Controller::CheckInput()
 
 	if (object->airbourne())
 	{
-		torque += (/*orientation **/Vec3Physics(0, 0, -PS4Input::getPS4Input()->GetAxis(LEFTSTICK).y)).Normalize() * airAccel * 0.7f;
-		torque += (/*orientation **/Vec3Physics(-PS4Input::getPS4Input()->GetAxis(LEFTSTICK).x, 0, 0)).Normalize() * airAccel;
+		torque += (orientation *Vec3Physics(0, 0, -1)).Normalize() * PS4Input::getPS4Input()->GetAxis(LEFTSTICK).x * airAccel * 0.7f;
+		torque += (orientation *Vec3Physics(1, 0, 0)).Normalize() * PS4Input::getPS4Input()->GetAxis(LEFTSTICK).y * airAccel;
 	}
 	else
 	{
-		force = (orientation * Vec3Physics(0, 0, -PS4Input::getPS4Input()->GetButton(BTN_R2))).Normalize() * accel;
-		force += (orientation * Vec3Physics(0, 0, PS4Input::getPS4Input()->GetButton(BTN_L2))).Normalize() * accel;
+		force = (orientation * Vec3Physics(0, 0, -1)).Normalize() * PS4Input::getPS4Input()->GetButton(BTN_R2)* accel;
+		force += (orientation * Vec3Physics(0, 0, 1)).Normalize() * PS4Input::getPS4Input()->GetButton(BTN_L2)* accel;
 		torque = (Vec3Physics(0, -PS4Input::getPS4Input()->GetAxis(LEFTSTICK).y * rotAccel, 0));
 
 		torque = (Vec3Physics(0, -PS4Input::getPS4Input()->GetAxis(LEFTSTICK).x * rotAccel, 0));
 		if (forward < 0){
-			torque = - torque;
+			torque = -torque;
 		}
 		object->turnWheels(PS4Input::getPS4Input()->GetAxis(LEFTSTICK).x);
 
@@ -47,12 +48,26 @@ void PS4Controller::CheckInput()
 	object->AddTorque(torque.x, torque.y, torque.z);
 	object->AddImpulse(impulse.x, impulse.y, impulse.z);
 
-	if (PS4Input::getPS4Input()->GetButtonDown(BTN_TRIANGLE))
+	if (PS4Input::getPS4Input()->GetButtonTriggered(BTN_TRIANGLE))
 	{
 		object->reset();
 	}
-	float pitch = (PS4Input::getPS4Input()->GetAxis(RIGHTSTICK).y);
-	float yaw = (PS4Input::getPS4Input()->GetAxis(RIGHTSTICK).x);
+
+	if (PS4Input::getPS4Input()->GetButtonTriggered(BTN_R3))
+	{
+		Renderer::GetInstance()->GetCurrentScene()->getCamera()->reset();
+	}
+
+	if (PS4Input::getPS4Input()->GetButtonTriggered(BTN_R1))
+	{
+		Renderer::GetInstance()->GetCurrentScene()->getCamera()->autocam = !Renderer::GetInstance()->GetCurrentScene()->getCamera()->autocam;
+		Renderer::GetInstance()->GetCurrentScene()->getCamera()->reset();
+	}
+
+	float sensitivityY = 1;
+	float sensitivityX = 3;
+	float pitch = (PS4Input::getPS4Input()->GetAxis(RIGHTSTICK).y * sensitivityY);
+	float yaw = (PS4Input::getPS4Input()->GetAxis(RIGHTSTICK).x * sensitivityX);
 	object->setCameraControl(pitch, yaw);
 }
 #endif

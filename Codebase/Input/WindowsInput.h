@@ -1,4 +1,5 @@
 #ifndef ORBIS
+
 #pragma once
 #include "InputBase.h"
 #include <windows.h>
@@ -22,4 +23,5 @@ public:
 	WindowsInput();
 	~WindowsInput();
 };
+
 #endif
