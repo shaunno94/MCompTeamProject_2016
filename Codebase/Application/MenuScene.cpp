@@ -27,13 +27,16 @@ MenuScene::MenuScene(UIControllerManager* controller)
 MenuScene::~MenuScene()
 {
 	delete btnMaterial;
-	delete guiSystem;
+	delete bgMaterial;
+	delete guiMaterial;
+	delete selectBtnMaterial;
+	if (guiSystem)
+		delete guiSystem;
 }
 
 
 void MenuScene::UpdateScene(float dt)
 {
-	//std::cout << menuOrtho->GetSelection() << std::endl;
 	m_Selected = menuOrtho->Update();
 }
 

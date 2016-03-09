@@ -28,10 +28,14 @@ public:
 	void LoadAudio();
 	void SetupControls();
 
+	GUISystem* getGUISystem(){ return guiSystem; }
+
 protected:
 	UIControllerManager* myControllers;
 
 	GameObject* test;
+	GUISystem* guiSystem;
+
 	
 	BaseShader* orthoShader;
 

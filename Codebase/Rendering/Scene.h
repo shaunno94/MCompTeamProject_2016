@@ -32,7 +32,6 @@ public:
 	unsigned int getNumLightObjects() { return lightObjects.size(); }
 	const char** getCubeMapDir()	{ return cubemapDir; }
 	unsigned int getNumGhostObjects() { return ghostObjects.size(); }
-	GUISystem* getGUISystem() { return guiSystem; }
 
 	Camera* getCamera(){ return cam; }
 
@@ -46,6 +45,7 @@ public:
 	virtual void UpdateScene(float dt);
 	void addLightObject(GameObject* obj);
 	void setCubeMap(const char** dir) { cubemapDir = dir; }
+	virtual GUISystem* getGUISystem();
 
 	unsigned char renderFlags; //triggers for graphical effects such as post processing and any other info required by the renderer
 
@@ -64,6 +64,5 @@ protected:
 	std::vector<GameObject*> ghostObjects;
 	Camera* cam;
 	const char** cubemapDir;
-	GUISystem* guiSystem;
 };
 

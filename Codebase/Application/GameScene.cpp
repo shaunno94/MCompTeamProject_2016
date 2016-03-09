@@ -44,13 +44,15 @@ GameScene::GameScene(ControllerManager* controller)
 GameScene::~GameScene()
 {
 	PhysicsEngineInstance::Release();
-	delete guiSystem;
 
 #ifndef ORBIS
 	ParticleManager::Destroy();
 #endif
 
-	delete pickupManager;
+	if (guiSystem)
+		delete guiSystem;
+
+	//delete pickupManager;
 
 #if DEBUG_DRAW
 	DebugDraw::Release();

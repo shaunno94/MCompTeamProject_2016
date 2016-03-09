@@ -86,7 +86,7 @@ void Renderer::RenderGUI()
 {
 	viewMatrix.ToIdentity();
 	projMatrix = Mat4Graphics::Orthographic(-1, 1, 1, -1, 1, -1);
-	GetCurrentScene()->guiSystem->Render();
+	GetCurrentScene()->getGUISystem()->Render();
 }
 
 void Renderer::OnUpdateScene(Frustum& frustum, Vec3Graphics camPos)

@@ -10,6 +10,7 @@ GUISystem::~GUISystem()
 {
 	for (auto& guiComp : m_component)
 		delete guiComp;
+
 	m_component.clear();
 }
 
@@ -32,11 +33,6 @@ void GUISystem::RemoveOrthoComponent(OrthoComponent* component)
 	}
 }
 
-//void GUISystem::Update()
-//{
-//	for (unsigned int i = 0; i < m_component.size(); ++i)
-//		m_component[i]->Update();
-//}
 
 void GUISystem::Render()
 {

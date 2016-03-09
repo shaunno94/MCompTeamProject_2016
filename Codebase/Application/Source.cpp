@@ -52,9 +52,6 @@ int main(void)
 	
 	//Set current scene to the game
 	renderer.SetCurrentScene(menuScene);
-	//renderer.SetCurrentScene(gameScene);
-	//gameScene->SetControllerActor();
-	//gameScene->SetupAI();
 
 #ifdef _DEBUG
 	std::cout << "Renderer Memory Usage: " << renderer.GetRendererMemUsage() / (1024 * 1024) << " (MB)" << std::endl;
@@ -98,7 +95,7 @@ int main(void)
 	}
 
 	SoundSystem::Instance()->Release();
-	//delete menuScene;
+	delete menuScene;
 	delete gameScene;
 
 	return 0;

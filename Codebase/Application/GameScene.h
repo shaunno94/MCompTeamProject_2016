@@ -66,8 +66,12 @@ public:
 		return pickupManager;
 	}
 
+	GUISystem* getGUISystem(){ return guiSystem; }
+
 protected:
 	
+	GUISystem* guiSystem;
+
 	ControllerManager* myControllers;
 	int scores[2];
 
