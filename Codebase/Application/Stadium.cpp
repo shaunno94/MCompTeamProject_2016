@@ -111,9 +111,13 @@ void Stadium::CreatePlane(std::vector<btConvexHullShape*> &collectionVector, Vec
 	points[2] = Vec3Graphics(end.x, end.y, end.z);
 	points[3] = Vec3Graphics(end.x, start.y, end.z);
 
-	float texLength = (start - end).Length() / 5;
+	float lengthOfWallX = ((start * Vec3Graphics(1, 0, 1)) - (end * Vec3Graphics(1, 0, 1))).Length();
+	float lengthOfWallY = ((start * Vec3Graphics(0, 1, 0)) - (end * Vec3Graphics(0, 1, 0))).Length();
 
-	Mesh* mesh = Mesh::GenerateQuad(points, Vec2Graphics(texLength, texLength));
+	float texLengthX = lengthOfWallX / 4;
+	float texLengthY = lengthOfWallY / 4;
+
+	Mesh* mesh = Mesh::GenerateQuad(points, Vec2Graphics(texLengthX, texLengthY));
 
 	GameObject* wall = new GameObject();
 	wall->SetRenderComponent(new RenderComponent(m_wallMaterial, mesh));
