@@ -6,7 +6,10 @@ class GUIComponent : public GameObject
 public:
 	GUIComponent(Material* material, Texture* texture, float z, bool visible, const std::string& name = "") : GameObject(name) 
 	{
-		
+		m_Material = material;
+		m_Texture = texture;
+		m_Depth = z;
+		m_Visible = visible;
 	};
 
 	virtual ~GUIComponent()

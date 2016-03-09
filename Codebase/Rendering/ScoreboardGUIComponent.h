@@ -15,10 +15,9 @@ public:
 	void Update(int scoreA, int scoreB, float time);
 
 protected:
-	GameObject* text;
-	RenderComponent* text_renderComp;
-
 	Font* font;
+	RenderComponent* renderComp;
+	Mesh* m_NewMesh;
 
 	int timeRem;
 	int min;

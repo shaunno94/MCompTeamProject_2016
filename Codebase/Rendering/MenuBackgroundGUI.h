@@ -1,6 +1,5 @@
 #pragma once
 #include "GUIComponent.h"
-#include "GameObject.h"
 
 class MenuBackgroundGUI : public GUIComponent
 {
@@ -9,8 +8,4 @@ public:
 	virtual ~MenuBackgroundGUI();
 
 	virtual void Render();
-
-protected:
-	GameObject* background;
-	Mesh* bg;
 };

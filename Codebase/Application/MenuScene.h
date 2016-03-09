@@ -4,7 +4,7 @@
 #include "Rendering\GUISystem.h"
 #include "Rendering\OGLShader.h"
 #include "Rendering\MenuBackgroundGUI.h"
-#include "Rendering\MenuGUI.h"
+#include "Rendering\MenuOrthoComponent.h"
 
 
 #ifndef ORBIS
@@ -38,10 +38,16 @@ protected:
 	Material* guiMaterial;
 	Material* textMaterial;
 	Material* bgMaterial;
+	Material* btnMaterial;
+	Material* selectBtnMaterial;
 
 	OrthoComponent* bgOrtho;
-	MenuGUI* menuGUI;
+	MenuOrthoComponent* menuOrtho;
+
 	MenuBackgroundGUI* menuBg;
+	ButtonGUI* singleBtn;
+	ButtonGUI* multiBtn;
+	ButtonGUI* exitBtn;
 
 	unsigned int m_Selected;
 };

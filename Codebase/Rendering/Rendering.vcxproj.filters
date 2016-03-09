@@ -264,14 +264,17 @@
     <ClInclude Include="MenuBackgroundGUI.h">
       <Filter>Header Files\UI\MenuGUI</Filter>
     </ClInclude>
-    <ClInclude Include="MenuGUI.h">
-      <Filter>Header Files\UI\MenuGUI</Filter>
-    </ClInclude>
     <ClInclude Include="MenuControllerComponent.h">
       <Filter>Header Files\Input</Filter>
     </ClInclude>
     <ClInclude Include="UIControllerManager.h">
       <Filter>Header Files\Input</Filter>
+    </ClInclude>
+    <ClInclude Include="ButtonGUI.h">
+      <Filter>Header Files\UI\MenuGUI</Filter>
+    </ClInclude>
+    <ClInclude Include="MenuOrthoComponent.h">
+      <Filter>Header Files\UI\MenuGUI</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -431,14 +434,17 @@
     <ClCompile Include="MenuBackgroundGUI.cpp">
       <Filter>Source Files\UI\MenuGUI</Filter>
     </ClCompile>
-    <ClCompile Include="MenuGUI.cpp">
-      <Filter>Source Files\UI\MenuGUI</Filter>
-    </ClCompile>
     <ClCompile Include="MenuControllerComponent.cpp">
       <Filter>Source Files\Input</Filter>
     </ClCompile>
     <ClCompile Include="UIControllerManager.cpp">
       <Filter>Source Files\Input</Filter>
+    </ClCompile>
+    <ClCompile Include="ButtonGUI.cpp">
+      <Filter>Source Files\UI\MenuGUI</Filter>
+    </ClCompile>
+    <ClCompile Include="MenuOrthoComponent.cpp">
+      <Filter>Source Files\UI\MenuGUI</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

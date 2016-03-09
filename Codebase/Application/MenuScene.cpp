@@ -31,8 +31,8 @@ MenuScene::~MenuScene()
 
 void MenuScene::UpdateScene(float dt)
 {
-	std::cout << menuGUI->GetSelection() << std::endl;
-	menuGUI->Update();
+	std::cout << menuOrtho->GetSelection() << std::endl;
+	menuOrtho->Update();
 }
 
 void MenuScene::SetupGameObjects()
@@ -52,6 +52,8 @@ void MenuScene::SetupMaterials()
 {
 	guiMaterial = new Material(orthoShader);
 	bgMaterial = new Material(orthoShader);
+	btnMaterial = new Material(orthoShader);
+	selectBtnMaterial = new Material(orthoShader);
 	//textMaterial = new Material(orthoShader);
 }
 
@@ -61,8 +63,11 @@ void MenuScene::DrawGUI()
 	menuBg = new MenuBackgroundGUI(bgMaterial, Texture::Get(TEXTURE_DIR"titleScreen1.jpg"), 1.0);
 	bgOrtho->AddGUIComponent(menuBg);
 
-	menuGUI = new MenuGUI(guiMaterial, Texture::Get(TEXTURE_DIR"bricks1.jpg"), 1.0,"menuGUI");
-	bgOrtho->AddGUIComponent(menuGUI);
+	singleBtn = new ButtonGUI();
+	menuOrtho = new MenuOrthoComponent();
+
+	//menuGUI = new MenuGUI(guiMaterial, Texture::Get(TEXTURE_DIR"bricks1.jpg"), 1.0,"menuGUI");
+	//bgOrtho->AddGUIComponent(menuGUI);
 	GUISystem::GetInstance().AddOrthoComponent(bgOrtho);
 }
 
