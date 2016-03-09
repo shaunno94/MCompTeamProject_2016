@@ -149,7 +149,7 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>NOMINMAX;ORBIS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>NOMINMAX;ORBIS;NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <AdditionalIncludeDirectories>..\BulletPhysics\src;$(SolutionDir);$(SolutionDir)Dependencies;$(SolutionDir)enet\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <RuntimeTypeInfo>true</RuntimeTypeInfo>
       <CppExceptions>true</CppExceptions>
@@ -173,9 +173,6 @@
   <ItemGroup>
     <ProjectReference Include="..\AI\AI.vcxproj">
       <Project>{ea8b500e-59fa-4a79-8398-08f85f821cc7}</Project>
-    </ProjectReference>
-    <ProjectReference Include="..\Audio\Audio.vcxproj">
-      <Project>{2a9d5c1b-7579-4999-b8bb-fdf9718cda28}</Project>
     </ProjectReference>
     <ProjectReference Include="..\BulletPhysics\build3\vs2010\BulletCollision.vcxproj">
       <Project>{40ea9fb9-b6a7-0546-bb80-77339701554e}</Project>

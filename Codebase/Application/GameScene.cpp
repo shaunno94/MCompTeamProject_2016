@@ -9,13 +9,14 @@ GameScene::GameScene(ControllerManager* controller)
 
 #ifndef ORBIS
 	SoundSystem::Initialise();
+#endif
 	ParticleManager::Initialise();
 
 	if (ParticleManager::GetManager().HasInitialised())
 	{
 		std::cout << "Particle Manager not Initialised" << std::endl;
 	}
-#endif
+
 	GUISystem::Initialise();
 	if (!GUISystem::GetInstance().HasInitialised())
 	{
@@ -42,16 +43,14 @@ GameScene::~GameScene()
 {
 	PhysicsEngineInstance::Release();
 	GUISystem::Destroy();
+	ParticleManager::Destroy();
 
 #ifndef ORBIS
 	SoundSystem::Release();
-	ParticleManager::Destroy();
 #endif
 
 #if DEBUG_DRAW
-#ifndef ORBIS
 	DebugDraw::Release();
-#endif
 #endif
 }
 
@@ -67,10 +66,13 @@ void GameScene::IncrementScore(int team)
 {
 	scores[team % 2]++;
 
+#ifndef ORBIS
 	SoundMOD mod;
 	mod.looping = false;
 	mod.isGlobal = true;
 	SoundSystem::Instance()->Play(SoundManager::GetSound(BANG), mod);
+#endif
+
 	scoreboardComponent->Update(scores[0], scores[1], currentTime);
 }
 

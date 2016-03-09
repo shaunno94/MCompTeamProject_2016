@@ -1,4 +1,3 @@
-#ifndef ORBIS
 #pragma once
 #include "ParticleSystem.h"
 
@@ -24,4 +23,3 @@ private:
 	~ParticleManager(void);
 	std::vector<ParticleSystem*> m_Systems;
 };
-#endif
