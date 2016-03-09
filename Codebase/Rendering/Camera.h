@@ -45,6 +45,17 @@ public:
 
 	~Camera(void){};
 
+	void reset(){
+		pitch = -10.0;
+		yaw = 90.0;
+		if (player){
+			yaw = acos((player->GetWorldTransform().GetRotation() * Vec3Graphics(1, 0, 0)).Normalize().Dot(Vec3Graphics(1, 0, 0)))* 57.2958;
+
+			if ((player->GetWorldTransform().GetRotation() * Vec3Graphics(0, 0, 1)).Normalize().Dot(Vec3Graphics(1, 0, 0)) < 0)
+				yaw = 360 - yaw;		
+		}
+	}
+
 	void UpdateCamera(float msec = 10.0f);
 
 	//Builds a view matrix for the current camera variables, suitable for sending straight
@@ -52,7 +63,7 @@ public:
 	Mat4Graphics BuildViewMatrix();
 
 	//Gets position in world space
-	Vec3Graphics GetPosition() const { return position;}
+	Vec3Graphics GetPosition() const;
 	//Sets position in world space
 	void	SetPosition(Vec3Graphics val) { position = val;}
 
@@ -66,10 +77,11 @@ public:
 	//Sets pitch, in degrees
 	void	SetPitch(float p) {pitch = p;}
 
+	bool autocam = false;
+
 protected:
 	float	yaw;
 	float	pitch;
 	Vec3Graphics position;
 	GameObject* player;
-	//ControllerComponent* controller;
 };
