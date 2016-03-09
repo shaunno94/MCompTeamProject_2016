@@ -1,3 +1,4 @@
+#ifndef ORBIS
 #include "SoundSystem.h"
 
 SoundSystem* SoundSystem::instance = NULL;
@@ -204,3 +205,4 @@ void	SoundSystem::Play(Sound* s, SoundMOD modifier) {
 
 	totalEmitters.push_back(n);
 }
+#endif

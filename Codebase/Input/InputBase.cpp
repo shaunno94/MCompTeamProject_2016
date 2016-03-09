@@ -1,6 +1,7 @@
 #include "InputBase.h"
 #include <math.h>
 
+
 InputBase::InputBase()
 {
 	ResetInput();
@@ -26,9 +27,9 @@ AXIS	InputBase::GetAxis(unsigned int i) {
 		return AXIS();
 	}
 	if (fabs(axis[i].x) < 0.05)
-		axis[i].x = 0;
+		axis[i].x = 0.0;
 	if (fabs(axis[i].y) < 0.05)
-		axis[i].y = 0;
+		axis[i].y = 0.0;
 	return axis[i];
 }
 
@@ -58,4 +59,12 @@ bool	InputBase::GetButtonHeld(unsigned int i) {
 		return false;
 	}
 	return buttonsHeld[i] > 0.5f ? true : false;
+}
+
+void InputBase::UpdateHolds()	{
+	//memcpy(buttonsHeld, buttons, MAX_BUTTONS * sizeof(float));
+	for (int i = 0; i < MAX_BUTTONS; i++)
+	{
+		buttonsHeld[i] = buttons[i];
+	}
 }

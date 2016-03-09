@@ -4,7 +4,9 @@
 MenuScene::MenuScene(UIControllerManager* controller)
 :myControllers(controller)
 {
+#ifndef ORBIS
 	SoundSystem::Initialise();
+#endif
 	GUISystem::Initialise();
 	
 	if (!GUISystem::GetInstance().HasInitialised())
@@ -24,7 +26,9 @@ MenuScene::MenuScene(UIControllerManager* controller)
 
 MenuScene::~MenuScene()
 {
+#ifndef ORBIS
 	SoundSystem::Release();
+#endif
 	GUISystem::Destroy();
 	delete bg;
 }
@@ -42,7 +46,11 @@ void MenuScene::SetupGameObjects()
 
 void MenuScene::SetupShaders()
 {
+#ifndef ORBIS
 	orthoShader = new OGLShader(MENU_VERT, MENU_FRAG);
+#else
+
+#endif
 
 	if (!orthoShader->IsOperational())
 		std::cout << "Shader not opertational!" << std::endl;
@@ -58,11 +66,11 @@ void MenuScene::SetupMaterials()
 void MenuScene::DrawGUI()
 {
 	bgOrtho = new OrthoComponent(1.0f);
-	menuBg = new MenuBackgroundGUI(bgMaterial, Texture::Get(TEXTURE_DIR"titleScreen1.jpg"), 1.0);
-	bgOrtho->AddGUIComponent(menuBg);
+	//menuBg = new MenuBackgroundGUI(bgMaterial, Texture::Get(TEXTURE_DIR"titleScreen1.jpg"), 1.0);
+	//bgOrtho->AddGUIComponent(menuBg);
 
-	menuGUI = new MenuGUI(guiMaterial, Texture::Get(TEXTURE_DIR"bricks1.jpg"), 1.0,"menuGUI");
-	bgOrtho->AddGUIComponent(menuGUI);
+	//menuGUI = new MenuGUI(guiMaterial, Texture::Get(TEXTURE_DIR"bricks1.jpg"), 1.0,"menuGUI");
+	//bgOrtho->AddGUIComponent(menuGUI);
 	GUISystem::GetInstance().AddOrthoComponent(bgOrtho);
 }
 

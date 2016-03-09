@@ -1,3 +1,4 @@
+#ifndef ORBIS
 #include "NetServerControllerManager.h"
 
 
@@ -48,3 +49,4 @@ void NetServerControllerManager::update(float ms)
 		}
 	}
 }
+#endif

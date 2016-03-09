@@ -23,7 +23,7 @@ void Camera::UpdateCamera(float msec)	{
 				
 		//std::cout << yaw << std::endl;
 	}
-
+	
 	
 }
 
@@ -56,7 +56,7 @@ Mat4Graphics Camera::BuildViewMatrix()	{
 	return	 Mat4Graphics::View(GetPosition(), ballPos);
 
 }
-}
+	}
 
 
 Vec3Graphics Camera::GetPosition() const

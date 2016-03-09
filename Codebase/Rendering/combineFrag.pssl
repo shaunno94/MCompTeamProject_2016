@@ -1,0 +1,26 @@
+
+SamplerState samp0	: register(s0);
+
+Texture2D diffuseTex : register(t0);
+Texture2D emissiveTex : register(t1);
+Texture2D specularTex : register(t2);
+
+struct VS_OUTPUT
+{
+	float4 position	: S_POSITION;
+	float2 texCoord	: TEXCOORD0;
+};
+
+float4 main(VS_OUTPUT IN) : S_TARGET_OUTPUT
+{
+	float3 diffuse = diffuseTex.Sample(samp0, IN.texCoord).xyz;
+	float3 light = emissiveTex.Sample(samp0, IN.texCoord).xyz;
+	float3 specular = specularTex.Sample(samp0, IN.texCoord).xyz;
+
+	float4 colour;
+	colour.xyz = diffuse * 0.3; // ambient
+	colour.xyz += diffuse * light; // lambert
+	colour.xyz += specular; // Specular
+	colour.a = 1.0;
+	return colour;
+}

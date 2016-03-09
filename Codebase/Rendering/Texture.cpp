@@ -9,25 +9,35 @@ unsigned int Texture::s_memoryUsage = 0;
 
 Texture* Texture::Make(const std::string& filePath, bool preload)
 {
+	std::string rawPath = filePath;
+#ifdef ORBIS
+	checkPath(rawPath);
+#endif
+
 	Texture* newTexture;
-	std::unordered_map<std::string, std::vector<Texture*>>::iterator match = s_textureRecords.find(filePath);
+	std::unordered_map<std::string, std::vector<Texture*>>::iterator match = s_textureRecords.find(rawPath);
 	if (match != s_textureRecords.end())
 	{
-		newTexture = new Texture(filePath, match->second.size(), preload);
+		newTexture = new Texture(rawPath, match->second.size(), preload);
 		match->second.push_back(newTexture);
 	}
 	else
 	{
-		newTexture = new Texture(filePath, 0, preload);
-		s_textureRecords.insert(std::pair<std::string, std::vector<Texture*>>(filePath, std::vector<Texture*>())).first->second.push_back(newTexture);
+		newTexture = new Texture(rawPath, 0, preload);
+		s_textureRecords.insert(std::pair<std::string, std::vector<Texture*>>(rawPath, std::vector<Texture*>())).first->second.push_back(newTexture);
 	}
 	return newTexture;
 }
 
 Texture* Texture::Get(const std::string& filePath, bool preload)
 {
+	std::string rawPath = filePath;
+#ifdef ORBIS
+	checkPath(rawPath);
+#endif
+
 	Texture* newTexture;
-	std::unordered_map<std::string, std::vector<Texture*>>::iterator match = s_textureRecords.find(filePath);
+	std::unordered_map<std::string, std::vector<Texture*>>::iterator match = s_textureRecords.find(rawPath);
 	if (match != s_textureRecords.end())
 	{
 		newTexture = match->second.back();
@@ -35,8 +45,8 @@ Texture* Texture::Get(const std::string& filePath, bool preload)
 	}
 	else
 	{
-		newTexture = new Texture(filePath, 0, preload);
-		s_textureRecords.insert(std::pair<std::string, std::vector<Texture*>>(filePath, std::vector<Texture*>())).first->second.push_back(newTexture);
+		newTexture = new Texture(rawPath, 0, preload);
+		s_textureRecords.insert(std::pair<std::string, std::vector<Texture*>>(rawPath, std::vector<Texture*>())).first->second.push_back(newTexture);
 	}
 	return newTexture;
 }
@@ -95,9 +105,7 @@ void Texture::ClearAll()
 
 void Texture::SetTextureParams(unsigned int flags)
 {
-	if (!textureId) 
-		LoadFromFile();
-	Renderer::GetInstance()->SetTextureFlags(textureId, flags);
+	textureFlags = flags;
 }
 
 void Texture::MeasureMemoryUsageAdd(textureHandle textureId)
@@ -110,28 +118,37 @@ void Texture::MeasureMemoryUsageSubtract(textureHandle textureId)
 	s_memoryUsage -= Renderer::GetInstance()->TextureMemoryUsage(textureId);
 }
 
+void Texture::checkPath(std::string& path)
+{
+	size_t pos = path.find_last_of(".");
+	if (pos < path.length())
+	{
+		path.erase(pos, std::string::npos);
+	}
+	path.append(".gnf");
+}
+
 Texture::Texture(const std::string& filepath, unsigned int index, bool preload) : filePath(filepath)
 {
-	textureId = 0;
 	textureCopyIndex = index;
 	m_referenceCount = 1;
-	if (preload) LoadFromFile();
+	textureFlags = 0;
+	if (preload)
+		LoadFromFile();
 }
 
 Texture::~Texture()
 {
-	if(textureId)
-	{
 #ifdef TEXTURE_TRACK_STATS
 		MeasureMemoryUsageSubtract(textureId);
 #endif
 #ifndef ORBIS
+		if (textureId)
+		{
 		glDeleteTextures(1, &textureId);
 		textureId = 0;
-#else
-		delete textureId;
+		}
 #endif
-	}
 }
 
 #ifndef ORBIS
@@ -167,6 +184,7 @@ void Texture::LoadFromFile()
 		//std::cout << "SOIL loading error: '" << SOIL_last_result() << "' (" << filePath << ")";
 		throw std::ios_base::failure(message.str());
 	}
+	textureLoaded = true;
 }
 #else
 void Texture::LoadFromFile()
@@ -187,7 +205,7 @@ void Texture::LoadFromFile()
 
 	sce::Gnf::Contents* contentsDesc = (sce::Gnf::Contents*)rawContents;
 
-	sce::Gnm::SizeAlign dataParams = getTexturePixelsSize(contentsDesc, 0);
+	sce::Gnm::SizeAlign dataParams = sce::Gnf::getTexturePixelsSize(contentsDesc, 0);
 
 	void *pixelsAddr = garlicAllocator.allocate(dataParams);
 	sce::Gnm::registerResource(nullptr, ownerHandle, pixelsAddr, dataParams.m_size, filePath.c_str(), sce::Gnm::kResourceTypeTextureBaseAddress, 0);
@@ -195,16 +213,12 @@ void Texture::LoadFromFile()
 	file.seekg(getTexturePixelsByteOffset(contentsDesc, 0), ios::cur); //fast forward in the file a bit
 	file.read((char*)pixelsAddr, dataParams.m_size);
 
-	textureId = patchTextures(contentsDesc, 0, 1, &pixelsAddr);
+	textureId = *sce::Gnf::patchTextures(contentsDesc, 0, 1, &pixelsAddr);
 
-	//TODO: add TEXTURE_TRACK_STATS stuff
-	/*tex->width = tex->apiTexture.getWidth();
-	tex->height = tex->apiTexture.getHeight();
-	tex->bpp = tex->apiTexture.getDepth();*/
-
-	//textureId->setResourceMemoryType(Gnm::kResourceMemoryTypeRO);
+	textureId.setResourceMemoryType(sce::Gnm::kResourceMemoryTypeRO);
 	file.close();
 	delete rawContents;
+	textureLoaded = true;
 }
 #endif
 
@@ -212,16 +226,13 @@ void Texture::LoadFromFile()
 /// Loads a texture to it's texture unit for use in shaders
 /// </summary>
 /// <returns></returns>
-void Texture::Load(unsigned int textureUnit)
+void Texture::Load(const shaderResourceLocation& textureUnit)
 {
-#ifndef ORBIS
-	glActiveTexture(GL_TEXTURE0 + textureUnit);
-	if (!textureId) 
+	if (!textureLoaded) 
 		LoadFromFile();
-	glBindTexture(GL_TEXTURE_2D, textureId);
-#else
-	if (!textureId) 
-		LoadFromFile();
-	//currentGFXContext->setTextures(Gnm::kShaderStagePs, textureUnit, 1, textureId);
-#endif
+	
+	if (textureFlags != 0)
+		Renderer::GetInstance()->SetTextureFlags(textureId, textureFlags);
+	
+	Renderer::GetInstance()->SetTexture(textureUnit, textureId);
 }

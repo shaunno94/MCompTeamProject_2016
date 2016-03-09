@@ -8,11 +8,11 @@ public:
 
 	virtual void Setup() override;
 
-	int Set(const std::string& uniformName, int i);
+	shaderResourceLocation Set(const std::string& uniformName, int i);
 
-	void Set(int uniformLocation, int i);
+	void Set(const shaderResourceLocation& uniformLocation, int i);
 
 protected:
-	std::vector<std::pair<int, int>> m_uniformInts;
+	std::vector<std::pair<shaderResourceLocation, int>> m_uniformInts;
 };
 

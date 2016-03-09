@@ -1,7 +1,7 @@
 #include "CarGameObject.h"
 
 
-CarGameObject::CarGameObject(Vec3Physics& position, QuatPhysics& rotation, Material* material, const std::string& name /* = "" */, unsigned int collisionFilterMask /* = COL_CAR */) :
+CarGameObject::CarGameObject(const Vec3Physics& position, const QuatPhysics& rotation, Material* material, const std::string name /* = "" */, unsigned int collisionFilterMask /* = COL_CAR */) :
 	GameObject(name)
 {
 	Mesh* carBaseMesh = ModelLoader::LoadMGL(MODEL_DIR"Car/car_base.mgl", true);

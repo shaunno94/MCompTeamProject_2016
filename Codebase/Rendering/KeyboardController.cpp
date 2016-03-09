@@ -2,7 +2,6 @@
 #include "KeyboardController.h"
 #include "Renderer.h"
 
-
 KeyboardController::KeyboardController(ControllerComponent* object)
 {
 	setObject(object);
@@ -70,9 +69,13 @@ void KeyboardController::CheckInput(){
 
 	object->turnWheels(turn);
 
-	if (Window::GetKeyboard()->KeyTriggered(KEYBOARD_SPACE))
+	if (!airbourne && Window::GetKeyboard()->KeyTriggered(KEYBOARD_SPACE))
 	{
 		impulse += (orientation * Vec3Physics(0, jump, -jump *.5));
+		SoundMOD MOD;
+		MOD.looping = false;
+		MOD.isGlobal = true;
+		SoundSystem::Instance()->Play(SoundManager::GetSound(BANG),MOD);
 	}
 
 	object->AddForce(force.x, force.y, force.z);

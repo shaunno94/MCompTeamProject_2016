@@ -1,3 +1,4 @@
+#ifndef ORBIS
 #pragma once
 
 #include <string>
@@ -83,3 +84,4 @@ protected:
 	unsigned int	channels;
 
 };
+#endif

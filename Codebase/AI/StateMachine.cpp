@@ -1,11 +1,9 @@
 #include "StateMachine.h"
 
-
 StateMachine::StateMachine()
 {
 	m_stateMap = new stateMapping();
 }
-
 
 StateMachine::~StateMachine()
 {
@@ -53,4 +51,3 @@ bool StateMachine::ChangeState(unsigned int stateName)
 	}
 	return false;
 }
-

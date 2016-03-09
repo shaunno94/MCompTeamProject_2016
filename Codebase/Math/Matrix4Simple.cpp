@@ -219,32 +219,32 @@ Matrix4Simple Matrix4Simple::Translation(const Vector3Simple& translation)	{
 	return m;
 }
 
-Matrix4Simple& Matrix4Simple::Transpose() {
+Matrix4Simple Matrix4Simple::Transpose(const Matrix4Simple& a)
+{
 	Matrix4Simple temp;
-	temp.values[0] = values[0];
-	temp.values[5] = values[5];
-	temp.values[10] = values[10];
-	temp.values[15] = values[15];
+	temp.values[0] = a.values[0];
+	temp.values[5] = a.values[5];
+	temp.values[10] = a.values[10];
+	temp.values[15] = a.values[15];
 
-	temp.values[1] = values[4];
-	temp.values[4] = values[1];
-	temp.values[2] = values[8];
-	temp.values[8] = values[2];
-	temp.values[3] = values[12];
-	temp.values[12] = values[3];
-	temp.values[6] = values[9];
-	temp.values[9] = values[6];
-	temp.values[7] = values[13];
-	temp.values[13] = values[7];
-	temp.values[11] = values[14];
-	temp.values[14] = values[11];
+	temp.values[1] = a.values[4];
+	temp.values[4] = a.values[1];
+	temp.values[2] = a.values[8];
+	temp.values[8] = a.values[2];
+	temp.values[3] = a.values[12];
+	temp.values[12] = a.values[3];
+	temp.values[6] = a.values[9];
+	temp.values[9] = a.values[6];
+	temp.values[7] = a.values[13];
+	temp.values[13] = a.values[7];
+	temp.values[11] = a.values[14];
+	temp.values[14] = a.values[11];
 
-	*this = temp;
-	return *this;
+	return temp;
 }
 
 //http://stackoverflow.com/questions/1148309/inverting-a-4x4-matrix
-Matrix4Simple Matrix4Simple::Inverse(Matrix4Simple& a)
+Matrix4Simple Matrix4Simple::Inverse(const Matrix4Simple& a)
 {
 	Matrix4Simple m;
 	double det;

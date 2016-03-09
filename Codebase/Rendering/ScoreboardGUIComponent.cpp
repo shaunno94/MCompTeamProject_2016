@@ -28,8 +28,8 @@ ScoreboardGUIComponent::~ScoreboardGUIComponent()
 //{
 //	
 //}
-
-void ScoreboardGUIComponent::Update(int& scoreA, int& scoreB, float& time)
+	
+void ScoreboardGUIComponent::Update(int scoreA, int scoreB, float time)
 {
 	delete m_Mesh;
 	timeRem = 180 - (int) time;

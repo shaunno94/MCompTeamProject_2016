@@ -33,7 +33,7 @@ State::~State()
 }
 
 void State::Update(float dt)
-{	
+{
 	if (m_childStates->size() != 0)
 	{
 		(*m_childStates)[m_activeChildState]->Update(dt);
@@ -59,8 +59,7 @@ void State::AddChildState(unsigned int stateName, State* childState)
 		(*m_childStates)[stateName] = childState;
 }
 
-void State::AddTrigger(Trigger* trigger , unsigned int destState)
+void State::AddTrigger(Trigger* trigger, unsigned int destState)
 {
 	m_triggers.push_back(new triggerPair(trigger, destState));
 }
-

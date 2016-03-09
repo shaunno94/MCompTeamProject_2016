@@ -1,5 +1,5 @@
+#ifndef ORBIS
 #include "PCNetProducerController.h"
-
 
 PCNetProducerController::PCNetProducerController(ControllerComponent* object, unsigned int id) : PCNetController(object, id),
 #ifndef ORBIS
@@ -21,3 +21,4 @@ void PCNetProducerController::Sync(NetSessionWriter& writer)
 	this->CheckInput();
 	PCNetController::Sync(writer);
 }
+#endif

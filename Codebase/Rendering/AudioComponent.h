@@ -1,3 +1,4 @@
+#ifndef ORBIS
 #pragma once
 #include "Audio/SoundSystem.h"
 
@@ -44,3 +45,4 @@ public:
 
 	virtual void Update() override;
 };
+#endif
