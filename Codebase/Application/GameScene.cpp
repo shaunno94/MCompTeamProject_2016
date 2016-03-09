@@ -291,6 +291,7 @@ void GameScene::SetupAI()
 }
 
 void GameScene::ResetObjects()
+//reset the positions and forces of objects in the scene
 {
 	btVector3 zeroVector = btVector3(0, 0, 0);
 	PhysicsEngineInstance::Instance()->clearForces();
@@ -299,8 +300,28 @@ void GameScene::ResetObjects()
 	dynamic_cast<RigidPhysicsObject*>(ball->GetPhysicsComponent())->GetPhysicsBody()->setLinearVelocity(zeroVector);
 	dynamic_cast<RigidPhysicsObject*>(ball->GetPhysicsComponent())->GetPhysicsBody()->setAngularVelocity(zeroVector);
 
-	ball->GetPhysicsComponent()->GetPhysicsBody()->setWorldTransform(btTransform(btQuaternion(0, 0, 0, 1), zeroVector));
+	ball->GetPhysicsComponent()->GetPhysicsBody()->setWorldTransform(btTransform(btQuaternion(0, 0, 0, 1), btVector3(0, 100, 0)));
 
+	dynamic_cast<RigidPhysicsObject*>(shooterAI->GetPhysicsComponent())->GetPhysicsBody()->clearForces();
+	dynamic_cast<RigidPhysicsObject*>(shooterAI->GetPhysicsComponent())->GetPhysicsBody()->setLinearVelocity(zeroVector);
+	dynamic_cast<RigidPhysicsObject*>(shooterAI->GetPhysicsComponent())->GetPhysicsBody()->setAngularVelocity(zeroVector);
+
+	shooterAI->GetPhysicsComponent()->GetPhysicsBody()->setWorldTransform(btTransform(btQuaternion(0, -1, 0, 1), btVector3(-190, 2, 30)));
+
+	dynamic_cast<RigidPhysicsObject*>(goalieAI->GetPhysicsComponent())->GetPhysicsBody()->clearForces();
+	dynamic_cast<RigidPhysicsObject*>(goalieAI->GetPhysicsComponent())->GetPhysicsBody()->setLinearVelocity(zeroVector);
+	dynamic_cast<RigidPhysicsObject*>(goalieAI->GetPhysicsComponent())->GetPhysicsBody()->setAngularVelocity(zeroVector);
+
+	goalieAI->GetPhysicsComponent()->GetPhysicsBody()->setWorldTransform(btTransform(btQuaternion(0, -0.5, 0, 1), btVector3(-230, 2, -30)));
+
+	dynamic_cast<RigidPhysicsObject*>(player->GetPhysicsComponent())->GetPhysicsBody()->clearForces();
+	dynamic_cast<RigidPhysicsObject*>(player->GetPhysicsComponent())->GetPhysicsBody()->setLinearVelocity(zeroVector);
+	dynamic_cast<RigidPhysicsObject*>(player->GetPhysicsComponent())->GetPhysicsBody()->setAngularVelocity(zeroVector);
+
+	player->GetPhysicsComponent()->GetPhysicsBody()->setWorldTransform(btTransform(btQuaternion(0, 1, 0, 1), btVector3(100, 2, 0)));
+	player->SetWorldTransform(Mat4Graphics::RotationY(-90) * Mat4Graphics::Translation(Vec3Graphics(100, 2, 0)));//have to reset this world transform too, for the camera
+
+	cam->reset();
 }
 
 
