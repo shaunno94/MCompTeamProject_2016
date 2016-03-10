@@ -1,16 +1,22 @@
 #include "SoundSystem.h"
-
+#ifdef ORBIS
+#include <libsysmodule.h>
+#endif
 SoundSystem* SoundSystem::instance = NULL;
 
-SoundSystem::SoundSystem(unsigned int channels) {
+SoundSystem::SoundSystem(unsigned int channels)
+{
 	masterVolume = 1.0f;
 
 	std::cout << "Creating SoundSystem!" << std::endl;
+
+#ifndef ORBIS
 	std::cout << "Found the following devices: " << alcGetString(NULL, ALC_DEVICE_SPECIFIER) << std::endl;	//outputs all OAL devices
 
 	device = alcOpenDevice(NULL);	//Open the 'best' device
 
-	if (!device) {
+	if (!device)
+	{
 		std::cout << "Failed to create SoundSystem! (No valid device!)" << std::endl;
 		return;
 	}
@@ -25,19 +31,48 @@ SoundSystem::SoundSystem(unsigned int channels) {
 	alDistanceModel(AL_LINEAR_DISTANCE_CLAMPED);
 
 	// generate sources per channel
-	for (unsigned int i = 0; i < channels; ++i) {
+	for (unsigned int i = 0; i < channels; ++i)
+	{
 		ALuint source;
 
 		alGenSources(1, &source);
 		ALenum error = alGetError();
 
-		if (error == AL_NO_ERROR)	{
-			sources.push_back(new OALSource(source));
+		if (error == AL_NO_ERROR)
+		{
+			sources.push_back(new AudioSource(source));
 		}
-		else{
+		else
+		{
 			break;
 		}
 	}
+#else
+	sceSysmoduleLoadModule(SCE_SYSMODULE_AUDIO_3D);
+
+	sceAudio3dInitialize(0);
+
+	SceAudio3dOpenParameters sParameters;
+	sceAudio3dGetDefaultOpenParameters(&sParameters);
+	sParameters.uiGranularity = 1024;
+	sParameters.uiMaxObjects = channels;
+	sParameters.uiQueueDepth = 1;
+
+	SceUserServiceUserId userId;
+	int ret = sceUserServiceGetInitialUser(&userId);
+
+	ret = sceAudio3dPortOpen(SCE_USER_SERVICE_USER_ID_SYSTEM, &sParameters, &audioPort);
+
+	for (int i = 0; i < channels; ++i) {
+		SceAudio3dPortId id;
+		ret = sceAudio3dObjectReserve(audioPort, &id);
+
+		AudioSource src = AudioSource(id);
+
+		sources.push_back(new AudioSource(src));
+	}
+
+#endif
 
 	m_MaxDynamicSources = channels - 1;
 
@@ -48,13 +83,17 @@ SoundSystem::SoundSystem(unsigned int channels) {
 	std::cout << "SoundSystem has " << sources.size() << " channels available!" << std::endl;
 }
 
-SoundSystem::~SoundSystem(void)	{
-	for (auto emitter : totalEmitters) {
+SoundSystem::~SoundSystem(void)
+{
+	for (auto emitter : totalEmitters)
+	{
 		delete emitter;
 	}
 	delete m_Background;
 
-	for (auto src : sources) {
+#ifndef ORBIS
+	for (auto src : sources)
+	{
 		alDeleteSources(1, &src->source);
 		delete src;
 	}
@@ -62,6 +101,7 @@ SoundSystem::~SoundSystem(void)	{
 	alcMakeContextCurrent(NULL);
 	alcDestroyContext(context);
 	alcCloseDevice(device);
+#endif
 }
 
 void SoundSystem::SetListenerMatrix(const Mat4& transform)
@@ -78,16 +118,21 @@ void SoundSystem::SetBackgroundMusic(Sound* snd)
 void SoundSystem::SetBackgroundVolume(float val)
 {
 	m_Background->SetVolume(
-		fmax(fmin(1.0f, val), 0.0f)
-		);
+	  fmax(fmin(1.0f, val), 0.0f)
+	);
 }
 
-void		SoundSystem::Update(float msec) {
+void		SoundSystem::Update(float msec)
+{
 	UpdateListener(); // update listener position
-
+	CullNodes();	//First off, remove nodes that are too far away
+	std::sort(totalEmitters.begin(), totalEmitters.end(), SoundEmitter::CompareNodesByPriority);	//Then sort by priority
+	AttachSources(); // add playable sounds
 	//Update values for every node, whether in range or not
-	for (auto emitter : totalEmitters) {
-		if (emitter->GetIsGlobal()){
+	for (auto emitter : emitters)
+	{
+		if (emitter->GetIsGlobal())
+		{
 			emitter->SetPosition(listenerPos);
 		}
 		emitter->Update(msec);
@@ -95,47 +140,50 @@ void		SoundSystem::Update(float msec) {
 
 	m_Background->Update(msec); // update background music
 
-	CullNodes();	//First off, remove nodes that are too far away
-	std::sort(totalEmitters.begin(), totalEmitters.end(), SoundEmitter::CompareNodesByPriority);	//Then sort by priority
-	AttachSources(); // add playable sounds
-
 	emitters.clear();	//done for this frame
 }
 
-void	SoundSystem::CullNodes() {
+void	SoundSystem::CullNodes()
+{
 	std::vector<SoundEmitter*>	tempEMT;
 
 	int size = 0;
 
-	for (auto emt : totalEmitters) {
+	for (auto emt : totalEmitters)
+	{
 
 		float length;
 
 		// distance from listener
 		length = (listenerPos -
-			emt->GetPosition()).Length();
-		
+		          emt->GetPosition()).Length();
+
 		// if emitter should play
-		if (length < emt->GetRadius() && 
-			emt->GetSound() &&
-			emt->GetTimeLeft() > 0 &&
-			size < m_MaxDynamicSources) {
+		if (length < emt->GetRadius() &&
+		    emt->GetSound() &&
+		    emt->GetTimeLeft() > 0 &&
+		    size < m_MaxDynamicSources)
+		{
 
 			emitters.push_back(emt);
 			tempEMT.push_back(emt);
 			size++;
-		} 
-		else{
+		}
+		else
+		{
 			emt->DetachSource();
-			if (!emt->GetIsSingle()) {
+			if (!emt->GetIsSingle())
+			{
 				tempEMT.push_back(emt);
 			}
-			else {
+			else
+			{
 				delete emt; // delete single instances
 			}
 		}
 
-		if (size >= m_MaxDynamicSources) {
+		if (size >= m_MaxDynamicSources)
+		{
 			break;
 		}
 	}
@@ -143,37 +191,42 @@ void	SoundSystem::CullNodes() {
 	totalEmitters = tempEMT;
 }
 
-void SoundSystem::AttachSources() {
+void SoundSystem::AttachSources()
+{
 	// attach background first
-	if (m_Background->GetSound() && !m_Background->GetSource()) 
+	if (m_Background->GetSound() && !m_Background->GetSource())
 		m_Background->AttachSource(GetSource());
 
-	for (auto emt : emitters) {
-		if (!emt->GetSource()) {	//Don't attach a new source if we already have one!
+	for (auto emt : emitters)
+	{
+		if (!emt->GetSource())  	//Don't attach a new source if we already have one!
+		{
 			emt->AttachSource(GetSource());
 		}
 	}
 }
 
-OALSource*	SoundSystem::GetSource() {
-	for (auto src : sources) {
-		OALSource* s = src;
-		if (!s->inUse) {
+AudioSource*	SoundSystem::GetSource()
+{
+	for (auto src : sources)
+	{
+		AudioSource* s = src;
+		if (!s->inUse)
+		{
 			return s;
 		}
 	}
 	return NULL;
 }
 
-void		SoundSystem::SetMasterVolume(float value)	{
+void	SoundSystem::SetMasterVolume(float value)
+{
 	masterVolume = value;
-	alListenerf(AL_GAIN, masterVolume);
+	//alListenerf(AL_GAIN, masterVolume);
 }
 
-// FIX THIS SHIT
-void	SoundSystem::UpdateListener() {
-
-
+void	SoundSystem::UpdateListener()
+{
 	Vec3 forward = listenerTransform.GetRotation() * Vec3(0, 0, -1);
 	Vec3 up = listenerTransform.GetRotation() * Vec3(0, 1, 0);
 
@@ -184,12 +237,15 @@ void	SoundSystem::UpdateListener() {
 	dirup[0].Normalize();
 	dirup[1].Normalize();
 
+#ifndef ORBIS
 	alListenerfv(AL_POSITION, (float*)&listenerPos);
 	alListenerfv(AL_VELOCITY, (float*)&listenerVel);
 	alListenerfv(AL_ORIENTATION, (float*)&dirup);
+#endif // !ORBIS
 }
 
-void	SoundSystem::Play(Sound* s, SoundMOD modifier) {
+void	SoundSystem::Play(Sound* s, SoundMOD modifier)
+{
 	SoundEmitter* n = new SoundEmitter();
 	n->SetSound(s);
 	n->setIsSingle(true);
@@ -200,7 +256,6 @@ void	SoundSystem::Play(Sound* s, SoundMOD modifier) {
 	n->SetPitch(modifier.pitch);
 	n->SetLooping(modifier.looping);
 	n->SetIsGlobal(modifier.isGlobal);
-	n->SetPosition(modifier.position);
 
 	totalEmitters.push_back(n);
 }

@@ -5,9 +5,7 @@
 #include "PS4Mesh.h"
 #endif
 
-
-uint64_t Mesh::s_memoryFootprint = 0;
-
+uint64_t Mesh::MeshMemoryUsage = 0;
 
 Mesh::Mesh(void)
 {
@@ -36,6 +34,7 @@ Mesh::Mesh(void)
 	m_Normals = nullptr;
 	m_Tangents = nullptr;
 	m_Indices = nullptr;
+	m_Children.clear();
 }
 
 Mesh::Mesh(uint32_t numVertices, Vec3Graphics* vertices, Vec2Graphics* texCoords, Vec3Graphics* normals, Vec3Graphics* tangents, uint32_t numIndices, uint32_t* indices)
@@ -53,8 +52,14 @@ Mesh::Mesh(uint32_t numVertices, Vec3Graphics* vertices, Vec2Graphics* texCoords
 	}
 
 	m_SpecExponent = 0.0f;
-
 	m_NumVertices = 0;
+	m_NumIndices = 0;
+	m_Vertices = nullptr;
+	m_TextureCoords = nullptr;
+	m_Normals = nullptr;
+	m_Tangents = nullptr;
+	m_Indices = nullptr;	
+	m_Children.clear();
 
 	m_Colours[ReservedMeshColours.AMBIENT.index] = Vec3Graphics(0.2f, 0.2f, 0.2f);
 	m_Colours[ReservedMeshColours.DIFFUSE.index] = Vec3Graphics::ONES;
@@ -67,6 +72,8 @@ Mesh::Mesh(uint32_t numVertices, Vec3Graphics* vertices, Vec2Graphics* texCoords
 	m_Normals = normals;
 	m_Tangents = tangents;
 	m_Indices = indices;
+
+	CalcMeshUsage(this);
 }
 
 Mesh::~Mesh(void)
@@ -76,13 +83,87 @@ Mesh::~Mesh(void)
 		if (m_Textures[i])
 			m_Textures[i]->Clear();
 	}
-	delete[] m_Vertices;
-	delete[] m_Indices;
-	delete[] m_TextureCoords;
-	delete[] m_Tangents;
-	delete[] m_Normals;
+	Clean();
 }
 
+void Mesh::CalcMeshUsage(Mesh* m)
+{
+	MeshMemoryUsage += m->m_NumVertices * sizeof(Vec3Graphics);
+	MeshMemoryUsage += m->m_NumIndices * sizeof(uint32_t);
+
+	if (m->m_TextureCoords)
+		MeshMemoryUsage += m->m_NumVertices * sizeof(Vec2Graphics);
+	if (m->m_Normals)
+		MeshMemoryUsage += m->m_NumVertices * sizeof(Vec3Graphics);
+	if (m->m_Tangents)
+		MeshMemoryUsage += m->m_NumVertices * sizeof(Vec3Graphics);
+}
+
+void Mesh::Clean()
+{
+	if (m_Vertices)
+	{
+		delete[] m_Vertices;
+		m_Vertices = nullptr;
+	}
+	if (m_Indices)
+	{
+		delete[] m_Indices;
+		m_Indices = nullptr;
+	}
+	if (m_TextureCoords)
+	{
+		delete[] m_TextureCoords;
+		m_TextureCoords = nullptr;
+	}
+	if (m_Tangents)
+	{
+		delete[] m_Tangents;
+		m_Tangents = nullptr;
+	}
+	if (m_Normals)
+	{
+		delete[] m_Normals;
+		m_Normals = nullptr;
+	}
+		
+}
+
+Mesh* Mesh::GenerateTriangle() {
+#ifndef ORBIS
+	Mesh* mesh = new OGLMesh();
+#else
+	Mesh* mesh = new PS4Mesh();
+#endif
+
+	mesh->m_NumVertices = 3;
+	mesh->m_NumIndices = 3;
+	mesh->SetPrimitiveType(TRIANGLE_STRIP);
+
+	mesh->m_Vertices = new Vec3Graphics[mesh->m_NumVertices];
+	mesh->m_TextureCoords = new Vec2Graphics[mesh->m_NumVertices];
+	mesh->m_Normals = new Vec3Graphics[mesh->m_NumVertices];
+	mesh->m_Tangents = new Vec3Graphics[mesh->m_NumVertices];
+	mesh->m_Indices = new uint32_t[mesh->m_NumVertices];
+
+	mesh->m_Vertices[0] = Vec3Graphics(0.0f, 0.5f, 0.0f);
+	mesh->m_Vertices[1] = Vec3Graphics(0.5f, -0.5f, 0.0f);
+	mesh->m_Vertices[2] = Vec3Graphics(-0.5f, -0.5f, 0.0f);
+
+	mesh->m_TextureCoords[0] = Vec2Graphics(0.5f, 0.0f);
+	mesh->m_TextureCoords[1] = Vec2Graphics(1.0f, 1.0f);
+	mesh->m_TextureCoords[2] = Vec2Graphics(0.0f, 1.0f);
+
+	for (int i = 0; i < mesh->m_NumVertices; ++i) {
+		mesh->m_Normals[i] = Vec3Graphics(0, 0, 1);
+		mesh->m_Tangents[i] = Vec3Graphics(1, 0, 0);
+		mesh->m_Indices[i] = i;
+	}
+
+	mesh->BufferData();
+	CalcMeshUsage(mesh);
+	return mesh;
+}
 
 Mesh* Mesh::GenerateQuad(Vec2Graphics texCoords)
 {
@@ -119,6 +200,7 @@ Mesh* Mesh::GenerateQuad(Vec2Graphics texCoords)
 		m->m_Indices[i] = i;
 	}
 	m->BufferData();
+	CalcMeshUsage(m);
 	return m;
 }
 
@@ -136,7 +218,7 @@ Mesh* Mesh::GenerateQuad(Vec3Graphics* vertices, Vec2Graphics texCoords /* = Vec
 	m->SetPrimitiveType(TRIANGLE_STRIP);
 
 	m->m_Vertices = new Vec3Graphics[m->m_NumVertices];
-	m->m_Indices = new size_t[m->m_NumIndices];
+	m->m_Indices = new uint32_t[m->m_NumIndices];
 	m->m_TextureCoords = new Vec2Graphics[m->m_NumVertices];
 	m->m_Normals = new Vec3Graphics[m->m_NumVertices];
 	m->m_Tangents = new Vec3Graphics[m->m_NumVertices];
@@ -155,11 +237,12 @@ Mesh* Mesh::GenerateQuad(Vec3Graphics* vertices, Vec2Graphics texCoords /* = Vec
 
 	for (int i = 0; i < m->m_NumIndices; ++i)
 	{
-		m->m_Normals[i] = normal;
-		m->m_Tangents[i] = normal.Cross(normal);
+		m->m_Normals[i] = normal.Normalize();
+		m->m_Tangents[i] = normal.Cross(normal).Normalize();
 		m->m_Indices[i] = i;
 	}
 	m->BufferData();
+	CalcMeshUsage(m);
 	return m;
 }
 
@@ -211,6 +294,7 @@ Mesh* Mesh::GenerateTextQuad(const std::string& text, Font* font)
 	}
 
 	m->BufferData();
+	CalcMeshUsage(m);
 	return m;
 };
 
@@ -249,6 +333,7 @@ Mesh* Mesh::GenerateQuadAlt()
 		m->m_Indices[i] = i;
 	}
 	m->BufferData();
+	CalcMeshUsage(m);
 	return m;
 }
 
@@ -287,6 +372,7 @@ Mesh* Mesh::GenerateQuadTexCoordCol(Vec2Graphics scale, Vec2Graphics texCoord, V
 		m->m_Indices[i] = i;
 	}
 	m->BufferData();
+	CalcMeshUsage(m);
 	return m;
 }
 

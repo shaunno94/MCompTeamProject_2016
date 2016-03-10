@@ -47,7 +47,7 @@ public:
 
 	unsigned char renderFlags; //triggers for graphical effects such as post processing and any other info required by the renderer
 
-private:
+protected:
 	//Comparators for sorting node lists - opaques (front to back), transparents (back to front). 
 	//Uses distance from camera for comparison.
 	static bool CompareByCameraDistance(const GameObject* a, const GameObject* b) { return (a->m_CamDist < b->m_CamDist); }

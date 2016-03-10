@@ -2,6 +2,7 @@
 #include "Rendering\constants.h"
 #include "OnTargetTrigger.h"
 #include "DistanceTrigger.h"
+#include "constants.h"
 
 DefenceState::DefenceState(StateMachine& stateMachine, GameObject& parent, GameObject& ball, GameObject& teamGoal, GameObject& targetGoal) :
 State(stateMachine, parent),

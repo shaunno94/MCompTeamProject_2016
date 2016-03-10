@@ -16,25 +16,6 @@
 #include "CubeMaterial.h"
 #include <vector>
 
-//#define OPENGL_DEBUGGING
-
-/// @ingroup Rendering
-/// <summary>
-///
-/// </summary>
-static const float biasValues[16] =
-{
-	0.5, 0.0, 0.0, 0.0,
-	0.0, 0.5, 0.0, 0.0,
-	0.0, 0.0, 0.5, 0.0,
-	0.5, 0.5, 0.5, 1.0
-};
-/// @ingroup Rendering
-/// <summary>
-///
-/// </summary>
-static const Mat4Graphics biasMatrix(biasValues);
-
 class OGLShader;
 class GameObject;
 class Renderer;
@@ -65,18 +46,21 @@ public:
 	}
 	void SetCurrentShader(BaseShader* s);
 
-	static void UpdateUniform(GLint location, const Mat4Graphics& mat4);
-	static void UpdateUniform(GLint location, const Mat3Graphics& mat3);
-	static void UpdateUniform(GLint location, const Vec4Graphics& vec4);
-	static void UpdateUniform(GLint location, const Vec3Graphics& vec3);
-	static void UpdateUniform(GLint location, const Vec2Graphics& vec2);
-	static void UpdateUniform(GLint location, float f);
-	static void UpdateUniform(GLint location, double d);
-	static void UpdateUniform(GLint location, int i);
-	static void UpdateUniform(GLint location, unsigned int u);
+	void UpdateUniform(const shaderResourceLocation& location, const Mat4Graphics& mat4);
+	void UpdateUniform(const shaderResourceLocation& location, const Mat3Graphics& mat3);
+	void UpdateUniform(const shaderResourceLocation& location, const Vec4Graphics& vec4);
+	void UpdateUniform(const shaderResourceLocation& location, const Vec3Graphics& vec3);
+	void UpdateUniform(const shaderResourceLocation& location, const Vec2Graphics& vec2);
+	void UpdateUniform(const shaderResourceLocation& location, float f);
+	void UpdateUniform(const shaderResourceLocation& location, double d);
+	void UpdateUniform(const shaderResourceLocation& location, int i);
+	void UpdateUniform(const shaderResourceLocation& location, unsigned int u);
 	void UpdateShaderMatrices();
+
 	void SetTextureFlags(unsigned int id, unsigned int flags);
 	unsigned int TextureMemoryUsage(unsigned int id);
+	void SetTexture(const shaderResourceLocation& id, textureHandle handle);
+	uint64_t GetRendererMemUsage() const { return rendererMemUsage; }
 
 protected:
 	virtual void	Resize(int x, int y);
@@ -129,5 +113,7 @@ protected:
 
 	GameObject* quad;
 	static Renderer* child;
+
+	static uint64_t rendererMemUsage;
 };
 #endif

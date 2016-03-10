@@ -1,31 +1,44 @@
-ConstantBuffer ShaderConstants
+ConstantBuffer modelMatrix
 {
 	column_major matrix modelMatrix;
+};
+
+ConstantBuffer inverseProjView
+{
+	column_major matrix inverseProjView;
+};
+
+ConstantBuffer viewMatrix
+{
 	column_major matrix viewMatrix;
+};
+ConstantBuffer projMatrix
+{
 	column_major matrix projMatrix;
-	column_major matrix textureMatrix;
-	column_major matrix inverseProjView; //Needs to come from CPU
 };
 
 struct VS_INPUT
 {
-	float3 position		: POSITION0;
+	float3 position	: POSITION0;
 };
 
 struct VS_OUTPUT
 {
-	float4 position		: S_POSITION;
-	float4x4 inverseProjView; 
+	float4 position	: S_POSITION;
+	//float4 testPos;
+	float4x4 invProjView; 
 };
 
 VS_OUTPUT main(VS_INPUT Input)
 {
 	VS_OUTPUT Output;
 
-	float4x4 MVP = projMatrix * viewMatrix * modelMatrix;
+	float4x4 MVP = mul(mul(projMatrix, viewMatrix), modelMatrix);
 	Output.position = mul(MVP, float4(Input.position.xyz, 1.0));
 	
-	Output.inverseProjView = inverseProjView;
+	Output.invProjView = inverseProjView;
+
+	//Output.testPos =  mul(MVP, float4(Input.position.xyz, 1.0));
 
 	return Output;
 }

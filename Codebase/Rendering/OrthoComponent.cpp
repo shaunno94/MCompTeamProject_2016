@@ -25,11 +25,11 @@ void OrthoComponent::RemoveGUIComponent(GUIComponent* element)
 	}
 }
 
-void OrthoComponent::Update()
-{
-	for (unsigned int i = 0; i < m_elements.size(); ++i)
-		m_elements[i]->Update();
-}
+//void OrthoComponent::Update()
+//{
+//	for (unsigned int i = 0; i < m_elements.size(); ++i)
+//		m_elements[i]->Update();
+//}
 
 void OrthoComponent::Render()
 {

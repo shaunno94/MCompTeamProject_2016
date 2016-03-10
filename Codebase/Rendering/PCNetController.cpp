@@ -1,3 +1,4 @@
+#ifndef ORBIS
 #include "PCNetController.h"
 #include "RigidPhysicsObject.h"
 #include "GameObject.h"
@@ -64,3 +65,4 @@ void PCNetController::Sync(NetSessionWriter& writer)
 
 	writer.AddGlobalMessage(NetMessage::Make(data, -1, m_id, NetReservedPhysicsMessageType + m_id, NetMessageStrategy::NetLatestMessageStrategy));
 }
+#endif

@@ -2,18 +2,85 @@
 #include <stddef.h>
 #include <mutex>
 #include <btBulletDynamicsCommon.h>
+#include <vector>
+
+
+# define BIT(x) 1 << x
+enum CollisionMasks
+{
+	COL_NOTHING = 0,
+	COL_WALL = BIT(0),
+	COL_CAR = BIT(1),
+	COL_AI_CAR = BIT(2),
+	COL_BALL = BIT(3),
+	COL_GOAL1 = BIT(4),
+	COL_GOAL2 = BIT(5),
+	COL_PICKUP = BIT(6)
+};
+enum CollisionGroups
+{
+	COL_GROUP_ALL = ~0,
+	COL_GROUP_DEFAULT = 1,
+	/*GROUP_WALL_BALL = COL_WALL | COL_BALL,
+	GROUP_CAR_WALL = COL_CAR | COL_WALL,
+	GROUP_CAR_BALL = COL_CAR | COL_BALL*/
+};
+
+class ParticleFilterStep
+{
+public:
+	ParticleFilterStep(unsigned int groupId = 0, unsigned int maskTest = ~0)
+	{
+		group = groupId;
+		mask = maskTest;
+	}
+
+	virtual bool callback(btBroadphaseProxy* proxy0, btBroadphaseProxy* proxy1) const
+	{
+		return true;
+	}
+
+	unsigned int group;
+	unsigned int mask;
+};
 
 //Collision callback which should return false if the entity is a particle i.e. group ID == 0 and mask == 0.
-//This will tell bullet to not consider particles in collision detection / response (hopefully - untested) 
-struct ParticleFilterCallback : public btOverlapFilterCallback
+//This will tell bullet to not consider particles in collision detection / response (hopefully - untested)
+class ParticleFilterCallback : public btOverlapFilterCallback
 {
-	virtual bool needBroadphaseCollision(btBroadphaseProxy* proxy0, btBroadphaseProxy* proxy1) const override
+public:
+	~ParticleFilterCallback()
 	{
-		bool collides = (proxy0->m_collisionFilterGroup & proxy1->m_collisionFilterMask) != 0;
-		collides = collides && (proxy1->m_collisionFilterGroup & proxy0->m_collisionFilterMask);
-
-		return collides;
+		for (auto step : steps)
+			delete step;
+		steps.clear();
 	}
+
+	virtual bool needBroadphaseCollision(btBroadphaseProxy* proxy0, btBroadphaseProxy* proxy1) const override
+	{/*
+		if ((proxy0->m_collisionFilterMask & (COL_PICKUP | COL_CAR)) && (proxy1->m_collisionFilterMask & (COL_PICKUP | COL_CAR)))
+		{
+		int test = 0;
+		}*/
+
+		bool result = true;
+		if (proxy0->m_collisionFilterGroup & proxy1->m_collisionFilterGroup)
+		{
+			for (auto step : steps)
+			{
+				if ((proxy0->m_collisionFilterGroup & step->group) && (proxy1->m_collisionFilterGroup & step->group))
+				{
+					if ((proxy0->m_collisionFilterMask & step->mask) && (proxy1->m_collisionFilterMask & step->mask))
+					{
+						result = result && step->callback(proxy0, proxy1);
+					}
+				}
+			}
+		}
+		return result;
+	}
+
+	std::vector<ParticleFilterStep*> steps;
 };
 
 class PhysicsEngineInstance
@@ -43,6 +110,7 @@ public:
 				m_pInstance = new btSoftRigidDynamicsWorld(dispatcher, bf, solver, collisionConfiguration, softSolver);
 
 				filter = new ParticleFilterCallback();
+				m_pInstance->getPairCache()->setOverlapFilterCallback(filter);
 				//m_pInstance->getPairCache()->setOverlapFilterCallback(filter);
 			}
 		}
@@ -69,7 +137,13 @@ public:
 			solver = nullptr;
 			filter = nullptr;
 			m_pInstance = nullptr;
+		
 		}
+	}
+
+	static ParticleFilterCallback& GetFilter()
+	{
+		return *filter;
 	}
 
 protected:

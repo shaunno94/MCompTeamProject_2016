@@ -1,6 +1,7 @@
 #ifndef ORBIS
 #include "KeyboardController.h"
-
+#include "Renderer.h"
+#include "Audio/SoundSystem.h"
 
 KeyboardController::KeyboardController(ControllerComponent* object)
 {
@@ -20,7 +21,7 @@ void KeyboardController::CheckInput(){
 	float turn = 0;
 	bool airbourne = object->airbourne();
 
-	auto forward = object->getForwardVelocity();
+	float forward = object->getForwardVelocity();
 
 	if (Window::GetKeyboard()->KeyDown(KEYBOARD_UP) || Window::GetKeyboard()->KeyDown(KEYBOARD_W))
 	{
@@ -40,10 +41,12 @@ void KeyboardController::CheckInput(){
 		if (airbourne)
 			torque += (orientation *Vec3Physics(0, 0, -1)).Normalize() * airAccel * 0.7f;
 		else
-		if (forward < 0)
+		if (forward < 0){
 			torque += (orientation *Vec3Physics(0, -1, 0)).Normalize() * -rotAccel;
-		else
+		}
+		else{
 			torque += (orientation *Vec3Physics(0, -1, 0)).Normalize() * rotAccel;
+		}
 
 		turn++;
 		//force += (orientation * Vec3Physics(0, 0, accel));
@@ -52,12 +55,14 @@ void KeyboardController::CheckInput(){
 	if (Window::GetKeyboard()->KeyDown(KEYBOARD_LEFT) || Window::GetKeyboard()->KeyDown(KEYBOARD_A))
 	{
 		if (airbourne)
-			torque += (orientation *Vec3Physics(0, 0, 1)).Normalize() * airAccel * 0.7f; 
+			torque += (orientation *Vec3Physics(0, 0, 1)).Normalize() * airAccel * 0.7f;
 		else
-		if (forward < 0)
+		if (forward < 0){
 			torque += (orientation *Vec3Physics(0, 1, 0)).Normalize() * -rotAccel;
-		else
+		}
+		else{
 			torque += (orientation *Vec3Physics(0, 1, 0)).Normalize() * rotAccel;
+		}
 
 		turn--;
 		//force += (orientation * Vec3Physics(0, 0, -accel));
@@ -65,9 +70,14 @@ void KeyboardController::CheckInput(){
 
 	object->turnWheels(turn);
 
-	if (Window::GetKeyboard()->KeyTriggered(KEYBOARD_SPACE))
+	if (!airbourne && Window::GetKeyboard()->KeyTriggered(KEYBOARD_SPACE))
 	{
 		impulse += (orientation * Vec3Physics(0, jump, -jump *.5));
+		SoundMOD mod;
+		mod.isGlobal = true;
+		mod.looping = false;
+		mod.volume = 0.4f;
+		SoundSystem::Instance()->Play(SoundManager::GetSound(BOOST), mod);
 	}
 
 	object->AddForce(force.x, force.y, force.z);
@@ -79,9 +89,20 @@ void KeyboardController::CheckInput(){
 		object->reset();
 	}
 
+	if (Window::GetKeyboard()->KeyTriggered(KEYBOARD_C))
+	{
+		Renderer::GetInstance()->GetCurrentScene()->getCamera()->autocam = !Renderer::GetInstance()->GetCurrentScene()->getCamera()->autocam;
+		Renderer::GetInstance()->GetCurrentScene()->getCamera()->reset();
+	}
+
 	//------camera control-------//
 	float pitch = (Window::GetMouse()->GetRelativePosition().y);
 	float yaw = (Window::GetMouse()->GetRelativePosition().x);
 	object->setCameraControl(pitch, yaw);
+
+	if (Window::GetKeyboard()->KeyTriggered(KEYBOARD_Q))
+	{
+		Renderer::GetInstance()->GetCurrentScene()->getCamera()->reset();
+	}
 }
 #endif

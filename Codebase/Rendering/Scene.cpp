@@ -4,7 +4,6 @@
 Scene::Scene()
 {
 	cam = new Camera(0.0f, 0.0f, Vec3Graphics(0, 0, 0));
-
 }
 
 
@@ -16,7 +15,7 @@ Scene::~Scene()
 	}
 	for (auto &obj : opaqueObjects)
 	{
-		delete obj;		
+		delete obj;
 	}
 	for (auto obj : ghostObjects)
 	{
@@ -36,7 +35,7 @@ GameObject* Scene::findGameObject(const std::string& objectName)
 	for (auto obj : ghostObjects) {
 		if (obj->m_Name == objectName) {
 			return obj;
-		}
+}
 	}
 	for (auto obj : opaqueObjects) {
 		if (obj->m_Name == objectName) {
@@ -78,12 +77,10 @@ void Scene::UpdateNodeLists(float dt, Frustum& frustum, Vec3Graphics camPos)
 	for (unsigned int i = 0; i < transparentObjects.size(); ++i)
 	{
 		transparentObjects[i]->OnUpdateObject(dt);
-
 	}
 	for (unsigned int i = 0; i < opaqueObjects.size(); ++i)
 	{
 		opaqueObjects[i]->OnUpdateObject(dt);
-
 	}
 	for (unsigned int i = 0; i < ghostObjects.size(); ++i)
 	{
@@ -102,7 +99,6 @@ void Scene::UpdateFrustumCulling(Frustum& frustum, Vec3Graphics camPos){
 	Vec3Graphics pos, dir;
 	for (unsigned int i = 0; i < transparentObjects.size(); ++i)
 	{
-		
 		if (!frustum.InsideFrustum(transparentObjects[i]))
 		{
 			transparentObjects[i]->m_RenderComponent->disabled = true;

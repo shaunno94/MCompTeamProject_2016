@@ -17,7 +17,7 @@ public:
 
 	void AddChildState(unsigned int stateName, State* childState);
 	void AddTrigger(Trigger* trigger, unsigned int destState);
-	
+
 protected:
 
 	bool CheckTriggers();
@@ -33,4 +33,3 @@ protected:
 	GameObject* m_parent;
 	StateMachine* m_stateMachine;
 };
-

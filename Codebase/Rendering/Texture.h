@@ -15,6 +15,7 @@
 #include <unordered_map>
 #include <vector>
 #include "Helpers/common.h"
+#include "BaseShader.h"
 
 #include <type_traits>
 
@@ -45,7 +46,7 @@ enum TextureFlags
 #ifndef ORBIS
 typedef unsigned int textureHandle;
 #else
-typedef const sce::Gnm::Texture* textureHandle;
+typedef sce::Gnm::Texture textureHandle;
 #endif
 
 /// @ingroup Rendering
@@ -71,7 +72,7 @@ public:
 	/// If this texture is not loaded onto the GPU, the <see cref="Texture::LoadFromFile"/> will be called automatically.
 	/// </remarks>
 	/// <param name="textureUnit">GPU texture unit.</param>
-	void Load(unsigned int textureUnit);
+	void Load(const shaderResourceLocation& textureUnit);
 
 	/// <summary>
 	/// Loads the managed texture from file.
@@ -90,7 +91,9 @@ public:
 	/// <returns>GPU texture id.</returns>
 	inline textureHandle GetTextureId()
 	{
-		if (!textureId) LoadFromFile();
+		if (!textureLoaded)
+			LoadFromFile();
+		
 			return textureId;
 	}
 	/// <summary>
@@ -102,9 +105,9 @@ public:
 		return filePath;
 	}
 
-	static inline unsigned int GetMemoryUsage()
+	static inline uint64_t GetMemoryUsage()
 	{
-		return s_memoryUsage;
+		return textureMemoryUsage;
 	}
 
 	Texture& operator=(const Texture&) = delete;
@@ -157,7 +160,8 @@ protected:
 
 	static std::unordered_map<std::string, std::vector<Texture*>> s_textureRecords;
 
-	static unsigned int s_memoryUsage;
+	static void checkPath(std::string& path);
+	static uint64_t textureMemoryUsage;
 	void MeasureMemoryUsageAdd(textureHandle textureId);
 	void MeasureMemoryUsageSubtract(textureHandle textureId);
 
@@ -167,5 +171,7 @@ protected:
 	unsigned int textureCopyIndex;
 	std::string filePath;
 	unsigned int m_referenceCount;
+	bool textureLoaded = false;
+	unsigned int textureFlags;
 };
 

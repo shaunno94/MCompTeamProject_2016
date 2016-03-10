@@ -12,11 +12,10 @@ ScoreboardGUIComponent::ScoreboardGUIComponent(Material* material, Texture* text
 	font = new Font(m_Texture, 16, 16);
 
 	m_Mesh = Mesh::GenerateTextQuad(std::to_string(0) + " - " + "3:00" + " - 0", font);
-	//m_Mesh = Mesh::GenerateQuad();
 	text = new GameObject("text");
 	text_renderComp = new RenderComponent(m_Material, m_Mesh);
 	text->SetRenderComponent(text_renderComp);
-	text->SetWorldTransform(Mat4Graphics::Translation(Vec3Graphics(350, 700, 0)) * Mat4Graphics::Scale(Vec3Graphics(40, 40, 1)));
+	text->SetWorldTransform(Mat4Graphics::Translation(Vec3Graphics(-0.6f, 0.7f, 0)) * Mat4Graphics::Scale(Vec3Graphics(0.1f, 0.1f, 1)));
 	m_Children.push_back(text);
 }
 
@@ -25,12 +24,12 @@ ScoreboardGUIComponent::~ScoreboardGUIComponent()
 	delete text;
 }
 
-void ScoreboardGUIComponent::Update()
-{
+//void ScoreboardGUIComponent::Update()
+//{
+//	
+//}
 	
-}
-
-void ScoreboardGUIComponent::Update(int& scoreA, int& scoreB, float& time)
+void ScoreboardGUIComponent::Update(int scoreA, int scoreB, float time)
 {
 	delete m_Mesh;
 	timeRem = 180 - (int) time;

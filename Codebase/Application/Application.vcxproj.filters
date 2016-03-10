@@ -13,6 +13,12 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
+    <Filter Include="Header Files\Pickups">
+      <UniqueIdentifier>{42e9b776-c626-4a47-b977-012172a2e0d8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Pickups">
+      <UniqueIdentifier>{dd27cd4f-5da0-4bbd-ad06-dc97657ebd40}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source.cpp">
@@ -30,6 +36,21 @@
     <ClCompile Include="CarGameObject.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="BallGameObject.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="GoalCollisionFilterStep.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="PickupGameObject.cpp">
+      <Filter>Source Files\Pickups</Filter>
+    </ClCompile>
+    <ClCompile Include="PickupManager.cpp">
+      <Filter>Source Files\Pickups</Filter>
+    </ClCompile>
+    <ClCompile Include="BoostPickupGameObject.cpp">
+      <Filter>Source Files\Pickups</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Stadium.h">
@@ -43,6 +64,21 @@
     </ClInclude>
     <ClInclude Include="MenuScene.h">
       <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="BallGameObject.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="GoalCollisionFilterStep.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="PickupGameObject.h">
+      <Filter>Header Files\Pickups</Filter>
+    </ClInclude>
+    <ClInclude Include="PickupManager.h">
+      <Filter>Header Files\Pickups</Filter>
+    </ClInclude>
+    <ClInclude Include="BoostPickupGameObject.h">
+      <Filter>Header Files\Pickups</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

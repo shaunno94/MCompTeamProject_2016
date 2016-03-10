@@ -16,12 +16,12 @@ void CubeMaterial::Setup()
 	UpdateUniformValue(m_uniformInts);
 }
 
-int CubeMaterial::Set(const std::string& uniformName, int i)
+shaderResourceLocation CubeMaterial::Set(const std::string& uniformName, int i)
 {
 	return setUniformValue(m_uniformInts, shader, uniformName, i);
 }
 
-void CubeMaterial::Set(int uniformLocation, int i)
+void CubeMaterial::Set(const shaderResourceLocation& uniformLocation, int i)
 {
 	setUniformValue(m_uniformInts, uniformLocation, i);
 }

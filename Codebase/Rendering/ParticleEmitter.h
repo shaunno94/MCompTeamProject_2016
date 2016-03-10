@@ -1,4 +1,3 @@
-#ifndef ORBIS
 #pragma once
 #include "Particle.h"
 
@@ -12,4 +11,3 @@ public:
 protected:
 private:
 };
-#endif

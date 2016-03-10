@@ -18,6 +18,7 @@ _-_-_-_-_-_-_-""  ""
 #include "constants.h"
 #include "Renderer.h"
 #include "OGLShader.h"
+#include "DebugDraw.h"
 
 /*
 Creates an OpenGL 3.2 CORE PROFILE rendering context. Sets itself
@@ -26,6 +27,7 @@ way to do it - but it kept the Tutorial code down to a minimum!
 */
 
 Renderer* OGLRenderer::child = nullptr;
+uint64_t OGLRenderer::rendererMemUsage = 0;
 
 OGLRenderer::OGLRenderer(std::string title, int sizeX, int sizeY, bool fullScreen)
 {
@@ -147,7 +149,7 @@ OGLRenderer::OGLRenderer(std::string title, int sizeX, int sizeY, bool fullScree
 
 	currentShader = nullptr;							//0 is the 'null' object name for shader programs...
 
-	Window::GetWindow().SetRenderer(this);					//Tell our window about the new renderer! (Which will in turn resize the renderer window to fit...)
+	Window::GetWindow().SetRenderer(this);					//Tell our window about the new renderer! (Which will in turn resize the renderer window to fit...)	
 
 	RECT clientRect, windowRect;
 	if (GetClientRect(windowHandle, &clientRect) && GetWindowRect(windowHandle, &windowRect))
@@ -257,41 +259,47 @@ void OGLRenderer::SetTextureRepeating(GLuint target, bool repeating)
 	glBindTexture(GL_TEXTURE_2D, 0);
 }
 
-void OGLRenderer::UpdateUniform(GLint location, const Mat4Graphics& mat4)
+void OGLRenderer::UpdateUniform(const shaderResourceLocation& location, const Mat4Graphics& mat4)
 {
-	if (location >= 0) glUniformMatrix4fv(location, 1, false, (float*)&mat4);
+	if (location.id >= 0) glUniformMatrix4fv(location.id, 1, false, (float*)&mat4);
 }
-void OGLRenderer::UpdateUniform(GLint location, const Mat3Graphics& mat3)
+void OGLRenderer::UpdateUniform(const shaderResourceLocation& location, const Mat3Graphics& mat3)
 {
-	if (location >= 0) glUniformMatrix3fv(location, 1, false, (float*)&mat3);
+	if (location.id >= 0) glUniformMatrix3fv(location.id, 1, false, (float*)&mat3);
 }
-void OGLRenderer::UpdateUniform(GLint location, const Vec4Graphics& vec4)
+void OGLRenderer::UpdateUniform(const shaderResourceLocation& location, const Vec4Graphics& vec4)
 {
-	if (location >= 0) glUniform4fv(location, 1, (float*)&vec4);
+	if (location.id >= 0) glUniform4fv(location.id, 1, (float*)&vec4);
 }
-void OGLRenderer::UpdateUniform(GLint location, const Vec3Graphics& vec3)
+void OGLRenderer::UpdateUniform(const shaderResourceLocation& location, const Vec3Graphics& vec3)
 {
-	if (location >= 0) glUniform3fv(location, 1, (float*)&vec3);
+	if (location.id >= 0) glUniform3fv(location.id, 1, (float*)&vec3);
 }
-void OGLRenderer::UpdateUniform(GLint location, const Vec2Graphics& vec2)
+void OGLRenderer::UpdateUniform(const shaderResourceLocation& location, const Vec2Graphics& vec2)
 {
-	if (location >= 0) glUniform2fv(location, 1, (float*)&vec2);
+	if (location.id >= 0) glUniform2fv(location.id, 1, (float*)&vec2);
 }
-void OGLRenderer::UpdateUniform(GLint location, float f)
+void OGLRenderer::UpdateUniform(const shaderResourceLocation& location, float f)
 {
-	if (location >= 0) glUniform1f(location, f);
+	if (location.id >= 0) glUniform1f(location.id, f);
 }
-void OGLRenderer::UpdateUniform(GLint location, double d)
+void OGLRenderer::UpdateUniform(const shaderResourceLocation& location, double d)
 {
-	if (location >= 0) glUniform1d(location, d);
+	if (location.id >= 0) glUniform1d(location.id, d);
 }
-void OGLRenderer::UpdateUniform(GLint location, int i)
+void OGLRenderer::UpdateUniform(const shaderResourceLocation& location, int i)
 {
-	if (location >= 0) glUniform1i(location, i);
+	if (location.id >= 0) glUniform1i(location.id, i);
 }
-void OGLRenderer::UpdateUniform(GLint location, unsigned int u)
+void OGLRenderer::UpdateUniform(const shaderResourceLocation& location, unsigned int u)
 {
-	if (location >= 0) glUniform1ui(location, u);
+	if (location.id >= 0) glUniform1ui(location.id, u);
+}
+
+void OGLRenderer::SetTexture(const shaderResourceLocation& id, textureHandle handle)
+{
+	glActiveTexture(GL_TEXTURE0 + id.id);
+	glBindTexture(GL_TEXTURE_2D, handle);
 }
 
 unsigned int OGLRenderer::TextureMemoryUsage(unsigned int id)
@@ -415,7 +423,7 @@ bool OGLRenderer::initFBO()
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
 
 	glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT,
-	             SHADOWSIZE, SHADOWSIZE, 0, GL_DEPTH_COMPONENT, GL_FLOAT, NULL);
+		SHADOWSIZE, SHADOWSIZE, 0, GL_DEPTH_COMPONENT, GL_FLOAT, NULL);
 
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_COMPARE_MODE, GL_COMPARE_R_TO_TEXTURE);
 
@@ -436,7 +444,7 @@ bool OGLRenderer::initFBO()
 	for (size_t i = 0; i < 6; ++i)
 	{
 		glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, GL_DEPTH_COMPONENT,
-		             SHADOWSIZE, SHADOWSIZE, 0, GL_DEPTH_COMPONENT, GL_FLOAT, NULL);
+			SHADOWSIZE, SHADOWSIZE, 0, GL_DEPTH_COMPONENT, GL_FLOAT, NULL);
 	}
 	glEnable(GL_TEXTURE_CUBE_MAP);
 	glBindTexture(GL_TEXTURE_CUBE_MAP, 0);
@@ -517,6 +525,7 @@ void OGLRenderer::GenerateScreenTexture(GLuint& into, bool depth)
 		GL_UNSIGNED_BYTE, NULL);
 
 	glBindTexture(GL_TEXTURE_2D, 0);
+	rendererMemUsage += TextureMemoryUsage(into);
 }
 
 void OGLRenderer::FillBuffers()
@@ -526,12 +535,13 @@ void OGLRenderer::FillBuffers()
 	glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
 
 	//SetCurrentShader(sceneShader);
-	
+
 	UpdateShaderMatrices();
 	DrawSky();
-
+	
 #if DEBUG_DRAW
 	PhysicsEngineInstance::Instance()->debugDrawWorld();
+	DebugDraw::Instance()->RenderLine();
 #endif
 	child->OnRenderScene();
 
@@ -554,7 +564,8 @@ void OGLRenderer::DrawPointLights()
 
 	glActiveTexture(GL_TEXTURE0 + ReservedOtherTextures.NORMALS.index);
 	glBindTexture(GL_TEXTURE_2D, bufferNormalTex);
-	
+	glActiveTexture(GL_TEXTURE0);
+
 	child->OnRenderLights();
 
 	glCullFace(GL_BACK);
@@ -566,7 +577,7 @@ void OGLRenderer::DrawPointLights()
 	glUseProgram(0);
 }
 
-void OGLRenderer::CombineBuffers() 
+void OGLRenderer::CombineBuffers()
 {
 	glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
 	projMatrix = Mat4Graphics::Orthographic(-1, 1, 1, -1, -1, 1);
@@ -630,11 +641,11 @@ void OGLRenderer::DrawShadowCube(GameObject* light){
 	glUseProgram(0);
 	glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE);
 	glViewport(0, 0, width, height);
-	
+
 	//((LightMaterial*)light->GetRenderComponent()->m_Material)->Set("lightProj", Mat4Graphics::Perspective(1, 15000, 1, 90));
 
 	glBindFramebuffer(GL_FRAMEBUFFER, pointLightFBO);
-	
+
 	glActiveTexture(GL_TEXTURE0 + ReservedOtherTextures.SHADOW_CUBE.index);
 	glBindTexture(GL_TEXTURE_CUBE_MAP, shadowTexCube);
 	glActiveTexture(GL_TEXTURE0);
@@ -680,7 +691,7 @@ void OGLRenderer::DrawShadow2D(GameObject* light){
 
 	projMatrix = child->localProjMat;
 	//viewMatrix = currentScene->getCamera()->BuildViewMatrix();
-	
+
 	child->OnUpdateScene(child->frameFrustrum, child->currentScene->getCamera()->GetPosition());
 }
 

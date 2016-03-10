@@ -1,8 +1,9 @@
 #include "Rendering/Renderer.h"
 #include "Rendering/GameTimer.h"
 #include "GameScene.h"
+#include "MenuScene.h"
 #include "Helpers/MeasuringTimer.h"
-
+//#include "Networking\Net.h"
 
 const float TIME_STEP = 1.0f / 120.0f;
 const unsigned int SUB_STEPS = 4;
@@ -18,7 +19,6 @@ const unsigned int SCREEN_WIDTH = 1920;
 //System Variables
 unsigned int sceLibcHeapExtendedAlloc = 1;			/* Switch to dynamic allocation */
 size_t sceLibcHeapSize = 512 * 1024 * 1024;			/* Set up heap area upper limit as 256 MiB */
-//int sceUserMainThreadPriority = SCE_KERNEL_DEFAULT_PRIORITY_USER;
 #endif
 
 int main(void)
@@ -33,18 +33,28 @@ int main(void)
 	{
 		return -1;
 	}
-
+	PhysicsEngineInstance::Instance();
 	GameTimer timer;
 #ifdef ORBIS
 	PS4Input input = PS4Input();
 #endif
 
 	ControllerManager* myControllers = new LocalControlManager;
+	//UIControllerManager* uiController = new UIControllerManager();
 	//Create GameScene
 	GameScene* gameScene = new GameScene(myControllers);
+//	MenuScene* menuScene = new MenuScene(uiController);
 	//Set current scene to the game
 	renderer.SetCurrentScene(gameScene);
 	gameScene->SetControllerActor();
+	gameScene->SetupAI();
+	//renderer.SetCurrentScene(menuScene);
+
+#ifdef _DEBUG
+	std::cout << "Renderer Memory Usage: " << renderer.GetRendererMemUsage() / (1024 * 1024) << " (MB)" << std::endl;
+	std::cout << "Texture Memory Usage: " << Texture::GetMemoryUsage() / (1024 * 1024) << " (MB)" << std::endl;
+	std::cout << "Mesh Memory Usage: " << Mesh::GetMeshMemUsage() / (1024 * 1024) << " (MB)" << std::endl;
+#endif
 
 #ifndef ORBIS
 	while (Window::GetWindow().UpdateWindow() && !Window::GetKeyboard()->KeyDown(KEYBOARD_ESCAPE))
@@ -71,7 +81,7 @@ int main(void)
 		MEASURING_TIMER_LOG_END();
 
 		MEASURING_TIMER_LOG_START("Sound System");
-		SoundSystem::Instance()->Update(ms);
+		
 		MEASURING_TIMER_LOG_END();
 
 		MEASURING_TIMER_LOG_END();//end frame inside
@@ -79,6 +89,8 @@ int main(void)
 		//TODO: Print time steps. Can pass stringstream to get a formated output string
 		//MEASURING_TIMER_PRINT(std::cout);
 		MEASURING_TIMER_CLEAR();
+
+		SoundSystem::Instance()->Update(ms);
 	}
 
 	delete gameScene;

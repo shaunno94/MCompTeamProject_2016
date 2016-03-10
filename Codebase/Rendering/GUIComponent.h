@@ -15,7 +15,7 @@ public:
 		delete m_Mesh;
 	}
 
-	virtual void Update() = 0;
+	//virtual void Update() = 0;
 	virtual void Render() = 0;
 
 	bool operator<(const GUIComponent& rhs) const

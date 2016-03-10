@@ -13,6 +13,7 @@
 #include "Audio\SoundSystem.h"
 #include "Rendering\ParticleManager.h"
 #include "Rendering\ScoreboardGUIComponent.h"
+#include "PickupManager.h"
 
 #ifndef ORBIS
 #include "Rendering\KeyboardController.h"
@@ -22,14 +23,14 @@ const string POINTLIGHTSHADER_VERT = SHADER_DIR"2dShadowLightvertex.glsl";
 const string POINTLIGHTSHADER_FRAG = SHADER_DIR"2dShadowLightfragment.glsl";
 const string GUI_VERT = SHADER_DIR"TexturedVertex.glsl";
 const string GUI_FRAG = SHADER_DIR"TexturedFragment.glsl";
-
 #else
 #include "Rendering\PS4Controller.h"
-const string SIMPLESHADER_VERT = SHADER_DIR"textureVertex.sb";
-const string SIMPLESHADER_FRAG = SHADER_DIR"textureFragment.sb";
-const string POINTLIGHTSHADER_VERT = SHADER_DIR"2dShadowLightvertex.sb";
-const string POINTLIGHTSHADER_FRAG = SHADER_DIR"2dShadowLightfragment.sb";
-
+const std::string SIMPLESHADER_VERT = SHADER_DIR"textureVertex.sb";
+const std::string SIMPLESHADER_FRAG = SHADER_DIR"textureFragment.sb";
+const std::string POINTLIGHTSHADER_VERT = SHADER_DIR"2dShadowLightvertex.sb";
+const std::string POINTLIGHTSHADER_FRAG = SHADER_DIR"2dShadowLightfragment.sb";
+const std::string GUI_VERT = SHADER_DIR"TexturedVertex.sb";
+const std::string GUI_FRAG = SHADER_DIR"TexturedFragment.sb";
 #endif
 #include "BulletCollision\CollisionDispatch\btCollisionWorld.h"
 #include "Helpers\DeltaTimer.h"
@@ -48,7 +49,9 @@ public:
 	void SetupMaterials();
 	void SetupControls();
 	void DrawGUI();
+
 	void SetControllerActor();
+	void SetupAI();
 
 	void IncrementScore(int team);
 
@@ -59,21 +62,29 @@ public:
 	void SetGoalScored(int goal) { goalScored = goal; }
 	int GetGoalScored() { return goalScored; }
 
+	PickupManager* GetPickupManager() {
+		return pickupManager;
+	}
+
 protected:
 	ControllerManager* myControllers;
-	GameCollisionFilter* goalBallFilter;
 	int scores[2];
 
 	void ResetObjects();
+	void ResetObject(GameObject& object);
 
 	void applyImpulseFromExplosion(CarGameObject* car);
-
 	GameObject* ball;
+	
 	GameObject* light1;
 	GameObject* light2;
+	
 	GameObject* player;
+	
 	GameObject* shooterAI;
 	GameObject* goalieAI;
+	GameObject* aggroAI;
+
 	GameObject* stadium;
 	GameObject* goal1;
 	GameObject* goal2;
@@ -89,8 +100,9 @@ protected:
 	LightMaterial* lightMaterial;
 
 	Material* material;
-	Material* ballMaterial;
 	Material* netMaterial;
+	Material* postMaterial;
+
 	Material* playerMaterial;
 	Material* aiMaterial;
 	Material* ai2Material;
@@ -98,14 +110,12 @@ protected:
 	Material* guiMaterial;
 	Material* textMaterial;
 
+	PickupManager* pickupManager;
+
 	ControllerComponent* cc;
 
 	OrthoComponent* hudOrtho;
 	ScoreboardGUIComponent* scoreboardComponent;
-
-	int ballID;
-	int goal1ID;
-	int goal2ID;
 
 	float timerCount = 0.0f;
 	float currentTime = 0.0f;
@@ -115,54 +125,3 @@ protected:
 	bool gameStart;
 };
 
-struct GameCollisionFilter : public btOverlapFilterCallback
-{
-
-public:
-
-	int m_ballID = 0;
-	int m_goal1ID = 0;
-	int m_goal2ID = 0;
-	GameScene* m_scene;
-
-	//DeltaTimer<float> timer = DeltaTimer<float>();
-	float timerCount = 0.0f;
-	int test;
-
-	GameCollisionFilter(GameScene* scene) : m_scene(scene) {
-	}
-
-
-	virtual bool needBroadphaseCollision(btBroadphaseProxy* proxy0, btBroadphaseProxy* proxy1) const override
-	{
-		short int combined = COL_CAR | COL_WALL;
-		/*int combinedMask = proxy0->m_collisionFilterMask | proxy1->m_collisionFilterMask;
-		int test1 = (combinedMask & COL_CAR) == COL_CAR;
-		int test2 = (combinedMask & COL_WALL) == COL_WALL;
-		int test3;*/
-		if ((proxy0->m_collisionFilterMask | proxy1->m_collisionFilterMask) & combined == combined)
-		{
-			int test = 0;
-		}
-		else
-		{
-			int test2 = 0;
-		}
-		//if (((combinedMask & COL_CAR) == COL_CAR) && ((combinedMask & COL_WALL) == COL_WALL)) {
-		//	std::cout << "Car and wall collision" << std::endl;
-		//	// sort out car-wall collision
-		//}
-
-		if ((proxy0->getUid() == m_ballID && proxy1->getUid() == m_goal1ID) ||
-			(proxy1->getUid() == m_ballID && proxy0->getUid() == m_goal1ID))
-		{
-			m_scene->SetGoalScored(1);
-		}
-		else if ((proxy0->getUid() == m_ballID && proxy1->getUid() == m_goal2ID) ||
-			(proxy1->getUid() == m_ballID && proxy0->getUid() == m_goal2ID))
-		{
-			m_scene->SetGoalScored(2);
-		}
-		return true;
-	}
-};

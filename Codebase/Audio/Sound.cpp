@@ -1,28 +1,19 @@
 #include "Sound.h"
-
-// sound
-Sound::Sound()
+/* BasicSound */
+BasicSound::BasicSound()
 {
 	bitRate = 0;
 	freqRate = 0;
 	length = 0;
 	data = NULL;
-	buffer = 0;
-	streaming = false;
 }
 
-Sound::~Sound(void)
+BasicSound::~BasicSound(void)
 {
 	delete data;
-	alDeleteBuffers(1, &buffer);
 }
 
-double	Sound::GetLength()
-{
-	return length;
-}
-
-void	Sound::LoadFromWAV(std::string filename)
+void	BasicSound::LoadFromWAV(std::string filename)
 {
 	std::ifstream	file(filename.c_str(), std::ios::in | std::ios::binary);
 
@@ -80,13 +71,26 @@ void	Sound::LoadFromWAV(std::string filename)
 	file.close();
 }
 
-void	Sound::LoadWAVChunkInfo(std::ifstream& file, std::string& name, unsigned int& size)
+void	BasicSound::LoadWAVChunkInfo(std::ifstream& file, std::string& name, unsigned int& size)
 {
 	char chunk[4];
 	file.read((char*)&chunk, 4);
 	file.read((char*)&size, 4);
 
 	name = std::string(chunk, 4);
+}
+
+/* Sound */
+#ifndef ORBIS
+Sound::Sound()
+{
+	buffer = 0;
+	streaming = false;
+}
+
+Sound::~Sound()
+{
+	alDeleteBuffers(1, &buffer);
 }
 
 ALenum Sound::GetOALFormat()
@@ -101,3 +105,4 @@ ALenum Sound::GetOALFormat()
 	}
 	return AL_FORMAT_MONO8;
 }
+#endif // !ORBIS

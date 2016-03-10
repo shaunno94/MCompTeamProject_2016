@@ -1,16 +1,21 @@
 #include "GameObject.h"
 
+unsigned int GameObject::id = 0;
+
 GameObject::GameObject(const std::string& name)
 {
 	m_Parent = nullptr;
 	m_Name = name;
 	m_PhysicsObj = nullptr;
 	m_RenderComponent = nullptr;
-
 	m_Audio = nullptr;
 
 	m_BoundingRadius = 1.0f;
 	m_CamDist = 0.0f;
+	m_Controller = nullptr;
+	id++;
+
+	m_spawnPoint = Vec3Graphics(0, 0, 0);
 
 	m_LocalTransform.ToIdentity();
 	m_WorldTransform.ToIdentity();
@@ -32,12 +37,13 @@ GameObject::~GameObject()
 	{
 		delete m_Controller;
 		m_Controller = nullptr;
-}
+	}
 	if (m_Audio)
 	{
 		delete m_Audio;
 		m_Audio = nullptr;
 	}
+
 }
 
 GameObject*	GameObject::FindGameObject(const std::string& name)
@@ -69,13 +75,8 @@ void GameObject::AddChildObject(GameObject* child)
 	child->m_Parent = this;
 }
 
-//TODO:: Parent-child relationship needs to be undone for sorted drawing!!
 void GameObject::OnRenderObject()				
 {
-	for (auto child : m_Children)
-	{
-		child->OnRenderObject();
-	}
 	if (m_RenderComponent)
 		m_RenderComponent->Draw();
 }

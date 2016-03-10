@@ -76,13 +76,12 @@ void Stadium::CreateCollisionWalls()
 	wallPhysics->CreatePhysicsBody(0, Vec3Physics(0, 0, 0), QuatPhysics(0, 0, 0, 1));
 	wallPhysics->GetPhysicsBody()->setRestitution(0.4f);
 	wallPhysics->GetPhysicsBody()->getBroadphaseProxy()->m_collisionFilterMask = COL_WALL;
+	wallPhysics->GetPhysicsBody()->getBroadphaseProxy()->m_collisionFilterGroup = COL_GROUP_DEFAULT;
 	
-
 }
 
 void Stadium::CreatePlane(std::vector<btConvexHullShape*> &collectionVector, Vec3Physics start, Vec3Physics end)
 {
-
 	start *= SCALE;
 	end *= SCALE;
 

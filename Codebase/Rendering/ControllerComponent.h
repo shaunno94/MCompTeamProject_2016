@@ -23,10 +23,12 @@ public:
 	float getForwardVelocity();
 	void reset();
 
-	inline GameObject* GetParent()
+	GameObject* GetParent()
 	{
 		return m_parent;
 	}
+
+	float boost;
 
 protected:
 	GameObject* m_parent;

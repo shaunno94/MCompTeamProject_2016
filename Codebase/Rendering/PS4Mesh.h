@@ -15,17 +15,13 @@ public:
 	void DrawDebugNormals(float length = 5.0f) override {};
 	void DrawDebugTangents(float length = 5.0f) override {};
 
-	static PS4Mesh* GenerateTriangle();
-	static PS4Mesh* GenerateQuad();
-	static PS4Mesh* GenerateSinglePoint();
-
 	void Draw(Material* m) override;
 	void BufferData() override;
 	void SetPrimitiveType(pType type) override;
 
 protected:
 	void	SubmitDraw(sce::Gnmx::GnmxGfxContext& cmdList, sce::Gnm::ShaderStage stage);
-	void	InitAttributeBuffer(sce::Gnm::Buffer &buffer, sce::Gnm::DataFormat format, void*offset);
+	void	InitAttributeBuffer(sce::Gnm::Buffer& buffer, sce::Gnm::DataFormat format, void*offset);
 
 	//Gpu simply has a 4 byte alignment!
 	struct MeshVertex
@@ -39,7 +35,7 @@ protected:
 	sce::Gnm::IndexSize		indexType;
 	sce::Gnm::PrimitiveType primitiveType;
 
-	int*		indexBuffer;
+	uint32_t*	indexBuffer;
 	MeshVertex*	vertexBuffer;
 
 	int	vertexDataSize;

@@ -50,7 +50,7 @@ class GameObject
 	friend class Scene;
 
 public:
-	GameObject(const std::string& name = "");
+	GameObject(const std::string& name = std::to_string(id));
 	virtual ~GameObject();
 
 	const std::string& GetName()
@@ -136,16 +136,8 @@ public:
 		return m_Audio;
 	}
 
-	void SetParticleSystem(ParticleSystem* system)
-	{
-		m_ParticleSystem = system;
-	}
 
-	ParticleSystem* GetParticleSystem() const
-	{
-		return m_ParticleSystem;
-	}
-
+	Vec3Graphics GetSpawnPoint() const { return m_spawnPoint; }
 protected:
 	virtual void OnRenderObject();			//Handles OpenGL calls to Render the object
 	virtual void OnUpdateObject(float dt);	//Override to handle things like AI etc on update loop
@@ -159,12 +151,17 @@ protected:
 	PhysicsObject*				m_PhysicsObj;
 	ControllerComponent*		m_Controller;
 
-	AudioComponent*				m_Audio;
-	ParticleSystem*				m_ParticleSystem;
 
-	float						m_BoundingRadius;	//Unused
+	AudioComponent*				m_Audio;
+
+
+	float						m_BoundingRadius;
 	Mat4Graphics				m_WorldTransform;
 	Mat4Graphics				m_LocalTransform;
 
+	Vec3Graphics				m_spawnPoint;
+
 	float m_CamDist; //For ordering of rendering lists.
+
+	static unsigned int id;
 };
