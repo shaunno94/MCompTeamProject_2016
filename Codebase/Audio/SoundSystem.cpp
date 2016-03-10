@@ -2,12 +2,12 @@
 #ifdef ORBIS
 #include <libsysmodule.h>
 #endif
+
 SoundSystem* SoundSystem::instance = NULL;
 
 SoundSystem::SoundSystem(unsigned int channels)
 {
 	masterVolume = 1.0f;
-
 	std::cout << "Creating SoundSystem!" << std::endl;
 
 #ifndef ORBIS
@@ -54,7 +54,7 @@ SoundSystem::SoundSystem(unsigned int channels)
 
 	SceAudio3dOpenParameters sParameters;
 	sceAudio3dGetDefaultOpenParameters(&sParameters);
-	sParameters.uiGranularity = 1024;
+	sParameters.uiGranularity = SAMPLE_GRANULARITY;
 	sParameters.uiMaxObjects = channels;
 	sParameters.uiQueueDepth = 1;
 
@@ -138,8 +138,14 @@ void		SoundSystem::Update(float msec)
 		emitter->Update(msec);
 	}
 
+	m_Background->SetPosition(listenerPos);
 	m_Background->Update(msec); // update background music
 
+#ifdef ORBIS
+	sceAudio3dPortAdvance(audioPort);
+
+	sceAudio3dPortPush(audioPort, SCE_AUDIO3D_BLOCKING_ASYNC);
+#endif
 	emitters.clear();	//done for this frame
 }
 

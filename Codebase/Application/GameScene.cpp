@@ -6,6 +6,7 @@ GameScene::GameScene(ControllerManager* controller)
 {
 	//Initialise Bullet physics engine.
 	PhysicsEngineInstance::Instance()->setGravity(btVector3(0, -9.81, 0));
+	SoundSystem::Initialise(32);
 
 	GUISystem::Initialise();
 	if (!GUISystem::GetInstance().HasInitialised())

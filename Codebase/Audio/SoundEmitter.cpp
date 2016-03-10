@@ -166,7 +166,7 @@ void		SoundEmitter::Update(float msec)
 		if (currentSource)
 		{
 			alSourcef(currentSource->source, AL_GAIN, volume);
-			alSourcef(currentSource->source, AL_PITCH, pitch);
+			alSourcef(currentSource->source, AL_PITCH, (pitch*0.95f));
 			alSourcef(currentSource->source, AL_MAX_DISTANCE, radius);
 			alSourcef(currentSource->source, AL_REFERENCE_DISTANCE, radius * 0.2f);
 
@@ -202,8 +202,6 @@ void		SoundEmitter::Update(float msec)
 	}
 }
 #else
-
-#define SAMPLE_GRANULARITY 1024
 
 void SoundEmitter::Reset() {
 	Emitter::Reset();
@@ -241,6 +239,9 @@ void SoundEmitter::Update(float msec) {
 
 	SceAudio3dPcm sPcm;
 
+	SampleFromSound(iSampleBuffer, SAMPLE_GRANULARITY, samplesUsed);
+	samplesUsed += SAMPLE_GRANULARITY;
+
 	sPcm.eFormat = SCE_AUDIO3D_FORMAT_S16;
 	sPcm.pSampleBuffer = iSampleBuffer;
 	sPcm.uiNumSamples = SAMPLE_GRANULARITY;
@@ -257,10 +258,12 @@ void SoundEmitter::Update(float msec) {
 
 void SoundEmitter::AttachSource(AudioSource* s){
 	currentSource = s;
+	currentSource->inUse = true;
 }
 
 void SoundEmitter::DetachSource(){
-
+	if (currentSource)
+		currentSource->inUse = false;
 }
 
 void SoundEmitter::SampleFromSound(int16_t* output, int samplesPerChannel, int startSample) {
