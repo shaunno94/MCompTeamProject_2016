@@ -17,11 +17,11 @@ DefenceState::~DefenceState()
 
 void DefenceState::setupChildStates()
 {
-	OnTargetTrigger* guardToClear = new OnTargetTrigger();
-	guardToClear->setupTrigger(*m_parent, *m_ball, *m_targetGoal, 0.5f);
+	DistanceTrigger* guardToClear = new DistanceTrigger();
+	guardToClear->setupTrigger(*m_ball, *m_teamGoal, 300, false);
 
 	DistanceTrigger* clearToGuard = new DistanceTrigger();
-	clearToGuard->setupTrigger(*m_ball, *m_teamGoal, 200, true);
+	clearToGuard->setupTrigger(*m_ball, *m_teamGoal, 230, true);
 
 	(*m_childStates)[GUARD_GOAL]->AddTrigger(guardToClear, CLEAR_GOAL);
 	(*m_childStates)[CLEAR_GOAL]->AddTrigger(clearToGuard, GUARD_GOAL);

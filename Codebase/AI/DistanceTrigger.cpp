@@ -34,21 +34,13 @@ bool DistanceTrigger::HasTriggered()
 	btVector3 parentOrigin = m_parent->GetPhysicsComponent()->GetPhysicsBody()->getWorldTransform().getOrigin()* btVector3(1, 0, 1);
 	btVector3 objBOrigin = m_objectB->GetPhysicsComponent()->GetPhysicsBody()->getWorldTransform().getOrigin()* btVector3(1, 0, 1);
 
-	float distanceSquare = (parentOrigin - objBOrigin).length2();
+	float distanceSquare = ((parentOrigin * btVector3(1, 0, 1)) - (objBOrigin * btVector3(1, 0, 1))).length2();
 	float triggerSquare = (m_triggerDistance * m_triggerDistance);
 
-	if (m_parent->GetName() == "ball" && m_objectB->GetName() == "blueGoal") {
-		float distance = (parentOrigin - objBOrigin).length();
-		std::cout << "Ball's distance to team goal = " << distance << " checking against " << m_triggerDistance << std::endl;
-	}
-
 	if ((m_triggerWhenLessThan) && (distanceSquare <= triggerSquare)) {
-		if (m_parent->GetName() == "ball" && m_objectB->GetName() == "blueGoal") {
-			//std::cout << "----------------Changing to guard --------------" << std::endl;
-		}
 		return true;
 	}
-	else if (distanceSquare >= triggerSquare) {
+	else if ((!m_triggerWhenLessThan) && (distanceSquare >= triggerSquare)) {
 		return true;
 	}
 	return false;

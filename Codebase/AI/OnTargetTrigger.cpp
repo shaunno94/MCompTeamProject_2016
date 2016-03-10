@@ -31,14 +31,7 @@ bool OnTargetTrigger::HasTriggered()
 
 	btScalar dot = aiToBall.dot(ballToGoal);
 
-	if (m_parent->GetName() == "goalieAI") {
-		std::cout << "Parent's dot with  ball = " << dot << " checking against " << m_targetAccuracy << std::endl;
-	}
-
 	if (dot > m_targetAccuracy) {
-		if (m_parent->GetName() == "goalieAI") {
-		//	std::cout << "---------------Goalie should switch to clear state------------- " << std::endl;
-		}
 		return true;
 	}
 	return false;
