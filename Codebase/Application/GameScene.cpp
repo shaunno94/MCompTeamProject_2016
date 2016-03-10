@@ -127,8 +127,6 @@ void GameScene::SetupGameObjects()
 	light2->SetWorldTransform(Mat4Graphics::Translation(Vec3Graphics(600, 900, 600)) *Mat4Graphics::Scale(Vec3Graphics(2400, 2400, 2400)));
 	light2->SetBoundingRadius(2400);
 
-	auto ballMaterial = new Material(simpleShader);
-	ballMaterial->Set(ReservedMeshTextures.DIFFUSE.name, Texture::Get(TEXTURE_DIR"football.png", true));
 	ball = new BallGameObject("ball", ballMaterial);
 
 	player = new CarGameObject(Vec3Physics(100, 2, 0), QuatPhysics(0, 1, 0, 1), playerMaterial, "player");
@@ -142,11 +140,11 @@ void GameScene::SetupGameObjects()
 	{
 		addGameObject(pickupMapping.second);
 	}
+
 	aggroAI = new CarGameObject(Vec3Physics(-190, 2, -30), QuatPhysics(0, 0, 0, 1), ai2Material, "aggroAI", COL_AI_CAR);
 
-
 	// Create Stadium
-	stadium = new Stadium(material, netMaterial, postMaterial, "stadium");
+	stadium = new Stadium(material, netMaterial, redPostMaterial, bluePostMaterial, "stadium");
 
 	goal1 = new GameObject("goal1");
 	goalBox = new RigidPhysicsObject();
@@ -206,10 +204,12 @@ void GameScene::SetupShaders()
 {
 #ifndef ORBIS
 	simpleShader = new OGLShader(SIMPLESHADER_VERT, SIMPLESHADER_FRAG);
+	colourShader = new OGLShader(SIMPLESHADER_VERT, COLOURSHADER_FRAG);
 	pointlightShader = new OGLShader(POINTLIGHTSHADER_VERT, POINTLIGHTSHADER_FRAG);
 	orthoShader = new OGLShader(GUI_VERT, GUI_FRAG);
 #else
 	simpleShader = new PS4Shader(SIMPLESHADER_VERT, SIMPLESHADER_FRAG);
+	colourShader = new PS4Shader(SIMPLESHADER_VERT, COLOURSHADER_FRAG);
 	pointlightShader = new PS4Shader(POINTLIGHTSHADER_VERT, POINTLIGHTSHADER_FRAG);
 	orthoShader = new PS4Shader(GUI_VERT, GUI_FRAG);
 #endif
@@ -217,6 +217,8 @@ void GameScene::SetupShaders()
 		std::cout << "Point light shader not operational!" << std::endl;
 	if(!simpleShader->IsOperational())
 		std::cout << "Simple shader not operational!" << std::endl;
+	if (!colourShader->IsOperational())
+		std::cout << "Colour shader not operational!" << std::endl;
 	if(!orthoShader->IsOperational())
 		std::cout << "ortho shader not operational!" << std::endl;
 }
@@ -228,7 +230,9 @@ void GameScene::SetupMaterials()
 
 	material = new Material(simpleShader);
 	netMaterial = new Material(simpleShader, true);
-	postMaterial = new Material(simpleShader, true);
+	ballMaterial = new Material(simpleShader);
+	redPostMaterial = new ExtendedMaterial(colourShader, true);
+	bluePostMaterial = new ExtendedMaterial(colourShader, true);
 	aiMaterial = new Material(simpleShader);
 	particleMaterial = new Material(simpleShader);
 	ai2Material = new Material(simpleShader);
