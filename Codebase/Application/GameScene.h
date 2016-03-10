@@ -19,6 +19,7 @@
 #include "Rendering\KeyboardController.h"
 const string SIMPLESHADER_VERT = SHADER_DIR"textureVertex.glsl";
 const string SIMPLESHADER_FRAG = SHADER_DIR"textureFragment.glsl";
+const string COLOURSHADER_FRAG = SHADER_DIR"colourTextureFragment.glsl";
 const string POINTLIGHTSHADER_VERT = SHADER_DIR"2dShadowLightvertex.glsl";
 const string POINTLIGHTSHADER_FRAG = SHADER_DIR"2dShadowLightfragment.glsl";
 const string GUI_VERT = SHADER_DIR"TexturedVertex.glsl";
@@ -27,6 +28,7 @@ const string GUI_FRAG = SHADER_DIR"TexturedFragment.glsl";
 #include "Rendering\PS4Controller.h"
 const std::string SIMPLESHADER_VERT = SHADER_DIR"textureVertex.sb";
 const std::string SIMPLESHADER_FRAG = SHADER_DIR"textureFragment.sb";
+const std::string COLOURSHADER_FRAG = SHADER_DIR"colourTextureFragment.sb";
 const std::string POINTLIGHTSHADER_VERT = SHADER_DIR"2dShadowLightvertex.sb";
 const std::string POINTLIGHTSHADER_FRAG = SHADER_DIR"2dShadowLightfragment.sb";
 const std::string GUI_VERT = SHADER_DIR"TexturedVertex.sb";
@@ -102,6 +104,7 @@ protected:
 	RigidPhysicsObject* goalBox2;
 
 	BaseShader* simpleShader;
+	BaseShader* colourShader;
 	BaseShader* pointlightShader;
 	BaseShader* orthoShader;
 
@@ -109,7 +112,9 @@ protected:
 
 	Material* material;
 	Material* netMaterial;
-	Material* postMaterial;
+	Material* ballMaterial;
+	ExtendedMaterial* redPostMaterial;
+	ExtendedMaterial* bluePostMaterial;
 
 	Material* playerMaterial;
 	Material* aiMaterial;

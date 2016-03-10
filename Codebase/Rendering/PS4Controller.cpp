@@ -44,7 +44,7 @@ void PS4Controller::CheckInput()
 		}
 	}
 
-	if (object->boost > 0 && PS4Input::getPS4Input()->GetButtonTriggered(BTN_CIRCLE))
+	if (object->boost > 0 && PS4Input::getPS4Input()->GetButtonDown(BTN_CIRCLE))
 	{
 		force *= 2;
 		torque *= 2;
