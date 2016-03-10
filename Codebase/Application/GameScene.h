@@ -96,12 +96,12 @@ protected:
 	GameObject* aggroAI;
 
 	GameObject* stadium;
-	GameObject* goal1;
-	GameObject* goal2;
+	GameObject* redGoal;
+	GameObject* blueGoal;
 
 	RigidPhysicsObject* ballPhysics;
-	RigidPhysicsObject* goalBox;
-	RigidPhysicsObject* goalBox2;
+	RigidPhysicsObject* redGoalBox;
+	RigidPhysicsObject* blueGoalBox;
 
 	BaseShader* simpleShader;
 	BaseShader* colourShader;

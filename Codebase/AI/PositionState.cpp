@@ -6,11 +6,11 @@
 #include "Helpers\degrees.h"
 
 
-PositionState::PositionState(StateMachine& stateMachine, GameObject& parent, GameObject& ball) :
+PositionState::PositionState(StateMachine& stateMachine, GameObject& parent, GameObject& ball, GameObject& targetGoal) :
 	State(stateMachine, parent),
-	m_ball(&ball)
+	m_ball(&ball),
+	m_targetGoal(&targetGoal)
 {
-	m_goal = Renderer::GetInstance()->GetCurrentScene()->findGameObject("goal1");
 }
 
 
@@ -27,7 +27,7 @@ void PositionState::Update(float dt)
 
 	State::Update(dt);
 
-	btVector3 goalPos = m_goal->GetPhysicsComponent()->GetPhysicsBody()->getWorldTransform().getOrigin();
+	btVector3 goalPos = m_targetGoal->GetPhysicsComponent()->GetPhysicsBody()->getWorldTransform().getOrigin();
 	btVector3 ballPos = m_ball->GetPhysicsComponent()->GetPhysicsBody()->getWorldTransform().getOrigin();
 	btVector3 parentPos = m_parent->GetPhysicsComponent()->GetPhysicsBody()->getWorldTransform().getOrigin();
 

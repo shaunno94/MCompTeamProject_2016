@@ -2,6 +2,7 @@
 #include "Rendering/GameTimer.h"
 #include "GameScene.h"
 #include "MenuScene.h"
+#include "EndScene.h"
 #include "NetServerSetupScene.h"
 #include "NetClientSetupScene.h"
 #include "Helpers/MeasuringTimer.h"
@@ -46,12 +47,12 @@ int main(void)
 	GameScene* gameScene = new GameScene();
 	MenuScene* menuScene = new MenuScene();
 	NetServerSetupScene* serverScene = new NetServerSetupScene();
-	NetClientSetupScene* clientScene = new NetClientSetupScene();
+	//EndScene* endScene = new EndScene();
 
 	renderer.AddScene(menuScene);
 	renderer.AddScene(gameScene);
 	renderer.AddScene(serverScene);
-	renderer.AddScene(clientScene);
+	//renderer.AddScene(endScene);
 	
 	//Set current scene to the game
 	renderer.SetCurrentScene(menuScene);
@@ -98,6 +99,7 @@ int main(void)
 	Renderer::GetInstance()->SetCurrentScene(nullptr);
 	delete menuScene;
 	delete gameScene;
+	//delete endScene;
 
 	return 0;
 }

@@ -5,7 +5,7 @@ class AIControllerComponent :
 	public ControllerComponent
 {
 public:
-	AIControllerComponent(GameObject* parent, unsigned int type);
+	AIControllerComponent(GameObject* parent, unsigned int type, bool blueTeam);
 	~AIControllerComponent();
 
 	void setupAI();
@@ -20,4 +20,5 @@ protected:
 	unsigned int m_type;
 	StateMachine* m_StateMachine;
 	unsigned int m_inactiveFramesAgainstWall;
+	bool m_blueTeam;
 };
