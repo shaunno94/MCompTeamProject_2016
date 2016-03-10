@@ -187,6 +187,7 @@
     <ClInclude Include="AggressiveState.h" />
     <ClInclude Include="ArenaHalfTrigger.h" />
     <ClInclude Include="ClearGoalState.h" />
+    <ClInclude Include="constants.h" />
     <ClInclude Include="DefenceState.h" />
     <ClInclude Include="DistanceTrigger.h" />
     <ClInclude Include="GuardGoalState.h" />

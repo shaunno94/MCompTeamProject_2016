@@ -23,8 +23,8 @@ Scene::~Scene()
 	}
 
 	delete cam;
-	/*if (playerController)
-		delete playerController;*/
+	if (myControllers)
+		delete myControllers;
 	transparentObjects.clear();
 	opaqueObjects.clear();
 	ghostObjects.clear();
@@ -68,7 +68,7 @@ void Scene::addGameObject(GameObject* obj)
 }
 
 void Scene::UpdateScene(float dt) {
-
+	myControllers->update(dt);
 }
 
 void Scene::UpdateNodeLists(float dt, Frustum& frustum, Vec3Graphics camPos)

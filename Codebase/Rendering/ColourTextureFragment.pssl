@@ -1,0 +1,17 @@
+ConstantBuffer colour {
+	float4 colour;
+};
+
+SamplerState samp0	: register(s0);
+Texture2D diffuseTex : register(t0);
+
+struct VS_INPUT
+{
+	float4 position		: S_POSITION;
+	float2 texCoord		: TEXCOORD0;
+};
+
+float4 main(VS_INPUT Input) : S_TARGET_OUTPUT
+{
+	return diffuseTex.Sample(samp0, Input.texCoord.xy) * colour;
+}

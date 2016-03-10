@@ -6,10 +6,11 @@
 const float WALL_HEIGHT = 150;
 const float HALF_GOAL_WIDTH = 40;
 
-Stadium::Stadium(Material* material, Material* wallMaterial, Material* postMaterial, const std::string& name /*= ""*/) :
+Stadium::Stadium(Material* material, Material* wallMaterial, ExtendedMaterial* redPostMaterial, ExtendedMaterial* bluePostMaterial, const std::string& name /*= ""*/) :
 GameObject(name),
 m_wallMaterial(wallMaterial),
-m_postMaterial(postMaterial)
+m_redPostMaterial(redPostMaterial),
+m_bluePostMaterial(bluePostMaterial)
 {
 
 	RigidPhysicsObject* floorPhysics = new RigidPhysicsObject();
@@ -25,15 +26,20 @@ m_postMaterial(postMaterial)
 
 
 	m_netTexture = Texture::Get(TEXTURE_DIR"link2.png");
-
 	m_netTexture->SetTextureParams(TextureFlags::REPEATING | TextureFlags::ANISOTROPIC_FILTERING);
+	
 	m_wallMaterial->Set("diffuseTex", m_netTexture);
 
-
 	m_postTexture = Texture::Get(TEXTURE_DIR"wood.png");
-
 	m_postTexture->SetTextureParams(TextureFlags::REPEATING | TextureFlags::ANISOTROPIC_FILTERING);
-	m_postMaterial->Set("diffuseTex", m_postTexture);
+
+	static_cast<Material*>(m_redPostMaterial)->Set("diffuseTex", m_postTexture);
+	m_redPostMaterial->Set("colour", Vec4Graphics(1.0f, 0.2f, 0.2f, 1));
+
+	static_cast<Material*>(m_bluePostMaterial)->Set("diffuseTex", m_postTexture);
+	m_bluePostMaterial->Set("colour", Vec4Graphics(0.2f, 0.2f, 1.0f, 1));
+
+	m_postMesh = ModelLoader::LoadMGL(MODEL_DIR"Common/cube.mgl", true);
 
 	CreateCollisionWalls();
 }
@@ -44,8 +50,6 @@ void Stadium::CreateCollisionWalls()
 {
 
 	const float GOAL_HEIGHT = 35;
-
-
 
 	// FRONT HALF
 	CreatePlane(m_collisionWalls, Vec3Physics(250, 0, -HALF_GOAL_WIDTH), Vec3Physics(250, WALL_HEIGHT, -65), true);
@@ -65,7 +69,6 @@ void Stadium::CreateCollisionWalls()
 	CreatePlane(m_collisionWalls, Vec3Physics(250, 0, HALF_GOAL_WIDTH), Vec3Physics(280, GOAL_HEIGHT, HALF_GOAL_WIDTH));
 	CreatePlane(m_collisionWalls, Vec3Physics(250, GOAL_HEIGHT, HALF_GOAL_WIDTH), Vec3Physics(280, GOAL_HEIGHT, -HALF_GOAL_WIDTH), false, true);
 	CreatePlane(m_collisionWalls, Vec3Physics(250, GOAL_HEIGHT, HALF_GOAL_WIDTH), Vec3Physics(250, WALL_HEIGHT, -HALF_GOAL_WIDTH));
-
 
 
 	// BACK HALF
@@ -88,7 +91,6 @@ void Stadium::CreateCollisionWalls()
 	CreatePlane(m_collisionWalls, Vec3Physics(-250, GOAL_HEIGHT, HALF_GOAL_WIDTH), Vec3Physics(-250, WALL_HEIGHT, -HALF_GOAL_WIDTH));
 
 
-
 	RigidPhysicsObject* roofPhysics = new RigidPhysicsObject();
 	roofPhysics->CreateCollisionShape(0, Vec3Physics(0, -1, 0), true);
 	roofPhysics->CreatePhysicsBody(0, Vec3Physics(0, WALL_HEIGHT * SCALE, 0), QuatPhysics(0, 0, 0, 1));
@@ -100,9 +102,6 @@ void Stadium::CreateCollisionWalls()
 	wallPhysics->CreatePhysicsBody(0, Vec3Physics(0, 0, 0), QuatPhysics(0, 0, 0, 1));
 	wallPhysics->GetPhysicsBody()->setRestitution(0.4f);
 	wallPhysics->GetPhysicsBody()->getBroadphaseProxy()->m_collisionFilterMask = COL_WALL;
-
-
-	
 
 }
 
@@ -164,37 +163,43 @@ void Stadium::CreatePlane(std::vector<btConvexHullShape*> &collectionVector, Vec
 	m_collisionWalls.push_back(newShape);
 
 	GameObject* post = new GameObject();
-	post->SetRenderComponent(new RenderComponent(m_postMaterial, ModelLoader::LoadMGL(MODEL_DIR"Common/cube.mgl", true)));
+	
+	ExtendedMaterial* material = (start.x < 0) ? m_bluePostMaterial : m_redPostMaterial;
+	if (start.x > -150 && start.z < 0)
+		material = m_redPostMaterial;
+
+	post->SetRenderComponent(new RenderComponent(material, m_postMesh));
 	post->SetLocalTransform(Mat4Graphics::Scale(Vec3Graphics(1.0f, abs(end.y - start.y), 1.0f)) * Mat4Graphics::Translation(Vec3Graphics(end.x, 0.0f, end.z)));
 	wall->AddChildObject(post);
 
 	if (first) {
 		post = new GameObject();
-		post->SetRenderComponent(new RenderComponent(m_postMaterial, ModelLoader::LoadMGL(MODEL_DIR"Common/cube.mgl", true)));
+		post->SetRenderComponent(new RenderComponent(material, m_postMesh));
 		post->SetLocalTransform(Mat4Graphics::Scale(Vec3Graphics(1.0f, abs(end.y - start.y), 1.0f)) * Mat4Graphics::Translation(Vec3Graphics(start.x, 0.0f, start.z)));
 		wall->AddChildObject(post);
 	}
 
 	if (roof) {
 		post = new GameObject();
-		post->SetRenderComponent(new RenderComponent(m_postMaterial, ModelLoader::LoadMGL(MODEL_DIR"Common/cube.mgl", true)));
+		post->SetRenderComponent(new RenderComponent(material, m_postMesh));
 		post->SetLocalTransform(Mat4Graphics::Scale(Vec3Graphics(1.0f, 1.0f, HALF_GOAL_WIDTH * SCALE)) * Mat4Graphics::Translation(Vec3Graphics(start.x, start.y, 0.0f)));
 		wall->AddChildObject(post);
 
 		post = new GameObject();
-		post->SetRenderComponent(new RenderComponent(m_postMaterial, ModelLoader::LoadMGL(MODEL_DIR"Common/cube.mgl", true)));
+		post->SetRenderComponent(new RenderComponent(material, m_postMesh));
 		post->SetLocalTransform(Mat4Graphics::Scale(Vec3Graphics(1.0f, 1.0f, HALF_GOAL_WIDTH * SCALE)) * Mat4Graphics::Translation(Vec3Graphics(end.x, end.y, 0.0f)));
 		wall->AddChildObject(post);
 
 		post = new GameObject();
-		post->SetRenderComponent(new RenderComponent(m_postMaterial, ModelLoader::LoadMGL(MODEL_DIR"Common/cube.mgl", true)));
+		post->SetRenderComponent(new RenderComponent(material, m_postMesh));
 		post->SetLocalTransform(Mat4Graphics::Translation(Vec3Graphics((start.x + end.x) / 2.0f, end.y, end.z)) * Mat4Graphics::Scale(Vec3Graphics(abs(end.x - start.x) / 2.0f, 1.0f, 1.0f)));
 		wall->AddChildObject(post);
 
 		post = new GameObject();
-		post->SetRenderComponent(new RenderComponent(m_postMaterial, ModelLoader::LoadMGL(MODEL_DIR"Common/cube.mgl", true)));
+		post->SetRenderComponent(new RenderComponent(material, m_postMesh));
 		post->SetLocalTransform(Mat4Graphics::Translation(Vec3Graphics((start.x + end.x) / 2.0f, start.y, start.z)) * Mat4Graphics::Scale(Vec3Graphics(abs(end.x - start.x) / 2.0f, 1.0f, 1.0f)));
 		wall->AddChildObject(post);
 	}
+
 
 }

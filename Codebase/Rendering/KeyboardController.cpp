@@ -77,7 +77,18 @@ void KeyboardController::CheckInput(){
 		mod.isGlobal = true;
 		mod.looping = false;
 		mod.volume = 0.4f;
-		SoundSystem::Instance()->Play(SoundManager::GetSound(BOOST), mod);
+		SoundSystem::Instance()->Play(SoundManager::GetSound(JUMP), mod);
+	}
+
+	AudioCompCar* acar = dynamic_cast<AudioCompCar*>(object->GetParent()->GetAudioComponent());
+	acar->SetBoostVolume(0.0f);
+
+	if (object->boost > 0 && Window::GetKeyboard()->KeyDown(KEYBOARD_SHIFT))
+	{
+		force *= 2;
+		torque *= 2;
+		object->boost -= 0.01;
+		acar->SetBoostVolume(1.0f);
 	}
 
 	object->AddForce(force.x, force.y, force.z);
@@ -87,6 +98,7 @@ void KeyboardController::CheckInput(){
 	if (Window::GetKeyboard()->KeyTriggered(KEYBOARD_R))
 	{
 		object->reset();
+		Renderer::GetInstance()->GetCurrentScene()->getCamera()->reset();
 	}
 
 	if (Window::GetKeyboard()->KeyTriggered(KEYBOARD_C))

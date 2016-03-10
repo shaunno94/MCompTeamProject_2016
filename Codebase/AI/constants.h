@@ -1,0 +1,19 @@
+#pragma once
+
+enum AITypes
+{
+	SHOOTER,
+	GOALKEEPER,
+	AGGRESSIVE
+};
+
+enum AIStates
+{
+	POSITION,
+	SHOOT,
+	DEFENCE,
+	ADVANCE,
+	GUARD_GOAL,
+	CLEAR_GOAL,
+	AGGRO
+};

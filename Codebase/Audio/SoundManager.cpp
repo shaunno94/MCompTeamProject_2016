@@ -54,7 +54,9 @@ void SoundManager::LoadAssets()
 	AddSound(AUDIO_DIR"music/votives.ogg", SONG2);
 	AddSound(AUDIO_DIR"car/engine_idle_norm.wav", ENGINE_IDLE);
 	AddSound(AUDIO_DIR"car/engine_rev_norm.wav", ENGINE_REV);
-	AddSound(AUDIO_DIR"car/launch_norm.wav", BOOST);
+	AddSound(AUDIO_DIR"car/launch_norm.wav", JUMP);
 	AddSound(AUDIO_DIR"car/alien_sucker2_norm.wav", POWERUP);
+	AddSound(AUDIO_DIR"car/boost_norm.wav", BOOST);
+
 
 }
