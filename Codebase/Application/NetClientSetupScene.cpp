@@ -158,12 +158,8 @@ void NetClientSetupScene::DrawGUI()
 
 	menuOrtho = new MenuOrthoComponent(0.5);
 	singleBtn = new ButtonGUIComponent(btnMaterial, selectBtnMaterial, Vec3Graphics(-0.7f, 0.7f, 0), Vec2Graphics(0.2f, 0.1f));
-	multiBtn = new ButtonGUIComponent(btnMaterial, selectBtnMaterial, Vec3Graphics(-0.7f, 0.4f, 0), Vec2Graphics(0.2f, 0.1f));
-	exitBtn = new ButtonGUIComponent(btnMaterial, selectBtnMaterial, Vec3Graphics(-0.7f, 0.1f, 0), Vec2Graphics(0.2f, 0.1f));
 
 	menuOrtho->AddGUIComponent(singleBtn);
-	menuOrtho->AddGUIComponent(multiBtn);
-	menuOrtho->AddGUIComponent(exitBtn);
 
 	guiSystem->AddOrthoComponent(connectionOrtho);
 

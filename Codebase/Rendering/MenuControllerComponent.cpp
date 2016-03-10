@@ -76,6 +76,7 @@ void MenuControllerComponent::Submit()
 		Renderer::GetInstance()->SetCurrentScene(Renderer::GetInstance()->GetScene(CLIENT_SETUP_SCENE));
 		break;
 	case QUIT:
+
 		break;
 	default:
 		std::cout << "Selection Invalid!";

@@ -21,10 +21,8 @@ public:
 		GetRenderComponent()->Draw();
 	};
 
-
 protected:
 	bool	m_Visible;
-
 	Material*	m_Material;
 
 };

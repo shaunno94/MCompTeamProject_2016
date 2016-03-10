@@ -5,6 +5,7 @@
 #include "Rendering\OGLShader.h"
 #include "Rendering\MenuBackgroundGUI.h"
 #include "Rendering\MenuOrthoComponent.h"
+#include "Rendering\TextGUIComponent.h"
 
 
 #ifndef ORBIS
@@ -47,11 +48,18 @@ protected:
 
 	OrthoComponent* bgOrtho;
 	MenuOrthoComponent* menuOrtho;
+	OrthoComponent* textOrtho;
 
 	MenuBackgroundGUI* menuBg;
 	ButtonGUIComponent* singleBtn;
-	ButtonGUIComponent* multiBtn;
+	ButtonGUIComponent* hostGameBtn;
+	ButtonGUIComponent* joinGameBtn;
 	ButtonGUIComponent* exitBtn;
+
+	TextGUIComponent* singleBtnText;
+	TextGUIComponent* hostGameBtnText;
+	TextGUIComponent* joinGameBtnText;
+	TextGUIComponent* exitBtnText;
 
 	int m_Selected;
 };

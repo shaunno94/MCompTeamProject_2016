@@ -32,6 +32,7 @@ void MenuController::CheckInput()
 		object->Submit();
 	//	std::cout << "RETURN" << std::endl;
 	}
+
 }
 
 #endif

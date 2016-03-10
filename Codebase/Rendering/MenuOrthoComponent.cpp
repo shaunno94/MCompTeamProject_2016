@@ -36,6 +36,10 @@ void MenuOrthoComponent::Render()
 {
 	for (unsigned int i = 0; i < m_elements.size(); i++)
 	{
+		for (int j = 0; j < m_elements[i]->GetChildren().size(); j++)
+		{
+			dynamic_cast<GUIComponent*>(m_elements[i]->GetChildren()[j])->Render();
+		}
 		m_elements[i]->Render();
 	}
 }

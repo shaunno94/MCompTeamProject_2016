@@ -103,6 +103,7 @@ void KeyboardController::CheckInput(){
 		Renderer::GetInstance()->GetCurrentScene()->getCamera()->reset();
 	}
 
+
 	//------camera control-------//
 	float pitch = (Window::GetMouse()->GetRelativePosition().y);
 	float yaw = (Window::GetMouse()->GetRelativePosition().x);

@@ -99,7 +99,7 @@ void GameScene::UpdateScene(float dt)
 		scoreboardComponent->Update(scores[0], scores[1], currentTime);
 		//GET_DEBUG_STREAM().str().substr()
 
-#ifdef _DEBUG
+#ifndef DEBUG_DRAW
 		
 		vector<std::string>tokens;
 		std::string t;
