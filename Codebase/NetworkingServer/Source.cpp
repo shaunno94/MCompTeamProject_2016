@@ -2,8 +2,9 @@
 #include "Rendering/GameTimer.h"
 #include "GameScene.h"
 #include "Networking/NetServer.h"
+#include "Helpers/MeasuringTimer.h"
 
-#include "Rendering/NetClientControllerManager.h"
+#include "Rendering/NetServerControllerManager.h"
 
 
 const float TIME_STEP = 1.0f / 120.0f;
@@ -40,6 +41,14 @@ int main(void)
 	}
 	ips.clear();
 
+	NetConnectionDataInternal* ballConnection = new NetConnectionDataInternal(nullptr);
+	ballConnection->name[0] = 'b';
+	ballConnection->name[1] = 'a';
+	ballConnection->name[2] = 'l';
+	ballConnection->name[3] = 'l';
+	ballConnection->name[4] = 0;
+	server->AddToSession(ballConnection);
+
 	unsigned int input = 1;
 	while (input != 0)
 	{
@@ -48,7 +57,7 @@ int main(void)
 		std::cout << "Connections:" << LINE_SEPARATOR_STR;
 		for (size_t i = 0; i < size; ++i)
 		{
-			NetConnectionData* connection = server->GetConnection(i);
+			NetConnectionDataInternal* connection = server->GetConnection(i);
 			if (connection)
 				std::cout << connection->GetAddressStr() << LINE_SEPARATOR_STR;
 		}
@@ -117,7 +126,7 @@ int main(void)
 	PS4Input input = PS4Input();
 #endif
 
-	ControllerManager* myControllers = new NetClientControllerManager(session);
+	ControllerManager* myControllers = new NetServerControllerManager(session);
 	//Create GameScene
 	GameScene* gameScene = new GameScene(myControllers);
 	//Set current scene to the game
@@ -138,6 +147,8 @@ int main(void)
 		myControllers->update(ms);
 		renderer.RenderScene(ms);
 		SoundSystem::Instance()->Update(ms);
+
+		MEASURING_TIMER_CLEAR();
 	}
 
 	delete gameScene;

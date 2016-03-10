@@ -48,7 +48,7 @@ protected:
 	Frustum frameFrustrum;
 	Frustum lightFrustrum;
 	static Renderer* s_renderer;
-	
+
 	float aspectRatio;
 	Mat4Graphics localProjMat;
 	float windowHeight, windowWidth;

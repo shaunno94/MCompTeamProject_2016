@@ -2,6 +2,7 @@
 #include "Rendering/GameTimer.h"
 #include "GameScene.h"
 #include "Networking/NetClient.h"
+#include "Helpers/MeasuringTimer.h"
 
 #include "Rendering/NetClientControllerManager.h"
 
@@ -119,6 +120,8 @@ int main(void)
 		myControllers->update(ms);
 		renderer.RenderScene(ms);
 		SoundSystem::Instance()->Update(ms);
+
+		MEASURING_TIMER_CLEAR();
 	}
 
 	delete gameScene;

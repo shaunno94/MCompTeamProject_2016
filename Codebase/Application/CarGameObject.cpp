@@ -17,7 +17,7 @@ CarGameObject::CarGameObject(const Vec3Physics& position, const QuatPhysics& rot
 	carPhysics->GetPhysicsBody()->setHitFraction(0.2);
 	carPhysics->GetPhysicsBody()->getBroadphaseProxy()->m_collisionFilterMask = collisionFilterMask;
 	carPhysics->GetPhysicsBody()->getBroadphaseProxy()->m_collisionFilterGroup = COL_GROUP_DEFAULT;
-	carPhysics->GetPhysicsBody()->setDamping(0.3, 0.5);
+	carPhysics->GetPhysicsBody()->setDamping(0.03, 0.5);
 
 	m_spawnPoint = position;
 

@@ -40,7 +40,7 @@ struct GameCollisionFilter;
 class GameScene : public Scene
 {
 public:
-	GameScene(ControllerManager* controller);
+	GameScene();
 	~GameScene();
 
 	void LoadAudio();

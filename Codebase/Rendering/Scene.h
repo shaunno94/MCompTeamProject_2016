@@ -4,13 +4,14 @@
 #include "Camera.h"
 #include "Helpers\collections.h"
 #include "Frustum.h"
+#include "Rendering\ControllerManager.h"
 #include "GUISystem.h"
 
 class Renderer;
 
 /// @ingroup Rendering
 /// <summary>
-///
+/// 
 /// </summary>
 class Scene
 {
@@ -84,7 +85,7 @@ public:
 	unsigned char renderFlags; //triggers for graphical effects such as post processing and any other info required by the renderer
 
 protected:
-	//Comparators for sorting node lists - opaques (front to back), transparents (back to front).
+	//Comparators for sorting node lists - opaques (front to back), transparents (back to front). 
 	//Uses distance from camera for comparison.
 	static bool CompareByCameraDistance(const GameObject* a, const GameObject* b)
 	{
@@ -104,5 +105,7 @@ protected:
 	std::vector<GameObject*> ghostObjects;
 	Camera* cam;
 	const char** cubemapDir;
+
+	ControllerManager* myControllers;
 };
 

@@ -29,6 +29,7 @@ public:
 	}
 
 	float boost;
+	float boosting;
 
 protected:
 	GameObject* m_parent;

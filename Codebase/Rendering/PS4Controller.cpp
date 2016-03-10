@@ -44,6 +44,13 @@ void PS4Controller::CheckInput()
 		}
 	}
 
+	if (object->boost > 0 && PS4Input::getPS4Input()->GetButtonTriggered(BTN_CIRCLE))
+	{
+		force *= 2;
+		torque *= 2;
+		object->boost -= 0.01;
+	}
+
 	object->AddForce(force.x, force.y, force.z);
 	object->AddTorque(torque.x, torque.y, torque.z);
 	object->AddImpulse(impulse.x, impulse.y, impulse.z);

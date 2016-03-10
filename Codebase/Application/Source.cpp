@@ -40,11 +40,10 @@ int main(void)
 #endif
 	SoundSystem::Initialise();
 
-	ControllerManager* myControllers = new LocalControlManager();
 	UIControllerManager* uiController = new UIControllerManager();
 	vector<Scene*> scenes;
 	//Create GameScene
-	GameScene* gameScene = new GameScene(myControllers);
+	GameScene* gameScene = new GameScene();
 	MenuScene* menuScene = new MenuScene(uiController);
 	scenes.push_back(menuScene);
 	scenes.push_back(gameScene);
@@ -77,7 +76,6 @@ int main(void)
 		PhysicsEngineInstance::Instance()->stepSimulation(ms, SUB_STEPS, TIME_STEP);
 		MEASURING_TIMER_LOG_END();
 
-		myControllers->update(ms);
 		uiController->update(ms);
 
 		MEASURING_TIMER_LOG_START("Renderer");
@@ -85,7 +83,7 @@ int main(void)
 		MEASURING_TIMER_LOG_END();
 
 		SoundSystem::Instance()->Update(ms);
-
+		
 
 		CLEAR_DEBUG_STREAM();
 		MEASURING_TIMER_PRINT(GET_DEBUG_STREAM());

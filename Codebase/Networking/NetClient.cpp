@@ -280,7 +280,10 @@ void NetClient::ProcessSessionRunPacket(ENetPacket* packet, NetSessionWriter& wr
 		  " was processed."LINE_SEPARATOR_DEF
 		);
 		//not process messages that you own
-		if (reinterpret_cast<NetMessageHeader*>(baseHeader)->target == m_sessionMemberId)
+
+		std::cout << (int) reinterpret_cast<NetMessageHeader*>(baseHeader)->source << LINE_SEPARATOR_STR;
+
+		if (reinterpret_cast<NetMessageHeader*>(baseHeader)->source == m_sessionMemberId)
 			return;
 
 		NetMessage* newMessage = new NetMessage();

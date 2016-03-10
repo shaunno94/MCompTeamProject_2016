@@ -54,7 +54,7 @@ GameScene::~GameScene()
 void GameScene::SetControllerActor()
 {
 	myControllers->setActor(Renderer::GetInstance()->GetCurrentScene()->findGameObject("shooterAI"), 0);
-	//myControllers->setActor(Renderer::GetInstance()->GetCurrentScene()->findGameObject("goalieAI"), 1);
+	myControllers->setActor(Renderer::GetInstance()->GetCurrentScene()->findGameObject("ball"), 1);
 }
 
 void GameScene::IncrementScore(int team)
@@ -258,7 +258,7 @@ void GameScene::DrawGUI()
 void GameScene::SetupControls()
 {
 	cc = new ControllerComponent(player);
-	myControllers->setProducer(player, 1);
+	myControllers->setProducer(player, 2);
 
 	attachCam(player);
 }
