@@ -467,6 +467,9 @@
     <ClCompile Include="DebugDrawOGL.cpp">
       <Filter>Source Files\OGL_API</Filter>
     </ClCompile>
+    <ClCompile Include="Particle.cpp">
+      <Filter>Source Files\Particle System</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <OrbisWavePsslc Include="textureVertex.pssl">

@@ -1,5 +1,5 @@
 #include "Scene.h"
-
+#include "Particle.h"
 
 Scene::Scene()
 {
@@ -58,8 +58,11 @@ void Scene::addGameObject(GameObject* obj)
 	{
 		addGameObject(child);
 	}
+
 	if (obj->m_RenderComponent)
 		obj->m_RenderComponent->m_Material->hasTranslucency ? transparentObjects.push_back(obj) : opaqueObjects.push_back(obj);
+	//else if (dynamic_cast<Particle*>(obj))
+//		particleObjects.push_back(obj);
 	else 
 		ghostObjects.push_back(obj);
 }
@@ -85,7 +88,10 @@ void Scene::UpdateNodeLists(float dt, Frustum& frustum, Vec3Graphics camPos)
 	for (unsigned int i = 0; i < ghostObjects.size(); ++i)
 	{
 		ghostObjects[i]->OnUpdateObject(dt);
-
+	}
+	for (unsigned int i = 0; i < particleObjects.size(); ++i)
+	{
+		particleObjects[i]->OnUpdateObject(dt);
 	}
 
 	UpdateFrustumCulling(frustum, camPos);
@@ -126,4 +132,9 @@ void Scene::UpdateFrustumCulling(Frustum& frustum, Vec3Graphics camPos){
 void Scene::addLightObject(GameObject* obj)
 {
 	lightObjects.push_back(obj);
+}
+
+void Scene::addParticleObject(GameObject* obj)
+{
+	particleObjects.push_back(obj);
 }

@@ -1,87 +1,65 @@
 #include "ParticleSystem.h"
+#include "Scene.h"
+#include "./Helpers/RNG.h"
 
-ParticleSystem::ParticleSystem(ParticleEmitter* emitter, Material* material, Texture* texture, unsigned int numParticles)
-: m_Material(material)
-	, m_Texture(texture)
-	, m_Force(0,-9.81f,0)
-	, m_NumAlive(0)
-	, m_ParticleEmitter(emitter)
-	, m_NumParticles(numParticles)
+ParticleSystem::ParticleSystem(ParticleEmitter* emitter, Material* material, GameObject* attatchment, Scene* scene, unsigned int maxParticles)
 {
-	m_Particles[numParticles];
-	material->Set("diffuseTex", m_Texture);
-
-	//for (int i = 0; i < numParticles; i++)
-	//	m_Particles->SetRenderComponent(new RenderComponent(m_Material, m_Mesh));
+	m_Material = material;
+	m_Scene = scene;
+	m_Attatchment = attatchment;
+	m_Force = Vector3Simple(0, -9.81f, 0);
+	m_NumAlive = 0;
+	m_ParticleEmitter = emitter;
+	m_NumParticles = maxParticles;
+	m_Particles.resize(maxParticles);
+	transform.setOrigin(btVector3(0.0, 0.0, 0.0));
 	
+	for (int i = 0; i < maxParticles; i++)
+	{
+		m_Particles[i] = new Particle(attatchment);
+		m_Particles[i]->SetPhysicsComponent(new RigidPhysicsObject());
+		m_Particles[i]->GetPhysicsComponent()->CreateCollisionShape(0.1);
+		m_Particles[i]->GetPhysicsComponent()->CreatePhysicsBody(1.0, Vec3Physics(0, 0, 0), QuatPhysics(0, 0, 0, 1), Vec3Physics(0, 0, 0), true);
+		m_Particles[i]->SetRenderComponent(new RenderComponent(m_Material, Mesh::GenerateQuad()));
+		m_Scene->addParticleObject(m_Particles[i]);
+	}
 }
 
 ParticleSystem::~ParticleSystem()
 {
-
-}
-
-void ParticleSystem::EmitParticle(Particle& particle)
-{
-	if (m_ParticleEmitter)
-		m_ParticleEmitter->EmitParticle(particle);
-	else
+	for (auto& particles : m_Particles)
 	{
-		//some form of default ways to emit particles
+		if (particles)
+		{
+			delete particles;
+			particles = nullptr;
+		}
 	}
 }
 
-void ParticleSystem::EmitParticles()
+void ParticleSystem::EmitParticle(Particle* particle, float dt)
 {
-	for (unsigned int i = 0; i < m_NumParticles; ++i)
-	{
-		EmitParticle(m_Particles[i]);
-	}
+	float x = RNG32::Rand(MIN_FORCE_XZ, MAX_FORCE_XZ);
+	float y = RNG32::Rand(MIN_FORCE_Y, MAX_FORCE_Y);
+	float z = RNG32::Rand(MIN_FORCE_XZ, MAX_FORCE_XZ);
+	static_cast<RigidPhysicsObject*>(particle->GetPhysicsComponent())->GetPhysicsBody()->applyCentralImpulse(btVector3(x, y, z));
 }
 
-void ParticleSystem::BuildVertexBuffer()
+void ParticleSystem::Update(float delta)
 {
-	Vec3Graphics x = Vec3Graphics(0.5, 0.0, 0.0);
-	Vec3Graphics y = Vec3Graphics(0.0, 0.5, 0.0);
-	Vec3Graphics z = Vec3Graphics(0.0, 0.0, 1.0);
-
-	for (unsigned int i = 0; i < m_NumParticles; ++i)
+	for (unsigned int i = 0; i < m_Particles.size(); ++i)
 	{
-		Particle& particle = m_Particles[i];
+		m_Particles[i]->SetAge(m_Particles[i]->GetAge() + delta);
 
-		unsigned int vertexIndex = i * 4;
-		
-		m_Centre[i] = Vec3Graphics((particle.m_Position + (-x * -y) * particle.m_Size).x,
-			(particle.m_Position + (-x * -y) * particle.m_Size).y,
-			(particle.m_Position + (-x * -y) * particle.m_Size).z);
+		if (m_Particles[i]->GetAge() < m_Particles[i]->GetLife())
+		{
+			EmitParticle(m_Particles[i], delta);
+		}
+		else
+		{
+			static_cast<RigidPhysicsObject*>(m_Particles[i]->GetPhysicsComponent())->GetPhysicsBody()->setLinearVelocity(btVector3(0, 0, 0));
+			m_Particles[i]->GetPhysicsComponent()->GetPhysicsBody()->setWorldTransform(transform);
+			m_Particles[i]->SetAge(0);
+		}
 	}
-}
-
-bool ParticleSystem::Update(float delta)
-{
-	for (unsigned int i = 0; i < m_NumParticles; ++i)
-	{
-		Particle& particle = m_Particles[i];
-
-		particle.m_Age += delta;
-		if (particle.m_Age > particle.m_Life)
-			EmitParticle(particle);
-
-		float lifeRatio = ClampValues((particle.m_Age / particle.m_Life), 0.0f, 1.0f);
-		particle.m_Velocity += (m_Force * delta);
-		particle.m_Position += (particle.m_Velocity * delta);
-		particle.m_Colour = Vec4Graphics(1.0f, 0.0f, 0.0f, 0.5);
-		particle.m_Size = Smooth(5.0, 0.0, lifeRatio);
-	}
-
-	BuildVertexBuffer();
-
-	return true;
-	
-}
-
-
-void ParticleSystem::Render()
-{
-	
 }

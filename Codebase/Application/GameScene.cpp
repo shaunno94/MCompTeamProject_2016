@@ -13,14 +13,6 @@ GameScene::GameScene()
 	PhysicsEngineInstance::Instance()->setGravity(btVector3(0, -9.81, 0));
 	SoundSystem::Initialise(32);
 
-#ifndef ORBIS
-	ParticleManager::Initialise();
-
-	if (ParticleManager::GetManager().HasInitialised())
-	{
-		std::cout << "Particle Manager not Initialised" << std::endl;
-	}
-#endif
 	GUISystem::Initialise();
 	if (!GUISystem::GetInstance().HasInitialised())
 	{
@@ -37,21 +29,18 @@ GameScene::GameScene()
 	SetupShaders();
 	SetupMaterials();
 	SetupGameObjects();
+	SetupParticles();
 	DrawGUI();
 	LoadAudio();
 	SetupControls();
 }
-
 
 GameScene::~GameScene()
 {
 	PhysicsEngineInstance::Release();
 	GUISystem::Destroy();
 	ParticleManager::Destroy();
-
-#ifndef ORBIS
 	SoundSystem::Release();
-#endif
 
 	delete pickupManager;
 
@@ -85,6 +74,7 @@ void GameScene::IncrementScore(int team)
 void GameScene::UpdateScene(float dt)
 {
 	Scene::UpdateScene(dt);
+	ParticleManager::Instance()->Update(dt);
 	if (currentTime > 180)
 	{
 		//TODO: Proceed to end game screen
@@ -182,7 +172,7 @@ void GameScene::SetupGameObjects()
 
 void GameScene::LoadAudio()
 {
-//#ifndef ORBIS
+	SoundSystem::Initialise();
 	//-------- SOUND
 	// load in files
 	SoundManager::LoadAssets();
@@ -200,7 +190,6 @@ void GameScene::LoadAudio()
 	goalieAI->SetAudioComponent(new AudioCompCar(false));
 	aggroAI->SetAudioComponent(new AudioCompCar(false));
 	//-------- SOUND
-//#endif
 }
 
 void GameScene::SetupShaders()
@@ -247,7 +236,22 @@ void GameScene::SetupMaterials()
 
 	aiMaterial->Set(ReservedMeshTextures.DIFFUSE.name, Texture::Get(MODEL_DIR"car/body1.bmp", true));
 	ai2Material->Set(ReservedMeshTextures.DIFFUSE.name, Texture::Get(MODEL_DIR"car/body2.bmp", true));
-	//particleMaterial->Set(ReservedMeshTextures.DIFFUSE.name, Texture::Get(TEXTURE_DIR"particle.tga", true));
+	
+	particleMaterial->Set(ReservedMeshTextures.DIFFUSE.name, Texture::Get(TEXTURE_DIR"particle.tga", true));
+	particleMaterial->hasTranslucency = true;
+}
+
+void GameScene::SetupParticles()
+{
+	if (!ParticleManager::Instance())
+	{
+		std::cout << "Particle Manager not Initialised" << std::endl;
+		return;
+	}
+
+	emitter = new CubeEmitter();
+	particleSystem = new ParticleSystem(emitter, particleMaterial, player, this, 24);
+	ParticleManager::Instance()->AddSystem(particleSystem);
 }
 
 void GameScene::DrawGUI()
@@ -326,9 +330,9 @@ void GameScene::ResetObject(GameObject& object) {
 	dynamic_cast<RigidPhysicsObject*>(object.GetPhysicsComponent())->GetPhysicsBody()->clearForces();
 	dynamic_cast<RigidPhysicsObject*>(object.GetPhysicsComponent())->GetPhysicsBody()->setLinearVelocity(zeroVector);
 	dynamic_cast<RigidPhysicsObject*>(object.GetPhysicsComponent())->GetPhysicsBody()->setAngularVelocity(zeroVector);
-	
+
 	object.GetPhysicsComponent()->GetPhysicsBody()->setWorldTransform(btTransform(btQuaternion(0, 0, 0, 1), btVector3(object.GetSpawnPoint().x, object.GetSpawnPoint().y, object.GetSpawnPoint().z)));
-	if (object.GetControllerComponent())
+	if (object.GetControllerComponent()) 
 		object.GetControllerComponent()->reset();
 
 }

@@ -103,8 +103,12 @@ void Renderer::OnRenderScene()
 {
 	for (unsigned int i = 0; i < currentScene->getNumOpaqueObjects(); ++i)
 		currentScene->getOpaqueObject(i)->OnRenderObject();
+
 	for (unsigned int i = 0; i < currentScene->getNumTransparentObjects(); ++i)
 		currentScene->getTransparentObject(i)->OnRenderObject();
+
+	for (unsigned int i = 0; i < currentScene->getNumParticleObjects(); ++i)
+		currentScene->getParticleObject(i)->OnRenderObject();
 }
 
 void Renderer::OnRenderLights()

@@ -85,44 +85,46 @@ void GameObject::OnUpdateObject(float dt)
 {
 	if (m_Controller)
 		m_Controller->updateObject(dt);
-	UpdateTransform();
-	for (auto child : m_Children)
-	{
-		child->OnUpdateObject(dt);
-	}
+
 	if (m_Audio)
 		m_Audio->Update();
 
 	UpdateTransform();
+
+	for (auto child : m_Children)
+	{
+		child->OnUpdateObject(dt);
+	}
 }
 
 void GameObject::UpdateTransform()
 {
 	if (!m_PhysicsObj)
 		m_WorldTransform = m_LocalTransform;
-	else{
+	else
+	{
+		//Bullet physics native containers: matrix, vec3, quaternion
+		btTransform trans;
+		btVector3 pos;
+		btQuaternion rot;
 
-	//Bullet physics native containers: matrix, vec3, quaternion
-	btTransform trans;
-	btVector3 pos;
-	btQuaternion rot;
+		//Our containers
+		Vec3Graphics p;
+		QuatGraphics r;
 
-	//Our containers
-	Vec3Graphics p;
-	QuatGraphics r;
+		//Get current position and rotation of object.
+		trans = m_PhysicsObj->GetPhysicsBody()->getWorldTransform();
+		pos = trans.getOrigin();
+		rot = trans.getRotation();
 
-	//Get current position and rotation of object.
-	trans = m_PhysicsObj->GetPhysicsBody()->getWorldTransform();
-	pos = trans.getOrigin();
-	rot = trans.getRotation();
-
-	//Convert
-	p = Vec3Graphics(pos.x(), pos.y(), pos.z());
-	r = QuatGraphics(rot.x(), rot.y(), rot.z(), rot.w());
+		//Convert
+		p = Vec3Graphics(pos.x(), pos.y(), pos.z());
+		r = QuatGraphics(rot.x(), rot.y(), rot.z(), rot.w());
 	
-	//Update model matrix 
-	m_WorldTransform = Mat4Graphics::Translation(p) * r.ToMatrix4() * m_LocalTransform;
+		//Update model matrix 
+		m_WorldTransform = Mat4Graphics::Translation(p) * r.ToMatrix4() * m_LocalTransform;
 	}
+
 	if (m_Parent)
-		m_WorldTransform =  m_Parent->m_WorldTransform*m_WorldTransform ;
+		m_WorldTransform =  m_Parent->m_WorldTransform * m_WorldTransform;
 }

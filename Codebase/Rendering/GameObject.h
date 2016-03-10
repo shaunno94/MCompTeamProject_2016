@@ -108,7 +108,6 @@ public:
 	void SetControllerComponent(ControllerComponent* comp)
 	{
 		m_Controller = comp;
-		//m_Controller->SetParent(this);
 	}
 	ControllerComponent* GetControllerComponent() const
 	{
@@ -151,9 +150,7 @@ protected:
 	PhysicsObject*				m_PhysicsObj;
 	ControllerComponent*		m_Controller;
 
-
 	AudioComponent*				m_Audio;
-
 
 	float						m_BoundingRadius;
 	Mat4Graphics				m_WorldTransform;
