@@ -87,7 +87,6 @@ void KeyboardController::CheckInput(){
 		object->boost -= 0.01;
 	}
 
-	std::cout << object->boost << std::endl;
 	object->AddForce(force.x, force.y, force.z);
 	object->AddTorque(torque.x, torque.y, torque.z);
 	object->AddImpulse(impulse.x, impulse.y, impulse.z);
