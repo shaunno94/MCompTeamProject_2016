@@ -69,8 +69,11 @@ void MenuControllerComponent::Submit()
 	case SINGLE_PLAYER:
 		Renderer::GetInstance()->SetCurrentScene(Renderer::GetInstance()->GetScene(GAME_SCENE));
 		break;
-	case MULTIPLAYER:
+	case HOST_GAME:
 		Renderer::GetInstance()->SetCurrentScene(Renderer::GetInstance()->GetScene(SERVER_SETUP_SCENE));
+		break;
+	case JOIN_GAME:
+		Renderer::GetInstance()->SetCurrentScene(Renderer::GetInstance()->GetScene(CLIENT_SETUP_SCENE));
 		break;
 	case QUIT:
 		break;

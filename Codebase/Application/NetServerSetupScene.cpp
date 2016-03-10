@@ -114,7 +114,7 @@ void NetServerSetupScene::SetupControls()
 void NetServerSetupScene::Setup()
 {
 	Network::Init();
-	server = new NetServer(5, 5, 5);
+	server = new NetServer(10, 10, 10);
 
 	ips = server->GetIpStr();
 
