@@ -15,6 +15,7 @@ ControllerComponent::ControllerComponent(GameObject* parent)
 	dYaw = 0;
 	reset();
 	m_updateState = false;
+	boost = boosting = 0;
 }
 
 
