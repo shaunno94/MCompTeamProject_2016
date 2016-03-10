@@ -34,10 +34,10 @@ m_bluePostMaterial(bluePostMaterial)
 	m_postTexture->SetTextureParams(TextureFlags::REPEATING | TextureFlags::ANISOTROPIC_FILTERING);
 
 	static_cast<Material*>(m_redPostMaterial)->Set("diffuseTex", m_postTexture);
-	m_redPostMaterial->Set("colour", Vec4Graphics(1.0f, 0.5f, 0.5f, 1));
+	m_redPostMaterial->Set("colour", Vec4Graphics(1.0f, 0.2f, 0.2f, 1));
 
 	static_cast<Material*>(m_bluePostMaterial)->Set("diffuseTex", m_postTexture);
-	m_bluePostMaterial->Set("colour", Vec4Graphics(0.5f, 0.5f, 1.0f, 1));
+	m_bluePostMaterial->Set("colour", Vec4Graphics(0.2f, 0.2f, 1.0f, 1));
 
 	m_postMesh = ModelLoader::LoadMGL(MODEL_DIR"Common/cube.mgl", true);
 
@@ -164,9 +164,9 @@ void Stadium::CreatePlane(std::vector<btConvexHullShape*> &collectionVector, Vec
 
 	GameObject* post = new GameObject();
 	
-	ExtendedMaterial* material = (start.x < 0) ? m_redPostMaterial : m_bluePostMaterial;
+	ExtendedMaterial* material = (start.x < 0) ? m_bluePostMaterial : m_redPostMaterial;
 	if (start.x > -150 && start.z < 0)
-		material = m_bluePostMaterial;
+		material = m_redPostMaterial;
 
 	post->SetRenderComponent(new RenderComponent(material, m_postMesh));
 	post->SetLocalTransform(Mat4Graphics::Scale(Vec3Graphics(1.0f, abs(end.y - start.y), 1.0f)) * Mat4Graphics::Translation(Vec3Graphics(end.x, 0.0f, end.z)));
