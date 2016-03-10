@@ -183,10 +183,10 @@ Mesh* Mesh::GenerateQuad(Vec2Graphics texCoords)
 	m->m_Normals = new Vec3Graphics[m->m_NumVertices];
 	m->m_Tangents = new Vec3Graphics[m->m_NumVertices];
 
-	m->m_Vertices[0] = Vec3Graphics(-1.0f, -1.0f, 0.0f);
-	m->m_Vertices[1] = Vec3Graphics(-1.0f, 1.0f, 0.0f);
-	m->m_Vertices[2] = Vec3Graphics(1.0f, -1.0f, 0.0f);
-	m->m_Vertices[3] = Vec3Graphics(1.0f, 1.0f, 0.0f);
+	m->m_Vertices[0] = Vec3Graphics(-1.0f, 1.0f, 0.0f);
+	m->m_Vertices[1] = Vec3Graphics(-1.0f, -1.0f, 0.0f);
+	m->m_Vertices[2] = Vec3Graphics(1.0f, 1.0f, 0.0f);
+	m->m_Vertices[3] = Vec3Graphics(1.0f, -1.0f, 0.0f);
 
 	m->m_TextureCoords[0] = Vec2Graphics(0.0f, texCoords.y);
 	m->m_TextureCoords[1] = Vec2Graphics(0.0f, 0.0f);
@@ -274,11 +274,12 @@ Mesh* Mesh::GenerateTextQuad(const std::string& text, Font* font)
 		unsigned int c = (unsigned int)text[i];
 		float x = (float)(c%font->getXCount());
 		float y = (float)((c / font->getXCount()) % font->getYCount());
+		float size = 1;
 
 		m->m_Vertices[(i * 4)] =	 Vec3Graphics((float)i,		 0, 0);
-		m->m_Vertices[(i * 4) + 1] = Vec3Graphics((float)i,		-1, 0);
-		m->m_Vertices[(i * 4) + 2] = Vec3Graphics((float)i + 1,  0, 0);
-		m->m_Vertices[(i * 4) + 3] = Vec3Graphics((float)i + 1, -1, 0);
+		m->m_Vertices[(i * 4) + 1] = Vec3Graphics((float)i, -size, 0);
+		m->m_Vertices[(i * 4) + 2] = Vec3Graphics((float)i + size, 0, 0);
+		m->m_Vertices[(i * 4) + 3] = Vec3Graphics((float)i + size, -size, 0);
 
 		m->m_TextureCoords[(i * 4)] =	  Vec2Graphics(x*texelWidth			,(y)*texelHeight);
 		m->m_TextureCoords[(i * 4) + 1] = Vec2Graphics(x*texelWidth			,(y + 1) * texelHeight);

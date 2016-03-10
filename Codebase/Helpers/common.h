@@ -3,6 +3,7 @@
 #include <string>
 #include <algorithm>
 #include <smmintrin.h>
+#include <sstream>
 
 /** @defgroup Helpers Helpers
 *  Collection of helpful functionality.
@@ -27,6 +28,15 @@ struct {
 /// Macro for calling methods with function pointers.
 /// </summary>
 #define CALL_MEMBER_FN(instance, ptrToMemberFn)  ((instance).*(ptrToMemberFn))
+
+struct DebugResources
+{
+	static std::stringstream g_DebugStream;
+};
+
+#define CLEAR_DEBUG_STREAM() DebugResources::g_DebugStream.str(""); DebugResources::g_DebugStream.clear()
+#define GET_DEBUG_STREAM() DebugResources::g_DebugStream
+
 
 template <typename T>
 inline T Squared(T v)

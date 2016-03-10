@@ -143,6 +143,7 @@
     <ClInclude Include="TSingleton.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="common.cpp" />
     <ClCompile Include="File.cpp" />
     <ClCompile Include="MeasuringTimer.cpp" />
     <ClCompile Include="RNG.cpp" />

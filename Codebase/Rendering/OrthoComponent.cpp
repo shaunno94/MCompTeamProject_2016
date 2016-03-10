@@ -8,7 +8,8 @@ OrthoComponent::OrthoComponent(const float z)
 
 OrthoComponent::~OrthoComponent()
 {
-
+	for (auto &guiComp : m_elements)
+		delete guiComp;
 }
 
 void OrthoComponent::AddGUIComponent(GUIComponent* element)

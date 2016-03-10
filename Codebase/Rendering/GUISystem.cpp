@@ -1,19 +1,17 @@
 #include "GUISystem.h"
 
-GUISystem* GUISystem::guiSystem;
 
 GUISystem::GUISystem()
 {
 	init = true;
 }
 
-bool GUISystem::Initialise()	{
-	guiSystem = new GUISystem();
+GUISystem::~GUISystem()
+{
+	for (auto& guiComp : m_component)
+		delete guiComp;
 
-	if (!guiSystem->HasInitialised()) {
-		return false;
-	}
-	return true;
+	m_component.clear();
 }
 
 bool GUISystem::HasInitialised()
@@ -35,11 +33,6 @@ void GUISystem::RemoveOrthoComponent(OrthoComponent* component)
 	}
 }
 
-//void GUISystem::Update()
-//{
-//	for (unsigned int i = 0; i < m_component.size(); ++i)
-//		m_component[i]->Update();
-//}
 
 void GUISystem::Render()
 {
@@ -49,9 +42,4 @@ void GUISystem::Render()
 	{
 		m_component[i]->Render();
 	}
-}
-
-void GUISystem::Destroy()
-{
-	guiSystem->m_component.clear();
 }

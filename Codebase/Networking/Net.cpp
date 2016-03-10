@@ -108,9 +108,10 @@ bool Network::Init()
 void Network::Clear()
 {
 	if (s_Initialized)
+	{
 		enet_deinitialize();
-
-	s_Initialized = false;
+		s_Initialized = false;
+	}
 }
 
 

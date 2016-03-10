@@ -65,7 +65,6 @@ void Scene::addGameObject(GameObject* obj)
 }
 
 void Scene::UpdateScene(float dt) {
-	myControllers->update(dt);
 }
 
 void Scene::UpdateNodeLists(float dt, Frustum& frustum, Vec3Graphics camPos)

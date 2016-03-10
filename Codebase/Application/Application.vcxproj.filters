@@ -51,6 +51,12 @@
     <ClCompile Include="BoostPickupGameObject.cpp">
       <Filter>Source Files\Pickups</Filter>
     </ClCompile>
+    <ClCompile Include="NetClientSetupScene.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="NetServerSetupScene.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Stadium.h">
@@ -79,6 +85,15 @@
     </ClInclude>
     <ClInclude Include="BoostPickupGameObject.h">
       <Filter>Header Files\Pickups</Filter>
+    </ClInclude>
+    <ClInclude Include="NetClientSetupScene.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="NetServerSetupScene.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="constants.h">
+      <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

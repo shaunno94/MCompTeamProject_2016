@@ -4,7 +4,7 @@
 #include "Rendering\GUISystem.h"
 #include "Rendering\OGLShader.h"
 #include "Rendering\MenuBackgroundGUI.h"
-#include "Rendering\MenuGUI.h"
+#include "Rendering\MenuOrthoComponent.h"
 
 
 #ifndef ORBIS
@@ -16,7 +16,7 @@ class MenuScene :
 	public Scene
 {
 public:
-	MenuScene(UIControllerManager* controller);
+	MenuScene();
 	~MenuScene();
 
 	virtual void UpdateScene(float dt) override;
@@ -28,23 +28,31 @@ public:
 	void LoadAudio();
 	void SetupControls();
 
+	GUISystem* getGUISystem(){ return guiSystem; }
+
 protected:
 	UIControllerManager* myControllers;
 
 	GameObject* test;
-	
-	Mesh* bg;
+	GUISystem* guiSystem;
 
+	
 	BaseShader* orthoShader;
 
 	Material* guiMaterial;
 	Material* textMaterial;
 	Material* bgMaterial;
+	Material* btnMaterial;
+	Material* selectBtnMaterial;
 
 	OrthoComponent* bgOrtho;
-	MenuGUI* menuGUI;
-	MenuBackgroundGUI* menuBg;
+	MenuOrthoComponent* menuOrtho;
 
-	unsigned int m_Selected;
+	MenuBackgroundGUI* menuBg;
+	ButtonGUIComponent* singleBtn;
+	ButtonGUIComponent* multiBtn;
+	ButtonGUIComponent* exitBtn;
+
+	int m_Selected;
 };
 

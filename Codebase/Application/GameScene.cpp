@@ -11,7 +11,6 @@ GameScene::GameScene()
 
 	//Initialise Bullet physics engine.
 	PhysicsEngineInstance::Instance()->setGravity(btVector3(0, -9.81, 0));
-	SoundSystem::Initialise();
 
 #ifndef ORBIS
 	ParticleManager::Initialise();
@@ -21,8 +20,8 @@ GameScene::GameScene()
 		std::cout << "Particle Manager not Initialised" << std::endl;
 	}
 #endif
-	GUISystem::Initialise();
-	if (!GUISystem::GetInstance().HasInitialised())
+	guiSystem = new GUISystem();
+	if (!guiSystem->HasInitialised())
 	{
 		std::cout << "GUI not Initialised!" << std::endl;
 	}
@@ -38,7 +37,6 @@ GameScene::GameScene()
 	SetupMaterials();
 	SetupGameObjects();
 	DrawGUI();
-	LoadAudio();
 	SetupControls();
 }
 
@@ -46,14 +44,15 @@ GameScene::GameScene()
 GameScene::~GameScene()
 {
 	PhysicsEngineInstance::Release();
-	GUISystem::Destroy();
-	ParticleManager::Destroy();
 
 #ifndef ORBIS
-	SoundSystem::Release();
+	ParticleManager::Destroy();
 #endif
 
-	delete pickupManager;
+	if (guiSystem)
+		delete guiSystem;
+
+	//delete pickupManager;
 
 #if DEBUG_DRAW
 	DebugDraw::Release();
@@ -84,19 +83,39 @@ void GameScene::IncrementScore(int team)
 
 void GameScene::UpdateScene(float dt)
 {
-	Scene::UpdateScene(dt);
+	myControllers->update(dt);
+
 	if (currentTime > 180)
 	{
-		//TODO: Proceed to end game screen
 		currentTime = 0;
 		lastTime = 0;
 	}
 	currentTime += dt / 1000.0f;
 
-	if (currentTime < 181)
+	if (currentTime - lastTime > 1)
 	{
 		lastTime = currentTime;
 		scoreboardComponent->Update(scores[0], scores[1], currentTime);
+		//GET_DEBUG_STREAM().str().substr()
+
+#ifdef _DEBUG
+		
+		vector<std::string>tokens;
+		std::string t;
+		while (std::getline(GET_DEBUG_STREAM(), t, '\n')) {
+			tokens.push_back(t.substr(2, std::string::npos));
+		}
+
+		float fpsStep = 1/(std::stof(tokens[1]) + std::stof(tokens[3])) * 1000;
+		float physicsStep = std::stof(tokens[1]);
+		std::string fps = "FPS: " + std::to_string(fpsStep).substr(0,5);
+		std::string physics = "Physics: " + tokens[1].substr(0, 5);
+		std::string graphics = "Graphics: " + tokens[3].substr(0, 5);
+
+		FPSDebugTextComponent->Update(fps);
+		physicsDebugTextComponent->Update(physics);
+		graphicsDebugTextComponent->Update(graphics);
+#endif
 	}
 
 	if (goalScored > 0) {
@@ -116,6 +135,7 @@ void GameScene::UpdateScene(float dt)
 			ResetObjects();
 		}
 	}
+
 }
 
 void GameScene::SetupGameObjects()
@@ -255,11 +275,21 @@ void GameScene::DrawGUI()
 	//Define Orthographic Component
 	hudOrtho = new OrthoComponent(1.0f);
 	//Add child GUI components, while defining materials, texture, and depth
-	scoreboardComponent = new ScoreboardGUIComponent(guiMaterial, Texture::Get(TEXTURE_DIR"tahoma.tga"), 1.0);
+
+	scoreboardComponent = new ScoreboardGUIComponent(guiMaterial, std::to_string(0) + " - " + "3:00" + " - 0", Vec3Graphics(-0.6f, 0.7f, 0), Vec3Graphics(0.1f, 0.1f, 1));
 	hudOrtho->AddGUIComponent(scoreboardComponent);
 
+#if _DEBUG
+	FPSDebugTextComponent = new TextGUIComponent(guiMaterial, GET_DEBUG_STREAM().str(), Vec3Graphics(-1.0f, -0.7f, 0), Vec3Graphics(0.04f, 0.04f, 1));
+	hudOrtho->AddGUIComponent(FPSDebugTextComponent);
+	physicsDebugTextComponent = new TextGUIComponent(guiMaterial, GET_DEBUG_STREAM().str(), Vec3Graphics(-1.0f, -0.8f, 0), Vec3Graphics(0.04f, 0.04f, 1));
+	hudOrtho->AddGUIComponent(physicsDebugTextComponent);
+	graphicsDebugTextComponent = new TextGUIComponent(guiMaterial, GET_DEBUG_STREAM().str(), Vec3Graphics(-1.0f, -0.9f, 0), Vec3Graphics(0.04f, 0.04f, 1));
+	hudOrtho->AddGUIComponent(graphicsDebugTextComponent);
+#endif
+
 	//Add Orthographic component to GUISystem
-	GUISystem::GetInstance().AddOrthoComponent(hudOrtho);
+	guiSystem->AddOrthoComponent(hudOrtho);
 }
 
 void GameScene::SetupControls()
@@ -326,9 +356,20 @@ void GameScene::ResetObject(GameObject& object) {
 	dynamic_cast<RigidPhysicsObject*>(object.GetPhysicsComponent())->GetPhysicsBody()->clearForces();
 	dynamic_cast<RigidPhysicsObject*>(object.GetPhysicsComponent())->GetPhysicsBody()->setLinearVelocity(zeroVector);
 	dynamic_cast<RigidPhysicsObject*>(object.GetPhysicsComponent())->GetPhysicsBody()->setAngularVelocity(zeroVector);
-	
+
 	object.GetPhysicsComponent()->GetPhysicsBody()->setWorldTransform(btTransform(btQuaternion(0, 0, 0, 1), btVector3(object.GetSpawnPoint().x, object.GetSpawnPoint().y, object.GetSpawnPoint().z)));
-	if (object.GetControllerComponent())
+	if (object.GetControllerComponent()) 
 		object.GetControllerComponent()->reset();
+
+}
+void GameScene::Setup()
+{
+	SetControllerActor();
+	SetupAI();
+	LoadAudio();
+}
+
+void GameScene::Cleanup()
+{
 
 }

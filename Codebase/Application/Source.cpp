@@ -2,6 +2,7 @@
 #include "Rendering/GameTimer.h"
 #include "GameScene.h"
 #include "MenuScene.h"
+#include "NetServerSetupScene.h"
 #include "Helpers/MeasuringTimer.h"
 //#include "Networking\Net.h"
 
@@ -38,16 +39,20 @@ int main(void)
 #ifdef ORBIS
 	PS4Input input = PS4Input();
 #endif
+	SoundSystem::Initialise();
 
-	//UIControllerManager* uiController = new UIControllerManager();
 	//Create GameScene
 	GameScene* gameScene = new GameScene();
-//	MenuScene* menuScene = new MenuScene(uiController);
+	MenuScene* menuScene = new MenuScene();
+	NetServerSetupScene* serverScene = new NetServerSetupScene();
+
+	renderer.AddScene(menuScene);
+	renderer.AddScene(gameScene);
+	renderer.AddScene(serverScene);
+	
 	//Set current scene to the game
-	renderer.SetCurrentScene(gameScene);
-	gameScene->SetControllerActor();
-	gameScene->SetupAI();
-	//renderer.SetCurrentScene(menuScene);
+	renderer.SetCurrentScene(menuScene);
+	//renderer.SetCurrentScene(gameScene);
 
 #ifdef _DEBUG
 	std::cout << "Renderer Memory Usage: " << renderer.GetRendererMemUsage() / (1024 * 1024) << " (MB)" << std::endl;
@@ -61,7 +66,7 @@ int main(void)
 	while (true)
 #endif
 	{
-		MEASURING_TIMER_LOG_START("Frame");
+	
 #ifdef ORBIS
 		input.Poll();
 #endif
@@ -71,27 +76,24 @@ int main(void)
 		PhysicsEngineInstance::Instance()->stepSimulation(ms, SUB_STEPS, TIME_STEP);
 		MEASURING_TIMER_LOG_END();
 
-		MEASURING_TIMER_LOG_START("Controllers");
-		//myControllers->update(ms);
-		MEASURING_TIMER_LOG_END();
-
 		MEASURING_TIMER_LOG_START("Renderer");
 		renderer.RenderScene(ms);
 		MEASURING_TIMER_LOG_END();
 
-		MEASURING_TIMER_LOG_START("Sound System");
+		SoundSystem::Instance()->Update(ms);
 		
-		MEASURING_TIMER_LOG_END();
 
-		MEASURING_TIMER_LOG_END();//end frame inside
+		CLEAR_DEBUG_STREAM();
+		MEASURING_TIMER_PRINT(GET_DEBUG_STREAM());
 
-		//TODO: Print time steps. Can pass stringstream to get a formated output string
-		//MEASURING_TIMER_PRINT(std::cout);
 		MEASURING_TIMER_CLEAR();
 
 		SoundSystem::Instance()->Update(ms);
 	}
 
+	SoundSystem::Instance()->Release();
+	Renderer::GetInstance()->SetCurrentScene(nullptr);
+	delete menuScene;
 	delete gameScene;
 
 	return 0;

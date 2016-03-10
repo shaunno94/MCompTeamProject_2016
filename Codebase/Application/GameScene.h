@@ -68,8 +68,16 @@ public:
 		return pickupManager;
 	}
 
-protected:
+	GUISystem* getGUISystem(){ return guiSystem; }
+	virtual void Setup() override;
+	virtual void Cleanup() override;
 
+
+protected:
+	
+	GUISystem* guiSystem;
+
+	ControllerManager* myControllers;
 	int scores[2];
 
 	void ResetObjects();
@@ -120,6 +128,9 @@ protected:
 	ControllerComponent* cc;
 
 	OrthoComponent* hudOrtho;
+	TextGUIComponent* FPSDebugTextComponent;
+	TextGUIComponent* physicsDebugTextComponent;
+	TextGUIComponent* graphicsDebugTextComponent;
 	ScoreboardGUIComponent* scoreboardComponent;
 
 	float timerCount = 0.0f;
