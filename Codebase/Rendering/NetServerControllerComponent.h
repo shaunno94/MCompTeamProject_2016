@@ -3,18 +3,17 @@
 #include "Rendering\MenuOrthoComponent.h"
 #include "UIControllerComponent.h"
 
-enum MENU_SELECTION
+enum NETSERVER_SELECTION
 {
-	SINGLE_PLAYER,
-	MULTIPLAYER,
-	QUIT
+	SERVER_MENU_BACK,
+	SERVER_MENU_START
 };
 
-class MenuControllerComponent : public UIControllerComponent
+class NetServerControllerComponent : public UIControllerComponent
 {
 public:
-	MenuControllerComponent(MenuOrthoComponent* parent, unsigned int type);
-	~MenuControllerComponent();
+	NetServerControllerComponent(MenuOrthoComponent* parent, unsigned int type);
+	~NetServerControllerComponent();
 	void UpdateObject(float dt);
 
 	void SelectNext();

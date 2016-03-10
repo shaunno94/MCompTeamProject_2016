@@ -1,9 +1,9 @@
 #include "MenuScene.h"
 
 
-MenuScene::MenuScene(UIControllerManager* controller)
-:myControllers(controller)
+MenuScene::MenuScene()
 {
+	myControllers = new UIControllerManager();
 
 	guiSystem = new GUISystem();
 	
@@ -34,6 +34,7 @@ MenuScene::~MenuScene()
 
 void MenuScene::UpdateScene(float dt)
 {
+	myControllers->update(dt);
 	m_Selected = menuOrtho->Update();
 }
 

@@ -2,7 +2,7 @@
 #include "MenuController.h"
 
 
-MenuController::MenuController(MenuControllerComponent* object)
+MenuController::MenuController(UIControllerComponent* object)
 {
 	setObject(object);
 }
@@ -13,7 +13,7 @@ MenuController::~MenuController()
 
 }
 
-void MenuController::CheckInput(std::vector<Scene*>& scenes)
+void MenuController::CheckInput()
 {
 	if (Window::GetKeyboard()->KeyTriggered(KEYBOARD_UP) || Window::GetKeyboard()->KeyTriggered(KEYBOARD_W))
 	{
@@ -29,7 +29,7 @@ void MenuController::CheckInput(std::vector<Scene*>& scenes)
 
 	if (Window::GetKeyboard()->KeyTriggered(KEYBOARD_RETURN))
 	{
-		object->Submit(scenes);
+		object->Submit();
 	//	std::cout << "RETURN" << std::endl;
 	}
 }

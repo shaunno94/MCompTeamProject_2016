@@ -101,10 +101,10 @@ int main(void)
 
 	ControllerManager* myControllers = new NetClientControllerManager(session);
 	//Create GameScene
-	GameScene* gameScene = new GameScene(myControllers);
+	//GameScene* gameScene = new GameScene();
 	//Set current scene to the game
-	renderer.SetCurrentScene(gameScene);
-	gameScene->SetControllerActor();
+	//renderer.SetCurrentScene(gameScene);
+	//gameScene->SetControllerActor();
 
 #ifndef ORBIS
 	while (Window::GetWindow().UpdateWindow() && !Window::GetKeyboard()->KeyDown(KEYBOARD_ESCAPE))
@@ -124,7 +124,7 @@ int main(void)
 		MEASURING_TIMER_CLEAR();
 	}
 
-	delete gameScene;
+	//delete gameScene;
 
 	SoundSystem::Release();
 

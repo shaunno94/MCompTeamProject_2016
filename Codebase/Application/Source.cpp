@@ -2,6 +2,7 @@
 #include "Rendering/GameTimer.h"
 #include "GameScene.h"
 #include "MenuScene.h"
+#include "NetServerSetupScene.h"
 #include "Helpers/MeasuringTimer.h"
 //#include "Networking\Net.h"
 
@@ -40,15 +41,14 @@ int main(void)
 #endif
 	SoundSystem::Initialise();
 
-	UIControllerManager* uiController = new UIControllerManager();
-	vector<Scene*> scenes;
 	//Create GameScene
 	GameScene* gameScene = new GameScene();
-	MenuScene* menuScene = new MenuScene(uiController);
-	scenes.push_back(menuScene);
-	scenes.push_back(gameScene);
+	MenuScene* menuScene = new MenuScene();
+	NetServerSetupScene* serverScene = new NetServerSetupScene();
 
-	uiController->SetAvailableScene(scenes);
+	renderer.AddScene(menuScene);
+	renderer.AddScene(gameScene);
+	renderer.AddScene(serverScene);
 	
 	//Set current scene to the game
 	renderer.SetCurrentScene(menuScene);
@@ -76,8 +76,6 @@ int main(void)
 		PhysicsEngineInstance::Instance()->stepSimulation(ms, SUB_STEPS, TIME_STEP);
 		MEASURING_TIMER_LOG_END();
 
-		uiController->update(ms);
-
 		MEASURING_TIMER_LOG_START("Renderer");
 		renderer.RenderScene(ms);
 		MEASURING_TIMER_LOG_END();
@@ -94,6 +92,7 @@ int main(void)
 	}
 
 	SoundSystem::Instance()->Release();
+	Renderer::GetInstance()->SetCurrentScene(nullptr);
 	delete menuScene;
 	delete gameScene;
 

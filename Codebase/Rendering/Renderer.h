@@ -24,12 +24,19 @@ public:
 
 	void SetCurrentScene(Scene* s)
 	{
+		if (currentScene)
+			currentScene->Cleanup();
 		currentScene = s;
+		if (currentScene)
+			currentScene->Setup();
 	}
 	Scene* GetCurrentScene()
 	{
 		return currentScene;
 	}
+
+	void AddScene(Scene* scene){ scenes.push_back(scene); }
+	Scene* GetScene(int scene) { return scenes[scene]; }
 
 	Renderer(std::string title, int sizeX, int sizeY, bool fullScreen);
 	virtual ~Renderer(void);
@@ -54,4 +61,7 @@ protected:
 	float windowHeight, windowWidth;
 	Vec2Graphics pixelPitch;
 	Scene* currentScene;
+
+	std::vector<Scene*> scenes;
+
 };

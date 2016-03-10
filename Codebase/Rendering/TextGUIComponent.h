@@ -1,3 +1,4 @@
+#pragma once
 #include "GUIComponent.h"
 
 class  TextGUIComponent : public GUIComponent

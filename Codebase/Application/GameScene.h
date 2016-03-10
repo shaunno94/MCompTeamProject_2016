@@ -67,7 +67,9 @@ public:
 	}
 
 	GUISystem* getGUISystem(){ return guiSystem; }
-	void Setup();
+	virtual void Setup() override;
+	virtual void Cleanup() override;
+
 
 protected:
 	

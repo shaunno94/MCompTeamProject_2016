@@ -2,12 +2,7 @@
 #include "OrthoComponent.h"
 #include "ButtonGUIComponent.h"
 
-enum SELECTED
-{
-	SINGLE_PLAYER,
-	MULTIPLAYER,
-	QUIT
-};
+
 
 class MenuOrthoComponent: public OrthoComponent
 {
@@ -31,5 +26,5 @@ public:
 
 protected:
 
-	unsigned int m_Selection = SINGLE_PLAYER;
+	unsigned int m_Selection = 0;
 };

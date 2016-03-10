@@ -5,20 +5,25 @@
 #include "Rendering\OGLShader.h"
 #include "Rendering\MenuBackgroundGUI.h"
 #include "Rendering\MenuOrthoComponent.h"
+#include "Networking\Net.h"
+#include "Networking\NetServer.h"
+#include "Rendering\TextGUIComponent.h"
 
 
 #ifndef ORBIS
-const string MENU_VERT = SHADER_DIR"TexturedVertex.glsl";
-const string MENU_FRAG = SHADER_DIR"TexturedFragment.glsl";
+const string MENU_SERVER_VERT = SHADER_DIR"TexturedVertex.glsl";
+const string MENU_SERVER_FRAG = SHADER_DIR"TexturedFragment.glsl";
 #endif
 
-class MenuScene :
+class NetServerSetupScene :
 	public Scene
 {
 public:
-	MenuScene();
-	~MenuScene();
+	NetServerSetupScene();
+	~NetServerSetupScene();
 
+	virtual void Setup() override;
+	virtual void Cleanup() override;
 	virtual void UpdateScene(float dt) override;
 
 	void SetupGameObjects();
@@ -36,7 +41,6 @@ protected:
 	GameObject* test;
 	GUISystem* guiSystem;
 
-	
 	BaseShader* orthoShader;
 
 	Material* guiMaterial;
@@ -45,13 +49,19 @@ protected:
 	Material* btnMaterial;
 	Material* selectBtnMaterial;
 
-	OrthoComponent* bgOrtho;
+	OrthoComponent* ipOrtho;
+	OrthoComponent* connectionOrtho;
 	MenuOrthoComponent* menuOrtho;
 
 	MenuBackgroundGUI* menuBg;
 	ButtonGUIComponent* singleBtn;
 	ButtonGUIComponent* multiBtn;
 	ButtonGUIComponent* exitBtn;
+
+	TextGUIComponent* ipText;
+
+	NetServer* server;
+	std::vector<std::string*> ips;
 
 	int m_Selected;
 };

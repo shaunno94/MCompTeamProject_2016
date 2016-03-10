@@ -24,7 +24,14 @@ Renderer::Renderer(std::string title, int sizeX, int sizeY, bool fullScreen) :
 	child = this;
 }
 
-Renderer::~Renderer(void) {}
+Renderer::~Renderer(void)
+{
+	if (currentScene)
+	{
+		currentScene->Cleanup();
+		currentScene = nullptr;
+	}
+}
 
 
 void Renderer::UpdateScene(float msec)
@@ -38,7 +45,7 @@ void Renderer::UpdateScene(float msec)
 		frameFrustrum.FromMatrix(projMatrix * viewMatrix);
 		currentScene->UpdateNodeLists(msec, frameFrustrum, currentScene->getCamera()->GetPosition());
 	}
-		
+
 }
 
 void Renderer::RenderScene(float msec)

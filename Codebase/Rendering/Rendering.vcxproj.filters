@@ -85,6 +85,12 @@
     <Filter Include="Source Files\UI\MenuGUI">
       <UniqueIdentifier>{627b3e3e-d3cf-4631-a920-4efafc0ff7c8}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\Input\Network">
+      <UniqueIdentifier>{26f9337b-2dfb-498e-98d7-057f88599bc1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Input\Network">
+      <UniqueIdentifier>{5524ab4a-439e-437b-b1ae-741808595da4}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Renderer.h">
@@ -246,18 +252,6 @@
     <ClInclude Include="Font.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="NetClientControllerManager.h">
-      <Filter>Header Files\Input</Filter>
-    </ClInclude>
-    <ClInclude Include="NetServerControllerManager.h">
-      <Filter>Header Files\Input</Filter>
-    </ClInclude>
-    <ClInclude Include="PCNetController.h">
-      <Filter>Header Files\Input</Filter>
-    </ClInclude>
-    <ClInclude Include="PCNetProducerController.h">
-      <Filter>Header Files\Input</Filter>
-    </ClInclude>
     <ClInclude Include="MenuController.h">
       <Filter>Header Files\Input</Filter>
     </ClInclude>
@@ -290,6 +284,27 @@
     </ClInclude>
     <ClInclude Include="ButtonGUIComponent.h">
       <Filter>Header Files\UI\MenuGUI</Filter>
+    </ClInclude>
+    <ClInclude Include="NetClientControllerManager.h">
+      <Filter>Header Files\Input\Network</Filter>
+    </ClInclude>
+    <ClInclude Include="NetServerControllerManager.h">
+      <Filter>Header Files\Input\Network</Filter>
+    </ClInclude>
+    <ClInclude Include="PCNetController.h">
+      <Filter>Header Files\Input\Network</Filter>
+    </ClInclude>
+    <ClInclude Include="PCNetProducerController.h">
+      <Filter>Header Files\Input\Network</Filter>
+    </ClInclude>
+    <ClInclude Include="UIControllerComponent.h">
+      <Filter>Header Files\Input</Filter>
+    </ClInclude>
+    <ClInclude Include="NetClientControllerComponent.h">
+      <Filter>Header Files\Input\Network</Filter>
+    </ClInclude>
+    <ClInclude Include="NetServerControllerComponent.h">
+      <Filter>Header Files\Input\Network</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -431,18 +446,6 @@
     <ClCompile Include="CubeMaterial.cpp">
       <Filter>Source Files\Material</Filter>
     </ClCompile>
-    <ClCompile Include="NetClientControllerManager.cpp">
-      <Filter>Source Files\Input</Filter>
-    </ClCompile>
-    <ClCompile Include="NetServerControllerManager.cpp">
-      <Filter>Source Files\Input</Filter>
-    </ClCompile>
-    <ClCompile Include="PCNetController.cpp">
-      <Filter>Source Files\Input</Filter>
-    </ClCompile>
-    <ClCompile Include="PCNetProducerController.cpp">
-      <Filter>Source Files\Input</Filter>
-    </ClCompile>
     <ClCompile Include="PS4MenuController.cpp">
       <Filter>Source Files\Input</Filter>
     </ClCompile>
@@ -472,6 +475,24 @@
     </ClCompile>
     <ClCompile Include="ButtonGUIComponent.cpp">
       <Filter>Source Files\UI\MenuGUI</Filter>
+    </ClCompile>
+    <ClCompile Include="NetClientControllerManager.cpp">
+      <Filter>Source Files\Input\Network</Filter>
+    </ClCompile>
+    <ClCompile Include="NetServerControllerComponent.cpp">
+      <Filter>Source Files\Input\Network</Filter>
+    </ClCompile>
+    <ClCompile Include="NetServerControllerManager.cpp">
+      <Filter>Source Files\Input\Network</Filter>
+    </ClCompile>
+    <ClCompile Include="PCNetController.cpp">
+      <Filter>Source Files\Input\Network</Filter>
+    </ClCompile>
+    <ClCompile Include="PCNetProducerController.cpp">
+      <Filter>Source Files\Input\Network</Filter>
+    </ClCompile>
+    <ClCompile Include="NetClientControllerComponent.cpp">
+      <Filter>Source Files\Input\Network</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

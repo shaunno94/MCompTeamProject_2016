@@ -5,19 +5,22 @@
 #include "Rendering\OGLShader.h"
 #include "Rendering\MenuBackgroundGUI.h"
 #include "Rendering\MenuOrthoComponent.h"
+#include "Rendering\TextGUIComponent.h"
+#include "Networking\Net.h"
+#include "Networking\NetServer.h"
 
 
 #ifndef ORBIS
-const string MENU_VERT = SHADER_DIR"TexturedVertex.glsl";
-const string MENU_FRAG = SHADER_DIR"TexturedFragment.glsl";
+const string MENU_CLIENT_VERT = SHADER_DIR"TexturedVertex.glsl";
+const string MENU_CLIENT_FRAG = SHADER_DIR"TexturedFragment.glsl";
 #endif
 
-class MenuScene :
+class NetClientSetupScene :
 	public Scene
 {
 public:
-	MenuScene();
-	~MenuScene();
+	NetClientSetupScene();
+	~NetClientSetupScene();
 
 	virtual void UpdateScene(float dt) override;
 
@@ -46,6 +49,7 @@ protected:
 	Material* selectBtnMaterial;
 
 	OrthoComponent* bgOrtho;
+	OrthoComponent* connectionOrtho;
 	MenuOrthoComponent* menuOrtho;
 
 	MenuBackgroundGUI* menuBg;

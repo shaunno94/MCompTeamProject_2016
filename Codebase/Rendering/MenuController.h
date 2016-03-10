@@ -1,20 +1,20 @@
 #ifndef ORBIS
 #pragma once
-#include "MenuControllerComponent.h"
+#include "UIControllerComponent.h"
 #include "Window.h"
 
 
 class MenuController
 {
 public:
-	MenuController(MenuControllerComponent* object);
+	MenuController(UIControllerComponent* object);
 	~MenuController();
 
-	void CheckInput(std::vector<Scene*>& scenes);
-	void setObject(MenuControllerComponent* object){ this->object = object; }
+	void CheckInput();
+	void setObject(UIControllerComponent* object){ this->object = object; }
 
 protected:
-	MenuControllerComponent* object;
+	UIControllerComponent* object;
 
 };
 #endif

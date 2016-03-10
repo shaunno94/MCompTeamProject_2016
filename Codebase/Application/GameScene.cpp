@@ -87,7 +87,6 @@ void GameScene::UpdateScene(float dt)
 
 	if (currentTime > 180)
 	{
-		//TODO: Proceed to end game screen
 		currentTime = 0;
 		lastTime = 0;
 	}
@@ -364,4 +363,9 @@ void GameScene::Setup()
 	SetControllerActor();
 	SetupAI();
 	LoadAudio();
+}
+
+void GameScene::Cleanup()
+{
+
 }

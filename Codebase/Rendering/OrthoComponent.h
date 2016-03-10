@@ -15,6 +15,11 @@ public:
 
 	bool operator<(const OrthoComponent &rhs) const { return depth < rhs.depth; };
 
+	std::vector<GUIComponent*>& GetElements()
+	{
+		return m_elements;
+	}
+
 protected:
 	const float depth;
 	std::vector<GUIComponent*> m_elements;

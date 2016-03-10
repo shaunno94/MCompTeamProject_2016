@@ -1,26 +1,25 @@
-#include "MenuControllerComponent.h"
+#include "NetClientControllerComponent.h"
 #include "Renderer.h"
 #include "GUISystem.h"
 #include "Application\GameScene.h"
 #include "Application\constants.h"
 
-
-MenuControllerComponent::MenuControllerComponent(MenuOrthoComponent* parent, unsigned int type)
+NetClientControllerComponent::NetClientControllerComponent(MenuOrthoComponent* parent, unsigned int type)
 {
 	m_parent = parent;
 }
 
-MenuControllerComponent::~MenuControllerComponent()
+NetClientControllerComponent ::~NetClientControllerComponent()
 {
 
 }
 
-void MenuControllerComponent::UpdateObject(float dt)
+void NetClientControllerComponent::UpdateObject(float dt)
 {
 
 }
 
-void MenuControllerComponent::SelectNext()
+void NetClientControllerComponent::SelectNext()
 {
 	unsigned int maxCount = m_parent->GetElements().size();
 	unsigned int counter = 0;
@@ -40,7 +39,7 @@ void MenuControllerComponent::SelectNext()
 	}
 }
 
-void MenuControllerComponent::SelectPrevious()
+void NetClientControllerComponent::SelectPrevious()
 {
 	unsigned int maxCount = m_parent->GetElements().size();
 	unsigned int counter = 0;
@@ -61,18 +60,16 @@ void MenuControllerComponent::SelectPrevious()
 	
 }
 
-void MenuControllerComponent::Submit()
+void NetClientControllerComponent::Submit()
 {
 
 	switch (m_parent->GetSelection())
 	{
-	case SINGLE_PLAYER:
-		Renderer::GetInstance()->SetCurrentScene(Renderer::GetInstance()->GetScene(GAME_SCENE));
+	case CLIENT_MENU_BACK:
+		Renderer::GetInstance()->SetCurrentScene(Renderer::GetInstance()->GetScene(MENU_SCENE));
 		break;
-	case MULTIPLAYER:
-		Renderer::GetInstance()->SetCurrentScene(Renderer::GetInstance()->GetScene(SERVER_SETUP_SCENE));
-		break;
-	case QUIT:
+	case CLIENT_MENU_START:
+		Renderer::GetInstance()->SetCurrentScene(Renderer::GetInstance()->GetScene(CLIENT_GAME_SCENE));
 		break;
 	default:
 		std::cout << "Selection Invalid!";
