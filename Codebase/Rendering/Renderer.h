@@ -1,6 +1,6 @@
 #pragma once
 #include "Scene.h"
-#define DEBUG_DRAW 1
+#define DEBUG_DRAW 0
 /// @ingroup Rendering
 /// <summary>
 /// Non-platform specific functionality for rendering a <see cref="Scene"/>.
