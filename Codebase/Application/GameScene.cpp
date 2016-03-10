@@ -184,10 +184,12 @@ void GameScene::SetupShaders()
 	simpleShader = new OGLShader(SIMPLESHADER_VERT, SIMPLESHADER_FRAG);
 	pointlightShader = new OGLShader(POINTLIGHTSHADER_VERT, POINTLIGHTSHADER_FRAG);
 	orthoShader = new OGLShader(GUI_VERT, GUI_FRAG);
+	particleShader = new OGLShader(SIMPLESHADER_VERT, SIMPLESHADER_FRAG, PARTICLE_GEO);
 #else
 	simpleShader = new PS4Shader(SIMPLESHADER_VERT, SIMPLESHADER_FRAG);
 	pointlightShader = new PS4Shader(POINTLIGHTSHADER_VERT, POINTLIGHTSHADER_FRAG);
 	orthoShader = new PS4Shader(GUI_VERT, GUI_FRAG);
+	particleShader = new PS4Shader(SIMPLESHADER_VERT, SIMPLESHADER_FRAG);
 #endif
 	if (!pointlightShader->IsOperational())
 		std::cout << "Point light shader not operational!" << std::endl;
@@ -195,6 +197,8 @@ void GameScene::SetupShaders()
 		std::cout << "Simple shader not operational!" << std::endl;
 	if(!orthoShader->IsOperational())
 		std::cout << "ortho shader not operational!" << std::endl;
+	if (!particleShader->IsOperational())
+		std::cout << "Particle shader not operational!" << std::endl;
 }
 
 void GameScene::SetupMaterials()
@@ -206,7 +210,7 @@ void GameScene::SetupMaterials()
 	netMaterial = new Material(simpleShader, true);
 	postMaterial = new Material(simpleShader, true);
 	aiMaterial = new Material(simpleShader);
-	particleMaterial = new Material(simpleShader);
+	particleMaterial = new Material(particleShader);
 	ai2Material = new Material(simpleShader);
 	guiMaterial = new Material(orthoShader);
 	textMaterial = new Material(orthoShader);
@@ -230,7 +234,7 @@ void GameScene::SetupParticles()
 	}
 
 	emitter = new CubeEmitter();
-	particleSystem = new ParticleSystem(emitter, particleMaterial, player, this, 24);
+	particleSystem = new ParticleSystem(emitter, particleMaterial, player, this, 36);
 	ParticleManager::Instance()->AddSystem(particleSystem);
 }
 

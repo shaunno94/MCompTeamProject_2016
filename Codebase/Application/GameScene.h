@@ -22,6 +22,7 @@ const string POINTLIGHTSHADER_VERT = SHADER_DIR"2dShadowLightvertex.glsl";
 const string POINTLIGHTSHADER_FRAG = SHADER_DIR"2dShadowLightfragment.glsl";
 const string GUI_VERT = SHADER_DIR"TexturedVertex.glsl";
 const string GUI_FRAG = SHADER_DIR"TexturedFragment.glsl";
+const string PARTICLE_GEO = SHADER_DIR"particleGeo.glsl";
 #else
 #include "Rendering\PS4Controller.h"
 const std::string SIMPLESHADER_VERT = SHADER_DIR"textureVertex.sb";
@@ -30,6 +31,7 @@ const std::string POINTLIGHTSHADER_VERT = SHADER_DIR"2dShadowLightvertex.sb";
 const std::string POINTLIGHTSHADER_FRAG = SHADER_DIR"2dShadowLightfragment.sb";
 const std::string GUI_VERT = SHADER_DIR"TexturedVertex.sb";
 const std::string GUI_FRAG = SHADER_DIR"TexturedFragment.sb";
+const std::string PARTICLE_GEO = SHADER_DIR"particleGeo.sb";
 #endif
 #include "BulletCollision\CollisionDispatch\btCollisionWorld.h"
 #include "Helpers\DeltaTimer.h"
@@ -93,6 +95,7 @@ protected:
 	BaseShader* simpleShader;
 	BaseShader* pointlightShader;
 	BaseShader* orthoShader;
+	BaseShader* particleShader;
 
 	LightMaterial* lightMaterial;
 

@@ -33,8 +33,8 @@ private:
 
 	btTransform transform;
 
-	const float MIN_FORCE_XZ = -1.0f;
-	const float MAX_FORCE_XZ = 1.0f;
-	const float MIN_FORCE_Y = 0.5f;
-	const float MAX_FORCE_Y = 1.0f;
+	const float MIN_FORCE_XZ = -0.1f;
+	const float MAX_FORCE_XZ = 0.1f;
+	const float MIN_FORCE_Y = 0.1f;
+	const float MAX_FORCE_Y = 0.2f;
 };

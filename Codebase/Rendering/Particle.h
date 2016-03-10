@@ -32,6 +32,7 @@ private:
 	Vec3Graphics m_OldPos;
 	Vec3Physics m_Velocity;
 	const Vec3Graphics m_Scale = Vec3Graphics(0.05, 0.05, 0.05);
+	const Vec3Graphics m_Offset = Vec3Graphics(5.0, 0.0, 0.0);
 
 	const float MAX_LIFE = 2000;
 	const float MIN_LIFE = 1200;
