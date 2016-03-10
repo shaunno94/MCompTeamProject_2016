@@ -28,6 +28,7 @@ const string GUI_FRAG = SHADER_DIR"TexturedFragment.glsl";
 #include "Rendering\PS4Controller.h"
 const std::string SIMPLESHADER_VERT = SHADER_DIR"textureVertex.sb";
 const std::string SIMPLESHADER_FRAG = SHADER_DIR"textureFragment.sb";
+//const std::string COLOURSHADER_FRAG = SHADER_DIR"colourTextureFragment.sb";
 const std::string POINTLIGHTSHADER_VERT = SHADER_DIR"2dShadowLightvertex.sb";
 const std::string POINTLIGHTSHADER_FRAG = SHADER_DIR"2dShadowLightfragment.sb";
 const std::string GUI_VERT = SHADER_DIR"TexturedVertex.sb";

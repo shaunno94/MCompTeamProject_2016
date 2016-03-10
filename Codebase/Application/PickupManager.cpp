@@ -7,22 +7,22 @@ PickupManager::PickupManager(Material* material)
 {
 	m_boostMesh = ModelLoader::LoadMGL(MODEL_DIR"Boost/boost.mgl", true);
 
-	PickupGameObject* pickup0 = new BoostPickupGameObject(material, m_boostMesh, Vec3Physics(150, 2.0, 50));
+	PickupGameObject* pickup0 = new BoostPickupGameObject(material, m_boostMesh, Vec3Physics(200, 2.0, 100));
 	m_pickups.insert({ pickup0->GetBroadphaseProxyId(), pickup0 });
 
-	PickupGameObject* pickup1 = new BoostPickupGameObject(material, m_boostMesh, Vec3Physics(150, 2.0, -50));
+	PickupGameObject* pickup1 = new BoostPickupGameObject(material, m_boostMesh, Vec3Physics(200, 2.0, -100));
 	m_pickups.insert({ pickup1->GetBroadphaseProxyId(), pickup1 });
 
-	PickupGameObject* pickup2 = new BoostPickupGameObject(material, m_boostMesh, Vec3Physics(50, 2.0, 0));
+	PickupGameObject* pickup2 = new BoostPickupGameObject(material, m_boostMesh, Vec3Physics(50, 2.0, 50));
 	m_pickups.insert({ pickup2->GetBroadphaseProxyId(), pickup2 });
 
-	PickupGameObject* pickup3 = new BoostPickupGameObject(material, m_boostMesh, Vec3Physics(-50, 2.0, 0));
+	PickupGameObject* pickup3 = new BoostPickupGameObject(material, m_boostMesh, Vec3Physics(-50, 2.0, -50));
 	m_pickups.insert({ pickup3->GetBroadphaseProxyId(), pickup3 });
 
-	PickupGameObject* pickup4 = new BoostPickupGameObject(material, m_boostMesh, Vec3Physics(-150, 2.0, 50));
+	PickupGameObject* pickup4 = new BoostPickupGameObject(material, m_boostMesh, Vec3Physics(-200, 2.0, 100));
 	m_pickups.insert({ pickup4->GetBroadphaseProxyId(), pickup4 });
 
-	PickupGameObject* pickup5 = new BoostPickupGameObject(material, m_boostMesh, Vec3Physics(-150, 2.0, -50));
+	PickupGameObject* pickup5 = new BoostPickupGameObject(material, m_boostMesh, Vec3Physics(-200, 2.0, -100));
 	m_pickups.insert({ pickup5->GetBroadphaseProxyId(), pickup5 });
 
 

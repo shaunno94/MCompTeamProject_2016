@@ -212,7 +212,7 @@ void GameScene::SetupShaders()
 	orthoShader = new OGLShader(GUI_VERT, GUI_FRAG);
 #else
 	simpleShader = new PS4Shader(SIMPLESHADER_VERT, SIMPLESHADER_FRAG);
-	colourShader = new PS4Shader(SIMPLESHADER_VERT, COLOURSHADER_FRAG);
+	colourShader = new PS4Shader(SIMPLESHADER_VERT, SIMPLESHADER_FRAG);
 	pointlightShader = new PS4Shader(POINTLIGHTSHADER_VERT, POINTLIGHTSHADER_FRAG);
 	orthoShader = new PS4Shader(GUI_VERT, GUI_FRAG);
 #endif
