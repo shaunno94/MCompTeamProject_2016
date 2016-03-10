@@ -12,7 +12,5 @@ public:
 
 protected:
 	GameObject* m_ball;
-	GameObject* m_goal;
-	bool m_hit;
 };
 

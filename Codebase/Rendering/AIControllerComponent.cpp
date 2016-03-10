@@ -12,10 +12,12 @@
 #include "AI\DefenceState.h"
 #include "AI\constants.h"
 #include "AI\AggressiveState.h"
+#include "AI\OffenceState.h"
 
-AIControllerComponent::AIControllerComponent(GameObject* parent, unsigned int type) :
+AIControllerComponent::AIControllerComponent(GameObject* parent, unsigned int type, bool blueTeam) :
 	ControllerComponent(parent),
-	m_type(type)
+	m_type(type),
+	m_blueTeam(blueTeam)
 {
 }
 
@@ -27,8 +29,10 @@ void AIControllerComponent::setupAI()
 {
 	GameObject* player = Renderer::GetInstance()->GetCurrentScene()->findGameObject("player");
 	GameObject* ball = Renderer::GetInstance()->GetCurrentScene()->findGameObject("ball");
-	GameObject* targetGoal = Renderer::GetInstance()->GetCurrentScene()->findGameObject("goal1");
-	GameObject* teamGoal = Renderer::GetInstance()->GetCurrentScene()->findGameObject("goal2");
+
+	
+	GameObject* targetGoal = (m_blueTeam) ? Renderer::GetInstance()->GetCurrentScene()->findGameObject("redGoal") : Renderer::GetInstance()->GetCurrentScene()->findGameObject("blueGoal");
+	GameObject* teamGoal = (m_blueTeam) ? Renderer::GetInstance()->GetCurrentScene()->findGameObject("blueGoal") : Renderer::GetInstance()->GetCurrentScene()->findGameObject("redGoal");
 
 	m_StateMachine = new StateMachine();
 
@@ -38,7 +42,7 @@ void AIControllerComponent::setupAI()
 	{
 
 					// Create States
-					PositionState* position = new PositionState(*m_StateMachine, *m_parent, *ball);
+					PositionState* position = new PositionState(*m_StateMachine, *m_parent, *ball, *targetGoal);
 					m_StateMachine->AddState(POSITION, position);
 
 					ShootState* shoot = new ShootState(*m_StateMachine, *m_parent, *ball);
@@ -99,12 +103,45 @@ void AIControllerComponent::setupAI()
 		break;
 	case AGGRESSIVE:
 	{
+					   // OFFENCE STATE (When player is away from ball):
+					   //		Contains Position and Shoot state, effectively becoming a Shooter AI
+					   //		One transition to Aggro single state
+					   //		Starts on Position, transition between Position and Shoot
+
+					   PositionState* position = new PositionState(*m_StateMachine, *m_parent, *ball, *targetGoal);
+					   ShootState* shoot = new ShootState(*m_StateMachine, *m_parent, *ball);
+
+					   OffenceState* offenceParentState = new OffenceState(*m_StateMachine, *m_parent, *ball, *targetGoal);
+					   offenceParentState->AddChildState(POSITION, position);
+					   offenceParentState->AddChildState(SHOOT, shoot);
+
+					   offenceParentState->setupChildStates();
+					   offenceParentState->Start();
+
+					   DistanceTrigger* offenceToAggroTrigger = new DistanceTrigger();
+					   offenceToAggroTrigger->setupTrigger(*player, *ball, 100.0f, true);
+					   offenceParentState->AddTrigger(offenceToAggroTrigger, AGGRO);
+
+					   m_StateMachine->AddState(OFFENCE, offenceParentState);
+
+
+					   // AGGRO STATE (When player is within range of ball):
+					   //		One Transition to Offense parent state
+
 					   AggressiveState* aggroState = new AggressiveState(*m_StateMachine, *m_parent, *ball, *player);
 					   m_StateMachine->AddState(AGGRO, aggroState);
 					   m_StateMachine->ChangeState(AGGRO);
+
+					   DistanceTrigger* aggroToOffenceTrigger = new DistanceTrigger();
+					   aggroToOffenceTrigger->setupTrigger(*player, *ball, 170.0f, false);
+					   aggroState->AddTrigger(aggroToOffenceTrigger, OFFENCE);
+
+					   m_StateMachine->ChangeState(OFFENCE);
 	}
 		break;
 	default:
+		m_type = SHOOTER;
+		setupAI();
 		break;
 	}
 }
