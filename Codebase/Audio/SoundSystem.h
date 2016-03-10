@@ -1,12 +1,14 @@
 #pragma once
 
 #include "SoundEmitter.h"
+#include <thread>
+#include <atomic>
 
 class SoundSystem
 {
 public:
 	// singleton methods
-	static void Initialise(unsigned int channels = 32)
+	static void Initialise(unsigned int channels = 48)
 	{
 		instance = new SoundSystem(channels);
 	}

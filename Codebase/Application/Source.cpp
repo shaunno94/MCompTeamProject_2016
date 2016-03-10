@@ -81,7 +81,7 @@ int main(void)
 		MEASURING_TIMER_LOG_END();
 
 		MEASURING_TIMER_LOG_START("Sound System");
-		
+		SoundSystem::Instance()->Update(ms);
 		MEASURING_TIMER_LOG_END();
 
 		MEASURING_TIMER_LOG_END();//end frame inside
@@ -90,7 +90,6 @@ int main(void)
 		//MEASURING_TIMER_PRINT(std::cout);
 		MEASURING_TIMER_CLEAR();
 
-		SoundSystem::Instance()->Update(ms);
 	}
 
 	delete gameScene;

@@ -6,7 +6,7 @@ GameScene::GameScene(ControllerManager* controller)
 {
 	//Initialise Bullet physics engine.
 	PhysicsEngineInstance::Instance()->setGravity(btVector3(0, -9.81, 0));
-	SoundSystem::Initialise();
+	SoundSystem::Initialise(32);
 
 #ifndef ORBIS
 	ParticleManager::Initialise();
@@ -181,10 +181,10 @@ void GameScene::LoadAudio()
 	SoundSystem::Instance()->SetBackgroundVolume(0.4f); // can be used for mute / unmute
 
 	// create audio components
-	//player->SetAudioComponent(new AudioCompCarLitener(true));
-	//shooterAI->SetAudioComponent(new AudioCompCar(false));
-	//goalieAI->SetAudioComponent(new AudioCompCar(false));
-	//aggroAI->SetAudioComponent(new AudioCompCar(false));
+	player->SetAudioComponent(new AudioCompCarLitener(true));
+	shooterAI->SetAudioComponent(new AudioCompCar(false));
+	goalieAI->SetAudioComponent(new AudioCompCar(false));
+	aggroAI->SetAudioComponent(new AudioCompCar(false));
 	//-------- SOUND
 //#endif
 }
