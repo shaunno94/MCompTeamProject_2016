@@ -9,7 +9,6 @@ GameScene::GameScene(ControllerManager* controller)
 {
 	//Initialise Bullet physics engine.
 	PhysicsEngineInstance::Instance()->setGravity(btVector3(0, -9.81, 0));
-	SoundSystem::Initialise();
 
 #ifndef ORBIS
 	ParticleManager::Initialise();
@@ -36,7 +35,6 @@ GameScene::GameScene(ControllerManager* controller)
 	SetupMaterials();
 	SetupGameObjects();
 	DrawGUI();
-	LoadAudio();
 	SetupControls();
 }
 
@@ -274,12 +272,14 @@ void GameScene::DrawGUI()
 	scoreboardComponent = new ScoreboardGUIComponent(guiMaterial, std::to_string(0) + " - " + "3:00" + " - 0", Vec3Graphics(-0.6f, 0.7f, 0), Vec3Graphics(0.1f, 0.1f, 1));
 	hudOrtho->AddGUIComponent(scoreboardComponent);
 
+#if _DEBUG
 	FPSDebugTextComponent = new TextGUIComponent(guiMaterial, GET_DEBUG_STREAM().str(), Vec3Graphics(-1.0f, -0.7f, 0), Vec3Graphics(0.04f, 0.04f, 1));
 	hudOrtho->AddGUIComponent(FPSDebugTextComponent);
 	physicsDebugTextComponent = new TextGUIComponent(guiMaterial, GET_DEBUG_STREAM().str(), Vec3Graphics(-1.0f, -0.8f, 0), Vec3Graphics(0.04f, 0.04f, 1));
 	hudOrtho->AddGUIComponent(physicsDebugTextComponent);
 	graphicsDebugTextComponent = new TextGUIComponent(guiMaterial, GET_DEBUG_STREAM().str(), Vec3Graphics(-1.0f, -0.9f, 0), Vec3Graphics(0.04f, 0.04f, 1));
 	hudOrtho->AddGUIComponent(graphicsDebugTextComponent);
+#endif
 
 	//Add Orthographic component to GUISystem
 	guiSystem->AddOrthoComponent(hudOrtho);
@@ -354,4 +354,10 @@ void GameScene::ResetObject(GameObject& object) {
 	if (object.GetControllerComponent()) 
 		object.GetControllerComponent()->reset();
 
+}
+void GameScene::Setup()
+{
+	SetControllerActor();
+	SetupAI();
+	LoadAudio();
 }

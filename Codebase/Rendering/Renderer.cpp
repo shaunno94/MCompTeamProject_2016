@@ -11,7 +11,6 @@ Renderer::Renderer(std::string title, int sizeX, int sizeY, bool fullScreen) :
 	PS4Renderer()
 #endif
 {
-	m_UpdateGlobalUniforms = true;
 	currentShader = nullptr;
 
 	aspectRatio = float(sizeX) / float(sizeY);
@@ -27,15 +26,6 @@ Renderer::Renderer(std::string title, int sizeX, int sizeY, bool fullScreen) :
 
 Renderer::~Renderer(void) {}
 
-void Renderer::updateGlobalUniforms(Material* material)
-{
-	auto lightMat = dynamic_cast<LightMaterial*>(material);
-	if (lightMat)
-	{
-		lightMat->Set("cameraPos", currentScene->getCamera()->GetPosition());
-		lightMat->Set("pixelSize", pixelPitch);
-	}
-}
 
 void Renderer::UpdateScene(float msec)
 {
@@ -48,15 +38,7 @@ void Renderer::UpdateScene(float msec)
 		frameFrustrum.FromMatrix(projMatrix * viewMatrix);
 		currentScene->UpdateNodeLists(msec, frameFrustrum, currentScene->getCamera()->GetPosition());
 	}
-	if (m_UpdateGlobalUniforms)
-	{
-		for (unsigned int i = 0; i < currentScene->getNumLightObjects(); ++i)
-		{
-			auto rc = currentScene->getLightObject(i)->GetRenderComponent();
-			updateGlobalUniforms(rc->m_Material);
-		}
-		m_UpdateGlobalUniforms = false;
-	}
+		
 }
 
 void Renderer::RenderScene(float msec)
@@ -116,8 +98,9 @@ void Renderer::OnRenderLights()
 		lm->Set("lightPos", light->GetWorldTransform().GetTranslation());
 		lm->Set("lightRadius", light->GetBoundingRadius());
 		lm->Set("lightColour", Vec4Graphics(1, 0.7, 0.5, 1));
-		lm->Set("cameraPos", currentScene->getCamera()->GetPosition());
+		lm->Set("cameraPos", camPos);
 		lm->Set("shadowBias", lm->shadowBias);
+		lm->Set("pixelSize", pixelPitch);
 
 		float dist = (light->GetWorldTransform().GetTranslation() - currentScene->getCamera()->GetPosition()).Length();
 

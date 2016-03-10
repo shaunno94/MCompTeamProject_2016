@@ -38,10 +38,8 @@ void MenuControllerComponent::Submit(std::vector<Scene*>& scene)
 	switch (m_parent->GetSelection())
 	{
 	case SINGLE_PLAYER:
-		Renderer::GetInstance()->GetCurrentScene()->getGUISystem();
 		Renderer::GetInstance()->SetCurrentScene(scene[1]);
-		dynamic_cast<GameScene*>(Renderer::GetInstance()->GetCurrentScene())->SetControllerActor();
-		dynamic_cast<GameScene*>(Renderer::GetInstance()->GetCurrentScene())->SetupAI();
+		dynamic_cast<GameScene*>(Renderer::GetInstance()->GetCurrentScene())->Setup();
 		break;
 	case MULTIPLAYER:
 		break;

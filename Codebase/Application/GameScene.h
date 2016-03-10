@@ -67,6 +67,7 @@ public:
 	}
 
 	GUISystem* getGUISystem(){ return guiSystem; }
+	void Setup();
 
 protected:
 	

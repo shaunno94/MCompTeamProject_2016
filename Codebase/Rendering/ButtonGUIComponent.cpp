@@ -20,17 +20,15 @@ ButtonGUIComponent::ButtonGUIComponent(Material* material, Material* matSelected
 ButtonGUIComponent::~ButtonGUIComponent()
 {
 	delete m_Mesh;
-	m_Texture->ClearAll();
-	m_TexSelected->ClearAll();
+	m_Texture->Clear();
+	m_TexSelected->Clear();
 }
 
 void ButtonGUIComponent::Update()
 {
-	SetRenderComponent(new RenderComponent(m_Material, m_Mesh));
-
+	GetRenderComponent()->m_Material = m_Material;
 	if (m_Selected)
 	{
-		m_MatSelected->Set(ReservedMeshTextures.DIFFUSE.name, m_TexSelected);
-		SetRenderComponent(new RenderComponent(m_MatSelected, m_Mesh));
+		GetRenderComponent()->m_Material = m_MatSelected;
 	}
 }

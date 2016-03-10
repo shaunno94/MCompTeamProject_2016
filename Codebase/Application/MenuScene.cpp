@@ -4,9 +4,7 @@
 MenuScene::MenuScene(UIControllerManager* controller)
 :myControllers(controller)
 {
-#ifndef ORBIS
-	SoundSystem::Initialise();
-#endif
+
 	guiSystem = new GUISystem();
 	
 	if (!guiSystem->HasInitialised())
@@ -19,7 +17,6 @@ MenuScene::MenuScene(UIControllerManager* controller)
 	SetupMaterials();
 	SetupGameObjects();
 	DrawGUI();
-	LoadAudio();
 	SetupControls();
 }
 
@@ -63,13 +60,14 @@ void MenuScene::SetupMaterials()
 	bgMaterial = new Material(orthoShader);
 	btnMaterial = new Material(orthoShader);
 	selectBtnMaterial = new Material(orthoShader);
+
 	//textMaterial = new Material(orthoShader);
 }
 
 void MenuScene::DrawGUI()
 {
 	bgOrtho = new OrthoComponent(1.0f);
-	menuBg = new MenuBackgroundGUI(bgMaterial,  1.0);
+	menuBg = new MenuBackgroundGUI(bgMaterial);
 	bgOrtho->AddGUIComponent(menuBg);
 
 	menuOrtho = new MenuOrthoComponent(0.5);

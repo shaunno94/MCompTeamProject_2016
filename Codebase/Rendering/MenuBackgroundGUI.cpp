@@ -12,7 +12,7 @@ MenuBackgroundGUI::MenuBackgroundGUI(Material* material, bool visible) : GUIComp
 MenuBackgroundGUI::~MenuBackgroundGUI()
 {
 	delete m_Mesh;
-	m_Texture->ClearAll();
+	m_Texture->Clear();
 }
 
 

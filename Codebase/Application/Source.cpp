@@ -38,6 +38,7 @@ int main(void)
 #ifdef ORBIS
 	PS4Input input = PS4Input();
 #endif
+	SoundSystem::Initialise();
 
 	ControllerManager* myControllers = new LocalControlManager();
 	UIControllerManager* uiController = new UIControllerManager();
@@ -52,6 +53,7 @@ int main(void)
 	
 	//Set current scene to the game
 	renderer.SetCurrentScene(menuScene);
+	//renderer.SetCurrentScene(gameScene);
 
 #ifdef _DEBUG
 	std::cout << "Renderer Memory Usage: " << renderer.GetRendererMemUsage() / (1024 * 1024) << " (MB)" << std::endl;
@@ -77,7 +79,6 @@ int main(void)
 
 		myControllers->update(ms);
 		uiController->update(ms);
-
 
 		MEASURING_TIMER_LOG_START("Renderer");
 		renderer.RenderScene(ms);

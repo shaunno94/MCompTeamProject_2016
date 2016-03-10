@@ -1,6 +1,6 @@
 #pragma once
 #include "Scene.h"
-#define DEBUG_DRAW 1
+#define DEBUG_DRAW 0
 /// @ingroup Rendering
 /// <summary>
 /// Non-platform specific functionality for rendering a <see cref="Scene"/>.
@@ -48,9 +48,7 @@ protected:
 	Frustum frameFrustrum;
 	Frustum lightFrustrum;
 	static Renderer* s_renderer;
-	void updateGlobalUniforms(Material* material);
-
-	bool m_UpdateGlobalUniforms;
+	
 	float aspectRatio;
 	Mat4Graphics localProjMat;
 	float windowHeight, windowWidth;
