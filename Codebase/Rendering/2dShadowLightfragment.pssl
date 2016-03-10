@@ -87,7 +87,7 @@ PS_OUTPUT main(VS_OUTPUT In) : S_TARGET_OUTPUT
 		float3 shadowMapDivide = (shadowMapPos.xyz / shadowMapPos.w);
 		float4 s4 = shadowTex.GatherCmp(samp1, shadowMapDivide.xy, shadowMapDivide.z);
 		float3 shadowPos =  (2.0 * shadowMapDivide.xyz) - 1.0;
-		shadow = (s4.x + s4.y + s4.z + s4.w) * 0.25f;
+		//shadow = (s4.x + s4.y + s4.z + s4.w) * 0.25f;
 		//shadow *= saturate(1.0 - pow(shadowPos.x * shadowPos.x + shadowPos.y * shadowPos.y, 8));
 
 		//Output.emissive = float4(normalize(shadowMapDivide.xyz), 1);

@@ -25,10 +25,12 @@ public:
 
 	GameObject* getLightObject(unsigned int i){ return lightObjects[i]; }
 	GameObject* getGhostObject(unsigned int i){ return ghostObjects[i]; }
+	GameObject* getParticleObject(unsigned int i) { return particleObjects[i]; }
 
 	unsigned int getNumTransparentObjects() { return transparentObjects.size(); }
 	unsigned int getNumOpaqueObjects() { return opaqueObjects.size(); }
 	unsigned int getNumLightObjects() { return lightObjects.size(); }
+	unsigned int getNumParticleObjects() { return particleObjects.size(); }
 	const char** getCubeMapDir()	{ return cubemapDir; }
 	unsigned int getNumGhostObjects() { return ghostObjects.size(); }
 
@@ -40,9 +42,13 @@ public:
 			delete cam;
 		cam = new Camera(player);
 	}
-	void addGameObject(GameObject* obj);
+	
 	virtual void UpdateScene(float dt);
+
+	void addGameObject(GameObject* obj);
 	void addLightObject(GameObject* obj);
+	void addParticleObject(GameObject* obj);
+
 	void setCubeMap(const char** dir) { cubemapDir = dir; }
 
 	unsigned char renderFlags; //triggers for graphical effects such as post processing and any other info required by the renderer
@@ -59,6 +65,7 @@ protected:
 	std::vector<GameObject*> transparentObjects;
 	std::vector<GameObject*> opaqueObjects;
 	std::vector<GameObject*> lightObjects;
+	std::vector<GameObject*> particleObjects;
 	std::vector<GameObject*> ghostObjects;
 	Camera* cam;
 	const char** cubemapDir;

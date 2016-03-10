@@ -15,8 +15,8 @@ uint32_t* DebugDrawPS4::indexBuffer = nullptr;
 void DebugDrawPS4::Instance()
 {
 	debugShader = new PS4Shader(dVertex, dFrag);
-	vertexBuffer = static_cast<btVector3*>	(meshGarlicAllocator.allocate(sizeof(btVector3) * 1000, sce::Gnm::kAlignmentOfBufferInBytes));
-	indexBuffer = static_cast<uint32_t*>	(meshGarlicAllocator.allocate(sizeof(uint32_t) * 1000, sce::Gnm::kAlignmentOfBufferInBytes));
+	vertexBuffer = static_cast<btVector3*>	(meshGarlicAllocator.allocate(sizeof(btVector3) * 10000, sce::Gnm::kAlignmentOfBufferInBytes));
+	indexBuffer = static_cast<uint32_t*>	(meshGarlicAllocator.allocate(sizeof(uint32_t) * 10000, sce::Gnm::kAlignmentOfBufferInBytes));
 }
 
 void DebugDrawPS4::Release()

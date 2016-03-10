@@ -71,17 +71,12 @@ int main(void)
 		MEASURING_TIMER_LOG_START("Physics");
 		PhysicsEngineInstance::Instance()->stepSimulation(ms, SUB_STEPS, TIME_STEP);
 		MEASURING_TIMER_LOG_END();
+		SoundSystem::Instance()->Update(ms);
 
-		MEASURING_TIMER_LOG_START("Controllers");
 		myControllers->update(ms);
-		MEASURING_TIMER_LOG_END();
 
 		MEASURING_TIMER_LOG_START("Renderer");
 		renderer.RenderScene(ms);
-		MEASURING_TIMER_LOG_END();
-
-		MEASURING_TIMER_LOG_START("Sound System");
-		
 		MEASURING_TIMER_LOG_END();
 
 		MEASURING_TIMER_LOG_END();//end frame inside
@@ -89,11 +84,8 @@ int main(void)
 		//TODO: Print time steps. Can pass stringstream to get a formated output string
 		//MEASURING_TIMER_PRINT(std::cout);
 		MEASURING_TIMER_CLEAR();
-
-		SoundSystem::Instance()->Update(ms);
 	}
 
 	delete gameScene;
-
 	return 0;
 }

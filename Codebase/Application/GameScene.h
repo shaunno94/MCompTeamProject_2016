@@ -47,6 +47,7 @@ public:
 	void SetupShaders();
 	void SetupMaterials();
 	void SetupControls();
+	void SetupParticles();
 	void DrawGUI();
 
 	void SetControllerActor();
@@ -110,6 +111,9 @@ protected:
 
 	OrthoComponent* hudOrtho;
 	ScoreboardGUIComponent* scoreboardComponent;
+
+	ParticleSystem* particleSystem;
+	CubeEmitter* emitter;
 
 	float timerCount = 0.0f;
 	float currentTime = 0.0f;
