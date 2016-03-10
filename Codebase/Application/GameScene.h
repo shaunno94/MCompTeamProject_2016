@@ -19,6 +19,7 @@
 #include "Rendering\KeyboardController.h"
 const string SIMPLESHADER_VERT = SHADER_DIR"textureVertex.glsl";
 const string SIMPLESHADER_FRAG = SHADER_DIR"textureFragment.glsl";
+const string COLOURSHADER_FRAG = SHADER_DIR"colourTextureFragment.glsl";
 const string POINTLIGHTSHADER_VERT = SHADER_DIR"2dShadowLightvertex.glsl";
 const string POINTLIGHTSHADER_FRAG = SHADER_DIR"2dShadowLightfragment.glsl";
 const string GUI_VERT = SHADER_DIR"TexturedVertex.glsl";
@@ -94,6 +95,7 @@ protected:
 	RigidPhysicsObject* goalBox2;
 
 	BaseShader* simpleShader;
+	BaseShader* colourShader;
 	BaseShader* pointlightShader;
 	BaseShader* orthoShader;
 
@@ -101,7 +103,9 @@ protected:
 
 	Material* material;
 	Material* netMaterial;
-	Material* postMaterial;
+	Material* ballMaterial;
+	ExtendedMaterial* redPostMaterial;
+	ExtendedMaterial* bluePostMaterial;
 
 	Material* playerMaterial;
 	Material* aiMaterial;

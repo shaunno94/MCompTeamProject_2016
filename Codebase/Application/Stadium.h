@@ -3,11 +3,12 @@
 #include "Rendering/Material.h"
 #include <string>
 #include "Rendering/ModelLoader.h"
+#include "Rendering/ExtendedMaterial.h"
 
 class Stadium : public GameObject
 {
 public:
-	Stadium(Material* material, Material* wallMaterial, Material* postMaterial, const std::string& name = "");
+	Stadium(Material* material, Material* wallMaterial, ExtendedMaterial* redPostMaterial, ExtendedMaterial* bluePostMaterial, const std::string& name = "");
 	~Stadium();
 
 private:
@@ -19,7 +20,11 @@ private:
 	Material* m_wallMaterial;
 	Texture* m_netTexture;
 
-	Material* m_postMaterial;
+	ExtendedMaterial* m_redPostMaterial;
+	ExtendedMaterial* m_bluePostMaterial;
 	Texture* m_postTexture;
+
+	Mesh* m_postMesh;
+
 };
 
