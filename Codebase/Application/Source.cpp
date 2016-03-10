@@ -39,10 +39,9 @@ int main(void)
 	PS4Input input = PS4Input();
 #endif
 
-	ControllerManager* myControllers = new LocalControlManager;
 	//UIControllerManager* uiController = new UIControllerManager();
 	//Create GameScene
-	GameScene* gameScene = new GameScene(myControllers);
+	GameScene* gameScene = new GameScene();
 //	MenuScene* menuScene = new MenuScene(uiController);
 	//Set current scene to the game
 	renderer.SetCurrentScene(gameScene);
@@ -73,7 +72,7 @@ int main(void)
 		MEASURING_TIMER_LOG_END();
 
 		MEASURING_TIMER_LOG_START("Controllers");
-		myControllers->update(ms);
+		//myControllers->update(ms);
 		MEASURING_TIMER_LOG_END();
 
 		MEASURING_TIMER_LOG_START("Renderer");

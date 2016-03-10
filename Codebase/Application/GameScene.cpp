@@ -4,9 +4,11 @@
 #include "PickupManager.h"
 #include "AI/constants.h"
 
-GameScene::GameScene(ControllerManager* controller)
-	: myControllers(controller)
+GameScene::GameScene()
 {
+	//initialise conroller manager
+	myControllers = new LocalControlManager();
+
 	//Initialise Bullet physics engine.
 	PhysicsEngineInstance::Instance()->setGravity(btVector3(0, -9.81, 0));
 	SoundSystem::Initialise();
@@ -82,6 +84,7 @@ void GameScene::IncrementScore(int team)
 
 void GameScene::UpdateScene(float dt)
 {
+	Scene::UpdateScene(dt);
 	if (currentTime > 180)
 	{
 		//TODO: Proceed to end game screen

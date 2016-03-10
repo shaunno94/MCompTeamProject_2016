@@ -40,7 +40,7 @@ struct GameCollisionFilter;
 class GameScene : public Scene
 {
 public:
-	GameScene(ControllerManager* controller);
+	GameScene();
 	~GameScene();
 
 	void LoadAudio();
@@ -67,7 +67,7 @@ public:
 	}
 
 protected:
-	ControllerManager* myControllers;
+
 	int scores[2];
 
 	void ResetObjects();

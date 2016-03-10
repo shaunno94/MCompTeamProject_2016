@@ -8,6 +8,12 @@ ControllerManager::ControllerManager()
 
 ControllerManager::~ControllerManager()
 {
+	for (auto ctrl : controllers)
+	{
+		if (ctrl)
+			delete ctrl;
+	}
+	controllers.clear();
 }
 
 void ControllerManager::update(float ms){
