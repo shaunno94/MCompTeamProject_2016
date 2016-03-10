@@ -181,10 +181,10 @@ void GameScene::LoadAudio()
 	SoundSystem::Instance()->SetBackgroundVolume(0.4f); // can be used for mute / unmute
 
 	// create audio components
-	player->SetAudioComponent(new AudioCompCarLitener(true));
-	shooterAI->SetAudioComponent(new AudioCompCar(false));
-	goalieAI->SetAudioComponent(new AudioCompCar(false));
-	aggroAI->SetAudioComponent(new AudioCompCar(false));
+	//player->SetAudioComponent(new AudioCompCarLitener(true));
+	//shooterAI->SetAudioComponent(new AudioCompCar(false));
+	//goalieAI->SetAudioComponent(new AudioCompCar(false));
+	//aggroAI->SetAudioComponent(new AudioCompCar(false));
 	//-------- SOUND
 //#endif
 }

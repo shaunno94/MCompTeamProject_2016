@@ -257,10 +257,12 @@ void SoundEmitter::Update(float msec) {
 
 void SoundEmitter::AttachSource(AudioSource* s){
 	currentSource = s;
+	currentSource->inUse = true;
 }
 
 void SoundEmitter::DetachSource(){
-
+	if (currentSource)
+		currentSource->inUse = false;
 }
 
 void SoundEmitter::SampleFromSound(int16_t* output, int samplesPerChannel, int startSample) {

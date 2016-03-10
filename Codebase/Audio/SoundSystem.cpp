@@ -140,6 +140,11 @@ void		SoundSystem::Update(float msec)
 
 	m_Background->Update(msec); // update background music
 
+#ifdef ORBIS
+	sceAudio3dPortAdvance(audioPort);
+
+	sceAudio3dPortPush(audioPort, SCE_AUDIO3D_BLOCKING_ASYNC);
+#endif
 	emitters.clear();	//done for this frame
 }
 

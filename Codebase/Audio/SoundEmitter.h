@@ -192,6 +192,9 @@ public:
 	{
 		port = val;
 	}
+	void SetSpread(float val) {
+		spread = val;
+	}
 
 protected:
 	void SampleFromSound(int16_t* output, int samplesPerChannel, int startSample);
