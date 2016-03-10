@@ -13,8 +13,9 @@ enum SoundAssets {
 	SONG2,
 	ENGINE_IDLE,
 	ENGINE_REV,
-	BOOST,
-	POWERUP
+	JUMP,
+	POWERUP,
+	BOOST
 };
 
 class SoundManager

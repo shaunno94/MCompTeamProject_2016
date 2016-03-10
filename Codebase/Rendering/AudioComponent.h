@@ -31,10 +31,14 @@ public:
 	AudioCompCar(bool global);
 	virtual ~AudioCompCar(){}
 
+	void SetBoostVolume(float val) {
+		m_BoostVol = val;
+	}
 	virtual void Update() override;
 
 protected:
 	float m_Pitch;
+	float m_BoostVol;
 };
 
 class AudioCompCarLitener : public AudioCompCar {
