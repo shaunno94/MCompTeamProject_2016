@@ -87,6 +87,7 @@ void GameScene::UpdateScene(float dt)
 
 	if (currentTime > 180)
 	{
+		//Renderer::GetInstance()->SetCurrentScene(Renderer::GetInstance()->GetScene(3));
 		currentTime = 0;
 		lastTime = 0;
 	}
@@ -339,7 +340,7 @@ void GameScene::ResetObjects()
 {
 	PhysicsEngineInstance::Instance()->clearForces();
 
-	//TODO: Reset player positions
+	//Reset player positions
 	ResetObject(*ball);
 	ResetObject(*player);
 	ResetObject(*shooterAI);
