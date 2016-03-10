@@ -1,9 +1,14 @@
 #include "GameScene.h"
 #include "BallGameObject.h"
+#include "GoalCollisionFilterStep.h"
+#include "PickupManager.h"
+#include "AI/constants.h"
 
-GameScene::GameScene(ControllerManager* controller)
-	: myControllers(controller)
+GameScene::GameScene()
 {
+	//initialise conroller manager
+	myControllers = new LocalControlManager();
+
 	//Initialise Bullet physics engine.
 	PhysicsEngineInstance::Instance()->setGravity(btVector3(0, -9.81, 0));
 	SoundSystem::Initialise(32);
@@ -48,6 +53,8 @@ GameScene::~GameScene()
 	SoundSystem::Release();
 #endif
 
+	delete pickupManager;
+
 #if DEBUG_DRAW
 	DebugDraw::Release();
 #endif
@@ -77,6 +84,7 @@ void GameScene::IncrementScore(int team)
 
 void GameScene::UpdateScene(float dt)
 {
+	Scene::UpdateScene(dt);
 	if (currentTime > 180)
 	{
 		//TODO: Proceed to end game screen
@@ -122,32 +130,39 @@ void GameScene::SetupGameObjects()
 	light2->SetWorldTransform(Mat4Graphics::Translation(Vec3Graphics(600, 900, 600)) *Mat4Graphics::Scale(Vec3Graphics(2400, 2400, 2400)));
 	light2->SetBoundingRadius(2400);
 
-	auto ballMaterial = new Material(simpleShader);
-	ballMaterial->Set(ReservedMeshTextures.DIFFUSE.name, Texture::Get(TEXTURE_DIR"football.png", true));
 	ball = new BallGameObject("ball", ballMaterial);
 
 	player = new CarGameObject(Vec3Physics(100, 2, 0), QuatPhysics(0, 1, 0, 1), playerMaterial, "player");
 
-	shooterAI = new CarGameObject(Vec3Physics(-190, 2, 30), QuatPhysics(0, 0, 0, 1), aiMaterial, "shooterAI", COL_AI_CAR);
+	shooterAI = new CarGameObject(Vec3Physics(-190, 2, 30), QuatPhysics::IDENTITY, aiMaterial, "shooterAI", COL_AI_CAR);
 
-	goalieAI = new CarGameObject(Vec3Physics(-230, 2, 0), QuatPhysics(0, 0, 0, 1), aiMaterial, "goalieAI", COL_AI_CAR);
+	goalieAI = new CarGameObject(Vec3Physics(-230, 2, 0), QuatPhysics::IDENTITY, aiMaterial, "goalieAI", COL_AI_CAR);
+
+	pickupManager = new PickupManager(material);
+	for (auto pickupMapping : *(pickupManager->GetPickups()))
+	{
+		addGameObject(pickupMapping.second);
+	}
 
 	aggroAI = new CarGameObject(Vec3Physics(-190, 2, -30), QuatPhysics(0, 0, 0, 1), ai2Material, "aggroAI", COL_AI_CAR);
 
-
 	// Create Stadium
-	stadium = new Stadium(material, netMaterial, postMaterial, "stadium");
+	stadium = new Stadium(material, netMaterial, redPostMaterial, bluePostMaterial, "stadium");
 
 	goal1 = new GameObject("goal1");
 	goalBox = new RigidPhysicsObject();
 	goalBox->CreateCollisionShape(Vec3Physics(7.0, 15.0, 35.0) * 1.5f, CUBOID);
-	goalBox->CreatePhysicsBody(0.0, Vec3Physics(268, 17, 0) * 1.5f, QuatPhysics(0, 0, 0, 1), Vec3Physics(1, 1, 1), true);
+	goalBox->CreatePhysicsBody(0.0, Vec3Physics(268, 17, 0) * 1.5f, QuatPhysics::IDENTITY, Vec3Physics::ONES, true);
+	goalBox->GetPhysicsBody()->getBroadphaseProxy()->m_collisionFilterGroup = COL_GROUP_DEFAULT;
+	goalBox->GetPhysicsBody()->getBroadphaseProxy()->m_collisionFilterMask = COL_GOAL1;
 	goal1->SetPhysicsComponent(goalBox);
 
 	goal2 = new GameObject("goal2");
 	goalBox2 = new RigidPhysicsObject();
 	goalBox2->CreateCollisionShape(Vec3Physics(7.0, 15.0, 35.0) * 1.5f, CUBOID);
-	goalBox2->CreatePhysicsBody(0.0, Vec3Physics(-268, 17, 0) * 1.5f, QuatPhysics(0, 0, 0, 1), Vec3Physics(1, 1, 1), true);
+	goalBox2->CreatePhysicsBody(0.0, Vec3Physics(-268, 17, 0) * 1.5f, QuatPhysics::IDENTITY, Vec3Physics::ONES, true);
+	goalBox2->GetPhysicsBody()->getBroadphaseProxy()->m_collisionFilterGroup = COL_GROUP_DEFAULT;
+	goalBox2->GetPhysicsBody()->getBroadphaseProxy()->m_collisionFilterMask = COL_GOAL2;
 	goal2->SetPhysicsComponent(goalBox2);
 
 
@@ -162,8 +177,7 @@ void GameScene::SetupGameObjects()
 
 	addLightObject(light2);
 
-	goalBallFilter = new GameCollisionFilter(this);
-	PhysicsEngineInstance::Instance()->getPairCache()->setOverlapFilterCallback(goalBallFilter);
+	PhysicsEngineInstance::GetFilter().steps.push_back(new GoalCollisionFilterStep());
 }
 
 void GameScene::LoadAudio()
@@ -193,10 +207,12 @@ void GameScene::SetupShaders()
 {
 #ifndef ORBIS
 	simpleShader = new OGLShader(SIMPLESHADER_VERT, SIMPLESHADER_FRAG);
+	colourShader = new OGLShader(SIMPLESHADER_VERT, COLOURSHADER_FRAG);
 	pointlightShader = new OGLShader(POINTLIGHTSHADER_VERT, POINTLIGHTSHADER_FRAG);
 	orthoShader = new OGLShader(GUI_VERT, GUI_FRAG);
 #else
 	simpleShader = new PS4Shader(SIMPLESHADER_VERT, SIMPLESHADER_FRAG);
+	colourShader = new PS4Shader(SIMPLESHADER_VERT, SIMPLESHADER_FRAG);
 	pointlightShader = new PS4Shader(POINTLIGHTSHADER_VERT, POINTLIGHTSHADER_FRAG);
 	orthoShader = new PS4Shader(GUI_VERT, GUI_FRAG);
 #endif
@@ -204,6 +220,8 @@ void GameScene::SetupShaders()
 		std::cout << "Point light shader not operational!" << std::endl;
 	if(!simpleShader->IsOperational())
 		std::cout << "Simple shader not operational!" << std::endl;
+	if (!colourShader->IsOperational())
+		std::cout << "Colour shader not operational!" << std::endl;
 	if(!orthoShader->IsOperational())
 		std::cout << "ortho shader not operational!" << std::endl;
 }
@@ -215,7 +233,9 @@ void GameScene::SetupMaterials()
 
 	material = new Material(simpleShader);
 	netMaterial = new Material(simpleShader, true);
-	postMaterial = new Material(simpleShader, true);
+	ballMaterial = new Material(simpleShader);
+	redPostMaterial = new ExtendedMaterial(colourShader, true);
+	bluePostMaterial = new ExtendedMaterial(colourShader, true);
 	aiMaterial = new Material(simpleShader);
 	particleMaterial = new Material(simpleShader);
 	ai2Material = new Material(simpleShader);
@@ -306,32 +326,9 @@ void GameScene::ResetObject(GameObject& object) {
 	dynamic_cast<RigidPhysicsObject*>(object.GetPhysicsComponent())->GetPhysicsBody()->clearForces();
 	dynamic_cast<RigidPhysicsObject*>(object.GetPhysicsComponent())->GetPhysicsBody()->setLinearVelocity(zeroVector);
 	dynamic_cast<RigidPhysicsObject*>(object.GetPhysicsComponent())->GetPhysicsBody()->setAngularVelocity(zeroVector);
-
+	
 	object.GetPhysicsComponent()->GetPhysicsBody()->setWorldTransform(btTransform(btQuaternion(0, 0, 0, 1), btVector3(object.GetSpawnPoint().x, object.GetSpawnPoint().y, object.GetSpawnPoint().z)));
-	if (object.GetControllerComponent()) 
+	if (object.GetControllerComponent())
 		object.GetControllerComponent()->reset();
-}
 
-
-GameCollisionFilter::GameCollisionFilter(GameScene* scene) : m_scene(scene) {
-	static_cast<RigidPhysicsObject*>(scene->findGameObject("ball")->GetPhysicsComponent())->GetPhysicsBody()->getBroadphaseProxy()->m_collisionFilterMask = COL_BALL;
-
-	m_ballID = static_cast<RigidPhysicsObject*>(scene->findGameObject("ball")->GetPhysicsComponent())->GetPhysicsBody()->getBroadphaseProxy()->getUid();
-	m_goal1ID = static_cast<RigidPhysicsObject*>(scene->findGameObject("goal1")->GetPhysicsComponent())->GetPhysicsBody()->getBroadphaseProxy()->getUid();
-	m_goal2ID = static_cast<RigidPhysicsObject*>(scene->findGameObject("goal2")->GetPhysicsComponent())->GetPhysicsBody()->getBroadphaseProxy()->getUid();
-}
-
-bool GameCollisionFilter::needBroadphaseCollision(btBroadphaseProxy* proxy0, btBroadphaseProxy* proxy1) const
-{
-	if ((proxy0->getUid() == m_ballID && proxy1->getUid() == m_goal1ID) ||
-		(proxy1->getUid() == m_ballID && proxy0->getUid() == m_goal1ID))
-	{
-		m_scene->SetGoalScored(1);
-	}
-	else if ((proxy0->getUid() == m_ballID && proxy1->getUid() == m_goal2ID) ||
-		(proxy1->getUid() == m_ballID && proxy0->getUid() == m_goal2ID))
-	{
-		m_scene->SetGoalScored(2);
-	}
-	return true;
 }

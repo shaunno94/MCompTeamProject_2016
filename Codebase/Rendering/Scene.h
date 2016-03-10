@@ -4,6 +4,7 @@
 #include "Camera.h"
 #include "Helpers\collections.h"
 #include "Frustum.h"
+#include "Rendering\ControllerManager.h"
 
 class Renderer;
 
@@ -62,5 +63,7 @@ protected:
 	std::vector<GameObject*> ghostObjects;
 	Camera* cam;
 	const char** cubemapDir;
+
+	ControllerManager* myControllers;
 };
 
