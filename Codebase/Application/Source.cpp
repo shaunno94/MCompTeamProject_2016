@@ -47,11 +47,13 @@ int main(void)
 	GameScene* gameScene = new GameScene();
 	MenuScene* menuScene = new MenuScene();
 	NetServerSetupScene* serverScene = new NetServerSetupScene();
+	NetClientSetupScene* clientScene = new NetClientSetupScene();
 	//EndScene* endScene = new EndScene();
 
 	renderer.AddScene(menuScene);
 	renderer.AddScene(gameScene);
 	renderer.AddScene(serverScene);
+	renderer.AddScene(clientScene);
 	//renderer.AddScene(endScene);
 	
 	//Set current scene to the game
