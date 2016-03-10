@@ -6,7 +6,7 @@ class PositionState :
 	public State
 {
 public:
-	PositionState(StateMachine& stateMachine, GameObject& parent, GameObject& ball);
+	PositionState(StateMachine& stateMachine, GameObject& parent, GameObject& ball, GameObject& targetGoal);
 	~PositionState();
 
 	virtual void Start();
@@ -14,6 +14,6 @@ public:
 
 protected:
 	GameObject* m_ball;
-	GameObject* m_goal;
+	GameObject* m_targetGoal;
 };
 

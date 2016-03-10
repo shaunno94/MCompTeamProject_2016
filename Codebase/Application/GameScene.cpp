@@ -64,8 +64,8 @@ void GameScene::SetControllerActor()
 {
 	myControllers->setActor(Renderer::GetInstance()->GetCurrentScene()->findGameObject("shooterAI"), SHOOTER);
 	myControllers->setActor(Renderer::GetInstance()->GetCurrentScene()->findGameObject("goalieAI"), GOALKEEPER);
-	//myControllers->setActor(Renderer::GetInstance()->GetCurrentScene()->findGameObject("aggroAI"), AGGRESSIVE);
-	myControllers->setActor(Renderer::GetInstance()->GetCurrentScene()->findGameObject("aggroAI"), SHOOTER); // Whilst debugging
+	myControllers->setActor(Renderer::GetInstance()->GetCurrentScene()->findGameObject("aggroAI"), AGGRESSIVE);
+	//myControllers->setActor(Renderer::GetInstance()->GetCurrentScene()->findGameObject("aggroAI"), SHOOTER); // Whilst debugging
 }
 
 void GameScene::IncrementScore(int team)
@@ -149,21 +149,21 @@ void GameScene::SetupGameObjects()
 	// Create Stadium
 	stadium = new Stadium(material, netMaterial, redPostMaterial, bluePostMaterial, "stadium");
 
-	goal1 = new GameObject("goal1");
-	goalBox = new RigidPhysicsObject();
-	goalBox->CreateCollisionShape(Vec3Physics(7.0, 15.0, 35.0) * 1.5f, CUBOID);
-	goalBox->CreatePhysicsBody(0.0, Vec3Physics(268, 17, 0) * 1.5f, QuatPhysics::IDENTITY, Vec3Physics::ONES, true);
-	goalBox->GetPhysicsBody()->getBroadphaseProxy()->m_collisionFilterGroup = COL_GROUP_DEFAULT;
-	goalBox->GetPhysicsBody()->getBroadphaseProxy()->m_collisionFilterMask = COL_GOAL1;
-	goal1->SetPhysicsComponent(goalBox);
+	redGoal = new GameObject("redGoal");
+	redGoalBox = new RigidPhysicsObject();
+	redGoalBox->CreateCollisionShape(Vec3Physics(7.0, 15.0, 35.0) * 1.5f, CUBOID);
+	redGoalBox->CreatePhysicsBody(0.0, Vec3Physics(268, 17, 0) * 1.5f, QuatPhysics::IDENTITY, Vec3Physics::ONES, true);
+	redGoalBox->GetPhysicsBody()->getBroadphaseProxy()->m_collisionFilterGroup = COL_GROUP_DEFAULT;
+	redGoalBox->GetPhysicsBody()->getBroadphaseProxy()->m_collisionFilterMask = COL_GOAL1;
+	redGoal->SetPhysicsComponent(redGoalBox);
 
-	goal2 = new GameObject("goal2");
-	goalBox2 = new RigidPhysicsObject();
-	goalBox2->CreateCollisionShape(Vec3Physics(7.0, 15.0, 35.0) * 1.5f, CUBOID);
-	goalBox2->CreatePhysicsBody(0.0, Vec3Physics(-268, 17, 0) * 1.5f, QuatPhysics::IDENTITY, Vec3Physics::ONES, true);
-	goalBox2->GetPhysicsBody()->getBroadphaseProxy()->m_collisionFilterGroup = COL_GROUP_DEFAULT;
-	goalBox2->GetPhysicsBody()->getBroadphaseProxy()->m_collisionFilterMask = COL_GOAL2;
-	goal2->SetPhysicsComponent(goalBox2);
+	blueGoal = new GameObject("blueGoal");
+	blueGoalBox = new RigidPhysicsObject();
+	blueGoalBox->CreateCollisionShape(Vec3Physics(7.0, 15.0, 35.0) * 1.5f, CUBOID);
+	blueGoalBox->CreatePhysicsBody(0.0, Vec3Physics(-268, 17, 0) * 1.5f, QuatPhysics::IDENTITY, Vec3Physics::ONES, true);
+	blueGoalBox->GetPhysicsBody()->getBroadphaseProxy()->m_collisionFilterGroup = COL_GROUP_DEFAULT;
+	blueGoalBox->GetPhysicsBody()->getBroadphaseProxy()->m_collisionFilterMask = COL_GOAL2;
+	blueGoal->SetPhysicsComponent(blueGoalBox);
 
 
 	addGameObject(stadium);
@@ -172,8 +172,8 @@ void GameScene::SetupGameObjects()
 	addGameObject(shooterAI);
 	addGameObject(goalieAI);
 	addGameObject(aggroAI);
-	addGameObject(goal1);
-	addGameObject(goal2);
+	addGameObject(redGoal);
+	addGameObject(blueGoal);
 
 	addLightObject(light2);
 

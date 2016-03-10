@@ -25,7 +25,7 @@ void ClearGoalState::Update(float dt)
 	btVector3 ballPos = m_ball->GetPhysicsComponent()->GetPhysicsBody()->getWorldTransform().getOrigin();
 	btVector3 parentPos = m_parent->GetPhysicsComponent()->GetPhysicsBody()->getWorldTransform().getOrigin();
 
-	btVector3 direction = ballPos - parentPos;
+	btVector3 direction = parentPos - ballPos;
 	direction.normalize();
 	direction *= 5.0f;
 

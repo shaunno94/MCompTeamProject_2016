@@ -1,4 +1,5 @@
 #include "StateMachine.h"
+#include <iostream>
 
 StateMachine::StateMachine()
 {
@@ -49,5 +50,10 @@ bool StateMachine::ChangeState(unsigned int stateName)
 		activeState->Start();
 		return true;
 	}
+	else {
+		activeState->ChangeChildState(stateName);
+		return true;
+	}
+	std::cout << "Could not find state " << stateName << " in state machine" << std::endl;
 	return false;
 }
