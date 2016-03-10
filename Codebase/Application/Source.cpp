@@ -46,12 +46,12 @@ int main(void)
 	GameScene* gameScene = new GameScene();
 	MenuScene* menuScene = new MenuScene();
 	NetServerSetupScene* serverScene = new NetServerSetupScene();
-	//EndScene* endScene = new EndScene();
+	EndScene* endScene = new EndScene();
 
 	renderer.AddScene(menuScene);
 	renderer.AddScene(gameScene);
 	renderer.AddScene(serverScene);
-	//renderer.AddScene(endScene);
+	renderer.AddScene(endScene);
 	
 	//Set current scene to the game
 	renderer.SetCurrentScene(menuScene);
@@ -98,7 +98,7 @@ int main(void)
 	Renderer::GetInstance()->SetCurrentScene(nullptr);
 	delete menuScene;
 	delete gameScene;
-	//delete endScene;
+	delete endScene;
 
 	return 0;
 }

@@ -85,11 +85,12 @@ void GameScene::UpdateScene(float dt)
 {
 	myControllers->update(dt);
 
-	if (currentTime > 180)
+	if (currentTime > 10)
 	{
-		//Renderer::GetInstance()->SetCurrentScene(Renderer::GetInstance()->GetScene(3));
+		Renderer::GetInstance()->SetCurrentScene(Renderer::GetInstance()->GetScene(3));
 		currentTime = 0;
 		lastTime = 0;
+		
 	}
 	currentTime += dt / 1000.0f;
 
