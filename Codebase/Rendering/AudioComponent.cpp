@@ -53,22 +53,23 @@ void AudioComponent::SetRadius(float rad)
 
 // Car Audio
 
-#define MAX_REV_VOL 0.5f
-#define MIN_REV_VOL 0.3f
+#define MAX_REV_VOL 0.3f
+#define MIN_REV_VOL 0.1f
 
-#define MAX_REV_PIT 1.8f
+#define MAX_REV_PIT 1.4f
 #define MIN_REV_PIT 0.1f
 
 #define MAX_IDLE_VOL 0.15f
 #define MIN_IDLE_VOL 0.0f
 
 #define REV_SPEED_VOL 50.0f // degree of interpolation
-#define REV_SPEED_PIT 70.0f 
+#define REV_SPEED_PIT 120.0f 
 #define IDLE_SPEED_VOL 15.0f // lower = faster cut off
 
 enum SoundHolder {
 	IDLE,
-	REV
+	REV,
+	FAST
 };
 
 AudioCompCar::AudioCompCar(bool global) : AudioComponent()
@@ -85,7 +86,15 @@ AudioCompCar::AudioCompCar(bool global) : AudioComponent()
 
 	m_AudioList.push_back(emt);
 
+	// boost noise
+	emt = new SoundEmitter(SoundManager::GetSound(BOOST));
+	emt->SetIsGlobal(global);
+	emt->SetPitch(0.85f);
+
+	m_AudioList.push_back(emt);
+
 	m_Pitch = MIN_REV_PIT;
+	m_BoostVol = 0.0f;
 
 	AddEmitters();
 
@@ -121,6 +130,8 @@ void AudioCompCar::Update()
 	m_Pitch = fmax(MIN_REV_PIT, m_Pitch);
 	
 	m_AudioList[REV]->SetPitch(m_Pitch);
+
+	m_AudioList[FAST]->SetVolume(m_BoostVol);
 }
 
 // Car Audio listener

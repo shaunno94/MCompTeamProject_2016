@@ -1,3 +1,4 @@
+#ifndef ORBIS
 #include "NetServer.h"
 
 #include "Helpers/common.h"
@@ -509,4 +510,4 @@ void NetServer::AddNewConnection(ENetPeer* peer)
 	//peer->data = new std::string("TestName");
 	m_connections.push_back(connection);
 }
-
+#endif

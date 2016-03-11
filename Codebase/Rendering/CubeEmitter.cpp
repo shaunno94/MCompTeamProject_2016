@@ -9,14 +9,14 @@ CubeEmitter::CubeEmitter()
 , MaxHeight(1)
 , MinDepth(-1)
 , MaxDepth(1)
-, MinSpeed(10)
+, MinSpeed(5)
 , MaxSpeed(20)
-, MinLifetime(3)
+, MinLifetime(2)
 , MaxLifetime(5)
 , Origin(Vec3Graphics(0, 0, 0))
 {}
 
-void CubeEmitter::EmitParticle(Particle& particle)
+void CubeEmitter::EmitParticle(Particle* particle)
 {
 	float x = RNG32::Rand(MinWidth, MaxWidth);
 	float y = RNG32::Rand(MinHeight, MaxHeight);
@@ -27,11 +27,10 @@ void CubeEmitter::EmitParticle(Particle& particle)
 
 	Vec3Graphics vector(x, y, z);
 
-	particle.m_Position = vector + Origin;
-	particle.m_Velocity = vector.Normalize() * speed;
-
-	particle.m_Life = lifetime;
-	particle.m_Age = 0;
+	particle->SetPosition(vector + Origin);
+	particle->SetVelocity(vector.Normalize() * speed);
+	particle->SetLife(lifetime);
+	particle->SetAge(0);
 }
 
 void CubeEmitter::DebugRender()

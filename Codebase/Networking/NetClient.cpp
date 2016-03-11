@@ -1,3 +1,4 @@
+#ifndef ORBIS
 #include "NetClient.h"
 
 #include "Helpers/common.h"
@@ -458,4 +459,4 @@ void NetClient::PushUpdates()
 		}
 	}
 }
-
+#endif

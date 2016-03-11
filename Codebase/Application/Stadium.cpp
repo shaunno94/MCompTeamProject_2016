@@ -45,13 +45,26 @@ m_bluePostMaterial(bluePostMaterial)
 	CreateCollisionWalls();
 }
 
-Stadium::~Stadium(){
-	delete m_stadiumMesh;
-	delete m_postMesh;
-
-	for (auto wall : m_walls)
+Stadium::~Stadium()
+{
+	if (m_stadiumMesh)
 	{
-		delete wall;
+		delete m_stadiumMesh;
+		m_stadiumMesh = nullptr;
+	}
+	if (m_postMesh)
+	{
+		delete m_postMesh;
+		m_postMesh = nullptr;
+	}
+
+	for (auto& wall : m_walls)
+	{
+		if (wall)
+		{
+			delete wall;
+			wall = nullptr;
+		}
 	}
 	m_walls.clear();
 }

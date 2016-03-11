@@ -16,13 +16,25 @@ TextGUIComponent::TextGUIComponent(Material* material, const std::string& text, 
 
 TextGUIComponent::~TextGUIComponent()
 {
-	delete m_Font;
-	delete m_Mesh;
+	if (m_Font)
+	{
+		delete m_Font;
+		m_Font = nullptr;
+	}
+	if (m_Mesh)
+	{
+		delete m_Mesh;
+		m_Mesh = nullptr;
+	}
 }
 
 void TextGUIComponent::Update(const std::string& text)
 {
-	delete m_Mesh;
+	if (m_Mesh)
+	{
+		delete m_Mesh;
+		m_Mesh = nullptr;
+	}
 	
 	m_Mesh = Mesh::GenerateTextQuad(text, m_Font);
 

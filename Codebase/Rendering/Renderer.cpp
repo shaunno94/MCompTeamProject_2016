@@ -56,19 +56,12 @@ void Renderer::RenderScene(float msec)
 	//Draws all objects attatched to the current scene.
 	if (currentScene)
 	{
-
 		FillBuffers(); //First Pass
-
 		DrawPointLights(); //Second Pass
-
 		CombineBuffers(); //Final Pass
-
 		RenderGUI();
-
 	}
-
 	SwapBuffers();
-
 }
 
 void Renderer::RenderGUI()
@@ -83,12 +76,19 @@ void Renderer::OnUpdateScene(Frustum& frustum, Vec3Graphics camPos)
 	currentScene->UpdateFrustumCulling(frustum, camPos);
 }
 
-void Renderer::OnRenderScene()
+void Renderer::OnRenderScene(bool shadowPass)
 {
 	for (unsigned int i = 0; i < currentScene->getNumOpaqueObjects(); ++i)
 		currentScene->getOpaqueObject(i)->OnRenderObject();
+
 	for (unsigned int i = 0; i < currentScene->getNumTransparentObjects(); ++i)
 		currentScene->getTransparentObject(i)->OnRenderObject();
+
+	if (!shadowPass)
+	{
+		for (unsigned int i = 0; i < currentScene->getNumParticleObjects(); ++i)
+			currentScene->getParticleObject(i)->OnRenderObject();
+	}
 }
 
 void Renderer::OnRenderLights()

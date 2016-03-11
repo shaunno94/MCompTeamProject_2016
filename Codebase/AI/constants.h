@@ -9,7 +9,6 @@ enum AITypes
 
 enum AIStates
 {
-	NONE,
 	POSITION,
 	SHOOT,
 	DEFENCE,

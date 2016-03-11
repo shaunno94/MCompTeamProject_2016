@@ -1,3 +1,4 @@
+#ifndef ORBIS
 #pragma once
 #include "Rendering\Scene.h"
 #include "Rendering\UIControllerManager.h"
@@ -56,7 +57,9 @@ protected:
 	ButtonGUIComponent* startBtn;
 	ButtonGUIComponent* cancelBtn;
 
+	TextGUIComponent* ipAddress;
 	TextGUIComponent* ipText;
+	TextGUIComponent* sessionMemText;
 	TextGUIComponent* startText;
 	TextGUIComponent* cancelText;
 
@@ -64,4 +67,4 @@ protected:
 
 	int m_Selected;
 };
-
+#endif

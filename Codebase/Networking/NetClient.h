@@ -1,3 +1,4 @@
+#ifndef ORBIS
 #pragma once
 
 #include "Net.h"
@@ -85,3 +86,4 @@ private:
 	NetClientSession* m_session;
 	std::string m_name;
 };
+#endif

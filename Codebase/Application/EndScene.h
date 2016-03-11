@@ -6,11 +6,7 @@
 #include "Rendering\MenuBackgroundGUI.h"
 #include "Rendering\MenuOrthoComponent.h"
 
-
-#ifndef ORBIS
-const string END_VERT = SHADER_DIR"TexturedVertex.glsl";
-const string END_FRAG = SHADER_DIR"TexturedFragment.glsl";
-#else
+#ifdef ORBIS
 #include "Input\PS4Input.h"
 #endif
 
@@ -30,15 +26,13 @@ public:
 	virtual void UpdateScene(float dt) override;
 
 	void Setup() override;
-	void SetupGameObjects();
 	void SetupShaders();
 	void SetupMaterials();
 	void DrawGUI();
 	void LoadAudio();
-	void SetupControls();
 	void SetWinningTeam(team team){ winningTeam = team; }
 
-	GUISystem* getGUISystem(){ return guiSystem; }
+	GUISystem* getGUISystem() override { return guiSystem; }
 
 protected:
 	UIControllerManager* myControllers;

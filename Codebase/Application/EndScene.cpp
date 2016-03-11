@@ -1,5 +1,6 @@
 #include "EndScene.h"
 #include "Rendering\Renderer.h"
+#include "constants.h"
 
 
 EndScene::EndScene()
@@ -11,12 +12,9 @@ EndScene::EndScene()
 		std::cout << "GUI not Initialised!" << std::endl;
 	}
 
-
 	SetupShaders();
-	SetupMaterials();
-	SetupGameObjects();
+	SetupMaterials();	
 	DrawGUI();
-	SetupControls();
 }
 
 
@@ -31,7 +29,8 @@ EndScene::~EndScene()
 		delete guiSystem;
 }
 
-void EndScene::Setup(){
+void EndScene::Setup()
+{
 	background->GetRenderComponent()->m_Material = bgMaterials[winningTeam];
 }
 
@@ -48,17 +47,13 @@ void EndScene::UpdateScene(float dt)
 
 }
 
-void EndScene::SetupGameObjects()
-{
-
-}
 
 void EndScene::SetupShaders()
 {
 #ifndef ORBIS
-	orthoShader = new OGLShader(END_VERT, END_FRAG);
+	orthoShader = new OGLShader(GUI_VERT, GUI_FRAG);
 #else
-
+	orthoShader = new PS4Shader(GUI_VERT, GUI_FRAG);
 #endif
 
 	if (!orthoShader->IsOperational())
@@ -95,12 +90,3 @@ void EndScene::LoadAudio()
 {
 
 }
-
-void EndScene::SetupControls()
-{
-
-}
-
-
-
-

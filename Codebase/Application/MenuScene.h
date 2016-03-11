@@ -7,7 +7,9 @@
 #include "Rendering\MenuOrthoComponent.h"
 #include "Rendering\TextGUIComponent.h"
 #include "Rendering\ExtendedMaterial.h"
+#include "Rendering\LightMaterial.h"
 #include "constants.h"
+
 
 class MenuScene :
 	public Scene
@@ -70,13 +72,9 @@ protected:
 	ButtonGUIComponent* hostGameBtn;
 	ButtonGUIComponent* joinGameBtn;
 	ButtonGUIComponent* exitBtn;
+	MenuBackgroundGUI* titleImg;
 
 	Mesh* lightMesh;
-
-	TextGUIComponent* singleBtnText;
-	TextGUIComponent* hostGameBtnText;
-	TextGUIComponent* joinGameBtnText;
-	TextGUIComponent* exitBtnText;
 
 	int m_Selected;
 

@@ -1,3 +1,4 @@
+#ifndef ORBIS
 #include "NetServerSetupScene.h"
 #include "constants.h"
 
@@ -47,7 +48,7 @@ void NetServerSetupScene::UpdateScene(float dt)
 	{
 		auto* connection = (*connections)[i];
 		if (connection)
-			connectionOrtho->AddGUIComponent(new TextGUIComponent(guiMaterial, connection->GetAddressStr(), Vec3Graphics(-1.0f, (-0.1f * i), 0), Vec3Graphics(0.04f, 0.04f, 1)));
+			connectionOrtho->AddGUIComponent(new TextGUIComponent(guiMaterial, connection->GetAddressStr(), Vec3Graphics(-0.2f, (0.5f - (i*0.1)), 0), Vec3Graphics(0.04f, 0.04f, 1)));
 	}
 
 	myControllers->update(dt);
@@ -81,22 +82,23 @@ void NetServerSetupScene::SetupMaterials()
 
 void NetServerSetupScene::DrawGUI()
 {
-		ipOrtho = new OrthoComponent(1.0f);
-		ipText = new TextGUIComponent(textMaterial, *(ips[0]), Vec3Graphics(-1.0f, -0.5, 0), Vec3Graphics(0.04f, 0.04f, 1));
-		ipOrtho->AddGUIComponent(ipText);
+	ipOrtho = new OrthoComponent(1.0f);
+	ipText = new TextGUIComponent(textMaterial, "Your IP Address:", Vec3Graphics(-1.0f, 0.7, 0), Vec3Graphics(0.04f, 0.04f, 1));
+	ipAddress = new TextGUIComponent(textMaterial, *(ips[0]), Vec3Graphics(-0.2f, 0.7, 0), Vec3Graphics(0.04f, 0.04f, 1));
+	sessionMemText = new TextGUIComponent(textMaterial, "Session Members:", Vec3Graphics(-1.0f, 0.5, 0), Vec3Graphics(0.04f, 0.04f, 1));
+	ipOrtho->AddGUIComponent(ipAddress);
+	ipOrtho->AddGUIComponent(ipText);
+	ipOrtho->AddGUIComponent(sessionMemText);
 
 	connectionOrtho = new OrthoComponent(1.0f);
 
 	menuOrtho = new MenuOrthoComponent(0.5);
 
-	startBtn = new ButtonGUIComponent(btnMaterial, selectBtnMaterial, Vec3Graphics(0.3f, -0.7f, 0), Vec2Graphics(0.1f, 0.05f));
-	startText = new TextGUIComponent(textMaterial, "Start", Vec3Graphics(0.3f, -0.7, 0), Vec3Graphics(0.04f, 0.04f, 1));
+	startBtn = new ButtonGUIComponent(btnMaterial, selectBtnMaterial, Vec3Graphics(0.6f, -0.5f, 0.0f), Vec2Graphics(0.3f, 0.05f));
+	startBtn->AddText(textMaterial, "Start");
 
-	cancelBtn = new ButtonGUIComponent(btnMaterial, selectBtnMaterial, Vec3Graphics(0.6f, -0.7f, 0), Vec2Graphics(0.1f, 0.05f));
-	cancelText = new TextGUIComponent(textMaterial, "Cancel", Vec3Graphics(0.6f, -0.7, 0), Vec3Graphics(0.04f, 0.04f, 1));
-
-	startBtn->AddChildObject(startText);
-	cancelBtn->AddChildObject(cancelText);
+	cancelBtn = new ButtonGUIComponent(btnMaterial, selectBtnMaterial, Vec3Graphics(0.6f, -0.7f, 0.0f), Vec2Graphics(0.3f, 0.05f));
+	cancelBtn->AddText(textMaterial, "Cancel");
 
 	menuOrtho->AddGUIComponent(cancelBtn);
 	menuOrtho->AddGUIComponent(startBtn);
@@ -124,7 +126,7 @@ void NetServerSetupScene::Setup()
 
 	ips = NetworkGameData::Instance.server->GetIpStr();
 
-	
+
 	SetupGameObjects();
 	DrawGUI();
 	SetupControls();
@@ -142,4 +144,4 @@ void NetServerSetupScene::Cleanup()
 	ips.clear();
 }
 
-
+#endif

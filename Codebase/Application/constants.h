@@ -46,6 +46,7 @@ const std::string POINTLIGHTSHADER_VERT = SHADER_DIR"2dShadowLightvertex.glsl";
 const std::string POINTLIGHTSHADER_FRAG = SHADER_DIR"2dShadowLightfragment.glsl";
 const std::string GUI_VERT = SHADER_DIR"TexturedVertex.glsl";
 const std::string GUI_FRAG = SHADER_DIR"TexturedFragment.glsl";
+const std::string PARTICLE_FRAG = SHADER_DIR"particleFragment.glsl";
 #else
 #include "Rendering\PS4Controller.h"
 const std::string SIMPLESHADER_VERT = SHADER_DIR"textureVertex.sb";
@@ -55,4 +56,5 @@ const std::string POINTLIGHTSHADER_VERT = SHADER_DIR"2dShadowLightvertex.sb";
 const std::string POINTLIGHTSHADER_FRAG = SHADER_DIR"2dShadowLightfragment.sb";
 const std::string GUI_VERT = SHADER_DIR"TexturedVertex.sb";
 const std::string GUI_FRAG = SHADER_DIR"TexturedFragment.sb";
+const std::string PARTICLE_FRAG = SHADER_DIR"particleFragment.sb";
 #endif

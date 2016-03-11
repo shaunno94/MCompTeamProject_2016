@@ -49,10 +49,14 @@ void SoundManager::DeleteSounds()
 
 void SoundManager::LoadAssets()
 {
-	AddSound(AUDIO_DIR"misc/bang.wav", BANG);
+	AddSound(AUDIO_DIR"misc/bang_norm.wav", BANG);
 	AddSound(AUDIO_DIR"music/Red_Doors_2_Norm.wav", SONG);
 	AddSound(AUDIO_DIR"music/votives.ogg", SONG2);
-	AddSound(AUDIO_DIR"car/engine_idle.wav", ENGINE_IDLE);
-	AddSound(AUDIO_DIR"car/engine_rev.wav", ENGINE_REV);
-	AddSound(AUDIO_DIR"car/launch.wav", BOOST);
+	AddSound(AUDIO_DIR"car/engine_idle_norm.wav", ENGINE_IDLE);
+	AddSound(AUDIO_DIR"car/engine_rev_norm.wav", ENGINE_REV);
+	AddSound(AUDIO_DIR"car/launch_norm.wav", JUMP);
+	AddSound(AUDIO_DIR"car/alien_sucker2_norm.wav", POWERUP);
+	AddSound(AUDIO_DIR"car/boost_norm.wav", BOOST);
+
+
 }

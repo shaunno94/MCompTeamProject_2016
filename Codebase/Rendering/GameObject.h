@@ -108,7 +108,6 @@ public:
 	void SetControllerComponent(ControllerComponent* comp)
 	{
 		m_Controller = comp;
-		//m_Controller->SetParent(this);
 	}
 	ControllerComponent* GetControllerComponent() const
 	{
@@ -136,7 +135,6 @@ public:
 		return m_Audio;
 	}
 
-
 	Vec3Graphics GetSpawnPoint() const { return m_spawnPoint; }
 protected:
 	virtual void OnRenderObject();			//Handles OpenGL calls to Render the object
@@ -151,9 +149,7 @@ protected:
 	PhysicsObject*				m_PhysicsObj;
 	ControllerComponent*		m_Controller;
 
-
 	AudioComponent*				m_Audio;
-
 
 	float						m_BoundingRadius;
 	Mat4Graphics				m_WorldTransform;

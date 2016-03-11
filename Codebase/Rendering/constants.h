@@ -49,8 +49,6 @@ enum MeshBuffer
 	MAX_BUFFER
 };
 
-
-#ifdef _DEBUG
 //In debug, the expectation is applications will be run from visual studio (starting directory being the project)
 #ifndef ORBIS
 #define SHADER_DIR	"../Assets/Shaders/"
@@ -62,20 +60,6 @@ enum MeshBuffer
 #define MODEL_DIR	"/app0/Assets/Models/"
 #define TEXTURE_DIR  "/app0/Assets/Textures/"
 #define AUDIO_DIR	"/app0/Assets/AUDIO/"
-#endif
-#else
-#ifndef ORBIS
-//In release, the expectation is applications will be run from the .exe files (starting directory being the .exe location)
-#define SHADER_DIR	"Assets/Shaders/"
-#define MODEL_DIR	"Assets/Models/"
-#define TEXTURE_DIR  "Assets/Textures/"
-#define AUDIO_DIR	"Assets/AUDIO/"
-#else
-#define SHADER_DIR "/app0/Assets/PS4Shaders/"
-#define MODEL_DIR	"/app0/Assets/Models/"
-#define TEXTURE_DIR  "/app0/Assets/Textures/"
-#define AUDIO_DIR	"/app0/Assets/AUDIO/"
-#endif
 #endif
 
 /// <summary>

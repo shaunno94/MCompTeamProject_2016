@@ -1,8 +1,8 @@
 #include "Scene.h"
+#include "Particle.h"
 #include "Renderer.h"
 #include "DebugDraw.h"
 #include "ParticleManager.h"
-
 
 Scene::Scene()
 {
@@ -12,7 +12,6 @@ Scene::Scene()
 
 Scene::~Scene()
 {
-
 	ClearObjects();
 
 	delete cam;
@@ -58,9 +57,12 @@ void Scene::addGameObject(GameObject* obj)
 	{
 		addGameObject(child);
 	}
+
 	if (obj->m_RenderComponent)
 		obj->m_RenderComponent->m_Material->hasTranslucency ? transparentObjects.push_back(obj) : opaqueObjects.push_back(obj);
-	else
+	//else if (dynamic_cast<Particle*>(obj))
+//		particleObjects.push_back(obj);
+	else 
 		ghostObjects.push_back(obj);
 }
 
@@ -85,7 +87,10 @@ void Scene::UpdateNodeLists(float dt, Frustum& frustum, Vec3Graphics camPos)
 	for (unsigned int i = 0; i < ghostObjects.size(); ++i)
 	{
 		ghostObjects[i]->OnUpdateObject(dt);
-
+	}
+	for (unsigned int i = 0; i < particleObjects.size(); ++i)
+	{
+		particleObjects[i]->OnUpdateObject(dt);
 	}
 
 	UpdateFrustumCulling(frustum, camPos);
@@ -117,7 +122,7 @@ void Scene::UpdateFrustumCulling(Frustum& frustum, Vec3Graphics camPos)
 			opaqueObjects[i]->m_RenderComponent->disabled = true;
 		}
 		opaqueObjects[i]->m_RenderComponent->disabled = false;
-
+		
 		pos = opaqueObjects[i]->GetWorldTransform().GetTranslation();
 		dir = pos - camPos;
 		opaqueObjects[i]->m_CamDist = dir.Dot(dir);
@@ -151,26 +156,48 @@ void Scene::Cleanup()
 
 void Scene::ClearObjects()
 {
-	for (auto obj : transparentObjects)
-	{
-		delete obj;
-	}
 	for (auto& obj : opaqueObjects)
 	{
-		delete obj;
+		if (obj)
+		{
+			delete obj;
+			obj = nullptr;
+		}
+	}
+	for (auto obj : transparentObjects)
+	{
+		if (obj)
+		{
+			delete obj;
+			obj = nullptr;
+		}
 	}
 	for (auto obj : ghostObjects)
 	{
-		delete obj;
+		if (obj)
+		{
+			delete obj;
+			obj = nullptr;
+		}
 	}
 	for (auto light : lightObjects)
 	{
-		delete light;
+		if (light)
+		{
+			delete light;
+			light = nullptr;
+		}
 	}
 	transparentObjects.clear();
 	opaqueObjects.clear();
 	ghostObjects.clear();
 	lightObjects.clear();
+	
 	if (myControllers)
-	myControllers->clear();
+		myControllers->clear();
+}
+
+void Scene::addParticleObject(GameObject* obj)
+{
+	particleObjects.push_back(obj);
 }

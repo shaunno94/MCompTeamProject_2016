@@ -467,6 +467,9 @@
     <ClCompile Include="DebugDrawOGL.cpp">
       <Filter>Source Files\OGL_API</Filter>
     </ClCompile>
+    <ClCompile Include="Particle.cpp">
+      <Filter>Source Files\Particle System</Filter>
+    </ClCompile>
     <ClCompile Include="MenuOrthoComponent.cpp">
       <Filter>Source Files\UI\MenuGUI</Filter>
     </ClCompile>
@@ -533,6 +536,9 @@
       <Filter>PS4Shaders</Filter>
     </OrbisWavePsslc>
     <OrbisWavePsslc Include="ColourTextureFragment.pssl">
+      <Filter>PS4Shaders</Filter>
+    </OrbisWavePsslc>
+    <OrbisWavePsslc Include="particleFragment.pssl">
       <Filter>PS4Shaders</Filter>
     </OrbisWavePsslc>
   </ItemGroup>

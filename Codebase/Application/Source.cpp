@@ -14,8 +14,9 @@ const float TIME_STEP = 1.0f / 120.0f;
 const unsigned int SUB_STEPS = 4;
 
 #ifndef ORBIS
-const unsigned int SCREEN_HEIGHT = 800;
-const unsigned int SCREEN_WIDTH = 1280;
+const unsigned int SCREEN_HEIGHT = 1080;
+const unsigned int SCREEN_WIDTH = 1920;
+//#pragma comment(lib, "../Networking/Debug/Net.lib")
 #else
 #include "Input\PS4Input.h"
 #include "Rendering\PS4Controller.h"
@@ -23,7 +24,7 @@ const unsigned int SCREEN_HEIGHT = 1080;
 const unsigned int SCREEN_WIDTH = 1920;
 //System Variables
 unsigned int sceLibcHeapExtendedAlloc = 1;			/* Switch to dynamic allocation */
-size_t sceLibcHeapSize = 512 * 1024 * 1024;			/* Set up heap area upper limit as 256 MiB */
+size_t sceLibcHeapSize = 512 * 1024 * 1024;			/* Set up heap area upper limit as 512 MiB */
 #endif
 
 int main(void)
@@ -33,7 +34,7 @@ int main(void)
 	//-------------------
 
 	//Initialise Renderer - including the window context if compiling for Windows - PC
-	Renderer renderer("Team Project - 2016", SCREEN_WIDTH, SCREEN_HEIGHT, false);
+	Renderer renderer("Team Project - 2016", SCREEN_WIDTH, SCREEN_HEIGHT, true);
 	if (!renderer.HasInitialised())
 	{
 		return -1;
@@ -49,15 +50,15 @@ int main(void)
 #endif
 
 	SoundSystem::Initialise();
-	ParticleManager::Initialise();
-	if (ParticleManager::GetManager().HasInitialised())
+
+	if (ParticleManager::Instance())
 	{
 		std::cout << "Particle Manager not Initialised" << std::endl;
 	}
 
 	//Create GameScene
-	GameScene* gameScene = new GameScene();
 	MenuScene* menuScene = new MenuScene();
+	GameScene* gameScene = new GameScene();
 	EndScene* endScene = new EndScene();
 
 	renderer.AddScene(menuScene);
@@ -76,9 +77,7 @@ int main(void)
 	renderer.AddScene(clientGame);
 #endif
 	
-	//Set current scene to the game
 	renderer.SetCurrentScene(menuScene);
-	//renderer.SetCurrentScene(gameScene);
 
 	
 
@@ -103,6 +102,9 @@ int main(void)
 		MEASURING_TIMER_LOG_START("Physics");
 		PhysicsEngineInstance::Instance()->stepSimulation(ms, SUB_STEPS, TIME_STEP);
 		MEASURING_TIMER_LOG_END();
+#ifndef ORBIS
+		SoundSystem::Instance()->Update(ms);
+#endif
 
 		MEASURING_TIMER_LOG_START("Renderer");
 		if (!renderer.GetCurrentScene())
@@ -110,18 +112,13 @@ int main(void)
 		renderer.RenderScene(ms);
 		MEASURING_TIMER_LOG_END();
 
-		SoundSystem::Instance()->Update(ms);
-		
-
 		CLEAR_DEBUG_STREAM();
 		MEASURING_TIMER_PRINT(GET_DEBUG_STREAM());
 
 		MEASURING_TIMER_CLEAR();
-
-		SoundSystem::Instance()->Update(ms);
 	}
 
-	SoundSystem::Instance()->Release();
+	SoundSystem::Release();
 	ParticleManager::Destroy();
 	renderer.SetCurrentScene(nullptr);
 	delete menuScene;

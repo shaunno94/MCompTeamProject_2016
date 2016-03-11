@@ -11,6 +11,9 @@
 #define SOUND_LOOP true
 #define SOUND_GLOBAL false
 
+// ps4
+#define SAMPLE_GRANULARITY 1024
+
 enum SoundPriority
 {
 	SOUNDPRIORTY_LOW,
@@ -191,6 +194,9 @@ public:
 	void SetPort(SceAudio3dPortId val)
 	{
 		port = val;
+	}
+	void SetSpread(float val) {
+		spread = val;
 	}
 
 protected:

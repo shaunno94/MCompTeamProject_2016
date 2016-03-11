@@ -13,6 +13,8 @@ enum SoundAssets {
 	SONG2,
 	ENGINE_IDLE,
 	ENGINE_REV,
+	JUMP,
+	POWERUP,
 	BOOST
 };
 

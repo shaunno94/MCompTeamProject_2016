@@ -22,6 +22,13 @@ struct DisablePickupCallback : public btCollisionWorld::ContactResultCallback
 	{
 		pickup->Disable(5000);
 		obj->GetControllerComponent()->boost = 1.0;
+
+		SoundMOD mod;
+		mod.looping = false;
+		mod.isGlobal = true;
+		mod.pitch = 1.7f;
+		mod.volume = 0.7f;
+		SoundSystem::Instance()->Play(SoundManager::GetSound(POWERUP), mod);
 		return 0;
 	}
 
