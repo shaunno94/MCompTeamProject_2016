@@ -8,6 +8,7 @@
 #include "Helpers/MeasuringTimer.h"
 #include "Networking\Net.h"
 #include "NetServerGameScene.h"
+#include "NetClientGameScene.h"
 
 const float TIME_STEP = 1.0f / 120.0f;
 const unsigned int SUB_STEPS = 4;
@@ -67,10 +68,12 @@ int main(void)
 	NetServerSetupScene* serverScene = new NetServerSetupScene();
 	NetClientSetupScene* clientScene = new NetClientSetupScene();
 	NetServerGameScene* serverGame = new NetServerGameScene();
+	NetClientGameScene* clientGame = new NetClientGameScene();
 
 	renderer.AddScene(serverScene);
 	renderer.AddScene(clientScene);
 	renderer.AddScene(serverGame);
+	renderer.AddScene(clientGame);
 #endif
 	
 	//Set current scene to the game

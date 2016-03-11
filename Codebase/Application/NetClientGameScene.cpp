@@ -95,7 +95,7 @@ void NetClientGameScene::Setup()
 	//SetupControls();
 	for (int i = 0; i < NetworkGameData::posCount; ++i)
 	{
-		if (i == NetworkGameData::Instance.server->GetSessionMemberId())
+		if (i == NetworkGameData::Instance.client->GetSessionMemberId())
 		{
 			cc = new ControllerComponent(m_cars[i]);
 			myControllers->setProducer(m_cars[i], i);

@@ -80,14 +80,21 @@ void NetClientSetupScene::UpdateScene(float dt)
 		{
 			if (!NetworkGameData::Instance.client->GetSession())
 			{
-				auto* connections = NetworkGameData::Instance.client->GetSession()->GetMembers();
-				size_t playerCount = connections->size();
-
-				for (size_t i = 0; i < playerCount; ++i)
+				if (NetworkGameData::Instance.client->GetSession())
 				{
-					auto* connection = (*connections)[i];
-					if (connection)
-						connectionOrtho->AddGUIComponent(new TextGUIComponent(guiMaterial, connection->name, Vec3Graphics(-1.0f, (-0.1f * i), 0), Vec3Graphics(0.04f, 0.04f, 1)));
+					auto* connections = NetworkGameData::Instance.client->GetSession()->GetMembers();
+					size_t playerCount = connections->size();
+
+					for (size_t i = 0; i < playerCount; ++i)
+					{
+						auto* connection = (*connections)[i];
+						if (connection)
+							connectionOrtho->AddGUIComponent(new TextGUIComponent(guiMaterial, connection->name, Vec3Graphics(-1.0f, (-0.1f * i), 0), Vec3Graphics(0.04f, 0.04f, 1)));
+					}
+				}
+				else
+				{
+					connectionOrtho->AddGUIComponent(new TextGUIComponent(guiMaterial, "Waiting for session to start...", Vec3Graphics(-1.0f, (-0.1f * 0), 0), Vec3Graphics(0.04f, 0.04f, 1)));
 				}
 			}
 			//accepted as member
