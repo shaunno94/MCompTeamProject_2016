@@ -14,7 +14,8 @@ const unsigned int SUB_STEPS = 4;
 #ifndef ORBIS
 const unsigned int SCREEN_HEIGHT = 1080;
 const unsigned int SCREEN_WIDTH = 1920;
-//#pragma comment(lib, "../Networking/Debug/Net.lib")
+#pragma comment(lib, "../Debug/enet.lib")
+#pragma comment(lib, "../Debug/Networking.lib")
 #else
 #include "Input\PS4Input.h"
 #include "Rendering\PS4Controller.h"
