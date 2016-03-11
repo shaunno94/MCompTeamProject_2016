@@ -26,12 +26,10 @@ public:
 	virtual void UpdateScene(float dt) override;
 
 	void Setup() override;
-	void SetupGameObjects();
 	void SetupShaders();
 	void SetupMaterials();
 	void DrawGUI();
 	void LoadAudio();
-	void SetupControls();
 	void SetWinningTeam(team team){ winningTeam = team; }
 
 	GUISystem* getGUISystem() override { return guiSystem; }

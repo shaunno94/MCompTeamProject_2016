@@ -72,13 +72,9 @@ protected:
 	ButtonGUIComponent* hostGameBtn;
 	ButtonGUIComponent* joinGameBtn;
 	ButtonGUIComponent* exitBtn;
+	MenuBackgroundGUI* titleImg;
 
 	Mesh* lightMesh;
-
-	TextGUIComponent* singleBtnText;
-	TextGUIComponent* hostGameBtnText;
-	TextGUIComponent* joinGameBtnText;
-	TextGUIComponent* exitBtnText;
 
 	int m_Selected;
 

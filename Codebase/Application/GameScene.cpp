@@ -10,7 +10,6 @@
 
 GameScene::GameScene()
 {
-
 	//initialise conroller manager
 	myControllers = new LocalControlManager();
 
@@ -22,12 +21,13 @@ GameScene::GameScene()
 
 	SetupShaders();
 	SetupMaterials();
+#ifndef ORBIS
 	DrawGUI();
+#endif
 }
 
 GameScene::~GameScene()
 {
-
 	delete material;
 	delete netMaterial;
 	delete redPostMaterial;
@@ -68,9 +68,9 @@ void GameScene::IncrementScore(int team)
 	mod.looping = false;
 	mod.isGlobal = true;
 	SoundSystem::Instance()->Play(SoundManager::GetSound(BANG), mod);
-#endif
 
-	//scoreboardComponent->Update(scores[0], scores[1], currentTime);
+	scoreboardComponent->Update(scores[0], scores[1], currentTime);
+#endif
 }
 
 void GameScene::UpdateScene(float dt)
@@ -81,6 +81,7 @@ void GameScene::UpdateScene(float dt)
 
 	if (currentTime > 180)
 	{
+#ifndef ORBIS
 		Scene* endScene = Renderer::GetInstance()->GetScene(END_SCENE);
 		team winner;
 		if (scores[0] > scores[1])
@@ -92,78 +93,81 @@ void GameScene::UpdateScene(float dt)
 		Renderer::GetInstance()->SetCurrentScene(endScene);
 		currentTime = 0;
 		lastTime = 0;
-
+#endif
 	}
 	else{
 
-		currentTime += dt / 1000.0f;
+	currentTime += dt / 1000.0f;
 
-		if (currentTime - lastTime > 1)
-		{
-			lastTime = currentTime;
-			scoreboardComponent->Update(scores[0], scores[1], currentTime);
-			//GET_DEBUG_STREAM().str().substr()
+	if (currentTime - lastTime > 1)
+	{
+		lastTime = currentTime;
+#ifndef ORBIS
+		scoreboardComponent->Update(scores[0], scores[1], currentTime);
+#endif
 
-#ifndef DEBUG_DRAW
-
-			vector<std::string>tokens;
-			std::string t;
-			while (std::getline(GET_DEBUG_STREAM(), t, '\n')) {
-				tokens.push_back(t.substr(2, std::string::npos));
-			}
+#ifndef ORBIS
+#ifdef _DEBUG
+		std::vector<std::string>tokens;
+		std::string t;
+		while (std::getline(GET_DEBUG_STREAM(), t, '\n')) {
+			tokens.push_back(t.substr(2, std::string::npos));
+		}
 
 			float fpsStep = 1 / (std::stof(tokens[1]) + std::stof(tokens[3])) * 1000;
-			float physicsStep = std::stof(tokens[1]);
+		float physicsStep = std::stof(tokens[1]);
 			std::string fps = "FPS: " + std::to_string(fpsStep).substr(0, 5);
-			std::string physics = "Physics: " + tokens[1].substr(0, 5);
-			std::string graphics = "Graphics: " + tokens[3].substr(0, 5);
+		std::string physics = "Physics: " + tokens[1].substr(0, 5);
+		std::string graphics = "Graphics: " + tokens[3].substr(0, 5);
 
-			FPSDebugTextComponent->Update(fps);
-			physicsDebugTextComponent->Update(physics);
-			graphicsDebugTextComponent->Update(graphics);
+		FPSDebugTextComponent->Update(fps);
+		physicsDebugTextComponent->Update(physics);
+		graphicsDebugTextComponent->Update(graphics);
 #endif
+#endif
+	}
+
+	if (goalScored > 0) {
+		if (timerCount == 0)
+		{
+			IncrementScore(goalScored - 1);
+			TriggerExplosion();
 		}
 
-		if (goalScored > 0) {
-			if (timerCount == 0)
-			{
-				IncrementScore(goalScored - 1);
-				TriggerExplosion();
-			}
+		timerCount += dt / 1000.0f;
 
-			timerCount += dt / 1000.0f;
-
-			//Increment goals for team 1
-			if (timerCount > 3.0f)
-			{
-				timerCount = 0;
-				goalScored = false;
-				ResetObjects();
-			}
-		}
-
-		float boost = floor(std::max(player->GetControllerComponent()->boost * 100.0f, 0.0f));
-		if (boost > 99.0f) {
-			boostComponent->Update(std::string("Boost:" + std::to_string(boost).substr(0, 3) + "%"));
-		}
-		else if (boost < 10.0f) {
-			boostComponent->Update(std::string("Boost:" + std::to_string(boost).substr(0, 1) + "%"));
-		}
-		else {
-			boostComponent->Update(std::string("Boost:" + std::to_string(boost).substr(0, 2) + "%"));
-		}
-
-		float speed = floor(std::max(player->GetControllerComponent()->getForwardVelocity(), 0.0f)) / 2.0f;
-		if (speed > 99.0f) {
-			speedComponent->Update(std::string(std::to_string(speed).substr(0, 3) + "mph"));
-		}
-		else if (speed < 10.0f) {
-			speedComponent->Update(std::string(std::to_string(speed).substr(0, 1) + "mph"));
-		}
-		else {
-			speedComponent->Update(std::string(std::to_string(speed).substr(0, 2) + "mph"));
+		//Increment goals for team 1
+		if (timerCount > 3.0f)
+		{
+			timerCount = 0;
+			goalScored = false;
+			ResetObjects();
 		}
 	}
+#ifndef ORBIS
+	float boost = floor(std::max(player->GetControllerComponent()->boost * 100.0f, 0.0f));
+	if (boost > 99.0f) {
+		boostComponent->Update(std::string("Boost:" + std::to_string(boost).substr(0, 3) + "%"));
+	}
+	else if (boost < 10.0f) {
+		boostComponent->Update(std::string("Boost:" + std::to_string(boost).substr(0, 1) + "%"));
+	} 
+	else {
+		boostComponent->Update(std::string("Boost:" + std::to_string(boost).substr(0, 2) + "%"));
+	}
+
+	float speed = floor(std::max(player->GetControllerComponent()->getForwardVelocity(), 0.0f)) / 2.0f;
+	if (speed > 99.0f) {
+			speedComponent->Update(std::string(std::to_string(speed).substr(0, 3) + "mph"));
+	}
+	else if (speed < 10.0f) {
+		speedComponent->Update(std::string(std::to_string(speed).substr(0, 1) + "mph"));
+	}
+	else {
+		speedComponent->Update(std::string(std::to_string(speed).substr(0, 2) + "mph"));
+	}
+#endif
+}
 }
 
 void GameScene::SetupGameObjects()
@@ -228,7 +232,6 @@ void GameScene::SetupGameObjects()
 
 void GameScene::LoadAudio()
 {
-	SoundSystem::Initialise(32);
 	//-------- SOUND
 	// load in files
 	SoundManager::LoadAssets();
@@ -409,9 +412,9 @@ void GameScene::ResetObject(GameObject& object) {
 	dynamic_cast<RigidPhysicsObject*>(object.GetPhysicsComponent())->GetPhysicsBody()->clearForces();
 	dynamic_cast<RigidPhysicsObject*>(object.GetPhysicsComponent())->GetPhysicsBody()->setLinearVelocity(zeroVector);
 	dynamic_cast<RigidPhysicsObject*>(object.GetPhysicsComponent())->GetPhysicsBody()->setAngularVelocity(zeroVector);
-	
+
 	object.GetPhysicsComponent()->GetPhysicsBody()->setWorldTransform(btTransform(btQuaternion(0, 0, 0, 1), btVector3(object.GetSpawnPoint().x, object.GetSpawnPoint().y, object.GetSpawnPoint().z)));
-	if (object.GetControllerComponent())
+	if (object.GetControllerComponent()) 
 		object.GetControllerComponent()->reset();
 
 }
@@ -422,20 +425,19 @@ void GameScene::Setup()
 	scores[0] = 0;
 	scores[1] = 0;
 
+
 	SetupGameObjects();
 	SetupParticles();
 	SetupControls();
 	SetControllerActor();
 	SetupAI();
 	LoadAudio();
-
 }
 
 void GameScene::Cleanup()
 {
-	/*ResetObjects();
-	scores[0] = scores[1] = 0;*/
 	Scene::Cleanup();
+#ifndef ORBIS
 	ClearObjects();
-
+#endif
 }

@@ -9,22 +9,7 @@
 
 MenuScene::MenuScene()
 {
-	myControllers = new UIControllerManager();
 
-	guiSystem = new GUISystem();
-	
-	if (!guiSystem->HasInitialised())
-	{
-		std::cout << "GUI not Initialised!" << std::endl;
-	}
-
-
-	SetupShaders();
-	SetupMaterials();
-	DrawGUI();
-	SetupControls();
-
-	lightMesh = ModelLoader::LoadMGL(MODEL_DIR"Common/ico.mgl", true);
 }
 
 
@@ -129,27 +114,26 @@ void MenuScene::SetupMaterials()
 void MenuScene::DrawGUI()
 {
 	menuOrtho = new MenuOrthoComponent(0);
+	bgOrtho = new MenuOrthoComponent(0);
 	singleBtn = new ButtonGUIComponent(btnMaterial, selectBtnMaterial,   Vec3Graphics(-0.6f, 0.7f,0.0f), Vec2Graphics(0.3f, 0.05f));
 	hostGameBtn = new ButtonGUIComponent(btnMaterial, selectBtnMaterial, Vec3Graphics(-0.6f, 0.5f, 0.0f), Vec2Graphics(0.3f, 0.05f));
 	joinGameBtn = new ButtonGUIComponent(btnMaterial, selectBtnMaterial, Vec3Graphics(-0.6f, 0.3f, 0.0f), Vec2Graphics(0.3f, 0.05f));
 	exitBtn = new ButtonGUIComponent(btnMaterial, selectBtnMaterial, Vec3Graphics(-0.6f, 0.1f, 0.0f), Vec2Graphics(0.3f, 0.05f));
 
-	singleBtnText = new TextGUIComponent(textMaterial, "Single Player", Vec3Graphics(-0.9f, 0.7f, 0.0f), Vec3Graphics(0.04f, 0.04f, 1));
-	hostGameBtnText = new TextGUIComponent(textMaterial, "Host Game", Vec3Graphics(-0.9f, 0.5f, 0.0f), Vec3Graphics(0.04f, 0.04f, 1));
-	joinGameBtnText = new TextGUIComponent(textMaterial, "Join Game", Vec3Graphics(-0.9f, 0.3f, 0.0f), Vec3Graphics(0.04f, 0.04f, 1));
-	exitBtnText = new TextGUIComponent(textMaterial, "Quit", Vec3Graphics(-0.9f, 0.1f, 0.0f), Vec3Graphics(0.04f, 0.04f, 1));
-
-	singleBtn->AddChildObject(singleBtnText);
-	hostGameBtn->AddChildObject(hostGameBtnText);
-	joinGameBtn->AddChildObject(joinGameBtnText);
-	exitBtn->AddChildObject(exitBtnText);
+	singleBtn->AddText(textMaterial, "Single Player");
+	hostGameBtn->AddText(textMaterial, "Host Game");
+	joinGameBtn->AddText(textMaterial, "Join Game");
+	exitBtn->AddText(textMaterial, "Quit");
 
 	menuOrtho->AddGUIComponent(singleBtn);
 	menuOrtho->AddGUIComponent(hostGameBtn);
 	menuOrtho->AddGUIComponent(joinGameBtn);
 	menuOrtho->AddGUIComponent(exitBtn);
+	titleImg = new MenuBackgroundGUI(bgMaterial);
+	bgOrtho->AddGUIComponent(titleImg);
 
 	guiSystem->AddOrthoComponent(menuOrtho);
+	guiSystem->AddOrthoComponent(bgOrtho);
 
 }
 
@@ -166,13 +150,30 @@ void MenuScene::SetupControls()
 void MenuScene::Cleanup()
 {
 	Scene::Cleanup();
+#ifndef ORBIS
 	ClearObjects();
+#endif
 }
 
 void MenuScene::Setup()
 {
-	Scene::Setup();
+	myControllers = new UIControllerManager();
 
+	guiSystem = new GUISystem();
+
+	if (!guiSystem->HasInitialised())
+	{
+		std::cout << "GUI not Initialised!" << std::endl;
+	}
+
+
+	SetupShaders();
+	SetupMaterials();
+	DrawGUI();
+	SetupControls();
+
+	lightMesh = ModelLoader::LoadMGL(MODEL_DIR"Common/ico.mgl", true);
+	Scene::Setup();
 	SetupGameObjects();
 }
 

@@ -14,6 +14,7 @@ const unsigned int SUB_STEPS = 4;
 #ifndef ORBIS
 const unsigned int SCREEN_HEIGHT = 1080;
 const unsigned int SCREEN_WIDTH = 1920;
+//#pragma comment(lib, "../Networking/Debug/Net.lib")
 #else
 #include "Input\PS4Input.h"
 #include "Rendering\PS4Controller.h"
@@ -41,17 +42,21 @@ int main(void)
 #ifdef ORBIS
 	PS4Input input = PS4Input();
 #endif
-#ifndef ORBIS
-		SoundSystem::Initialise();
-#endif
+	SoundSystem::Initialise();
+
 	if (ParticleManager::Instance())
 	{
 		std::cout << "Particle Manager not Initialised" << std::endl;
 	}
 
 	//Create GameScene
-	GameScene* gameScene = new GameScene();
 	MenuScene* menuScene = new MenuScene();
+	GameScene* gameScene = new GameScene();
+	EndScene* endScene = new EndScene();
+
+	renderer.AddScene(menuScene);
+	renderer.AddScene(gameScene);
+	renderer.AddScene(endScene);
 
 #ifndef ORBIS
 	NetServerSetupScene* serverScene = new NetServerSetupScene();
@@ -60,16 +65,8 @@ int main(void)
 	renderer.AddScene(clientScene);
 #endif
 
-	EndScene* endScene = new EndScene();
-
-
-	renderer.AddScene(menuScene);
-	renderer.AddScene(gameScene);
-	renderer.AddScene(endScene);
 	
-	//Set current scene to the game
-	renderer.SetCurrentScene(gameScene);
-	//renderer.SetCurrentScene(gameScene);
+	renderer.SetCurrentScene(menuScene);
 
 #ifdef _DEBUG
 	std::cout << "Renderer Memory Usage: " << renderer.GetRendererMemUsage() / (1024 * 1024) << " (MB)" << std::endl;
@@ -100,7 +97,7 @@ int main(void)
 		if (!renderer.GetCurrentScene())
 			break;
 		renderer.RenderScene(ms);
-		MEASURING_TIMER_LOG_END();		
+		MEASURING_TIMER_LOG_END();
 
 		CLEAR_DEBUG_STREAM();
 		MEASURING_TIMER_PRINT(GET_DEBUG_STREAM());
@@ -112,7 +109,7 @@ int main(void)
 	ParticleManager::Destroy();
 	renderer.SetCurrentScene(nullptr);
 	delete menuScene;
-	delete gameScene;
+	delete gameScene;	
 	delete endScene;
 
 	return 0;

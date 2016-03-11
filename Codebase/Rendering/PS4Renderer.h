@@ -102,7 +102,7 @@ private:
 
 	//Memory Allocation
 	const int _GarlicMemory = (1024 * 1024 * 512);
-	const int _OnionMemory = (1024 * 1024 * 256);
+	const int _OnionMemory = (1024 * 1024 * 512);
 	sce::Gnmx::Toolkit::StackAllocator	stackAllocators[MEMORYMAX];
 
 	bool init = false;

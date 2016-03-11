@@ -12,12 +12,9 @@ EndScene::EndScene()
 		std::cout << "GUI not Initialised!" << std::endl;
 	}
 
-
 	SetupShaders();
-	SetupMaterials();
-	SetupGameObjects();
+	SetupMaterials();	
 	DrawGUI();
-	SetupControls();
 }
 
 
@@ -32,7 +29,8 @@ EndScene::~EndScene()
 		delete guiSystem;
 }
 
-void EndScene::Setup(){
+void EndScene::Setup()
+{
 	background->GetRenderComponent()->m_Material = bgMaterials[winningTeam];
 }
 
@@ -49,10 +47,6 @@ void EndScene::UpdateScene(float dt)
 
 }
 
-void EndScene::SetupGameObjects()
-{
-
-}
 
 void EndScene::SetupShaders()
 {
@@ -96,12 +90,3 @@ void EndScene::LoadAudio()
 {
 
 }
-
-void EndScene::SetupControls()
-{
-
-}
-
-
-
-

@@ -156,21 +156,37 @@ void Scene::Cleanup()
 
 void Scene::ClearObjects()
 {
-	for (auto obj : transparentObjects)
-	{
-		delete obj;
-	}
 	for (auto& obj : opaqueObjects)
 	{
-		delete obj;
+		if (obj)
+		{
+			delete obj;
+			obj = nullptr;
+		}
+	}
+	for (auto obj : transparentObjects)
+	{
+		if (obj)
+		{
+			delete obj;
+			obj = nullptr;
+		}
 	}
 	for (auto obj : ghostObjects)
 	{
-		delete obj;
+		if (obj)
+		{
+			delete obj;
+			obj = nullptr;
+		}
 	}
 	for (auto light : lightObjects)
 	{
-		delete light;
+		if (light)
+		{
+			delete light;
+			light = nullptr;
+		}
 	}
 	transparentObjects.clear();
 	opaqueObjects.clear();
