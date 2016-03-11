@@ -54,9 +54,10 @@ GameScene::~GameScene()
 
 void GameScene::SetControllerActor()
 {
-	myControllers->setActor(Renderer::GetInstance()->GetCurrentScene()->findGameObject("shooterAI"), SHOOTER);
-	myControllers->setActor(Renderer::GetInstance()->GetCurrentScene()->findGameObject("goalieAI"), GOALKEEPER);
-	myControllers->setActor(Renderer::GetInstance()->GetCurrentScene()->findGameObject("aggroAI"), AGGRESSIVE);
+	myControllers->setActor(shooterAI, SHOOTER);
+	myControllers->setActor(goalieAI, GOALKEEPER);
+	myControllers->setActor(friendlyGoalieAI, GOALKEEPER);
+	myControllers->setActor(aggroAI, AGGRESSIVE);
 }
 
 void GameScene::IncrementScore(int team)
@@ -93,6 +94,19 @@ void GameScene::UpdateScene(float dt)
 
 	}
 	else{
+		if (Renderer::GetInstance()->needsPauseCheck()){
+			if (Renderer::GetInstance()->isPaused()) {
+				SoundSystem::Instance()->SetMasterVolume(0.0f);
+				hudOrtho->AddGUIComponent(pausedComponent);
+				hudOrtho->AddGUIComponent(quitComponent);
+			}
+			else {
+				SoundSystem::Instance()->SetMasterVolume(1.0f);
+				hudOrtho->RemoveGUIComponent(pausedComponent);
+				hudOrtho->RemoveGUIComponent(quitComponent);
+			}
+			Renderer::GetInstance()->pauseChecked();
+		}
 
 	currentTime += dt / 1000.0f;
 
@@ -131,7 +145,6 @@ void GameScene::UpdateScene(float dt)
 
 		timerCount += dt / 1000.0f;
 
-		//Increment goals for team 1
 		if (timerCount > 3.0f)
 		{
 			timerCount = 0;
@@ -180,8 +193,9 @@ void GameScene::SetupGameObjects()
 
 	player = new CarGameObject(Vec3Physics(195, 2, 0), QuatPhysics(0, 1, 0, 1), playerMaterial, RED_TEAM, "player");
 	shooterAI = new CarGameObject(Vec3Physics(-190, 2, 30), QuatPhysics::IDENTITY, aiMaterial, BLUE_TEAM, "shooterAI", COL_AI_CAR);
+	friendlyGoalieAI = new CarGameObject(Vec3Physics(330, 2, 0), QuatPhysics::IDENTITY, playerMaterial, RED_TEAM, "friendlyGoalieAI", COL_AI_CAR);
 	goalieAI = new CarGameObject(Vec3Physics(-330, 2, 0), QuatPhysics::IDENTITY, aiMaterial, BLUE_TEAM, "goalieAI", COL_AI_CAR);
-	aggroAI = new CarGameObject(Vec3Physics(-190, 2, -30), QuatPhysics(0, 0, 0, 1), ai2Material, BLUE_TEAM, "aggroAI", COL_AI_CAR);
+	aggroAI = new CarGameObject(Vec3Physics(-190, 2, -30), QuatPhysics(0, 0, 0, 1), aiMaterial, BLUE_TEAM, "aggroAI", COL_AI_CAR);
 
 	pickupManager = new PickupManager(material);
 	for (auto pickupMapping : *(pickupManager->GetPickups()))
@@ -214,6 +228,7 @@ void GameScene::SetupGameObjects()
 	addGameObject(player);
 	addGameObject(ball);
 	addGameObject(shooterAI);
+	addGameObject(friendlyGoalieAI);
 	addGameObject(goalieAI);
 	addGameObject(aggroAI);
 	addGameObject(redGoal);
@@ -241,6 +256,7 @@ void GameScene::LoadAudio()
 	// create audio components
 	player->SetAudioComponent(new AudioCompCarLitener(true));
 	shooterAI->SetAudioComponent(new AudioCompCar(false));
+	friendlyGoalieAI->SetAudioComponent(new AudioCompCar(false));
 	goalieAI->SetAudioComponent(new AudioCompCar(false));
 	aggroAI->SetAudioComponent(new AudioCompCar(false));
 	//-------- SOUND
@@ -294,6 +310,7 @@ void GameScene::DrawGUI()
 {
 	//Define Orthographic Component
 	hudOrtho = new OrthoComponent(1.0f);
+	menuOrtho = new MenuOrthoComponent(0);
 	//Add child GUI components, while defining materials, texture, and depth
 
 	scoreboardComponent = new ScoreboardGUIComponent(guiMaterial, std::to_string(0) + " - " + "3:00" + " - 0", Vec3Graphics(-0.6f, 0.7f, 0), Vec3Graphics(0.1f, 0.1f, 1));
@@ -307,6 +324,10 @@ void GameScene::DrawGUI()
 	graphicsDebugTextComponent = new TextGUIComponent(guiMaterial, GET_DEBUG_STREAM().str(), Vec3Graphics(-1.0f, -0.9f, 0), Vec3Graphics(0.04f, 0.04f, 1));
 	hudOrtho->AddGUIComponent(graphicsDebugTextComponent);
 #endif
+	
+
+	pausedComponent = new TextGUIComponent(textMaterial, "Paused!", Vec3Graphics(-0.2f, 0, 0), Vec3Graphics(0.05f, 0.05f, 1));
+	quitComponent = new TextGUIComponent(textMaterial, "Press BACKSPACE to quit to menu", Vec3Graphics(-0.75f, -0.2f, 0), Vec3Graphics(0.05f, 0.05f, 1));
 
 	speedComponent = new TextGUIComponent(guiMaterial, "0mph", Vec3Graphics(0.53f, -0.8f, 0), Vec3Graphics(0.05f, 0.05f, 1));
 	hudOrtho->AddGUIComponent(speedComponent);
@@ -331,7 +352,9 @@ void GameScene::TriggerExplosion()
 
 	applyImpulseFromExplosion((CarGameObject*)player);
 	applyImpulseFromExplosion((CarGameObject*)shooterAI);
+	applyImpulseFromExplosion((CarGameObject*)friendlyGoalieAI);
 	applyImpulseFromExplosion((CarGameObject*)goalieAI);
+	applyImpulseFromExplosion((CarGameObject*)aggroAI);
 
 }
 

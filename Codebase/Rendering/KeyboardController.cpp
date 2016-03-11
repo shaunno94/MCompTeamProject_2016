@@ -2,6 +2,7 @@
 #include "KeyboardController.h"
 #include "Renderer.h"
 #include "Audio/SoundSystem.h"
+#include "Application/constants.h"
 
 KeyboardController::KeyboardController(ControllerComponent* object)
 {
@@ -112,6 +113,17 @@ void KeyboardController::CheckInput(){
 	if (Window::GetKeyboard()->KeyTriggered(KEYBOARD_Q))
 	{
 		Renderer::GetInstance()->GetCurrentScene()->getCamera()->reset();
+	}
+
+	if (Window::GetKeyboard()->KeyTriggered(KEYBOARD_P)) {
+		// Pause
+		Renderer::GetInstance()->togglePause();
+	}
+
+	if (Renderer::GetInstance()->isPaused() && Window::GetKeyboard()->KeyTriggered(KEYBOARD_BACK)) {
+		Scene* menuScene = Renderer::GetInstance()->GetScene(MENU_SCENE);
+		Renderer::GetInstance()->togglePause();
+		Renderer::GetInstance()->SetCurrentScene(menuScene);
 	}
 }
 #endif

@@ -31,8 +31,10 @@ void OrthoComponent::RemoveGUIComponent(GUIComponent* element)
 {
 	for (unsigned int i = 0; i < m_elements.size(); ++i)
 	{
-		if (m_elements[i] == element)
-			m_elements.erase(m_elements.begin());
+		if (m_elements[i] == element) {
+			m_elements.erase(m_elements.begin() + i);
+			return;
+		}
 	}
 }
 

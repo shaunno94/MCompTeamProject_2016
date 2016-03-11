@@ -31,7 +31,7 @@ int main(void)
 	//-------------------
 
 	//Initialise Renderer - including the window context if compiling for Windows - PC
-	Renderer renderer("Team Project - 2016", SCREEN_WIDTH, SCREEN_HEIGHT, true);
+	Renderer renderer("Team Project - 2016", SCREEN_WIDTH, SCREEN_HEIGHT, false);
 	if (!renderer.HasInitialised())
 	{
 		return -1;
@@ -59,8 +59,8 @@ int main(void)
 	renderer.AddScene(menuScene);
 	renderer.AddScene(gameScene);
 	renderer.AddScene(serverScene);
-	renderer.AddScene(clientScene);
 	renderer.AddScene(endScene);
+	renderer.AddScene(clientScene);
 	
 	//Set current scene to the game
 	renderer.SetCurrentScene(menuScene);
@@ -84,18 +84,16 @@ int main(void)
 #endif
 		float ms = timer.GetTimer()->Get(1000.0f);
 
-		MEASURING_TIMER_LOG_START("Physics");
-		PhysicsEngineInstance::Instance()->stepSimulation(ms, SUB_STEPS, TIME_STEP);
-		MEASURING_TIMER_LOG_END();
-
+		if (!renderer.isPaused()) {
+			MEASURING_TIMER_LOG_START("Physics");
+			PhysicsEngineInstance::Instance()->stepSimulation(ms, SUB_STEPS, TIME_STEP);
+			MEASURING_TIMER_LOG_END();
+		}
 		MEASURING_TIMER_LOG_START("Renderer");
 		if (!renderer.GetCurrentScene())
 			break;
 		renderer.RenderScene(ms);
-		MEASURING_TIMER_LOG_END();
-
-		SoundSystem::Instance()->Update(ms);
-		
+		MEASURING_TIMER_LOG_END();		
 
 		CLEAR_DEBUG_STREAM();
 		MEASURING_TIMER_PRINT(GET_DEBUG_STREAM());

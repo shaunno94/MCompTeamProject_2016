@@ -23,6 +23,26 @@ MenuScene::MenuScene()
 	lightMesh = ModelLoader::LoadMGL(MODEL_DIR"Common/ico.mgl", true);
 }
 
+void MenuScene::LoadAudio()
+{
+	//#ifndef ORBIS
+	//-------- SOUND
+	// load in files
+	SoundManager::LoadAssets();
+
+	//load ogg file (EXPERIMENTAL STREAMING)
+	//SoundManager::AddSound(AUDIO_DIR"139320__votives__arpegthing.ogg", "song");
+
+	// add background music
+	SoundSystem::Instance()->SetBackgroundMusic(SoundManager::GetSound(SONG2));
+	SoundSystem::Instance()->SetBackgroundVolume(0.4f); // can be used for mute / unmute
+
+	// create audio components
+	//player->SetAudioComponent(new AudioCompCarLitener(true));
+	//-------- SOUND
+	//#endif
+}
+
 
 MenuScene::~MenuScene()
 {
@@ -153,10 +173,6 @@ void MenuScene::DrawGUI()
 
 }
 
-void MenuScene::LoadAudio()
-{
-
-}
 
 void MenuScene::SetupControls()
 {
@@ -174,6 +190,7 @@ void MenuScene::Setup()
 	Scene::Setup();
 
 	SetupGameObjects();
+	LoadAudio();
 }
 
 

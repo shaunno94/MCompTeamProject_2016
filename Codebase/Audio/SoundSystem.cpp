@@ -222,7 +222,7 @@ AudioSource*	SoundSystem::GetSource()
 void	SoundSystem::SetMasterVolume(float value)
 {
 	masterVolume = value;
-	//alListenerf(AL_GAIN, masterVolume);
+	alListenerf(AL_GAIN, masterVolume);
 }
 
 void	SoundSystem::UpdateListener()

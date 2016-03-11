@@ -36,6 +36,9 @@ Renderer::~Renderer(void)
 
 void Renderer::UpdateScene(float msec)
 {
+	if (m_paused)
+		msec = 0.0f;
+
 	if (currentScene)
 	{
 		currentScene->getCamera()->UpdateCamera(msec);

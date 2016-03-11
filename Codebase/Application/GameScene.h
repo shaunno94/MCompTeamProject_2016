@@ -74,6 +74,7 @@ protected:
 	GameObject* player;
 	
 	GameObject* shooterAI;
+	GameObject* friendlyGoalieAI;
 	GameObject* goalieAI;
 	GameObject* aggroAI;
 
@@ -104,17 +105,22 @@ protected:
 	Material* particleMaterial;
 	Material* guiMaterial;
 	Material* textMaterial;
+	Material* btnMaterial;
+	Material* selectBtnMaterial;
 
 	PickupManager* pickupManager;
 
 	ControllerComponent* cc;
 
 	OrthoComponent* hudOrtho;
+	MenuOrthoComponent* menuOrtho;
 	TextGUIComponent* speedComponent;
 	TextGUIComponent* boostComponent;
 	TextGUIComponent* FPSDebugTextComponent;
 	TextGUIComponent* physicsDebugTextComponent;
 	TextGUIComponent* graphicsDebugTextComponent;
+	TextGUIComponent* pausedComponent;
+	TextGUIComponent* quitComponent;
 	ScoreboardGUIComponent* scoreboardComponent;
 
 	float timerCount = 0.0f;
@@ -123,5 +129,9 @@ protected:
 	int goalScored = 0;
 
 	bool gameStart;
+	TextGUIComponent* pauseContinueBtnText;
+	TextGUIComponent* pauseMenuBtnText;
+	ButtonGUIComponent* continueBtn;
+	ButtonGUIComponent* menuBtn;
 };
 
