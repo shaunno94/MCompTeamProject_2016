@@ -1,3 +1,4 @@
+#ifndef ORBIS
 #pragma once
 
 #include "Net.h"
@@ -86,3 +87,4 @@ private:
 	//for session sync?
 	//bool m_sessionUpdated;
 };
+#endif

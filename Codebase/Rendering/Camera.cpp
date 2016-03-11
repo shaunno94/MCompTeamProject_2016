@@ -19,11 +19,12 @@ void Camera::UpdateCamera(float msec)	{
 		//position.y = 10;
 
 		//Update the mouse by how much
+		if (!autocam)
 				player->GetControllerComponent()->getCameraControl(pitch, yaw);
 				
 		//std::cout << yaw << std::endl;
 	}
-	
+
 	
 }
 
@@ -56,7 +57,7 @@ Mat4Graphics Camera::BuildViewMatrix()	{
 	return	 Mat4Graphics::View(GetPosition(), ballPos);
 
 }
-	}
+}
 
 
 Vec3Graphics Camera::GetPosition() const

@@ -1,3 +1,4 @@
+#ifndef ORBIS
 #include "NetSession.h"
 #include <cassert>
 #include "constants.h"
@@ -301,3 +302,4 @@ void NetSessionWriter::AddGlobalMessage(NetMessage* message, bool sending)
 }
 
 
+#endif

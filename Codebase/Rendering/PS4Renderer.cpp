@@ -283,7 +283,7 @@ void PS4Renderer::CombineBuffers()
 	currentPS4Buffer->ClearBuffer(*currentGFXContext);
 	currentPS4Buffer->SetRenderTargets(*currentGFXContext);
 
-	projMatrix = Mat4Graphics::Orthographic(-1, 1, 1, -1, 1, -1);
+	projMatrix = Mat4Graphics::Orthographic(-1, 1, 1, -1, -1, 1);
 	InitCMD(currentPS4Buffer);
 
 	SetTexture(diffuseLoc, *offScreenBuffers[G_BUFFER]->GetTexture(COLOUR));

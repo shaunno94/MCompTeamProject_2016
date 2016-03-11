@@ -3,6 +3,7 @@
 #include <utility>
 #include <map>
 #include "Trigger.h"
+#include "constants.h"
 
 class StateMachine;
 
@@ -17,6 +18,7 @@ public:
 
 	void AddChildState(unsigned int stateName, State* childState);
 	void AddTrigger(Trigger* trigger, unsigned int destState);
+	void ChangeChildState(unsigned int stateName);
 
 protected:
 

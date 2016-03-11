@@ -2,6 +2,9 @@
 #include "Rendering/GameTimer.h"
 #include "GameScene.h"
 #include "MenuScene.h"
+#include "EndScene.h"
+#include "NetServerSetupScene.h"
+#include "NetClientSetupScene.h"
 #include "Helpers/MeasuringTimer.h"
 //#include "Networking\Net.h"
 
@@ -18,7 +21,7 @@ const unsigned int SCREEN_HEIGHT = 1080;
 const unsigned int SCREEN_WIDTH = 1920;
 //System Variables
 unsigned int sceLibcHeapExtendedAlloc = 1;			/* Switch to dynamic allocation */
-size_t sceLibcHeapSize = 512 * 1024 * 1024;			/* Set up heap area upper limit as 256 MiB */
+size_t sceLibcHeapSize = 512 * 1024 * 1024;			/* Set up heap area upper limit as 512 MiB */
 #endif
 
 int main(void)
@@ -33,21 +36,40 @@ int main(void)
 	{
 		return -1;
 	}
-	PhysicsEngineInstance::Instance();
+
 	GameTimer timer;
 #ifdef ORBIS
 	PS4Input input = PS4Input();
 #endif
+#ifndef ORBIS
+		SoundSystem::Initialise();
+#endif
+	if (ParticleManager::Instance())
+	{
+		std::cout << "Particle Manager not Initialised" << std::endl;
+	}
 
-	//UIControllerManager* uiController = new UIControllerManager();
 	//Create GameScene
 	GameScene* gameScene = new GameScene();
-//	MenuScene* menuScene = new MenuScene(uiController);
+	MenuScene* menuScene = new MenuScene();
+
+#ifndef ORBIS
+	NetServerSetupScene* serverScene = new NetServerSetupScene();
+	NetClientSetupScene* clientScene = new NetClientSetupScene();
+	renderer.AddScene(serverScene);
+	renderer.AddScene(clientScene);
+#endif
+
+	EndScene* endScene = new EndScene();
+
+
+	renderer.AddScene(menuScene);
+	renderer.AddScene(gameScene);
+	renderer.AddScene(endScene);
+	
 	//Set current scene to the game
 	renderer.SetCurrentScene(gameScene);
-	gameScene->SetControllerActor();
-	gameScene->SetupAI();
-	//renderer.SetCurrentScene(menuScene);
+	//renderer.SetCurrentScene(gameScene);
 
 #ifdef _DEBUG
 	std::cout << "Renderer Memory Usage: " << renderer.GetRendererMemUsage() / (1024 * 1024) << " (MB)" << std::endl;
@@ -61,7 +83,7 @@ int main(void)
 	while (true)
 #endif
 	{
-		MEASURING_TIMER_LOG_START("Frame");
+	
 #ifdef ORBIS
 		input.Poll();
 #endif
@@ -70,21 +92,28 @@ int main(void)
 		MEASURING_TIMER_LOG_START("Physics");
 		PhysicsEngineInstance::Instance()->stepSimulation(ms, SUB_STEPS, TIME_STEP);
 		MEASURING_TIMER_LOG_END();
+#ifndef ORBIS
 		SoundSystem::Instance()->Update(ms);
-
-		//myControllers->update(ms);
+#endif
 
 		MEASURING_TIMER_LOG_START("Renderer");
+		if (!renderer.GetCurrentScene())
+			break;
 		renderer.RenderScene(ms);
-		MEASURING_TIMER_LOG_END();
+		MEASURING_TIMER_LOG_END();		
 
-		MEASURING_TIMER_LOG_END();//end frame inside
+		CLEAR_DEBUG_STREAM();
+		MEASURING_TIMER_PRINT(GET_DEBUG_STREAM());
 
-		//TODO: Print time steps. Can pass stringstream to get a formated output string
-		//MEASURING_TIMER_PRINT(std::cout);
 		MEASURING_TIMER_CLEAR();
 	}
 
+	SoundSystem::Release();
+	ParticleManager::Destroy();
+	renderer.SetCurrentScene(nullptr);
+	delete menuScene;
 	delete gameScene;
+	delete endScene;
+
 	return 0;
 }

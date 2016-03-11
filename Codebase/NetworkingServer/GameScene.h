@@ -59,7 +59,11 @@ public:
 	void SetGoalScored(int goal) { goalScored = goal; }
 	int GetGoalScored() { return goalScored; }
 
+	GUISystem* GetGUISystem(){ return guiSystem; }
+
 protected:
+	GUISystem* guiSystem;
+
 	ControllerManager* myControllers;
 	GameCollisionFilter* goalBallFilter;
 	int scores[2];

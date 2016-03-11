@@ -1,5 +1,8 @@
 #include "Scene.h"
 #include "Particle.h"
+#include "Renderer.h"
+#include "DebugDraw.h"
+#include "ParticleManager.h"
 
 Scene::Scene()
 {
@@ -9,44 +12,40 @@ Scene::Scene()
 
 Scene::~Scene()
 {
-	for (auto obj : transparentObjects)
-	{
-		delete obj;
-	}
-	for (auto &obj : opaqueObjects)
-	{
-		delete obj;
-	}
-	for (auto obj : ghostObjects)
-	{
-		delete obj;
-	}
+	ClearObjects();
 
 	delete cam;
 	if (myControllers)
+	{
 		delete myControllers;
-	transparentObjects.clear();
-	opaqueObjects.clear();
-	ghostObjects.clear();
+		myControllers = nullptr;
+	}
 }
 
 GameObject* Scene::findGameObject(const std::string& objectName)
 {
-	for (auto obj : ghostObjects) {
-		if (obj->m_Name == objectName) {
-			return obj;
-}
-	}
-	for (auto obj : opaqueObjects) {
-		if (obj->m_Name == objectName) {
+	for (auto obj : ghostObjects)
+	{
+		if (obj->m_Name == objectName)
+		{
 			return obj;
 		}
 	}
-	for (auto obj : transparentObjects) {
-		if (obj->m_Name == objectName) {
+	for (auto obj : opaqueObjects)
+	{
+		if (obj->m_Name == objectName)
+		{
 			return obj;
 		}
 	}
+	for (auto obj : transparentObjects)
+	{
+		if (obj->m_Name == objectName)
+		{
+			return obj;
+		}
+	}
+
 	return nullptr;
 
 }
@@ -67,8 +66,8 @@ void Scene::addGameObject(GameObject* obj)
 		ghostObjects.push_back(obj);
 }
 
-void Scene::UpdateScene(float dt) {
-	myControllers->update(dt);
+void Scene::UpdateScene(float dt)
+{
 }
 
 void Scene::UpdateNodeLists(float dt, Frustum& frustum, Vec3Graphics camPos)
@@ -101,7 +100,8 @@ void Scene::UpdateNodeLists(float dt, Frustum& frustum, Vec3Graphics camPos)
 	InsertionSort(opaqueObjects.begin(), opaqueObjects.end(), Scene::CompareByCameraDistance);
 }
 
-void Scene::UpdateFrustumCulling(Frustum& frustum, Vec3Graphics camPos){
+void Scene::UpdateFrustumCulling(Frustum& frustum, Vec3Graphics camPos)
+{
 	Vec3Graphics pos, dir;
 	for (unsigned int i = 0; i < transparentObjects.size(); ++i)
 	{
@@ -132,6 +132,53 @@ void Scene::UpdateFrustumCulling(Frustum& frustum, Vec3Graphics camPos){
 void Scene::addLightObject(GameObject* obj)
 {
 	lightObjects.push_back(obj);
+}
+
+void Scene::Setup()
+{
+
+	//Initialise Bullet physics engine.
+	PhysicsEngineInstance::Instance()->setGravity(btVector3(0, -9.81, 0));
+
+#if DEBUG_DRAW
+	PhysicsEngineInstance::Instance()->setDebugDrawer(DebugDraw::Instance());
+	DebugDraw::Context(Renderer::GetInstance());
+#endif
+}
+
+void Scene::Cleanup()
+{
+	PhysicsEngineInstance::Release();
+#if DEBUG_DRAW
+	DebugDraw::Release();
+#endif
+}
+
+void Scene::ClearObjects()
+{
+	for (auto obj : transparentObjects)
+	{
+		delete obj;
+	}
+	for (auto& obj : opaqueObjects)
+	{
+		delete obj;
+	}
+	for (auto obj : ghostObjects)
+	{
+		delete obj;
+	}
+	for (auto light : lightObjects)
+	{
+		delete light;
+	}
+	transparentObjects.clear();
+	opaqueObjects.clear();
+	ghostObjects.clear();
+	lightObjects.clear();
+	
+	if (myControllers)
+		myControllers->clear();
 }
 
 void Scene::addParticleObject(GameObject* obj)

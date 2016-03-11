@@ -13,6 +13,7 @@ public:
 	virtual void setActor(GameObject* g, unsigned int type) override;
 
 	void setupActors();
+	void clear() override;
 
 private:
 	std::vector<AIControllerComponent*> aiControllers;

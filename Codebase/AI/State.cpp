@@ -46,6 +46,7 @@ bool State::CheckTriggers()
 	for (triggerPair* &trigger : m_triggers) {
 		if (trigger->first->HasTriggered()) {
 			m_stateMachine->ChangeState(trigger->second);
+			m_activeChildState = trigger->second;
 			return true;
 		}
 	}
@@ -62,4 +63,9 @@ void State::AddChildState(unsigned int stateName, State* childState)
 void State::AddTrigger(Trigger* trigger, unsigned int destState)
 {
 	m_triggers.push_back(new triggerPair(trigger, destState));
+}
+
+void State::ChangeChildState(unsigned int stateName)
+{
+	m_activeChildState = stateName;
 }

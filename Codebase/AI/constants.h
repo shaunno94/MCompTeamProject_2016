@@ -15,5 +15,6 @@ enum AIStates
 	ADVANCE,
 	GUARD_GOAL,
 	CLEAR_GOAL,
-	AGGRO
+	AGGRO,
+	OFFENCE
 };

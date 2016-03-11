@@ -13,7 +13,7 @@
 /// <summary>
 /// Holds functionality for loading a mesh from the hard-drive.
 /// </summary>
-static class ModelLoader
+class ModelLoader
 {
 public:
 	// Loads file and returns correct Mesh, buffered or unbuffered

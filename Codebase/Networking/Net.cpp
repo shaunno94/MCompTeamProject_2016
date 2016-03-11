@@ -1,3 +1,4 @@
+#ifndef ORBIS
 #include "Net.h"
 #include <cstdio>
 #include <cassert>
@@ -11,6 +12,7 @@ NetConnectionData::NetConnectionData(const std::string& address) : m_addressStr(
 {
 	m_peer = nullptr;
 	isPeer = true;
+	m_initialConnectMade = false;
 }
 
 NetConnectionData::NetConnectionData(ENetPeer* peer)
@@ -18,6 +20,7 @@ NetConnectionData::NetConnectionData(ENetPeer* peer)
 	static const size_t CONNECTION_NAME_MAX_LENGTH = 64;
 	char buffer[CONNECTION_NAME_MAX_LENGTH];
 
+	m_initialConnectMade = true;
 	m_peer = peer;
 	isPeer = peer ? true : false;
 	if (isPeer)
@@ -45,6 +48,9 @@ NetConnectionState NetConnectionData::GetState() const
 {
 	if (!isPeer)
 		return NetConnectionState::NetNonPeerConnection;
+
+	if (!m_initialConnectMade)
+		return NetConnectionState::NetPeerConnecting;
 
 	//destroyed
 	if (m_peer == nullptr)
@@ -108,9 +114,10 @@ bool Network::Init()
 void Network::Clear()
 {
 	if (s_Initialized)
+	{
 		enet_deinitialize();
-
-	s_Initialized = false;
+		s_Initialized = false;
+	}
 }
 
 
@@ -200,3 +207,4 @@ void NetHost::BroadcastMsg(NetMessage* message, bool reliable)
 
 	enet_host_broadcast(m_host, 1, packet);
 }
+#endif

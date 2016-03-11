@@ -7,7 +7,7 @@ GameScene::GameScene(ControllerManager* controller)
 	PhysicsEngineInstance::Instance()->setGravity(btVector3(0, -9.81, 0));
 
 	SoundSystem::Initialise();
-	GUISystem::Initialise();
+	guiSystem = new GUISystem();
 	ParticleManager::Initialise();
 
 	if (ParticleManager::GetManager().HasInitialised())
@@ -15,7 +15,7 @@ GameScene::GameScene(ControllerManager* controller)
 		std::cout << "Particle Manager not Initialised" << std::endl;
 	}
 
-	if (!GUISystem::GetInstance().HasInitialised())
+	if (!guiSystem->HasInitialised())
 	{
 		std::cout << "GUI not Initialised!" << std::endl;
 	}
@@ -41,8 +41,8 @@ GameScene::GameScene(ControllerManager* controller)
 GameScene::~GameScene()
 {
 	PhysicsEngineInstance::Release();
-	GUISystem::Destroy();
 	ParticleManager::Destroy();
+	delete guiSystem;
 
 #if DEBUG_DRAW
 #ifndef ORBIS
@@ -125,7 +125,6 @@ void GameScene::SetupGameObjects()
 
 	ball->SetRenderComponent(new RenderComponent(ballMaterial, ModelLoader::LoadMGL(MODEL_DIR"Common/sphere.mgl", true)));
 	ball->SetLocalTransform(Mat4Graphics::Scale(Vector3Simple(6, 6, 6)));
-
 
 	ballPhysics->GetPhysicsBody()->getBroadphaseProxy()->m_collisionFilterMask = COL_BALL;
 
@@ -247,11 +246,11 @@ void GameScene::DrawGUI()
 	//Define Orthographic Component
 	hudOrtho = new OrthoComponent(1.0f);
 	//Add child GUI components, while defining materials, texture, and depth
-	scoreboardComponent = new ScoreboardGUIComponent(guiMaterial, Texture::Get(TEXTURE_DIR"tahoma.tga"), 1.0);
+	scoreboardComponent = new ScoreboardGUIComponent(guiMaterial, std::to_string(0) + " - " + "3:00" + " - 0", Vec3Graphics(-0.6f, 0.7f, 0), Vec3Graphics(0.1f, 0.1f, 1));
 	hudOrtho->AddGUIComponent(scoreboardComponent);
 
 	//Add Orthographic component to GUISystem
-	GUISystem::GetInstance().AddOrthoComponent(hudOrtho);
+	guiSystem->AddOrthoComponent(hudOrtho);
 
 }
 

@@ -2,23 +2,20 @@
 #include "GUIComponent.h"
 #include "GameObject.h"
 #include "Font.h"
+#include "TextGUIComponent.h"
 
-class ScoreboardGUIComponent : public GUIComponent
+class ScoreboardGUIComponent : public TextGUIComponent
 {
 public:
-	ScoreboardGUIComponent(Material* material, Texture* texture, float z, bool visible = true);
+	ScoreboardGUIComponent(Material* material, const std::string& text, Vec3Graphics pos, Vec3Graphics scale, bool visible = true);
 	virtual ~ScoreboardGUIComponent();
 
 //	virtual void Update();
-	virtual void Render();
-
 	void Update(int scoreA, int scoreB, float time);
 
 protected:
-	GameObject* text;
-	RenderComponent* text_renderComp;
 
-	Font* font;
+	Texture* m_Texture;
 
 	int timeRem;
 	int min;

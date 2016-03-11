@@ -1,9 +1,13 @@
 #include "MenuControllerComponent.h"
+#include "Renderer.h"
+#include "GUISystem.h"
+#include "Application\GameScene.h"
+#include "Application\constants.h"
 
-MenuControllerComponent::MenuControllerComponent(MenuGUI* parent, unsigned int type) :
-	ControllerComponent(parent)
+
+MenuControllerComponent::MenuControllerComponent(MenuOrthoComponent* parent, unsigned int type)
 {
-	//parent->GetChildren()[0]
+	m_parent = parent;
 }
 
 MenuControllerComponent::~MenuControllerComponent()
@@ -11,3 +15,70 @@ MenuControllerComponent::~MenuControllerComponent()
 
 }
 
+void MenuControllerComponent::UpdateObject(float dt)
+{
+
+}
+
+void MenuControllerComponent::SelectNext()
+{
+	unsigned int maxCount = m_parent->GetElements().size();
+	unsigned int counter = 0;
+
+	while (counter < maxCount)
+	{
+		counter++;
+		unsigned int selection = (m_parent->GetSelection() + 1) % maxCount;
+		auto selectable = dynamic_cast<ButtonGUIComponent*>(m_parent->GetElements()[selection]);
+		if (selectable)
+		{
+			m_parent->SetSelection(selection);
+			break;
+		}
+		else
+			continue;
+	}
+}
+
+void MenuControllerComponent::SelectPrevious()
+{
+	unsigned int maxCount = m_parent->GetElements().size();
+	unsigned int counter = 0;
+
+	while (counter < maxCount)
+	{
+		counter++;
+		unsigned int selection = (m_parent->GetSelection() + maxCount - 1) % maxCount;
+		auto selectable = dynamic_cast<ButtonGUIComponent*>(m_parent->GetElements()[selection]);
+		if (selectable)
+		{
+			m_parent->SetSelection(selection);
+			break;
+		}
+		else
+			continue;
+	}
+	
+}
+
+void MenuControllerComponent::Submit()
+{
+
+	switch (m_parent->GetSelection())
+	{
+	case SINGLE_PLAYER:
+		Renderer::GetInstance()->SetCurrentScene(Renderer::GetInstance()->GetScene(GAME_SCENE));
+		break;
+	case HOST_GAME:
+		Renderer::GetInstance()->SetCurrentScene(Renderer::GetInstance()->GetScene(SERVER_SETUP_SCENE));
+		break;
+	case JOIN_GAME:
+		Renderer::GetInstance()->SetCurrentScene(Renderer::GetInstance()->GetScene(CLIENT_SETUP_SCENE));
+		break;
+	case QUIT:
+		Renderer::GetInstance()->SetCurrentScene(nullptr);
+		break;
+	default:
+		std::cout << "Selection Invalid!";
+	}
+}

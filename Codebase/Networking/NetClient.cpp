@@ -1,3 +1,4 @@
+#ifndef ORBIS
 #include "NetClient.h"
 
 #include "Helpers/common.h"
@@ -58,6 +59,19 @@ NetClient::~NetClient()
 
 void NetClient::ConnectToServerService()
 {
+	ENetAddress enetAddress;
+	enet_address_set_host(&enetAddress, m_serverConnection->GetAddressStr().c_str());
+	enetAddress.port = NET_PORT;
+
+	m_serverConnection->SetPeer(enet_host_connect(m_host, &enetAddress, 2, 0));
+	m_serverConnection->SetInitialConnection(true);
+
+	if (m_serverConnection->GetPeer() == nullptr)
+	{
+		NET_INFO("No available peers for ENet connection using " << m_serverConnection->GetAddressStr() << "."LINE_SEPARATOR_DEF);
+		return;
+	}
+
 	ENetEvent event;
 	/* Wait up to NET_CONNECTION_TIMEOUT milliseconds for the connection attempt to succeed. */
 	if (enet_host_service(m_host, &event, NET_CONNECTION_TIMEOUT) > 0 && event.type == ENET_EVENT_TYPE_CONNECT)
@@ -378,18 +392,6 @@ void NetClient::ConnectToServer(const std::string& address)
 		m_threadHandle.get();
 
 	m_serverConnection = new NetConnectionDataClient(address);
-	ENetAddress enetAddress;
-	enet_address_set_host(&enetAddress, m_serverConnection->GetAddressStr().c_str());
-	enetAddress.port = NET_PORT;
-
-	m_serverConnection->SetPeer(enet_host_connect(m_host, &enetAddress, 2, 0));
-
-	if (m_serverConnection->GetPeer() == nullptr)
-	{
-		NET_INFO("No available peers for ENet connection using " << m_serverConnection->GetAddressStr() << "."LINE_SEPARATOR_DEF);
-		return;
-	}
-
 	m_threadHandle = std::move(std::async(std::launch::async, &NetClient::ConnectToServerService, this));
 }
 
@@ -457,4 +459,4 @@ void NetClient::PushUpdates()
 		}
 	}
 }
-
+#endif

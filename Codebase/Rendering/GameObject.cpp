@@ -43,7 +43,6 @@ GameObject::~GameObject()
 		delete m_Audio;
 		m_Audio = nullptr;
 	}
-
 }
 
 GameObject*	GameObject::FindGameObject(const std::string& name)

@@ -2,6 +2,7 @@
 #include "PS4Controller.h"
 #include "PS4MenuController.h"
 #include "MenuControllerComponent.h"
+#include "NetworkingServer\CarGameObject.h"
 
 LocalControlManager::LocalControlManager()
 {
@@ -24,7 +25,8 @@ void LocalControlManager::setProducer(GameObject* g, unsigned int type){
 }
 
 void LocalControlManager::setActor(GameObject* g, unsigned int type){
-	ControllerComponent* cc = new AIControllerComponent(g, type);
+	//TODO: Change team to be field of GameObject class
+	ControllerComponent* cc = new AIControllerComponent(g, type, static_cast<CarGameObject*>(g)->isOnBlueTeam());
 	aiControllers.push_back(dynamic_cast<AIControllerComponent*>(cc));
 }
 	
@@ -33,4 +35,9 @@ void LocalControlManager::setupActors()
 	for (AIControllerComponent* ai : aiControllers) {
 		ai->setupAI();
 	}
+}
+
+void LocalControlManager :: clear(){
+	aiControllers.clear();
+	ControllerManager::clear();
 }

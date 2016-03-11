@@ -8,10 +8,10 @@ ParticleManager* ParticleManager::Instance()
 	if (!particleManager) 
 	{
 		particleManager = new ParticleManager();
-		init = true;
-	}
-	return particleManager;
+	init = true;
 }
+	return particleManager;
+	}
 
 bool ParticleManager::HasInitialised()
 {
@@ -37,7 +37,7 @@ void ParticleManager::Update(float delta)
 	for (unsigned int i = 0; i < m_Systems.size(); ++i)
 	{
 		m_Systems[i]->Update(delta);
-	}
+}
 }
 
 void ParticleManager::Destroy()

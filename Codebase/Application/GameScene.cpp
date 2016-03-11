@@ -4,57 +4,59 @@
 #include "PickupManager.h"
 #include "AI/constants.h"
 #include "Rendering\ParticleSystem.h"
+#include "constants.h"
+#include <algorithm>  
+
 
 GameScene::GameScene()
 {
+
 	//initialise conroller manager
 	myControllers = new LocalControlManager();
 
-	//Initialise Bullet physics engine.
-	PhysicsEngineInstance::Instance()->setGravity(btVector3(0, -9.81, 0));
-
-	GUISystem::Initialise();
-	if (!GUISystem::GetInstance().HasInitialised())
+	guiSystem = new GUISystem();
+	if (!guiSystem->HasInitialised())
 	{
 		std::cout << "GUI not Initialised!" << std::endl;
 	}
-	scores[0] = 0;
-	scores[1] = 0;
-
-#if DEBUG_DRAW
-	PhysicsEngineInstance::Instance()->setDebugDrawer(DebugDraw::Instance());
-	DebugDraw::Context(Renderer::GetInstance());
-#endif
 
 	SetupShaders();
 	SetupMaterials();
-	SetupGameObjects();
-	SetupParticles();
 	DrawGUI();
-	LoadAudio();
-	SetupControls();
 }
 
 GameScene::~GameScene()
 {
-	PhysicsEngineInstance::Release();
-	GUISystem::Destroy();
-	ParticleManager::Destroy();
-	SoundSystem::Release();
+
+	delete material;
+	delete netMaterial;
+	delete redPostMaterial;
+	delete bluePostMaterial;
+	delete ballMaterial;
+
+	delete playerMaterial;
+	delete aiMaterial;
+	delete ai2Material;
+	delete particleMaterial;
+	delete guiMaterial;
+	delete textMaterial;
 
 	delete pickupManager;
 
-#if DEBUG_DRAW
-	DebugDraw::Release();
-#endif
+	delete myControllers;
+	myControllers = nullptr;
+
+	delete guiSystem;
+	guiSystem = nullptr;
+
+
 }
 
 void GameScene::SetControllerActor()
 {
 	myControllers->setActor(Renderer::GetInstance()->GetCurrentScene()->findGameObject("shooterAI"), SHOOTER);
 	myControllers->setActor(Renderer::GetInstance()->GetCurrentScene()->findGameObject("goalieAI"), GOALKEEPER);
-	//myControllers->setActor(Renderer::GetInstance()->GetCurrentScene()->findGameObject("aggroAI"), AGGRESSIVE);
-	myControllers->setActor(Renderer::GetInstance()->GetCurrentScene()->findGameObject("aggroAI"), SHOOTER); // Whilst debugging
+	myControllers->setActor(Renderer::GetInstance()->GetCurrentScene()->findGameObject("aggroAI"), AGGRESSIVE);
 }
 
 void GameScene::IncrementScore(int team)
@@ -68,65 +70,120 @@ void GameScene::IncrementScore(int team)
 	SoundSystem::Instance()->Play(SoundManager::GetSound(BANG), mod);
 #endif
 
-	scoreboardComponent->Update(scores[0], scores[1], currentTime);
+	//scoreboardComponent->Update(scores[0], scores[1], currentTime);
 }
 
 void GameScene::UpdateScene(float dt)
 {
-	Scene::UpdateScene(dt);
 	ParticleManager::Instance()->Update(dt);
+
+	myControllers->update(dt);
+
 	if (currentTime > 180)
 	{
-		//TODO: Proceed to end game screen
+		Scene* endScene = Renderer::GetInstance()->GetScene(END_SCENE);
+		team winner;
+		if (scores[0] > scores[1])
+			((EndScene*)endScene)->SetWinningTeam(BLUE_WINS);
+		else if (scores[0] < scores[1])
+			((EndScene*)endScene)->SetWinningTeam(RED_WINS);
+		else
+			((EndScene*)endScene)->SetWinningTeam(TIE);
+		Renderer::GetInstance()->SetCurrentScene(endScene);
 		currentTime = 0;
 		lastTime = 0;
-	}
-	currentTime += dt / 1000.0f;
 
-	if (currentTime < 181)
-	{
-		lastTime = currentTime;
-		scoreboardComponent->Update(scores[0], scores[1], currentTime);
 	}
+	else{
 
-	if (goalScored > 0) {
-		if (timerCount == 0)
+		currentTime += dt / 1000.0f;
+
+		if (currentTime - lastTime > 1)
 		{
-			IncrementScore(goalScored - 1);
-			TriggerExplosion();
+			lastTime = currentTime;
+			scoreboardComponent->Update(scores[0], scores[1], currentTime);
+			//GET_DEBUG_STREAM().str().substr()
+
+#ifndef DEBUG_DRAW
+
+			vector<std::string>tokens;
+			std::string t;
+			while (std::getline(GET_DEBUG_STREAM(), t, '\n')) {
+				tokens.push_back(t.substr(2, std::string::npos));
+			}
+
+			float fpsStep = 1 / (std::stof(tokens[1]) + std::stof(tokens[3])) * 1000;
+			float physicsStep = std::stof(tokens[1]);
+			std::string fps = "FPS: " + std::to_string(fpsStep).substr(0, 5);
+			std::string physics = "Physics: " + tokens[1].substr(0, 5);
+			std::string graphics = "Graphics: " + tokens[3].substr(0, 5);
+
+			FPSDebugTextComponent->Update(fps);
+			physicsDebugTextComponent->Update(physics);
+			graphicsDebugTextComponent->Update(graphics);
+#endif
 		}
 
-		timerCount += dt / 1000.0f;
+		if (goalScored > 0) {
+			if (timerCount == 0)
+			{
+				IncrementScore(goalScored - 1);
+				TriggerExplosion();
+			}
 
-		//Increment goals for team 1
-		if (timerCount > 3.0f)
-		{
-			timerCount = 0;
-			goalScored = false;
-			ResetObjects();
+			timerCount += dt / 1000.0f;
+
+			//Increment goals for team 1
+			if (timerCount > 3.0f)
+			{
+				timerCount = 0;
+				goalScored = false;
+				ResetObjects();
+			}
+		}
+
+		float boost = floor(std::max(player->GetControllerComponent()->boost * 100.0f, 0.0f));
+		if (boost > 99.0f) {
+			boostComponent->Update(std::string("Boost:" + std::to_string(boost).substr(0, 3) + "%"));
+		}
+		else if (boost < 10.0f) {
+			boostComponent->Update(std::string("Boost:" + std::to_string(boost).substr(0, 1) + "%"));
+		}
+		else {
+			boostComponent->Update(std::string("Boost:" + std::to_string(boost).substr(0, 2) + "%"));
+		}
+
+		float speed = floor(std::max(player->GetControllerComponent()->getForwardVelocity(), 0.0f)) / 2.0f;
+		if (speed > 99.0f) {
+			speedComponent->Update(std::string(std::to_string(speed).substr(0, 3) + "mph"));
+		}
+		else if (speed < 10.0f) {
+			speedComponent->Update(std::string(std::to_string(speed).substr(0, 1) + "mph"));
+		}
+		else {
+			speedComponent->Update(std::string(std::to_string(speed).substr(0, 2) + "mph"));
 		}
 	}
 }
 
 void GameScene::SetupGameObjects()
 {
-	light1 = new GameObject("l");
+	light1 = new GameObject("light1");
 	light1->SetRenderComponent(new RenderComponent(lightMaterial, ModelLoader::LoadMGL(MODEL_DIR"Common/ico.mgl", true)));
 	light1->SetWorldTransform(Mat4Graphics::Translation(Vec3Graphics(0, 2, 0.3f)) *Mat4Graphics::Scale(Vec3Graphics(20, 20, 20)));
 	light1->SetBoundingRadius(20);
 
-	light2 = new GameObject("l");
+	light2 = new GameObject("light2");
 	light2->SetRenderComponent(new RenderComponent(lightMaterial, ModelLoader::LoadMGL(MODEL_DIR"Common/ico.mgl", true)));
 	light2->SetWorldTransform(Mat4Graphics::Translation(Vec3Graphics(600, 900, 600)) *Mat4Graphics::Scale(Vec3Graphics(2400, 2400, 2400)));
 	light2->SetBoundingRadius(2400);
 
 	ball = new BallGameObject("ball", ballMaterial);
 
-	player = new CarGameObject(Vec3Physics(100, 2, 0), QuatPhysics(0, 1, 0, 1), playerMaterial, "player");
-
-	shooterAI = new CarGameObject(Vec3Physics(-190, 2, 30), QuatPhysics::IDENTITY, aiMaterial, "shooterAI", COL_AI_CAR);
-
-	goalieAI = new CarGameObject(Vec3Physics(-230, 2, 0), QuatPhysics::IDENTITY, aiMaterial, "goalieAI", COL_AI_CAR);
+	player = new CarGameObject(Vec3Physics(195, 2, 0), QuatPhysics(0, 1, 0, 1), playerMaterial, RED_TEAM, "player");
+	shooterAI = new CarGameObject(Vec3Physics(-190, 2, 30), QuatPhysics::IDENTITY, aiMaterial, BLUE_TEAM, "shooterAI", COL_AI_CAR);
+	goalieAI = new CarGameObject(Vec3Physics(-330, 2, 0), QuatPhysics::IDENTITY, aiMaterial, BLUE_TEAM, "goalieAI", COL_AI_CAR);
+	aggroAI = new CarGameObject(Vec3Physics(-190, 2, -30), QuatPhysics(0, 0, 0, 1), ai2Material, BLUE_TEAM, "aggroAI", COL_AI_CAR);
 
 	pickupManager = new PickupManager(material);
 	for (auto pickupMapping : *(pickupManager->GetPickups()))
@@ -134,26 +191,25 @@ void GameScene::SetupGameObjects()
 		addGameObject(pickupMapping.second);
 	}
 
-	aggroAI = new CarGameObject(Vec3Physics(-190, 2, -30), QuatPhysics(0, 0, 0, 1), ai2Material, "aggroAI", COL_AI_CAR);
 
 	// Create Stadium
 	stadium = new Stadium(material, netMaterial, redPostMaterial, bluePostMaterial, "stadium");
 
-	goal1 = new GameObject("goal1");
-	goalBox = new RigidPhysicsObject();
-	goalBox->CreateCollisionShape(Vec3Physics(7.0, 15.0, 35.0) * 1.5f, CUBOID);
-	goalBox->CreatePhysicsBody(0.0, Vec3Physics(268, 17, 0) * 1.5f, QuatPhysics::IDENTITY, Vec3Physics::ONES, true);
-	goalBox->GetPhysicsBody()->getBroadphaseProxy()->m_collisionFilterGroup = COL_GROUP_DEFAULT;
-	goalBox->GetPhysicsBody()->getBroadphaseProxy()->m_collisionFilterMask = COL_GOAL1;
-	goal1->SetPhysicsComponent(goalBox);
+	redGoal = new GameObject("redGoal");
+	redGoalBox = new RigidPhysicsObject();
+	redGoalBox->CreateCollisionShape(Vec3Physics(7.0, 15.0, 35.0) * 1.5f, CUBOID);
+	redGoalBox->CreatePhysicsBody(0.0, Vec3Physics(268, 17, 0) * 1.5f, QuatPhysics::IDENTITY, Vec3Physics::ONES, true);
+	redGoalBox->GetPhysicsBody()->getBroadphaseProxy()->m_collisionFilterGroup = COL_GROUP_DEFAULT;
+	redGoalBox->GetPhysicsBody()->getBroadphaseProxy()->m_collisionFilterMask = COL_GOAL1;
+	redGoal->SetPhysicsComponent(redGoalBox);
 
-	goal2 = new GameObject("goal2");
-	goalBox2 = new RigidPhysicsObject();
-	goalBox2->CreateCollisionShape(Vec3Physics(7.0, 15.0, 35.0) * 1.5f, CUBOID);
-	goalBox2->CreatePhysicsBody(0.0, Vec3Physics(-268, 17, 0) * 1.5f, QuatPhysics::IDENTITY, Vec3Physics::ONES, true);
-	goalBox2->GetPhysicsBody()->getBroadphaseProxy()->m_collisionFilterGroup = COL_GROUP_DEFAULT;
-	goalBox2->GetPhysicsBody()->getBroadphaseProxy()->m_collisionFilterMask = COL_GOAL2;
-	goal2->SetPhysicsComponent(goalBox2);
+	blueGoal = new GameObject("blueGoal");
+	blueGoalBox = new RigidPhysicsObject();
+	blueGoalBox->CreateCollisionShape(Vec3Physics(7.0, 15.0, 35.0) * 1.5f, CUBOID);
+	blueGoalBox->CreatePhysicsBody(0.0, Vec3Physics(-268, 17, 0) * 1.5f, QuatPhysics::IDENTITY, Vec3Physics::ONES, true);
+	blueGoalBox->GetPhysicsBody()->getBroadphaseProxy()->m_collisionFilterGroup = COL_GROUP_DEFAULT;
+	blueGoalBox->GetPhysicsBody()->getBroadphaseProxy()->m_collisionFilterMask = COL_GOAL2;
+	blueGoal->SetPhysicsComponent(blueGoalBox);
 
 
 	addGameObject(stadium);
@@ -162,8 +218,8 @@ void GameScene::SetupGameObjects()
 	addGameObject(shooterAI);
 	addGameObject(goalieAI);
 	addGameObject(aggroAI);
-	addGameObject(goal1);
-	addGameObject(goal2);
+	addGameObject(redGoal);
+	addGameObject(blueGoal);
 
 	addLightObject(light2);
 
@@ -209,11 +265,11 @@ void GameScene::SetupShaders()
 #endif
 	if (!pointlightShader->IsOperational())
 		std::cout << "Point light shader not operational!" << std::endl;
-	if(!simpleShader->IsOperational())
+	if (!simpleShader->IsOperational())
 		std::cout << "Simple shader not operational!" << std::endl;
 	if (!colourShader->IsOperational())
 		std::cout << "Colour shader not operational!" << std::endl;
-	if(!orthoShader->IsOperational())
+	if (!orthoShader->IsOperational())
 		std::cout << "ortho shader not operational!" << std::endl;
 	if (!particleShader->IsOperational())
 		std::cout << "particle shader not operational!" << std::endl;
@@ -267,11 +323,26 @@ void GameScene::DrawGUI()
 	//Define Orthographic Component
 	hudOrtho = new OrthoComponent(1.0f);
 	//Add child GUI components, while defining materials, texture, and depth
-	scoreboardComponent = new ScoreboardGUIComponent(guiMaterial, Texture::Get(TEXTURE_DIR"tahoma.tga"), 1.0);
+
+	scoreboardComponent = new ScoreboardGUIComponent(guiMaterial, std::to_string(0) + " - " + "3:00" + " - 0", Vec3Graphics(-0.6f, 0.7f, 0), Vec3Graphics(0.1f, 0.1f, 1));
 	hudOrtho->AddGUIComponent(scoreboardComponent);
 
+#if _DEBUG
+	FPSDebugTextComponent = new TextGUIComponent(guiMaterial, GET_DEBUG_STREAM().str(), Vec3Graphics(-1.0f, -0.7f, 0), Vec3Graphics(0.04f, 0.04f, 1));
+	hudOrtho->AddGUIComponent(FPSDebugTextComponent);
+	physicsDebugTextComponent = new TextGUIComponent(guiMaterial, GET_DEBUG_STREAM().str(), Vec3Graphics(-1.0f, -0.8f, 0), Vec3Graphics(0.04f, 0.04f, 1));
+	hudOrtho->AddGUIComponent(physicsDebugTextComponent);
+	graphicsDebugTextComponent = new TextGUIComponent(guiMaterial, GET_DEBUG_STREAM().str(), Vec3Graphics(-1.0f, -0.9f, 0), Vec3Graphics(0.04f, 0.04f, 1));
+	hudOrtho->AddGUIComponent(graphicsDebugTextComponent);
+#endif
+
+	speedComponent = new TextGUIComponent(guiMaterial, "0mph", Vec3Graphics(0.53f, -0.8f, 0), Vec3Graphics(0.05f, 0.05f, 1));
+	hudOrtho->AddGUIComponent(speedComponent);
+
+	boostComponent = new TextGUIComponent(guiMaterial, "Boost:0%", Vec3Graphics(0.45f, -0.9f, 0), Vec3Graphics(0.05f, 0.05f, 1));
+	hudOrtho->AddGUIComponent(boostComponent);
 	//Add Orthographic component to GUISystem
-	GUISystem::GetInstance().AddOrthoComponent(hudOrtho);
+	guiSystem->AddOrthoComponent(hudOrtho);
 }
 
 void GameScene::SetupControls()
@@ -321,7 +392,7 @@ void GameScene::ResetObjects()
 {
 	PhysicsEngineInstance::Instance()->clearForces();
 
-	//TODO: Reset player positions
+	//Reset player positions
 	ResetObject(*ball);
 	ResetObject(*player);
 	ResetObject(*shooterAI);
@@ -338,9 +409,33 @@ void GameScene::ResetObject(GameObject& object) {
 	dynamic_cast<RigidPhysicsObject*>(object.GetPhysicsComponent())->GetPhysicsBody()->clearForces();
 	dynamic_cast<RigidPhysicsObject*>(object.GetPhysicsComponent())->GetPhysicsBody()->setLinearVelocity(zeroVector);
 	dynamic_cast<RigidPhysicsObject*>(object.GetPhysicsComponent())->GetPhysicsBody()->setAngularVelocity(zeroVector);
-
+	
 	object.GetPhysicsComponent()->GetPhysicsBody()->setWorldTransform(btTransform(btQuaternion(0, 0, 0, 1), btVector3(object.GetSpawnPoint().x, object.GetSpawnPoint().y, object.GetSpawnPoint().z)));
-	if (object.GetControllerComponent()) 
+	if (object.GetControllerComponent())
 		object.GetControllerComponent()->reset();
+
+}
+
+void GameScene::Setup()
+{
+	Scene::Setup();
+	scores[0] = 0;
+	scores[1] = 0;
+
+	SetupGameObjects();
+	SetupParticles();
+	SetupControls();
+	SetControllerActor();
+	SetupAI();
+	LoadAudio();
+
+}
+
+void GameScene::Cleanup()
+{
+	/*ResetObjects();
+	scores[0] = scores[1] = 0;*/
+	Scene::Cleanup();
+	ClearObjects();
 
 }

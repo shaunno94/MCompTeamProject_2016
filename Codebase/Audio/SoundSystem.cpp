@@ -3,7 +3,7 @@
 #include <libsysmodule.h>
 #endif
 
-SoundSystem* SoundSystem::instance = NULL;
+SoundSystem* SoundSystem::instance = nullptr;
 
 SoundSystem::SoundSystem(unsigned int channels)
 {

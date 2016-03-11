@@ -5,6 +5,7 @@
 #include "Helpers\collections.h"
 #include "Frustum.h"
 #include "Rendering\ControllerManager.h"
+#include "GUISystem.h"
 
 class Renderer;
 
@@ -35,10 +36,14 @@ public:
 	const char** getCubeMapDir()	{ return cubemapDir; }
 	unsigned int getNumGhostObjects() { return ghostObjects.size(); }
 
-	Camera* getCamera(){ return cam; }
+	Camera* getCamera()
+	{
+		return cam;
+	}
 
 	//attaches the camera to a game object
-	void attachCam(GameObject* player){
+	void attachCam(GameObject* player)
+	{
 		if (cam)
 			delete cam;
 		cam = new Camera(player);
@@ -48,17 +53,27 @@ public:
 
 	void addGameObject(GameObject* obj);
 	void addLightObject(GameObject* obj);
+	virtual GUISystem* getGUISystem()=0;
+
+	virtual void Setup();
+	virtual void Cleanup();
+	void ClearObjects();
 	void addParticleObject(GameObject* obj);
 
-	void setCubeMap(const char** dir) { cubemapDir = dir; }
 
 	unsigned char renderFlags; //triggers for graphical effects such as post processing and any other info required by the renderer
 
 protected:
 	//Comparators for sorting node lists - opaques (front to back), transparents (back to front). 
 	//Uses distance from camera for comparison.
-	static bool CompareByCameraDistance(const GameObject* a, const GameObject* b) { return (a->m_CamDist < b->m_CamDist); }
-	static bool CompareByCameraDistanceInv(const GameObject* a, const GameObject* b) { return (a->m_CamDist > b->m_CamDist); }
+	static bool CompareByCameraDistance(const GameObject* a, const GameObject* b)
+	{
+		return (a->m_CamDist < b->m_CamDist);
+	}
+	static bool CompareByCameraDistanceInv(const GameObject* a, const GameObject* b)
+	{
+		return (a->m_CamDist > b->m_CamDist);
+	}
 	//Updates game objects by calling OnUpdateObject and then sorts the render lists for opaque and transparent objects.
 	void UpdateNodeLists(float dt, Frustum& frustum, Vec3Graphics camPos);
 	void UpdateFrustumCulling(Frustum& frustum, Vec3Graphics camPos);

@@ -14,28 +14,8 @@
 #include "Rendering\ParticleManager.h"
 #include "Rendering\ScoreboardGUIComponent.h"
 #include "PickupManager.h"
+#include "EndScene.h"
 
-#ifndef ORBIS
-#include "Rendering\KeyboardController.h"
-const string SIMPLESHADER_VERT = SHADER_DIR"textureVertex.glsl";
-const string SIMPLESHADER_FRAG = SHADER_DIR"textureFragment.glsl";
-const string PARTICLE_FRAG = SHADER_DIR"particleFragment.glsl";
-const string COLOURSHADER_FRAG = SHADER_DIR"colourTextureFragment.glsl";
-const string POINTLIGHTSHADER_VERT = SHADER_DIR"2dShadowLightvertex.glsl";
-const string POINTLIGHTSHADER_FRAG = SHADER_DIR"2dShadowLightfragment.glsl";
-const string GUI_VERT = SHADER_DIR"TexturedVertex.glsl";
-const string GUI_FRAG = SHADER_DIR"TexturedFragment.glsl";
-#else
-#include "Rendering\PS4Controller.h"
-const std::string SIMPLESHADER_VERT = SHADER_DIR"textureVertex.sb";
-const std::string SIMPLESHADER_FRAG = SHADER_DIR"textureFragment.sb";
-const std::string PARTICLE_FRAG = SHADER_DIR"particleFragment.sb";
-const std::string COLOURSHADER_FRAG = SHADER_DIR"colourTextureFragment.sb";
-const std::string POINTLIGHTSHADER_VERT = SHADER_DIR"2dShadowLightvertex.sb";
-const std::string POINTLIGHTSHADER_FRAG = SHADER_DIR"2dShadowLightfragment.sb";
-const std::string GUI_VERT = SHADER_DIR"TexturedVertex.sb";
-const std::string GUI_FRAG = SHADER_DIR"TexturedFragment.sb";
-#endif
 #include "BulletCollision\CollisionDispatch\btCollisionWorld.h"
 #include "Helpers\DeltaTimer.h"
 
@@ -71,8 +51,16 @@ public:
 		return pickupManager;
 	}
 
+	GUISystem* getGUISystem() override { return guiSystem; }
+	virtual void Setup() override;
+	virtual void Cleanup() override;
+
+
 protected:
 
+	GUISystem* guiSystem;
+
+	
 	int scores[2];
 
 	void ResetObjects();
@@ -91,12 +79,12 @@ protected:
 	GameObject* aggroAI;
 
 	GameObject* stadium;
-	GameObject* goal1;
-	GameObject* goal2;
+	GameObject* redGoal;
+	GameObject* blueGoal;
 
 	RigidPhysicsObject* ballPhysics;
-	RigidPhysicsObject* goalBox;
-	RigidPhysicsObject* goalBox2;
+	RigidPhysicsObject* redGoalBox;
+	RigidPhysicsObject* blueGoalBox;
 
 	BaseShader* simpleShader;
 	BaseShader* colourShader;
@@ -124,6 +112,11 @@ protected:
 	ControllerComponent* cc;
 
 	OrthoComponent* hudOrtho;
+	TextGUIComponent* speedComponent;
+	TextGUIComponent* boostComponent;
+	TextGUIComponent* FPSDebugTextComponent;
+	TextGUIComponent* physicsDebugTextComponent;
+	TextGUIComponent* graphicsDebugTextComponent;
 	ScoreboardGUIComponent* scoreboardComponent;
 
 	ParticleSystem* playerParticleSystem;

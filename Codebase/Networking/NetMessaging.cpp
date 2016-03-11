@@ -1,3 +1,4 @@
+#ifndef ORBIS
 #include "NetMessaging.h"
 
 
@@ -17,3 +18,4 @@ NetMessage::~NetMessage()
 		data = nullptr;
 	}
 }
+#endif
