@@ -74,6 +74,7 @@ void NetClientSetupScene::UpdateScene(float dt)
 		if (Window::GetKeyboard()->KeyTriggered(KEYBOARD_RETURN))
 		{
 			m_IPGiven = true;
+			client->ConnectToServer(m_IP);
 		}
 	}
 	else
@@ -103,7 +104,7 @@ void NetClientSetupScene::UpdateScene(float dt)
 		}
 		case NetPeerDisconnected:
 		{
-			Renderer::GetInstance()->SetCurrentScene(Renderer::GetInstance()->GetScene(GAME_SCENE));
+			Renderer::GetInstance()->SetCurrentScene(Renderer::GetInstance()->GetScene(MENU_SCENE));
 			break;
 		}
 		default:
@@ -173,7 +174,7 @@ void NetClientSetupScene::LoadAudio()
 
 void NetClientSetupScene::SetupControls()
 {
-	myControllers->setProducer(menuOrtho,2);
+//	myControllers->setProducer(menuOrtho,2);
 }
 
 

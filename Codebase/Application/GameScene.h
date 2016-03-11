@@ -139,6 +139,5 @@ protected:
 	int goalScored = 0;
 
 	bool gameStart;
-	bool debug;
 };
 

@@ -54,11 +54,10 @@ protected:
 	MenuOrthoComponent* menuOrtho;
 
 	MenuBackgroundGUI* menuBg;
-	ButtonGUIComponent* singleBtn;
-	ButtonGUIComponent* multiBtn;
-	ButtonGUIComponent* exitBtn;
+	ButtonGUIComponent* cancelBtn;
 
 	TextGUIComponent* ipText;
+	TextGUIComponent* cancelText;
 
 	NetServer* server;
 	std::vector<std::string*> ips;

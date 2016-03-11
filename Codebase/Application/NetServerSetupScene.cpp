@@ -20,8 +20,12 @@ NetServerSetupScene::~NetServerSetupScene()
 	delete bgMaterial;
 	delete guiMaterial;
 	delete selectBtnMaterial;
+
+	delete cancelBtn;
+
 	delete ipText;
-	delete singleBtn;
+	delete cancelText;
+
 	if (guiSystem)
 		delete guiSystem;
 }
@@ -79,22 +83,25 @@ void NetServerSetupScene::SetupMaterials()
 	bgMaterial = new Material(orthoShader);
 	btnMaterial = new Material(orthoShader);
 	selectBtnMaterial = new Material(orthoShader);
-
-	//textMaterial = new Material(orthoShader);
+	textMaterial = new Material(orthoShader);
 }
 
 void NetServerSetupScene::DrawGUI()
 {
 	ipOrtho = new OrthoComponent(1.0f);
-	ipText = new TextGUIComponent(guiMaterial, *(ips[0]), Vec3Graphics(-1.0f, -0.5, 0), Vec3Graphics(0.04f, 0.04f, 1));
+	ipText = new TextGUIComponent(textMaterial, *(ips[0]), Vec3Graphics(-1.0f, -0.5, 0), Vec3Graphics(0.04f, 0.04f, 1));
 	ipOrtho->AddGUIComponent(ipText);
 
 	connectionOrtho = new OrthoComponent(1.0f);
 
 	menuOrtho = new MenuOrthoComponent(0.5);
-	singleBtn = new ButtonGUIComponent(btnMaterial, selectBtnMaterial, Vec3Graphics(-0.7f, 0.7f, 0), Vec2Graphics(0.2f, 0.1f));
 
-	menuOrtho->AddGUIComponent(singleBtn);
+	cancelBtn = new ButtonGUIComponent(btnMaterial, selectBtnMaterial, Vec3Graphics(0.6f, -0.7f, 0), Vec2Graphics(0.3f, 0.05f));
+	cancelText = new TextGUIComponent(textMaterial, "Cancel", Vec3Graphics(0.3f, -0.7, 0), Vec3Graphics(0.04f, 0.04f, 1));
+
+	cancelBtn->AddChildObject(cancelText);
+
+	menuOrtho->AddGUIComponent(cancelBtn);
 
 	guiSystem->AddOrthoComponent(ipOrtho);
 	guiSystem->AddOrthoComponent(menuOrtho);

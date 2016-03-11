@@ -83,6 +83,8 @@ int main(void)
 		MEASURING_TIMER_LOG_END();
 
 		MEASURING_TIMER_LOG_START("Renderer");
+		if (!renderer.GetCurrentScene())
+			break;
 		renderer.RenderScene(ms);
 		MEASURING_TIMER_LOG_END();
 
