@@ -124,7 +124,7 @@ void MenuScene::SetupMaterials()
 
 void MenuScene::DrawGUI()
 {
-	bgOrtho = new OrthoComponent(1.0f);
+	bgOrtho = new OrthoComponent(1.0);
 	//menuBg = new MenuBackgroundGUI(bgMaterial);
 	//bgOrtho->AddGUIComponent(menuBg);
 
@@ -132,10 +132,12 @@ void MenuScene::DrawGUI()
 	singleBtn = new ButtonGUIComponent(btnMaterial, selectBtnMaterial, Vec3Graphics(-0.7f, 0.7f, 0), Vec2Graphics(0.2f, 0.1f));
 	multiBtn = new ButtonGUIComponent(btnMaterial, selectBtnMaterial, Vec3Graphics(-0.7f, 0.4f, 0), Vec2Graphics(0.2f, 0.1f));
 	exitBtn = new ButtonGUIComponent(btnMaterial, selectBtnMaterial, Vec3Graphics(-0.7f, 0.1f, 0), Vec2Graphics(0.2f, 0.1f));
+	titleImg = new MenuBackgroundGUI(bgMaterial);
 
 	menuOrtho->AddGUIComponent(singleBtn);
 	menuOrtho->AddGUIComponent(multiBtn);
 	menuOrtho->AddGUIComponent(exitBtn);
+	bgOrtho->AddGUIComponent(titleImg);
 
 	guiSystem->AddOrthoComponent(bgOrtho);
 	guiSystem->AddOrthoComponent(menuOrtho);

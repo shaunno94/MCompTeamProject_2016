@@ -67,6 +67,7 @@ protected:
 	ButtonGUIComponent* singleBtn;
 	ButtonGUIComponent* multiBtn;
 	ButtonGUIComponent* exitBtn;
+	MenuBackgroundGUI* titleImg;
 
 	Mesh* lightMesh;
 

@@ -11,8 +11,8 @@ const float TIME_STEP = 1.0f / 120.0f;
 const unsigned int SUB_STEPS = 4;
 
 #ifndef ORBIS
-const unsigned int SCREEN_HEIGHT = 800;
-const unsigned int SCREEN_WIDTH = 1280;
+const unsigned int SCREEN_HEIGHT = 1080;
+const unsigned int SCREEN_WIDTH = 1920;
 #else
 #include "Input\PS4Input.h"
 #include "Rendering\PS4Controller.h"
@@ -30,7 +30,7 @@ int main(void)
 	//-------------------
 
 	//Initialise Renderer - including the window context if compiling for Windows - PC
-	Renderer renderer("Team Project - 2016", SCREEN_WIDTH, SCREEN_HEIGHT, false);
+	Renderer renderer("Team Project - 2016", SCREEN_WIDTH, SCREEN_HEIGHT, true);
 	if (!renderer.HasInitialised())
 	{
 		return -1;
