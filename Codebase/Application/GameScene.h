@@ -14,6 +14,7 @@
 #include "Rendering\ParticleManager.h"
 #include "Rendering\ScoreboardGUIComponent.h"
 #include "PickupManager.h"
+#include "EndScene.h"
 
 #ifndef ORBIS
 #include "Rendering\KeyboardController.h"

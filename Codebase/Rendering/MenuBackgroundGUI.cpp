@@ -2,9 +2,6 @@
 
 MenuBackgroundGUI::MenuBackgroundGUI(Material* material, bool visible) : GUIComponent(material, visible)
 {
-	m_Texture = Texture::Get(TEXTURE_DIR"titleScreen1.jpg");
-	m_Material->Set(ReservedMeshTextures.DIFFUSE.name, m_Texture);
-
 	m_Mesh = Mesh::GenerateQuad();
 	SetRenderComponent(new RenderComponent(m_Material, m_Mesh));
 }
@@ -12,7 +9,7 @@ MenuBackgroundGUI::MenuBackgroundGUI(Material* material, bool visible) : GUIComp
 MenuBackgroundGUI::~MenuBackgroundGUI()
 {
 	delete m_Mesh;
-	m_Texture->Clear();
+	//m_Texture->Clear();
 }
 
 

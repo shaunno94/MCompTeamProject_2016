@@ -4,6 +4,7 @@
 #include "PickupManager.h"
 #include "AI/constants.h"
 
+
 GameScene::GameScene()
 {
 	//initialise conroller manager
@@ -87,7 +88,15 @@ void GameScene::UpdateScene(float dt)
 
 	if (currentTime > 10)
 	{
-		Renderer::GetInstance()->SetCurrentScene(Renderer::GetInstance()->GetScene(3));
+		Scene* endScene = Renderer::GetInstance()->GetScene(3);
+		team winner;
+		if (scores[0] > scores[1])
+			((EndScene*)endScene)->SetWinningTeam(BLUE_TEAM);
+		else if(scores[0] < scores[1])
+			((EndScene*)endScene)->SetWinningTeam(RED_TEAM);
+		else
+			((EndScene*)endScene)->SetWinningTeam(TIE);
+		Renderer::GetInstance()->SetCurrentScene(endScene);
 		currentTime = 0;
 		lastTime = 0;
 		
@@ -373,5 +382,6 @@ void GameScene::Setup()
 
 void GameScene::Cleanup()
 {
-
+	ResetObjects();
+	scores[0] = scores[1] = 0;
 }
