@@ -11,6 +11,12 @@ enum SCENES
 	CLIENT_GAME_SCENE
 };
 
+enum TEAMS {
+	RED_TEAM,
+	BLUE_TEAM
+};
+
+
 
 #ifndef ORBIS
 #include "Rendering\KeyboardController.h"
