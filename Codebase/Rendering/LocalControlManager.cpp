@@ -36,3 +36,8 @@ void LocalControlManager::setupActors()
 		ai->setupAI();
 	}
 }
+
+void LocalControlManager :: clear(){
+	aiControllers.clear();
+	ControllerManager::clear();
+}

@@ -22,3 +22,7 @@ void ControllerManager::update(float ms){
 		ctrl->CheckInput();
 	}
 }
+
+void ControllerManager::clear(){
+	controllers.clear();
+}

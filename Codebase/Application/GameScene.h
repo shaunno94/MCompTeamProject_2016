@@ -14,6 +14,7 @@
 #include "Rendering\ParticleManager.h"
 #include "Rendering\ScoreboardGUIComponent.h"
 #include "PickupManager.h"
+#include "EndScene.h"
 
 #include "BulletCollision\CollisionDispatch\btCollisionWorld.h"
 #include "Helpers\DeltaTimer.h"
@@ -58,7 +59,7 @@ protected:
 	
 	GUISystem* guiSystem;
 
-	ControllerManager* myControllers;
+	
 	int scores[2];
 
 	void ResetObjects();

@@ -10,7 +10,15 @@
 #ifndef ORBIS
 const string END_VERT = SHADER_DIR"TexturedVertex.glsl";
 const string END_FRAG = SHADER_DIR"TexturedFragment.glsl";
+#else
+#include "Input\PS4Input.h"
 #endif
+
+enum team{
+	RED_WINS,
+	BLUE_WINS,
+	TIE
+};
 
 class EndScene :
 	public Scene
@@ -21,12 +29,14 @@ public:
 
 	virtual void UpdateScene(float dt) override;
 
+	void Setup() override;
 	void SetupGameObjects();
 	void SetupShaders();
 	void SetupMaterials();
 	void DrawGUI();
 	void LoadAudio();
 	void SetupControls();
+	void SetWinningTeam(team team){ winningTeam = team; }
 
 	GUISystem* getGUISystem(){ return guiSystem; }
 
@@ -41,18 +51,14 @@ protected:
 
 	Material* guiMaterial;
 	Material* textMaterial;
-	Material* bgMaterial;
-	Material* btnMaterial;
-	Material* selectBtnMaterial;
+	Material* bgMaterials[3];
 
 	OrthoComponent* bgOrtho;
 	MenuOrthoComponent* menuOrtho;
 
 	MenuBackgroundGUI* background;
-	ButtonGUIComponent* toMenuBtn;
-	ButtonGUIComponent* restartBtn;
 
-	int m_Selected;
+	team winningTeam;
 };
 
 
