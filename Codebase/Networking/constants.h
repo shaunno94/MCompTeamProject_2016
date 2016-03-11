@@ -2,11 +2,11 @@
 
 #include <cstdint>
 
-#define NET_DEBUG
+//#define NET_DEBUG
 
 
 #ifdef NET_DEBUG
-#define  ENET_DEBUG
+//#define  ENET_DEBUG
 #endif
 
 #ifdef NET_DEBUG
