@@ -241,7 +241,7 @@ void PS4Renderer::FillBuffers()
 	DebugDraw::Instance()->RenderLine();
 #endif
 
-	child->OnRenderScene();
+	child->OnRenderScene(false);
 }
 
 void PS4Renderer::DrawSkyBox()
@@ -327,7 +327,7 @@ void PS4Renderer::DrawShadow2D(GameObject* light)
 	child->lightFrustrum.FromMatrix(projMatrix * viewMatrix);
 	child->OnUpdateScene(child->lightFrustrum, light->GetWorldTransform().GetTranslation());
 
-	child->OnRenderScene();
+	child->OnRenderScene(true);
 
 	viewMatrix = child->currentScene->getCamera()->BuildViewMatrix();
 	projMatrix = child->localProjMat;

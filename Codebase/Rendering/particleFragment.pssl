@@ -1,5 +1,5 @@
+SamplerState samp0	: register(s0);
 
-SamplerState samp0 : register(s0);
 Texture2D diffuseTex : register(t0);
 
 struct VS_OUTPUT
@@ -25,6 +25,8 @@ PS_OUTPUT main(VS_OUTPUT In) : S_TARGET_OUTPUT
 	{
 		discard;
 	}
+	colour.a *= 0.2;
+
 	Output.colour = colour;
 	Output.normal = float4(In.normal.xyz * 0.5 + 0.5, 1.0);
 	return Output;

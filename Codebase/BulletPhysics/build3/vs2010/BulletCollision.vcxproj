@@ -124,6 +124,10 @@
       <FloatingPointModel>Fast</FloatingPointModel>
       <DebugInformationFormat>
       </DebugInformationFormat>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
+      <WholeProgramOptimization>true</WholeProgramOptimization>
+      <InlineFunctionExpansion>AnySuitable</InlineFunctionExpansion>
     </ClCompile>
     <ResourceCompile>
       <PreprocessorDefinitions>
@@ -158,9 +162,11 @@
       <FloatingPointModel>Fast</FloatingPointModel>
       <DebugInformationFormat>
       </DebugInformationFormat>
-      <OptimizationLevel>Level3</OptimizationLevel>
+      <OptimizationLevel>Levels</OptimizationLevel>
       <UnrollLoops>true</UnrollLoops>
       <RuntimeTypeInfo>true</RuntimeTypeInfo>
+      <FastMath>true</FastMath>
+      <LinkTimeOptimization>true</LinkTimeOptimization>
     </ClCompile>
     <ResourceCompile>
       <PreprocessorDefinitions>

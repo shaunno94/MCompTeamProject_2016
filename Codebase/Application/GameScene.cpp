@@ -3,6 +3,7 @@
 #include "GoalCollisionFilterStep.h"
 #include "PickupManager.h"
 #include "AI/constants.h"
+#include "Rendering\ParticleSystem.h"
 
 GameScene::GameScene()
 {
@@ -11,7 +12,6 @@ GameScene::GameScene()
 
 	//Initialise Bullet physics engine.
 	PhysicsEngineInstance::Instance()->setGravity(btVector3(0, -9.81, 0));
-	SoundSystem::Initialise(32);
 
 	GUISystem::Initialise();
 	if (!GUISystem::GetInstance().HasInitialised())
@@ -172,7 +172,7 @@ void GameScene::SetupGameObjects()
 
 void GameScene::LoadAudio()
 {
-	SoundSystem::Initialise();
+	SoundSystem::Initialise(32);
 	//-------- SOUND
 	// load in files
 	SoundManager::LoadAssets();
@@ -199,13 +199,13 @@ void GameScene::SetupShaders()
 	colourShader = new OGLShader(SIMPLESHADER_VERT, COLOURSHADER_FRAG);
 	pointlightShader = new OGLShader(POINTLIGHTSHADER_VERT, POINTLIGHTSHADER_FRAG);
 	orthoShader = new OGLShader(GUI_VERT, GUI_FRAG);
-	particleShader = new OGLShader(SIMPLESHADER_VERT, SIMPLESHADER_FRAG, PARTICLE_GEO);
+	particleShader = new OGLShader(SIMPLESHADER_VERT, PARTICLE_FRAG);
 #else
 	simpleShader = new PS4Shader(SIMPLESHADER_VERT, SIMPLESHADER_FRAG);
 	colourShader = new PS4Shader(SIMPLESHADER_VERT, SIMPLESHADER_FRAG);
 	pointlightShader = new PS4Shader(POINTLIGHTSHADER_VERT, POINTLIGHTSHADER_FRAG);
 	orthoShader = new PS4Shader(GUI_VERT, GUI_FRAG);
-	particleShader = new PS4Shader(SIMPLESHADER_VERT, SIMPLESHADER_FRAG);
+	particleShader = new PS4Shader(SIMPLESHADER_VERT, PARTICLE_FRAG);
 #endif
 	if (!pointlightShader->IsOperational())
 		std::cout << "Point light shader not operational!" << std::endl;
@@ -216,7 +216,7 @@ void GameScene::SetupShaders()
 	if(!orthoShader->IsOperational())
 		std::cout << "ortho shader not operational!" << std::endl;
 	if (!particleShader->IsOperational())
-		std::cout << "Particle shader not operational!" << std::endl;
+		std::cout << "particle shader not operational!" << std::endl;
 }
 
 void GameScene::SetupMaterials()
@@ -241,7 +241,7 @@ void GameScene::SetupMaterials()
 	aiMaterial->Set(ReservedMeshTextures.DIFFUSE.name, Texture::Get(MODEL_DIR"car/body1.bmp", true));
 	ai2Material->Set(ReservedMeshTextures.DIFFUSE.name, Texture::Get(MODEL_DIR"car/body2.bmp", true));
 	
-	particleMaterial->Set(ReservedMeshTextures.DIFFUSE.name, Texture::Get(TEXTURE_DIR"particle.tga", true));
+	particleMaterial->Set(ReservedMeshTextures.DIFFUSE.name, Texture::Get(TEXTURE_DIR"smokeparticle.png", true));
 	particleMaterial->hasTranslucency = true;
 }
 
@@ -252,10 +252,14 @@ void GameScene::SetupParticles()
 		std::cout << "Particle Manager not Initialised" << std::endl;
 		return;
 	}
-
-	emitter = new CubeEmitter();
-	particleSystem = new ParticleSystem(emitter, particleMaterial, player, this, 36);
-	ParticleManager::Instance()->AddSystem(particleSystem);
+	playerParticleSystem = new ParticleSystem(particleMaterial, player, this, 200);
+	AI1_ParticleSystem = new ParticleSystem(particleMaterial, shooterAI, this, 200);
+	AI2_ParticleSystem = new ParticleSystem(particleMaterial, goalieAI, this, 200);
+	AI3_ParticleSystem = new ParticleSystem(particleMaterial, aggroAI, this, 200);
+	ParticleManager::Instance()->AddSystem(playerParticleSystem);
+	ParticleManager::Instance()->AddSystem(AI1_ParticleSystem);
+	ParticleManager::Instance()->AddSystem(AI2_ParticleSystem);
+	ParticleManager::Instance()->AddSystem(AI3_ParticleSystem);
 }
 
 void GameScene::DrawGUI()

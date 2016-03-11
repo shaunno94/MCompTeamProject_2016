@@ -99,7 +99,7 @@ void Renderer::OnUpdateScene(Frustum& frustum, Vec3Graphics camPos)
 	currentScene->UpdateFrustumCulling(frustum, camPos);
 }
 
-void Renderer::OnRenderScene()
+void Renderer::OnRenderScene(bool shadowPass)
 {
 	for (unsigned int i = 0; i < currentScene->getNumOpaqueObjects(); ++i)
 		currentScene->getOpaqueObject(i)->OnRenderObject();
@@ -107,8 +107,11 @@ void Renderer::OnRenderScene()
 	for (unsigned int i = 0; i < currentScene->getNumTransparentObjects(); ++i)
 		currentScene->getTransparentObject(i)->OnRenderObject();
 
-	for (unsigned int i = 0; i < currentScene->getNumParticleObjects(); ++i)
-		currentScene->getParticleObject(i)->OnRenderObject();
+	if (!shadowPass)
+	{
+		for (unsigned int i = 0; i < currentScene->getNumParticleObjects(); ++i)
+			currentScene->getParticleObject(i)->OnRenderObject();
+	}
 }
 
 void Renderer::OnRenderLights()

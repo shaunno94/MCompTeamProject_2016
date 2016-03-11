@@ -511,6 +511,9 @@
     <OrbisWavePsslc Include="ColourTextureFragment.pssl">
       <Filter>PS4Shaders</Filter>
     </OrbisWavePsslc>
+    <OrbisWavePsslc Include="particleFragment.pssl">
+      <Filter>PS4Shaders</Filter>
+    </OrbisWavePsslc>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="Rendering.rc">

@@ -135,7 +135,6 @@ public:
 		return m_Audio;
 	}
 
-
 	Vec3Graphics GetSpawnPoint() const { return m_spawnPoint; }
 protected:
 	virtual void OnRenderObject();			//Handles OpenGL calls to Render the object

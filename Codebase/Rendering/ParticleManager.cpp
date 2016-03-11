@@ -47,6 +47,7 @@ void ParticleManager::Destroy()
 		for (auto& system : particleManager->m_Systems)
 		{
 			delete system;
+			system = nullptr;
 		}
 		particleManager->m_Systems.clear();
 		delete particleManager;
