@@ -73,11 +73,6 @@ protected:
 
 	Mesh* lightMesh;
 
-	TextGUIComponent* singleBtnText;
-	TextGUIComponent* hostGameBtnText;
-	TextGUIComponent* joinGameBtnText;
-	TextGUIComponent* exitBtnText;
-
 	int m_Selected;
 
 	float rotation;

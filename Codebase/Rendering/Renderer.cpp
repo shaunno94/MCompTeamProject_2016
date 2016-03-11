@@ -40,10 +40,14 @@ void Renderer::UpdateScene(float msec)
 	{
 		currentScene->getCamera()->UpdateCamera(msec);
 		currentScene->UpdateScene(msec);
-		viewMatrix = currentScene->getCamera()->BuildViewMatrix();
-		//Updates all objects in the scene, sorts lists for rendering
-		frameFrustrum.FromMatrix(projMatrix * viewMatrix);
-		currentScene->UpdateNodeLists(msec, frameFrustrum, currentScene->getCamera()->GetPosition());
+		if (currentScene)
+		{
+			viewMatrix = currentScene->getCamera()->BuildViewMatrix();
+			//Updates all objects in the scene, sorts lists for rendering
+			frameFrustrum.FromMatrix(projMatrix * viewMatrix);
+			currentScene->UpdateNodeLists(msec, frameFrustrum, currentScene->getCamera()->GetPosition());
+
+		}
 	}
 
 }

@@ -5,6 +5,8 @@ ButtonGUIComponent::ButtonGUIComponent(Material* material, Material* matSelected
 	m_MatSelected = matSelected;
 
 	m_Selected = selected;
+	m_pos = pos;
+	m_scale = scale;
 
 	m_Texture = Texture::Get(TEXTURE_DIR"button1.png");
 	m_TexSelected = Texture::Get(TEXTURE_DIR"blue.png");
@@ -32,4 +34,10 @@ void ButtonGUIComponent::Update()
 	{
 		GetRenderComponent()->m_Material = m_MatSelected;
 	}
+}
+
+void ButtonGUIComponent::AddText(Material* textMaterial, const std::string& text)
+{
+	m_Text =  new TextGUIComponent(textMaterial, text, Vec3Graphics(m_pos.x - 0.3f, m_pos.y + 0.02f, 0.0f), Vec3Graphics(m_scale.x / 10, m_scale.y, 0));
+	AddChildObject(m_Text);
 }

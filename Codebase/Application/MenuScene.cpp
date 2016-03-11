@@ -130,15 +130,10 @@ void MenuScene::DrawGUI()
 	joinGameBtn = new ButtonGUIComponent(btnMaterial, selectBtnMaterial, Vec3Graphics(-0.6f, 0.3f, 0.0f), Vec2Graphics(0.3f, 0.05f));
 	exitBtn = new ButtonGUIComponent(btnMaterial, selectBtnMaterial, Vec3Graphics(-0.6f, 0.1f, 0.0f), Vec2Graphics(0.3f, 0.05f));
 
-	singleBtnText = new TextGUIComponent(textMaterial, "Single Player", Vec3Graphics(-0.9f, 0.7f, 0.0f), Vec3Graphics(0.04f, 0.04f, 1));
-	hostGameBtnText = new TextGUIComponent(textMaterial, "Host Game", Vec3Graphics(-0.9f, 0.5f, 0.0f), Vec3Graphics(0.04f, 0.04f, 1));
-	joinGameBtnText = new TextGUIComponent(textMaterial, "Join Game", Vec3Graphics(-0.9f, 0.3f, 0.0f), Vec3Graphics(0.04f, 0.04f, 1));
-	exitBtnText = new TextGUIComponent(textMaterial, "Quit", Vec3Graphics(-0.9f, 0.1f, 0.0f), Vec3Graphics(0.04f, 0.04f, 1));
-
-	singleBtn->AddChildObject(singleBtnText);
-	hostGameBtn->AddChildObject(hostGameBtnText);
-	joinGameBtn->AddChildObject(joinGameBtnText);
-	exitBtn->AddChildObject(exitBtnText);
+	singleBtn->AddText(textMaterial, "Single Player");
+	hostGameBtn->AddText(textMaterial, "Host Game");
+	joinGameBtn->AddText(textMaterial, "Join Game");
+	exitBtn->AddText(textMaterial, "Quit");
 
 	menuOrtho->AddGUIComponent(singleBtn);
 	menuOrtho->AddGUIComponent(hostGameBtn);

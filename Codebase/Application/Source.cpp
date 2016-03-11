@@ -59,8 +59,8 @@ int main(void)
 	renderer.AddScene(menuScene);
 	renderer.AddScene(gameScene);
 	renderer.AddScene(serverScene);
-	renderer.AddScene(clientScene);
 	renderer.AddScene(endScene);
+	renderer.AddScene(clientScene);
 	
 	//Set current scene to the game
 	renderer.SetCurrentScene(menuScene);
