@@ -22,7 +22,11 @@ TextGUIComponent::~TextGUIComponent()
 
 void TextGUIComponent::Update(const std::string& text)
 {
-	delete m_Mesh;
+	if (m_Mesh)
+	{
+		delete m_Mesh;
+		m_Mesh = nullptr;
+	}
 	
 	m_Mesh = Mesh::GenerateTextQuad(text, m_Font);
 
