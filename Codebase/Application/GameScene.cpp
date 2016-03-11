@@ -139,6 +139,16 @@ void GameScene::UpdateScene(float dt)
 		boostComponent->Update(std::string("Boost:" + std::to_string(boost).substr(0, 2) + "%"));
 	}
 
+	float speed = floor(std::max(player->GetControllerComponent()->getForwardVelocity(), 0.0f)) / 2.0f;
+	if (speed > 99.0f) {
+		speedComponent->Update(std::string(std::to_string(speed).substr(0,3) + "mph"));
+	}
+	else if (speed < 10.0f) {
+		speedComponent->Update(std::string(std::to_string(speed).substr(0, 1) + "mph"));
+	}
+	else {
+		speedComponent->Update(std::string(std::to_string(speed).substr(0, 2) + "mph"));
+	}
 }
 
 void GameScene::SetupGameObjects()
@@ -284,6 +294,9 @@ void GameScene::DrawGUI()
 	graphicsDebugTextComponent = new TextGUIComponent(guiMaterial, GET_DEBUG_STREAM().str(), Vec3Graphics(-1.0f, -0.9f, 0), Vec3Graphics(0.04f, 0.04f, 1));
 	hudOrtho->AddGUIComponent(graphicsDebugTextComponent);
 #endif
+
+	speedComponent = new TextGUIComponent(guiMaterial, "0mph", Vec3Graphics(0.53f, -0.8f, 0), Vec3Graphics(0.05f, 0.05f, 1));
+	hudOrtho->AddGUIComponent(speedComponent);
 
 	boostComponent = new TextGUIComponent(guiMaterial, "Boost:0%", Vec3Graphics(0.45f, -0.9f, 0), Vec3Graphics(0.05f, 0.05f, 1));
 	hudOrtho->AddGUIComponent(boostComponent);
