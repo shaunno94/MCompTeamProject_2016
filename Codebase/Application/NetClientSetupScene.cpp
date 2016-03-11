@@ -185,9 +185,7 @@ void NetClientSetupScene::Cleanup()
 	Network::Clear();
 	delete client;
 	client = nullptr;
-
-
-
+	m_IP = "";
 }
 
 

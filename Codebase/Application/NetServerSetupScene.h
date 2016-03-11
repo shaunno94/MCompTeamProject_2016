@@ -38,7 +38,6 @@ public:
 protected:
 	UIControllerManager* myControllers;
 
-	GameObject* test;
 	GUISystem* guiSystem;
 
 	BaseShader* orthoShader;
@@ -54,9 +53,11 @@ protected:
 	MenuOrthoComponent* menuOrtho;
 
 	MenuBackgroundGUI* menuBg;
+	ButtonGUIComponent* startBtn;
 	ButtonGUIComponent* cancelBtn;
 
 	TextGUIComponent* ipText;
+	TextGUIComponent* startText;
 	TextGUIComponent* cancelText;
 
 	NetServer* server;
