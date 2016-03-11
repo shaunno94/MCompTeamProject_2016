@@ -1,6 +1,6 @@
 #pragma once
 #include "Scene.h"
-#define DEBUG_DRAW 0
+#define DEBUG_DRAW 1
 /// @ingroup Rendering
 /// <summary>
 /// Non-platform specific functionality for rendering a <see cref="Scene"/>.
@@ -44,22 +44,6 @@ public:
 	void RenderScene(float msec);
 	void UpdateScene(float msec);
 
-	void togglePause() { 
-		m_paused = !m_paused; 
-		m_pauseCheck = true;
-	}
-
-	bool isPaused() {
-		return m_paused;
-	}
-	bool needsPauseCheck() {
-		return m_pauseCheck;
-	}
-
-	void pauseChecked() {
-		m_pauseCheck = false;
-	}
-
 protected:
 	void OnUpdateScene(Frustum& frustum, Vec3Graphics camPos);
 	void OnRenderScene();
@@ -79,8 +63,5 @@ protected:
 	Scene* currentScene;
 
 	std::vector<Scene*> scenes;
-
-	bool m_paused = false;
-	bool m_pauseCheck = false;
 
 };

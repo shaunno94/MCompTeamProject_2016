@@ -31,7 +31,7 @@ int main(void)
 	//-------------------
 
 	//Initialise Renderer - including the window context if compiling for Windows - PC
-	Renderer renderer("Team Project - 2016", SCREEN_WIDTH, SCREEN_HEIGHT, false);
+	Renderer renderer("Team Project - 2016", SCREEN_WIDTH, SCREEN_HEIGHT, true);
 	if (!renderer.HasInitialised())
 	{
 		return -1;
@@ -84,7 +84,7 @@ int main(void)
 #endif
 		float ms = timer.GetTimer()->Get(1000.0f);
 
-		if (!renderer.isPaused()) {
+		if (!renderer.GetCurrentScene()->isPaused()) {
 			MEASURING_TIMER_LOG_START("Physics");
 			PhysicsEngineInstance::Instance()->stepSimulation(ms, SUB_STEPS, TIME_STEP);
 			MEASURING_TIMER_LOG_END();

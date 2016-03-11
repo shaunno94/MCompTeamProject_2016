@@ -55,6 +55,7 @@ public:
 	virtual void Cleanup() override;
 
 
+
 protected:
 	
 	GUISystem* guiSystem;
@@ -133,5 +134,7 @@ protected:
 	TextGUIComponent* pauseMenuBtnText;
 	ButtonGUIComponent* continueBtn;
 	ButtonGUIComponent* menuBtn;
+
+
 };
 

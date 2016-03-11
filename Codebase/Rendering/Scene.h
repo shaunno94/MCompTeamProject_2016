@@ -88,6 +88,20 @@ public:
 
 	unsigned char renderFlags; //triggers for graphical effects such as post processing and any other info required by the renderer
 
+
+	void togglePause() {
+		m_paused = !m_paused;
+		m_pauseCheck = true;
+	}
+
+	bool isPaused() {
+		return m_paused;
+	}
+	bool needsPauseCheck() {
+		return m_pauseCheck;
+	}
+
+
 protected:
 	//Comparators for sorting node lists - opaques (front to back), transparents (back to front). 
 	//Uses distance from camera for comparison.
@@ -111,5 +125,7 @@ protected:
 	const char** cubemapDir;
 
 	ControllerManager* myControllers;
+	bool m_paused = false;
+	bool m_pauseCheck = false;
 };
 

@@ -106,10 +106,11 @@ void KeyboardController::CheckInput(){
 
 
 	//------camera control-------//
-	float pitch = (Window::GetMouse()->GetRelativePosition().y);
-	float yaw = (Window::GetMouse()->GetRelativePosition().x);
-	object->setCameraControl(pitch, yaw);
-
+	if (!Renderer::GetInstance()->GetCurrentScene()->isPaused()) {
+		float pitch = (Window::GetMouse()->GetRelativePosition().y);
+		float yaw = (Window::GetMouse()->GetRelativePosition().x);
+		object->setCameraControl(pitch, yaw);
+	}
 	if (Window::GetKeyboard()->KeyTriggered(KEYBOARD_Q))
 	{
 		Renderer::GetInstance()->GetCurrentScene()->getCamera()->reset();
@@ -117,12 +118,12 @@ void KeyboardController::CheckInput(){
 
 	if (Window::GetKeyboard()->KeyTriggered(KEYBOARD_P)) {
 		// Pause
-		Renderer::GetInstance()->togglePause();
+		Renderer::GetInstance()->GetCurrentScene()->togglePause();
 	}
 
-	if (Renderer::GetInstance()->isPaused() && Window::GetKeyboard()->KeyTriggered(KEYBOARD_BACK)) {
+	if (Renderer::GetInstance()->GetCurrentScene()->isPaused() && Window::GetKeyboard()->KeyTriggered(KEYBOARD_BACK)) {
 		Scene* menuScene = Renderer::GetInstance()->GetScene(MENU_SCENE);
-		Renderer::GetInstance()->togglePause();
+		Renderer::GetInstance()->GetCurrentScene()->togglePause();
 		Renderer::GetInstance()->SetCurrentScene(menuScene);
 	}
 }

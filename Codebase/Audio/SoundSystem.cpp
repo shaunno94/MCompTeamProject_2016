@@ -222,7 +222,9 @@ AudioSource*	SoundSystem::GetSource()
 void	SoundSystem::SetMasterVolume(float value)
 {
 	masterVolume = value;
+#ifndef ORBIS
 	alListenerf(AL_GAIN, masterVolume);
+#endif
 }
 
 void	SoundSystem::UpdateListener()

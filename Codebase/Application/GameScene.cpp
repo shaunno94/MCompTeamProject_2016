@@ -94,8 +94,8 @@ void GameScene::UpdateScene(float dt)
 
 	}
 	else{
-		if (Renderer::GetInstance()->needsPauseCheck()){
-			if (Renderer::GetInstance()->isPaused()) {
+		if (needsPauseCheck()){
+			if (isPaused()) {
 				SoundSystem::Instance()->SetMasterVolume(0.0f);
 				hudOrtho->AddGUIComponent(pausedComponent);
 				hudOrtho->AddGUIComponent(quitComponent);
@@ -105,7 +105,7 @@ void GameScene::UpdateScene(float dt)
 				hudOrtho->RemoveGUIComponent(pausedComponent);
 				hudOrtho->RemoveGUIComponent(quitComponent);
 			}
-			Renderer::GetInstance()->pauseChecked();
+			m_pauseCheck = false;
 		}
 
 	currentTime += dt / 1000.0f;
@@ -116,7 +116,7 @@ void GameScene::UpdateScene(float dt)
 		scoreboardComponent->Update(scores[0], scores[1], currentTime);
 		//GET_DEBUG_STREAM().str().substr()
 
-#ifndef DEBUG_DRAW
+#ifdef DEBUG_DRAW
 		
 		vector<std::string>tokens;
 		std::string t;
@@ -392,6 +392,7 @@ void GameScene::ResetObjects()
 	ResetObject(*player);
 	ResetObject(*shooterAI);
 	ResetObject(*goalieAI);
+	ResetObject(*friendlyGoalieAI);
 	ResetObject(*aggroAI);
 
 	player->SetWorldTransform(Mat4Graphics::RotationY(-90) * Mat4Graphics::Translation(Vec3Graphics(100, 2, 0)));//have to reset this world transform too, for the camera

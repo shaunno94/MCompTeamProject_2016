@@ -26,11 +26,14 @@ void ShootState::Update(float dt)
 	btVector3 ballPos = m_ball->GetPhysicsComponent()->GetPhysicsBody()->getWorldTransform().getOrigin();
 	btVector3 parentPos = m_parent->GetPhysicsComponent()->GetPhysicsBody()->getWorldTransform().getOrigin();
 
-	btVector3 aiToBall = ballPos - parentPos;
+	btVector3 vel = dynamic_cast<RigidPhysicsObject*>(m_ball->GetPhysicsComponent())->GetPhysicsBody()->getLinearVelocity();
 
-	aiToBall.normalize();
+	btVector3 desiredPos = ballPos + vel;
+	btVector3 aiToDesired = desiredPos - parentPos;
 
-	aiToBall *= 10.0f;
-	m_parent->GetControllerComponent()->AddForce(aiToBall.x(), 0.0f, aiToBall.z());
+	aiToDesired.normalize();
+
+	aiToDesired *= 10.0f;
+	m_parent->GetControllerComponent()->AddForce(aiToDesired.x(), 0.0f, aiToDesired.z());
 }
 

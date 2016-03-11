@@ -36,9 +36,6 @@ Renderer::~Renderer(void)
 
 void Renderer::UpdateScene(float msec)
 {
-	if (m_paused)
-		msec = 0.0f;
-
 	if (currentScene)
 	{
 		currentScene->getCamera()->UpdateCamera(msec);
@@ -53,6 +50,10 @@ void Renderer::UpdateScene(float msec)
 
 void Renderer::RenderScene(float msec)
 {
+	if (GetCurrentScene()->isPaused()) {
+		msec = 0.0f;
+	}
+
 	projMatrix = localProjMat;
 	UpdateScene(msec);
 

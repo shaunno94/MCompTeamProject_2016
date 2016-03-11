@@ -16,8 +16,6 @@ enum TEAMS {
 	BLUE_TEAM
 };
 
-
-
 #ifndef ORBIS
 #include "Rendering\KeyboardController.h"
 const std::string SIMPLESHADER_VERT = SHADER_DIR"textureVertex.glsl";
