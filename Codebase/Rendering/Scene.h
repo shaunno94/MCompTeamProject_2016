@@ -82,8 +82,9 @@ public:
 	}
 	virtual GUISystem* getGUISystem()=0;
 
-	virtual void Setup(){};
-	virtual void Cleanup(){};
+	virtual void Setup();
+	virtual void Cleanup();
+	void ClearObjects();
 
 	unsigned char renderFlags; //triggers for graphical effects such as post processing and any other info required by the renderer
 

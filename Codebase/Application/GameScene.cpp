@@ -3,60 +3,51 @@
 #include "GoalCollisionFilterStep.h"
 #include "PickupManager.h"
 #include "AI/constants.h"
+#include "constants.h"
 
 GameScene::GameScene()
 {
+
 	//initialise conroller manager
 	myControllers = new LocalControlManager();
 
-	//Initialise Bullet physics engine.
-	PhysicsEngineInstance::Instance()->setGravity(btVector3(0, -9.81, 0));
-
-#ifndef ORBIS
-	ParticleManager::Initialise();
-
-	if (ParticleManager::GetManager().HasInitialised())
-	{
-		std::cout << "Particle Manager not Initialised" << std::endl;
-	}
-#endif
 	guiSystem = new GUISystem();
 	if (!guiSystem->HasInitialised())
 	{
 		std::cout << "GUI not Initialised!" << std::endl;
 	}
-	scores[0] = 0;
-	scores[1] = 0;
-
-#if DEBUG_DRAW
-	PhysicsEngineInstance::Instance()->setDebugDrawer(DebugDraw::Instance());
-	DebugDraw::Context(Renderer::GetInstance());
-#endif
 
 	SetupShaders();
 	SetupMaterials();
-	SetupGameObjects();
 	DrawGUI();
-	SetupControls();
 }
 
 
 GameScene::~GameScene()
 {
-	PhysicsEngineInstance::Release();
 
-#ifndef ORBIS
-	ParticleManager::Destroy();
-#endif
+	delete material;
+	delete netMaterial;
+	delete redPostMaterial;
+	delete bluePostMaterial;
+	delete ballMaterial;
 
-	if (guiSystem)
-		delete guiSystem;
+	delete playerMaterial;
+	delete aiMaterial;
+	delete ai2Material;
+	delete particleMaterial;
+	delete guiMaterial;
+	delete textMaterial;
 
-	//delete pickupManager;
+	delete pickupManager;
 
-#if DEBUG_DRAW
-	DebugDraw::Release();
-#endif
+	delete myControllers;
+	myControllers = nullptr;
+
+	delete guiSystem;
+	guiSystem = nullptr;
+
+
 }
 
 void GameScene::SetControllerActor()
@@ -64,7 +55,6 @@ void GameScene::SetControllerActor()
 	myControllers->setActor(Renderer::GetInstance()->GetCurrentScene()->findGameObject("shooterAI"), SHOOTER);
 	myControllers->setActor(Renderer::GetInstance()->GetCurrentScene()->findGameObject("goalieAI"), GOALKEEPER);
 	myControllers->setActor(Renderer::GetInstance()->GetCurrentScene()->findGameObject("aggroAI"), AGGRESSIVE);
-	//myControllers->setActor(Renderer::GetInstance()->GetCurrentScene()->findGameObject("aggroAI"), SHOOTER); // Whilst debugging
 }
 
 void GameScene::IncrementScore(int team)
@@ -365,12 +355,21 @@ void GameScene::ResetObject(GameObject& object) {
 }
 void GameScene::Setup()
 {
+	Scene::Setup();
+	scores[0] = 0;
+	scores[1] = 0;
+
+	SetupGameObjects();
+	SetupControls();
 	SetControllerActor();
 	SetupAI();
 	LoadAudio();
+
 }
 
 void GameScene::Cleanup()
 {
+	Scene::Cleanup();
+	ClearObjects();
 
 }

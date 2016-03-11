@@ -5,12 +5,13 @@ BallGameObject::BallGameObject(const std::string& name, Material* material) : Ga
 {
 	material->Set(ReservedMeshTextures.DIFFUSE.name, Texture::Get(TEXTURE_DIR"football.png", true));
 
-	SetRenderComponent(new RenderComponent(material, ModelLoader::LoadMGL(MODEL_DIR"Common/sphere.mgl", true)));
+	m_mesh = ModelLoader::LoadMGL(MODEL_DIR"Common/sphere.mgl", true);
+	SetRenderComponent(new RenderComponent(material, m_mesh));
 	SetLocalTransform(Mat4Graphics::Scale(Vec3Graphics(6, 6, 6)));
 
 	auto ballPhysics = new RigidPhysicsObject();
 	ballPhysics->CreateCollisionShape(6.0);
-	ballPhysics->CreatePhysicsBody(1.0, Vec3Physics(0, 3, 0), QuatPhysics(0, 0, 0, 1), Vec3Physics(1, 1, 1));
+	ballPhysics->CreatePhysicsBody(1.0, Vec3Physics(0, 1, 0), QuatPhysics(0, 0, 0, 1), Vec3Physics(1, 1, 1));
 
 	auto body = ballPhysics->GetPhysicsBody();
 	body->setRestitution(btScalar(1.6));
@@ -28,4 +29,5 @@ BallGameObject::BallGameObject(const std::string& name, Material* material) : Ga
 
 BallGameObject::~BallGameObject()
 {
+	delete m_mesh;
 }
