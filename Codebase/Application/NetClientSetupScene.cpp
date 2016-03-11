@@ -35,14 +35,15 @@ void ConnectingPrint()
 
 void NetClientSetupScene::UpdateScene(float dt)
 {
+
 	for (auto element : connectionOrtho->GetElements())
 		delete element;
 	connectionOrtho->GetElements().clear();
 
 	if (!m_IPGiven)
 	{
-		connectionOrtho->AddGUIComponent(new TextGUIComponent(guiMaterial, "Give Server address:", Vec3Graphics(-1.0f, -0.1f, 0), Vec3Graphics(0.04f, 0.04f, 1)));
-		connectionOrtho->AddGUIComponent(new TextGUIComponent(guiMaterial, m_IP, Vec3Graphics(-1.0f, -0.2f, 0), Vec3Graphics(0.04f, 0.04f, 1)));
+		connectionOrtho->AddGUIComponent(new TextGUIComponent(guiMaterial, "Give Server address:", Vec3Graphics(-0.8f, 0.0f, 0), Vec3Graphics(0.04f, 0.04f, 1)));
+		connectionOrtho->AddGUIComponent(new TextGUIComponent(guiMaterial, m_IP, Vec3Graphics(0.0f, 0.0f, 0), Vec3Graphics(0.04f, 0.04f, 1)));
 
 		if (m_IP.size() < 15)
 		{
@@ -102,20 +103,10 @@ void NetClientSetupScene::UpdateScene(float dt)
 			break;
 		}
 		default:
-			connectionOrtho->AddGUIComponent(new TextGUIComponent(guiMaterial, "Connecting...", Vec3Graphics(-1.0f, -0.1f, 0), Vec3Graphics(0.04f, 0.04f, 1)));
+			connectionOrtho->AddGUIComponent(new TextGUIComponent(guiMaterial, "Connecting...", Vec3Graphics(-0.4f, 0.0f, 0), Vec3Graphics(0.04f, 0.04f, 1)));
 			break;
 		}
 	}
-
-	/*auto* connections = server->GetSession()->GetMembers();
-	size_t playerCount = connections->size();
-
-	for (size_t i = 0; i < playerCount; ++i)
-	{
-		auto* connection = (*connections)[i];
-		if (connection)
-			connectionOrtho->AddGUIComponent(new TextGUIComponent(guiMaterial, connection->GetAddressStr(), Vec3Graphics(-1.0f, (-0.1f * i), 0), Vec3Graphics(0.04f, 0.04f, 1)));
-	}*/
 
 	myControllers->update(dt);
 }

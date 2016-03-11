@@ -56,7 +56,9 @@ protected:
 	ButtonGUIComponent* startBtn;
 	ButtonGUIComponent* cancelBtn;
 
+	TextGUIComponent* ipAddress;
 	TextGUIComponent* ipText;
+	TextGUIComponent* sessionMemText;
 	TextGUIComponent* startText;
 	TextGUIComponent* cancelText;
 

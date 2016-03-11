@@ -100,7 +100,6 @@ void GameScene::UpdateScene(float dt)
 	{
 		lastTime = currentTime;
 		scoreboardComponent->Update(scores[0], scores[1], currentTime);
-		//GET_DEBUG_STREAM().str().substr()
 
 #ifndef DEBUG_DRAW
 		
