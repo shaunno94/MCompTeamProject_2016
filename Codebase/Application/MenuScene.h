@@ -70,6 +70,7 @@ protected:
 	ButtonGUIComponent* hostGameBtn;
 	ButtonGUIComponent* joinGameBtn;
 	ButtonGUIComponent* exitBtn;
+	MenuBackgroundGUI* titleImg;
 
 	Mesh* lightMesh;
 
