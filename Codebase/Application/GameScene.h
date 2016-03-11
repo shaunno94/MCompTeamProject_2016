@@ -32,6 +32,7 @@ public:
 	void SetupShaders();
 	void SetupMaterials();
 	void SetupControls();
+	void SetupParticles();
 	void DrawGUI();
 
 	void SetControllerActor();
@@ -50,13 +51,13 @@ public:
 		return pickupManager;
 	}
 
-	GUISystem* getGUISystem(){ return guiSystem; }
+	GUISystem* getGUISystem() override { return guiSystem; }
 	virtual void Setup() override;
 	virtual void Cleanup() override;
 
 
 protected:
-	
+
 	GUISystem* guiSystem;
 
 	
@@ -89,6 +90,7 @@ protected:
 	BaseShader* colourShader;
 	BaseShader* pointlightShader;
 	BaseShader* orthoShader;
+	BaseShader* particleShader;
 
 	LightMaterial* lightMaterial;
 
@@ -116,6 +118,11 @@ protected:
 	TextGUIComponent* physicsDebugTextComponent;
 	TextGUIComponent* graphicsDebugTextComponent;
 	ScoreboardGUIComponent* scoreboardComponent;
+
+	ParticleSystem* playerParticleSystem;
+	ParticleSystem* AI1_ParticleSystem;
+	ParticleSystem* AI2_ParticleSystem;
+	ParticleSystem* AI3_ParticleSystem;
 
 	float timerCount = 0.0f;
 	float currentTime = 0.0f;

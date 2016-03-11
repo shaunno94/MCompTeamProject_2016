@@ -3,13 +3,13 @@
 #include "GoalCollisionFilterStep.h"
 #include "PickupManager.h"
 #include "AI/constants.h"
+#include "Rendering\ParticleSystem.h"
 #include "constants.h"
 #include <algorithm>  
 
 
 GameScene::GameScene()
 {
-
 	//initialise conroller manager
 	myControllers = new LocalControlManager();
 
@@ -21,13 +21,13 @@ GameScene::GameScene()
 
 	SetupShaders();
 	SetupMaterials();
+#ifndef ORBIS
 	DrawGUI();
+#endif
 }
-
 
 GameScene::~GameScene()
 {
-
 	delete material;
 	delete netMaterial;
 	delete redPostMaterial;
@@ -68,17 +68,20 @@ void GameScene::IncrementScore(int team)
 	mod.looping = false;
 	mod.isGlobal = true;
 	SoundSystem::Instance()->Play(SoundManager::GetSound(BANG), mod);
-#endif
 
 	scoreboardComponent->Update(scores[0], scores[1], currentTime);
+#endif
 }
 
 void GameScene::UpdateScene(float dt)
 {
+	ParticleManager::Instance()->Update(dt);
+
 	myControllers->update(dt);
 
 	if (currentTime > 180)
 	{
+#ifndef ORBIS
 		Scene* endScene = Renderer::GetInstance()->GetScene(END_SCENE);
 		team winner;
 		if (scores[0] > scores[1])
@@ -90,7 +93,7 @@ void GameScene::UpdateScene(float dt)
 		Renderer::GetInstance()->SetCurrentScene(endScene);
 		currentTime = 0;
 		lastTime = 0;
-
+#endif
 	}
 	else{
 
@@ -99,11 +102,13 @@ void GameScene::UpdateScene(float dt)
 	if (currentTime - lastTime > 1)
 	{
 		lastTime = currentTime;
+#ifndef ORBIS
 		scoreboardComponent->Update(scores[0], scores[1], currentTime);
+#endif
 
-#ifndef DEBUG_DRAW
-		
-		vector<std::string>tokens;
+#ifndef ORBIS
+#ifdef _DEBUG
+		std::vector<std::string>tokens;
 		std::string t;
 		while (std::getline(GET_DEBUG_STREAM(), t, '\n')) {
 			tokens.push_back(t.substr(2, std::string::npos));
@@ -118,6 +123,7 @@ void GameScene::UpdateScene(float dt)
 		FPSDebugTextComponent->Update(fps);
 		physicsDebugTextComponent->Update(physics);
 		graphicsDebugTextComponent->Update(graphics);
+#endif
 #endif
 	}
 
@@ -138,7 +144,7 @@ void GameScene::UpdateScene(float dt)
 			ResetObjects();
 		}
 	}
-
+#ifndef ORBIS
 	float boost = floor(std::max(player->GetControllerComponent()->boost * 100.0f, 0.0f));
 	if (boost > 99.0f) {
 		boostComponent->Update(std::string("Boost:" + std::to_string(boost).substr(0, 3) + "%"));
@@ -160,6 +166,7 @@ void GameScene::UpdateScene(float dt)
 	else {
 		speedComponent->Update(std::string(std::to_string(speed).substr(0, 2) + "mph"));
 	}
+#endif
 }
 }
 
@@ -225,7 +232,6 @@ void GameScene::SetupGameObjects()
 
 void GameScene::LoadAudio()
 {
-//#ifndef ORBIS
 	//-------- SOUND
 	// load in files
 	SoundManager::LoadAssets();
@@ -243,7 +249,6 @@ void GameScene::LoadAudio()
 	goalieAI->SetAudioComponent(new AudioCompCar(false));
 	aggroAI->SetAudioComponent(new AudioCompCar(false));
 	//-------- SOUND
-//#endif
 }
 
 void GameScene::SetupShaders()
@@ -253,11 +258,13 @@ void GameScene::SetupShaders()
 	colourShader = new OGLShader(SIMPLESHADER_VERT, COLOURSHADER_FRAG);
 	pointlightShader = new OGLShader(POINTLIGHTSHADER_VERT, POINTLIGHTSHADER_FRAG);
 	orthoShader = new OGLShader(GUI_VERT, GUI_FRAG);
+	particleShader = new OGLShader(SIMPLESHADER_VERT, PARTICLE_FRAG);
 #else
 	simpleShader = new PS4Shader(SIMPLESHADER_VERT, SIMPLESHADER_FRAG);
 	colourShader = new PS4Shader(SIMPLESHADER_VERT, SIMPLESHADER_FRAG);
 	pointlightShader = new PS4Shader(POINTLIGHTSHADER_VERT, POINTLIGHTSHADER_FRAG);
 	orthoShader = new PS4Shader(GUI_VERT, GUI_FRAG);
+	particleShader = new PS4Shader(SIMPLESHADER_VERT, PARTICLE_FRAG);
 #endif
 	if (!pointlightShader->IsOperational())
 		std::cout << "Point light shader not operational!" << std::endl;
@@ -267,6 +274,8 @@ void GameScene::SetupShaders()
 		std::cout << "Colour shader not operational!" << std::endl;
 	if (!orthoShader->IsOperational())
 		std::cout << "ortho shader not operational!" << std::endl;
+	if (!particleShader->IsOperational())
+		std::cout << "particle shader not operational!" << std::endl;
 }
 
 void GameScene::SetupMaterials()
@@ -280,13 +289,36 @@ void GameScene::SetupMaterials()
 	redPostMaterial = new ExtendedMaterial(colourShader, true);
 	bluePostMaterial = new ExtendedMaterial(colourShader, true);
 	aiMaterial = new Material(simpleShader);
-	particleMaterial = new Material(simpleShader);
+	particleMaterial = new Material(particleShader);
 	ai2Material = new Material(simpleShader);
 	guiMaterial = new Material(orthoShader);
 	textMaterial = new Material(orthoShader);
 	playerMaterial = new Material(simpleShader);
 
-	//particleMaterial->Set(ReservedMeshTextures.DIFFUSE.name, Texture::Get(TEXTURE_DIR"particle.tga", true));
+	playerMaterial = new Material(simpleShader);
+
+	aiMaterial->Set(ReservedMeshTextures.DIFFUSE.name, Texture::Get(MODEL_DIR"car/body1.bmp", true));
+	ai2Material->Set(ReservedMeshTextures.DIFFUSE.name, Texture::Get(MODEL_DIR"car/body2.bmp", true));
+	
+	particleMaterial->Set(ReservedMeshTextures.DIFFUSE.name, Texture::Get(TEXTURE_DIR"smokeparticle.png", true));
+	particleMaterial->hasTranslucency = true;
+}
+
+void GameScene::SetupParticles()
+{
+	if (!ParticleManager::Instance())
+	{
+		std::cout << "Particle Manager not Initialised" << std::endl;
+		return;
+	}
+	playerParticleSystem = new ParticleSystem(particleMaterial, player, this, 200);
+	AI1_ParticleSystem = new ParticleSystem(particleMaterial, shooterAI, this, 200);
+	AI2_ParticleSystem = new ParticleSystem(particleMaterial, goalieAI, this, 200);
+	AI3_ParticleSystem = new ParticleSystem(particleMaterial, aggroAI, this, 200);
+	ParticleManager::Instance()->AddSystem(playerParticleSystem);
+	ParticleManager::Instance()->AddSystem(AI1_ParticleSystem);
+	ParticleManager::Instance()->AddSystem(AI2_ParticleSystem);
+	ParticleManager::Instance()->AddSystem(AI3_ParticleSystem);
 }
 
 void GameScene::DrawGUI()
@@ -393,19 +425,19 @@ void GameScene::Setup()
 	scores[0] = 0;
 	scores[1] = 0;
 
+
 	SetupGameObjects();
+	SetupParticles();
 	SetupControls();
 	SetControllerActor();
 	SetupAI();
 	LoadAudio();
-
 }
 
 void GameScene::Cleanup()
 {
-	/*ResetObjects();
-	scores[0] = scores[1] = 0;*/
 	Scene::Cleanup();
+#ifndef ORBIS
 	ClearObjects();
-
+#endif
 }

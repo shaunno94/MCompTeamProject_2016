@@ -7,7 +7,9 @@
 #include "Rendering\MenuOrthoComponent.h"
 #include "Rendering\TextGUIComponent.h"
 #include "Rendering\ExtendedMaterial.h"
+#include "Rendering\LightMaterial.h"
 #include "constants.h"
+
 
 class MenuScene :
 	public Scene

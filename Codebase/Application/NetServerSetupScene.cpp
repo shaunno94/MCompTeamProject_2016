@@ -1,3 +1,4 @@
+#ifndef ORBIS
 #include "NetServerSetupScene.h"
 
 
@@ -142,4 +143,4 @@ void NetServerSetupScene::Cleanup()
 	ips.clear();
 }
 
-
+#endif

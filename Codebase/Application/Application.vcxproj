@@ -70,7 +70,7 @@
     <LibraryPath>$(SCE_ORBIS_SAMPLE_DIR)\sample_code\graphics\api_gnm\toolkit;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|ORBIS'">
-    <IncludePath>$(SCE_ORBIS_SAMPLE_DIR)\;$(IncludePath)</IncludePath>
+    <IncludePath>$(SCE_ORBIS_SAMPLE_DIR)\sample_code\;$(IncludePath)</IncludePath>
     <LibraryPath>$(SCE_ORBIS_SAMPLE_DIR)\sample_code\graphics\api_gnm\toolkit;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
@@ -133,6 +133,8 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>NOMINMAX;NDEBUG;GLEW_STATIC;_MBCS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <AdditionalIncludeDirectories>..\BulletPhysics\src;$(SolutionDir);$(SolutionDir)Dependencies;$(SolutionDir)enet\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <InlineFunctionExpansion>AnySuitable</InlineFunctionExpansion>
+      <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
@@ -150,16 +152,20 @@
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>NOMINMAX;ORBIS;NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>..\BulletPhysics\src;$(SolutionDir);$(SolutionDir)Dependencies;$(SolutionDir)enet\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SCE_ORBIS_SAMPLE_DIR)\;$(IncludePath);..\BulletPhysics\src;$(SolutionDir);$(SolutionDir)Dependencies;$(SolutionDir)enet\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <RuntimeTypeInfo>true</RuntimeTypeInfo>
       <CppExceptions>true</CppExceptions>
+      <OptimizationLevel>Levels</OptimizationLevel>
+      <FastMath>true</FastMath>
+      <UnrollLoops>true</UnrollLoops>
+      <LinkTimeOptimization>true</LinkTimeOptimization>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <AdditionalLibraryDirectories>$(SCE_ORBIS_SAMPLE_DIR)\sample_code\graphics\api_gnm\toolkit;$(LibraryPath);$(SolutionDir)Dependencies;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>libSceDbgVideoOut_stub_weak.a;libSceVideoOut_stub_weak.a;libSceGnm.a;libSceGnm_debug.a;libSceGnmx.a;libSceGnmx_debug.a;libSceGpuAddress.a;libSceGnmDriver_stub_weak.a;libSceShaderBinary.a;libSceGnf.a;libSceGnf_debug.a;libScePad_stub_weak.a;libSceUserService_stub_weak.a;libSceSysmodule_stub_weak.a;libSceNgs2_stub_weak.a;libSceAudioOut_stub_weak.a;toolkit_debug.a;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>libSceDbgVideoOut_stub_weak.a;libSceVideoOut_stub_weak.a;libSceGnm.a;libSceGnm_debug.a;libSceGnmx.a;libSceGnmx_debug.a;libSceGpuAddress.a;libSceGnmDriver_stub_weak.a;libSceShaderBinary.a;libSceGnf.a;libSceGnf_debug.a;libScePad_stub_weak.a;libSceUserService_stub_weak.a;libSceSysmodule_stub_weak.a;libSceNgs2_stub_weak.a;libSceAudioOut_stub_weak.a;-lSceAudio3d_stub_weak;toolkit_debug.a;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
@@ -207,9 +213,6 @@
     </ProjectReference>
     <ProjectReference Include="..\Memory\Memory.vcxproj">
       <Project>{84f8e699-7dc9-4e84-9677-c38fb5f2bf2f}</Project>
-    </ProjectReference>
-    <ProjectReference Include="..\Networking\Networking.vcxproj">
-      <Project>{3d0273ae-8c72-430c-a0e5-5968cf2eab39}</Project>
     </ProjectReference>
     <ProjectReference Include="..\PhysicsEngine\PhysicsEngine.vcxproj">
       <Project>{2cc601e3-e95d-4c55-b786-474f898780f5}</Project>

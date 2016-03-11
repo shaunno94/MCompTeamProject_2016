@@ -543,7 +543,7 @@ void OGLRenderer::FillBuffers()
 	PhysicsEngineInstance::Instance()->debugDrawWorld();
 	DebugDraw::Instance()->RenderLine();
 #endif
-	child->OnRenderScene();
+	child->OnRenderScene(false);
 
 	glUseProgram(0);
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
@@ -635,7 +635,7 @@ void OGLRenderer::DrawShadowCube(GameObject* light){
 		UpdateShaderMatrices();
 
 		glDisable(GL_CULL_FACE);
-		child->OnRenderScene();
+		child->OnRenderScene(true);
 		glEnable(GL_CULL_FACE);
 	}
 	glUseProgram(0);
@@ -675,7 +675,7 @@ void OGLRenderer::DrawShadow2D(GameObject* light){
 	child->OnUpdateScene(child->lightFrustrum, light->GetWorldTransform().GetTranslation());
 
 	glDisable(GL_CULL_FACE);
-	child->OnRenderScene();
+	child->OnRenderScene(true);
 	glEnable(GL_CULL_FACE);
 
 	glUseProgram(0);

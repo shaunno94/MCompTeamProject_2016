@@ -241,7 +241,7 @@ void PS4Renderer::FillBuffers()
 	DebugDraw::Instance()->RenderLine();
 #endif
 
-	child->OnRenderScene();
+	child->OnRenderScene(false);
 }
 
 void PS4Renderer::DrawSkyBox()
@@ -283,7 +283,7 @@ void PS4Renderer::CombineBuffers()
 	currentPS4Buffer->ClearBuffer(*currentGFXContext);
 	currentPS4Buffer->SetRenderTargets(*currentGFXContext);
 
-	projMatrix = Mat4Graphics::Orthographic(-1, 1, 1, -1, 1, -1);
+	projMatrix = Mat4Graphics::Orthographic(-1, 1, 1, -1, -1, 1);
 	InitCMD(currentPS4Buffer);
 
 	SetTexture(diffuseLoc, *offScreenBuffers[G_BUFFER]->GetTexture(COLOUR));
@@ -327,7 +327,7 @@ void PS4Renderer::DrawShadow2D(GameObject* light)
 	child->lightFrustrum.FromMatrix(projMatrix * viewMatrix);
 	child->OnUpdateScene(child->lightFrustrum, light->GetWorldTransform().GetTranslation());
 
-	child->OnRenderScene();
+	child->OnRenderScene(true);
 
 	viewMatrix = child->currentScene->getCamera()->BuildViewMatrix();
 	projMatrix = child->localProjMat;

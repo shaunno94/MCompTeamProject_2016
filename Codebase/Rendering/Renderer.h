@@ -46,7 +46,7 @@ public:
 
 protected:
 	void OnUpdateScene(Frustum& frustum, Vec3Graphics camPos);
-	void OnRenderScene();
+	void OnRenderScene(bool shadowPass);
 	void OnRenderLights();
 	void RenderGUI();
 

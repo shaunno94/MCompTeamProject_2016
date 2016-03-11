@@ -1,3 +1,4 @@
+#ifndef ORBIS
 #pragma once
 #include "enet/enet.h"
 #include <mutex>
@@ -144,3 +145,4 @@ private:
 	static void ENET_CALLBACK networkMemManagerFree(void* memory);
 };
 
+#endif

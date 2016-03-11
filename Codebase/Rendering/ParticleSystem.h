@@ -8,30 +8,22 @@
 class ParticleSystem
 {
 public:
-
-	ParticleSystem(ParticleEmitter* emitter, Material* material, Texture* texture, unsigned int numParticles);
+	ParticleSystem(Material* material, GameObject* attatchment, Scene* scene, unsigned int maxParticles);
 	~ParticleSystem();
-
-	void EmitParticles();
-	void BuildVertexBuffer();
-	bool Update(float delta);
-	void Render();
+	void Update(float delta);
 
 protected:
-	void RandomizePos();
-	void EmitParticle(Particle& particle);
+	void EmitParticle(Particle* particle, float dt);
+
 private:
-
-	GameObject*				m_Object;
-	ParticleEmitter*		m_ParticleEmitter;
-	Texture*				m_Texture;
-	unsigned int			m_NumAlive;
-	Particle*				m_Particles;
+	GameObject*				m_Attatchment;
+	Scene*					m_Scene;
+	std::vector<Particle*>	m_Particles;
 	unsigned int			m_NumParticles;
-
-	Vec3Graphics*			m_Centre;
-
-	Vec3Graphics			m_Force;
 	Material*				m_Material;
-	Texture*				m_texture;
+
+	const float MIN_FORCE_XZ = -20.0f;
+	const float MAX_FORCE_XZ = 20.0f;
+	const Vec3Graphics m_Scale = Vec3Graphics(0.08, 0.08, 0.08);
+	const Vec3Graphics m_Offset = Vector3Simple(0.0, 3.0, 10.0);
 };

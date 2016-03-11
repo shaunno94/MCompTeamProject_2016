@@ -6,7 +6,7 @@ class  TextGUIComponent : public GUIComponent
 public:
 	TextGUIComponent();
 	TextGUIComponent(Material* material, const std::string& text, Vec3Graphics pos, Vec3Graphics scale, bool visible = true);
-	~TextGUIComponent();
+	virtual ~TextGUIComponent();
 
 	void Update(const std::string& text);
 

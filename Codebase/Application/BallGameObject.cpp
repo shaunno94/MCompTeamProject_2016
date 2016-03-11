@@ -29,5 +29,9 @@ BallGameObject::BallGameObject(const std::string& name, Material* material) : Ga
 
 BallGameObject::~BallGameObject()
 {
-	delete m_mesh;
+	if (m_mesh)
+	{
+		delete m_mesh;
+		m_mesh = nullptr;
+	}
 }

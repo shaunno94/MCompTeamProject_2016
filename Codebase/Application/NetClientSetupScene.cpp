@@ -1,3 +1,4 @@
+#ifndef ORBIS
 #include "NetClientSetupScene.h"
 #include "Rendering\Renderer.h"
 #include "Application\constants.h"
@@ -178,7 +179,7 @@ void NetClientSetupScene::Cleanup()
 	client = nullptr;
 	m_IP = "";
 }
-
+#endif
 
 
 

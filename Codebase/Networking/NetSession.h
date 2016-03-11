@@ -1,3 +1,4 @@
+#ifndef ORBIS
 #pragma once
 
 #include "Helpers/DeltaTimer.h"
@@ -156,5 +157,5 @@ private:
 	std::vector<std::pair<NetMessage*, bool>> m_messages;
 };
 
-
+#endif
 

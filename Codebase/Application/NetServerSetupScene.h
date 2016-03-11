@@ -1,3 +1,4 @@
+#ifndef ORBIS
 #pragma once
 #include "Rendering\Scene.h"
 #include "Rendering\UIControllerManager.h"
@@ -67,4 +68,4 @@ protected:
 
 	int m_Selected;
 };
-
+#endif

@@ -19,8 +19,13 @@ PS_OUTPUT main(VS_OUTPUT In) : S_TARGET_OUTPUT
 {
 	PS_OUTPUT Output;
 
-	Output.colour = diffuseTex.Sample(samp0, In.texCoord.xy); 
+	float4 colour = diffuseTex.Sample(samp0, In.texCoord.xy); 
+
+	if(colour.a < 0.2)
+	{
+		discard;
+	}
+	Output.colour = colour;
 	Output.normal = float4(In.normal.xyz * 0.5 + 0.5, 1.0);
-	//Output.normal = float4(0,0,In.position.z, 1.0);
 	return Output;
 }

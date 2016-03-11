@@ -1,26 +1,15 @@
 #include "MenuScene.h"
 #include "Stadium.h"
 #include "BallGameObject.h"
+#ifdef ORBIS
+#include "Rendering\PS4Shader.h"
+#include "Rendering\LightMaterial.h"
+#endif
 
 
 MenuScene::MenuScene()
 {
-	myControllers = new UIControllerManager();
 
-	guiSystem = new GUISystem();
-	
-	if (!guiSystem->HasInitialised())
-	{
-		std::cout << "GUI not Initialised!" << std::endl;
-	}
-
-
-	SetupShaders();
-	SetupMaterials();
-	DrawGUI();
-	SetupControls();
-
-	lightMesh = ModelLoader::LoadMGL(MODEL_DIR"Common/ico.mgl", true);
 }
 
 
@@ -161,13 +150,30 @@ void MenuScene::SetupControls()
 void MenuScene::Cleanup()
 {
 	Scene::Cleanup();
+#ifndef ORBIS
 	ClearObjects();
+#endif
 }
 
 void MenuScene::Setup()
 {
-	Scene::Setup();
+	myControllers = new UIControllerManager();
 
+	guiSystem = new GUISystem();
+
+	if (!guiSystem->HasInitialised())
+	{
+		std::cout << "GUI not Initialised!" << std::endl;
+	}
+
+
+	SetupShaders();
+	SetupMaterials();
+	DrawGUI();
+	SetupControls();
+
+	lightMesh = ModelLoader::LoadMGL(MODEL_DIR"Common/ico.mgl", true);
+	Scene::Setup();
 	SetupGameObjects();
 }
 

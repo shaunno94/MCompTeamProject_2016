@@ -1,3 +1,4 @@
+#ifndef ORBIS
 #pragma once
 
 #include "constants.h"
@@ -74,3 +75,4 @@ protected:
 	NetMessage();
 };
 
+#endif

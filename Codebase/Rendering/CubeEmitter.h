@@ -6,7 +6,7 @@ class CubeEmitter : public ParticleEmitter
 public:
 	CubeEmitter();
 
-	virtual void EmitParticle(Particle& particle);
+	virtual void EmitParticle(Particle* particle);
 	virtual void DebugRender();
 
 	float MinWidth;

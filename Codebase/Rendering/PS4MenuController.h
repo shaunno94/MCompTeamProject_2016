@@ -1,17 +1,17 @@
 #ifdef ORBIS
 #pragma once
-#include "MenuControllerComponent.h"
+#include "UIControllerComponent.h"
 #include "Input/PS4Input.h"
 
 class PS4MenuController
 {
 public:
-	PS4MenuController(MenuControllerComponent* object);
+	PS4MenuController(UIControllerComponent* object);
 	~PS4MenuController();
 	void CheckInput();
-	void setObject(MenuControllerComponent* object){ this->object = object; }
+	void setObject(UIControllerComponent* object){ this->object = object; }
 
 protected:
-	MenuControllerComponent* object;
+	UIControllerComponent* object;
 };
 #endif

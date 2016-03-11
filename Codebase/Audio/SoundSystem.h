@@ -1,18 +1,25 @@
 #pragma once
 
 #include "SoundEmitter.h"
+#include <thread>
+#include <atomic>
 
 class SoundSystem
 {
 public:
 	// singleton methods
-	static void Initialise(unsigned int channels = 32)
+	static void Initialise(unsigned int channels = 48)
 	{
-		instance = new SoundSystem(channels);
+		if (!instance)
+			instance = new SoundSystem(channels);
 	}
 	static void Release()
 	{
-		delete instance;
+		if (instance)
+		{
+			delete instance;
+			instance = nullptr;
+		}
 	}
 	static SoundSystem* Instance()
 	{

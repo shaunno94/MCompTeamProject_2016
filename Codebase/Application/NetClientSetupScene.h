@@ -1,3 +1,4 @@
+#ifndef ORBIS
 #pragma once
 #include "Rendering\Scene.h"
 #include "Rendering\UIControllerManager.h"
@@ -55,4 +56,4 @@ protected:
 	bool m_IPGiven;
 	std::string m_IP;
 };
-
+#endif

@@ -1,3 +1,4 @@
+#ifndef ORBIS
 #include "Net.h"
 #include <cstdio>
 #include <cassert>
@@ -206,3 +207,4 @@ void NetHost::BroadcastMsg(NetMessage* message, bool reliable)
 
 	enet_host_broadcast(m_host, 1, packet);
 }
+#endif
