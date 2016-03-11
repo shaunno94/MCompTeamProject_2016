@@ -46,7 +46,7 @@ GameScene::~GameScene()
 	delete myControllers;
 	myControllers = nullptr;
 
-		delete guiSystem;
+	delete guiSystem;
 	guiSystem = nullptr;
 
 
@@ -82,82 +82,85 @@ void GameScene::UpdateScene(float dt)
 		Scene* endScene = Renderer::GetInstance()->GetScene(END_SCENE);
 		team winner;
 		if (scores[0] > scores[1])
-			((EndScene*)endScene)->SetWinningTeam(BLUE_TEAM);
-		else if(scores[0] < scores[1])
-			((EndScene*)endScene)->SetWinningTeam(RED_TEAM);
+			((EndScene*)endScene)->SetWinningTeam(BLUE_WINS);
+		else if (scores[0] < scores[1])
+			((EndScene*)endScene)->SetWinningTeam(RED_WINS);
 		else
 			((EndScene*)endScene)->SetWinningTeam(TIE);
 		Renderer::GetInstance()->SetCurrentScene(endScene);
 		currentTime = 0;
 		lastTime = 0;
-		
-	}
-	currentTime += dt / 1000.0f;
 
-	if (currentTime - lastTime > 1)
-	{
-		lastTime = currentTime;
-		scoreboardComponent->Update(scores[0], scores[1], currentTime);
-		//GET_DEBUG_STREAM().str().substr()
+	}
+	else{
+
+		currentTime += dt / 1000.0f;
+
+		if (currentTime - lastTime > 1)
+		{
+			lastTime = currentTime;
+			scoreboardComponent->Update(scores[0], scores[1], currentTime);
+			//GET_DEBUG_STREAM().str().substr()
 
 #ifdef _DEBUG
-		
-		vector<std::string>tokens;
-		std::string t;
-		while (std::getline(GET_DEBUG_STREAM(), t, '\n')) {
-			tokens.push_back(t.substr(2, std::string::npos));
-		}
 
-		float fpsStep = 1/(std::stof(tokens[1]) + std::stof(tokens[3])) * 1000;
-		float physicsStep = std::stof(tokens[1]);
-		std::string fps = "FPS: " + std::to_string(fpsStep).substr(0,5);
-		std::string physics = "Physics: " + tokens[1].substr(0, 5);
-		std::string graphics = "Graphics: " + tokens[3].substr(0, 5);
+			vector<std::string>tokens;
+			std::string t;
+			while (std::getline(GET_DEBUG_STREAM(), t, '\n')) {
+				tokens.push_back(t.substr(2, std::string::npos));
+			}
 
-		FPSDebugTextComponent->Update(fps);
-		physicsDebugTextComponent->Update(physics);
-		graphicsDebugTextComponent->Update(graphics);
+			float fpsStep = 1 / (std::stof(tokens[1]) + std::stof(tokens[3])) * 1000;
+			float physicsStep = std::stof(tokens[1]);
+			std::string fps = "FPS: " + std::to_string(fpsStep).substr(0, 5);
+			std::string physics = "Physics: " + tokens[1].substr(0, 5);
+			std::string graphics = "Graphics: " + tokens[3].substr(0, 5);
+
+			FPSDebugTextComponent->Update(fps);
+			physicsDebugTextComponent->Update(physics);
+			graphicsDebugTextComponent->Update(graphics);
 #endif
-	}
-
-	if (goalScored > 0) {
-		if (timerCount == 0)
-		{
-			IncrementScore(goalScored - 1);
-			TriggerExplosion();
 		}
 
-		timerCount += dt / 1000.0f;
+		if (goalScored > 0) {
+			if (timerCount == 0)
+			{
+				IncrementScore(goalScored - 1);
+				TriggerExplosion();
+			}
 
-		//Increment goals for team 1
-		if (timerCount > 3.0f)
-		{
-			timerCount = 0;
-			goalScored = false;
-			ResetObjects();
+			timerCount += dt / 1000.0f;
+
+			//Increment goals for team 1
+			if (timerCount > 3.0f)
+			{
+				timerCount = 0;
+				goalScored = false;
+				ResetObjects();
+			}
 		}
-	}
 
-	float boost = floor(std::max(player->GetControllerComponent()->boost * 100.0f, 0.0f));
-	if (boost > 99.0f) {
-		boostComponent->Update(std::string("Boost:" + std::to_string(boost).substr(0, 3) + "%"));
-	}
-	else if (boost < 10.0f) {
-		boostComponent->Update(std::string("Boost:" + std::to_string(boost).substr(0, 1) + "%"));
-	} 
-	else {
-		boostComponent->Update(std::string("Boost:" + std::to_string(boost).substr(0, 2) + "%"));
-	}
+		float boost = floor(std::max(player->GetControllerComponent()->boost * 100.0f, 0.0f));
+		if (boost > 99.0f) {
+			boostComponent->Update(std::string("Boost:" + std::to_string(boost).substr(0, 3) + "%"));
+		}
+		else if (boost < 10.0f) {
+			boostComponent->Update(std::string("Boost:" + std::to_string(boost).substr(0, 1) + "%"));
+		}
+		else {
+			boostComponent->Update(std::string("Boost:" + std::to_string(boost).substr(0, 2) + "%"));
+		}
 
-	float speed = floor(std::max(player->GetControllerComponent()->getForwardVelocity(), 0.0f)) / 2.0f;
-	if (speed > 99.0f) {
-		speedComponent->Update(std::string(std::to_string(speed).substr(0,3) + "mph"));
-	}
-	else if (speed < 10.0f) {
-		speedComponent->Update(std::string(std::to_string(speed).substr(0, 1) + "mph"));
-	}
-	else {
-		speedComponent->Update(std::string(std::to_string(speed).substr(0, 2) + "mph"));
+		float speed = floor(std::max(player->GetControllerComponent()->getForwardVelocity(), 0.0f)) / 2.0f;
+		if (speed > 99.0f) {
+			speedComponent->Update(std::string(std::to_string(speed).substr(0, 3) + "mph"));
+		}
+		else if (speed < 10.0f) {
+			speedComponent->Update(std::string(std::to_string(speed).substr(0, 1) + "mph"));
+		}
+		else {
+			speedComponent->Update(std::string(std::to_string(speed).substr(0, 2) + "mph"));
+		}
 	}
 }
 
@@ -223,7 +226,7 @@ void GameScene::SetupGameObjects()
 
 void GameScene::LoadAudio()
 {
-//#ifndef ORBIS
+	//#ifndef ORBIS
 	//-------- SOUND
 	// load in files
 	SoundManager::LoadAssets();
@@ -241,7 +244,7 @@ void GameScene::LoadAudio()
 	goalieAI->SetAudioComponent(new AudioCompCar(false));
 	aggroAI->SetAudioComponent(new AudioCompCar(false));
 	//-------- SOUND
-//#endif
+	//#endif
 }
 
 void GameScene::SetupShaders()
@@ -259,11 +262,11 @@ void GameScene::SetupShaders()
 #endif
 	if (!pointlightShader->IsOperational())
 		std::cout << "Point light shader not operational!" << std::endl;
-	if(!simpleShader->IsOperational())
+	if (!simpleShader->IsOperational())
 		std::cout << "Simple shader not operational!" << std::endl;
 	if (!colourShader->IsOperational())
 		std::cout << "Colour shader not operational!" << std::endl;
-	if(!orthoShader->IsOperational())
+	if (!orthoShader->IsOperational())
 		std::cout << "ortho shader not operational!" << std::endl;
 }
 
@@ -380,7 +383,7 @@ void GameScene::ResetObject(GameObject& object) {
 	dynamic_cast<RigidPhysicsObject*>(object.GetPhysicsComponent())->GetPhysicsBody()->setAngularVelocity(zeroVector);
 
 	object.GetPhysicsComponent()->GetPhysicsBody()->setWorldTransform(btTransform(btQuaternion(0, 0, 0, 1), btVector3(object.GetSpawnPoint().x, object.GetSpawnPoint().y, object.GetSpawnPoint().z)));
-	if (object.GetControllerComponent()) 
+	if (object.GetControllerComponent())
 		object.GetControllerComponent()->reset();
 
 }

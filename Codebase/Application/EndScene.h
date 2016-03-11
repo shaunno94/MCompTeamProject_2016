@@ -15,8 +15,8 @@ const string END_FRAG = SHADER_DIR"TexturedFragment.glsl";
 #endif
 
 enum team{
-	RED_TEAM,
-	BLUE_TEAM,
+	RED_WINS,
+	BLUE_WINS,
 	TIE
 };
 

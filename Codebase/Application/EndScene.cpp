@@ -68,10 +68,10 @@ void EndScene::SetupShaders()
 void EndScene::SetupMaterials()
 {
 	guiMaterial = new Material(orthoShader);
-	bgMaterials[RED_TEAM] = new Material(orthoShader);
-	bgMaterials[RED_TEAM]->Set(ReservedMeshTextures.DIFFUSE.name, Texture::Get(TEXTURE_DIR"WINRED.png"));
-	bgMaterials[BLUE_TEAM] = new Material(orthoShader);
-	bgMaterials[BLUE_TEAM]->Set(ReservedMeshTextures.DIFFUSE.name, Texture::Get(TEXTURE_DIR"WINBLUE.png"));
+	bgMaterials[RED_WINS] = new Material(orthoShader);
+	bgMaterials[RED_WINS]->Set(ReservedMeshTextures.DIFFUSE.name, Texture::Get(TEXTURE_DIR"WINRED.png"));
+	bgMaterials[BLUE_WINS] = new Material(orthoShader);
+	bgMaterials[BLUE_WINS]->Set(ReservedMeshTextures.DIFFUSE.name, Texture::Get(TEXTURE_DIR"WINBLUE.png"));
 	bgMaterials[TIE] = new Material(orthoShader);
 	bgMaterials[TIE]->Set(ReservedMeshTextures.DIFFUSE.name, Texture::Get(TEXTURE_DIR"TIE.png"));
 
