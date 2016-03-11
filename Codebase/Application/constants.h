@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Math\nclglMath.h"
+#include "Rendering\constants.h"
 
 enum SCENES
 {

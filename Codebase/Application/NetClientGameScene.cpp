@@ -147,7 +147,7 @@ void NetClientGameScene::Setup()
 
 void NetClientGameScene::Cleanup()
 {
-	GameScene::Cleanup();
+	//GameScene::Cleanup();
 	//Scene::Cleanup();
 	//ClearObjects();
 	//delete NetworkGameData::Instance.client;

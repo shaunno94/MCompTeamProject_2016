@@ -45,7 +45,10 @@ void NetServerGameScene::Setup()
 
 	for (int i = 0; i < NetworkGameData::posCount; ++i)
 	{
-		m_cars.push_back(new CarGameObject(NetworkGameData::Instance.pos[i], NetworkGameData::Instance.quat[i], playerMaterial, RED_TEAM, i == NetworkGameData::Instance.server->GetSessionMemberId() ? "player" : "enemy"));
+		m_cars.push_back(new CarGameObject(NetworkGameData::Instance.pos[i], NetworkGameData::Instance.quat[i],
+			i >= (NetworkGameData::posCount / 2.0f) ?  playerMaterial : aiMaterial,
+			i < (NetworkGameData::posCount / 2.0f) ? RED_TEAM : BLUE_TEAM,
+			i == NetworkGameData::Instance.server->GetSessionMemberId() ? "player" : "enemy"));
 
 		addGameObject(m_cars[i]);
 	}
@@ -163,7 +166,7 @@ void NetServerGameScene::Setup()
 
 void NetServerGameScene::Cleanup()
 {
-	GameScene::Cleanup();
+	//GameScene::Cleanup();
 	//Scene::Cleanup();
 	//ClearObjects();
 	//delete NetworkGameData::Instance.server;

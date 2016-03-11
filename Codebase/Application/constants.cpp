@@ -1,5 +1,7 @@
 #include "constants.h"
 
+
+#ifndef ORBIS
 NetworkGameData NetworkGameData::Instance = {
 	Vec3Physics(200, 2, 0),
 	Vec3Physics(300, 2, 30),
@@ -16,3 +18,4 @@ NetworkGameData NetworkGameData::Instance = {
 	nullptr,
 	nullptr
 };
+#endif
