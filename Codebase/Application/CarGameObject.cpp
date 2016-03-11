@@ -2,9 +2,18 @@
 #include "BoostPickupGameObject.h"
 
 
-CarGameObject::CarGameObject(const Vec3Physics& position, const QuatPhysics& rotation, Material* material, const std::string& name /* = "" */, unsigned int collisionFilterMask) :
-	GameObject(name)
+CarGameObject::CarGameObject(const Vec3Physics& position, const QuatPhysics& rotation, Material* material, unsigned int team, const std::string& name /*= ""*/, unsigned int collisionMask /*= COL_CAR*/) :
+	GameObject(name),
+	m_team(team)
 {
+
+	if (m_team == BLUE_TEAM) {
+		material->Set("diffuseTex", Texture::Get(MODEL_DIR"car/body1.bmp", true));
+	}
+	else {
+		material->Set("diffuseTex", Texture::Get(MODEL_DIR"car/body.bmp", true));
+	}
+
 	Mesh* carBaseMesh = ModelLoader::LoadMGL(MODEL_DIR"Car/car_base.mgl", true);
 	Mesh* wheelMesh = ModelLoader::LoadMGL(MODEL_DIR"Car/wheel.mgl", true);
 
@@ -15,7 +24,7 @@ CarGameObject::CarGameObject(const Vec3Physics& position, const QuatPhysics& rot
 	carPhysics->GetPhysicsBody()->setFriction(0.5);
 	carPhysics->GetPhysicsBody()->setRollingFriction(0.7);
 	carPhysics->GetPhysicsBody()->setHitFraction(0.2);
-	carPhysics->GetPhysicsBody()->getBroadphaseProxy()->m_collisionFilterMask = collisionFilterMask;
+	carPhysics->GetPhysicsBody()->getBroadphaseProxy()->m_collisionFilterMask = collisionMask;
 	carPhysics->GetPhysicsBody()->getBroadphaseProxy()->m_collisionFilterGroup = COL_GROUP_DEFAULT;
 	carPhysics->GetPhysicsBody()->setDamping(0.03, 0.5);
 

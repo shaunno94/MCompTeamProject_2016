@@ -36,12 +36,17 @@ int main(void)
 	{
 		return -1;
 	}
-	PhysicsEngineInstance::Instance();
+
 	GameTimer timer;
 #ifdef ORBIS
 	PS4Input input = PS4Input();
 #endif
 	SoundSystem::Initialise();
+	ParticleManager::Initialise();
+	if (ParticleManager::GetManager().HasInitialised())
+	{
+		std::cout << "Particle Manager not Initialised" << std::endl;
+	}
 
 	//Create GameScene
 	GameScene* gameScene = new GameScene();
@@ -100,9 +105,10 @@ int main(void)
 	}
 
 	SoundSystem::Instance()->Release();
-	Renderer::GetInstance()->SetCurrentScene(nullptr);
+	ParticleManager::Destroy();
+	renderer.SetCurrentScene(nullptr);
 	delete menuScene;
-	delete gameScene;
+	delete gameScene;	
 	//delete endScene;
 
 	return 0;

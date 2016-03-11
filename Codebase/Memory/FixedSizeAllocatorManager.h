@@ -21,6 +21,8 @@
 
 #ifdef _DEBUG
 #define ALOCATOR_TRACK_STATS
+#else
+#define ALOCATOR_TRACK_STATS
 #endif
 
 

@@ -51,5 +51,5 @@ void OrthoComponent::Render()
 			dynamic_cast<GUIComponent*>(m_elements[i]->GetChildren()[j])->Render();
 		}
 		m_elements[i]->Render();
-	}
+}
 }

@@ -12,12 +12,13 @@ m_wallMaterial(wallMaterial),
 m_redPostMaterial(redPostMaterial),
 m_bluePostMaterial(bluePostMaterial)
 {
+	m_stadiumMesh = ModelLoader::LoadMGL(MODEL_DIR"Stadium/Stadium.mgl", true);
 
 	RigidPhysicsObject* floorPhysics = new RigidPhysicsObject();
 	floorPhysics->CreateCollisionShape(0, Vec3Physics(0, 1, 0), true);
 	floorPhysics->CreatePhysicsBody(0, Vec3Physics(0, -1, 0), QuatPhysics(0, 0, 0, 1));
 
-	this->SetRenderComponent(new RenderComponent(material, ModelLoader::LoadMGL(MODEL_DIR"Stadium/Stadium.mgl", true)));
+	this->SetRenderComponent(new RenderComponent(material, m_stadiumMesh));
 	this->SetPhysicsComponent(floorPhysics);
 	this->GetPhysicsComponent()->GetPhysicsBody()->setRestitution(0.3);
 	this->SetLocalTransform(Mat4Graphics::Scale(Vec3Physics(SCALE, SCALE, SCALE)) * Mat4Graphics::Translation(Vec3Graphics(6.8, -28.5, 2)) * Mat4Graphics::RotationX(-0.7f) * Mat4Graphics::RotationY(30.5f));
@@ -44,7 +45,16 @@ m_bluePostMaterial(bluePostMaterial)
 	CreateCollisionWalls();
 }
 
-Stadium::~Stadium(){}
+Stadium::~Stadium(){
+	delete m_stadiumMesh;
+	delete m_postMesh;
+
+	for (auto wall : m_walls)
+	{
+		delete wall;
+	}
+	m_walls.clear();
+}
 
 void Stadium::CreateCollisionWalls()
 {
@@ -139,6 +149,7 @@ void Stadium::CreatePlane(std::vector<btConvexHullShape*> &collectionVector, Vec
 	float texLengthY = lengthOfWallY / 4;
 
 	Mesh* mesh = Mesh::GenerateQuad(points, Vec2Graphics(texLengthX, texLengthY));
+	m_walls.push_back(mesh);
 
 	GameObject* wall = new GameObject();
 	wall->SetRenderComponent(new RenderComponent(m_wallMaterial, mesh));

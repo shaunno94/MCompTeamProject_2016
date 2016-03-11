@@ -3,60 +3,52 @@
 #include "GoalCollisionFilterStep.h"
 #include "PickupManager.h"
 #include "AI/constants.h"
+#include "constants.h"
+#include <algorithm>  
 
 GameScene::GameScene()
 {
+
 	//initialise conroller manager
 	myControllers = new LocalControlManager();
 
-	//Initialise Bullet physics engine.
-	PhysicsEngineInstance::Instance()->setGravity(btVector3(0, -9.81, 0));
-
-#ifndef ORBIS
-	ParticleManager::Initialise();
-
-	if (ParticleManager::GetManager().HasInitialised())
-	{
-		std::cout << "Particle Manager not Initialised" << std::endl;
-	}
-#endif
 	guiSystem = new GUISystem();
 	if (!guiSystem->HasInitialised())
 	{
 		std::cout << "GUI not Initialised!" << std::endl;
 	}
-	scores[0] = 0;
-	scores[1] = 0;
-
-#if DEBUG_DRAW
-	PhysicsEngineInstance::Instance()->setDebugDrawer(DebugDraw::Instance());
-	DebugDraw::Context(Renderer::GetInstance());
-#endif
 
 	SetupShaders();
 	SetupMaterials();
-	SetupGameObjects();
 	DrawGUI();
-	SetupControls();
 }
 
 
 GameScene::~GameScene()
 {
-	PhysicsEngineInstance::Release();
 
-#ifndef ORBIS
-	ParticleManager::Destroy();
-#endif
+	delete material;
+	delete netMaterial;
+	delete redPostMaterial;
+	delete bluePostMaterial;
+	delete ballMaterial;
 
-	if (guiSystem)
-		delete guiSystem;
+	delete playerMaterial;
+	delete aiMaterial;
+	delete ai2Material;
+	delete particleMaterial;
+	delete guiMaterial;
+	delete textMaterial;
 
-	//delete pickupManager;
+	delete pickupManager;
 
-#if DEBUG_DRAW
-	DebugDraw::Release();
-#endif
+	delete myControllers;
+	myControllers = nullptr;
+
+	delete guiSystem;
+	guiSystem = nullptr;
+
+
 }
 
 void GameScene::SetControllerActor()
@@ -64,7 +56,6 @@ void GameScene::SetControllerActor()
 	myControllers->setActor(Renderer::GetInstance()->GetCurrentScene()->findGameObject("shooterAI"), SHOOTER);
 	myControllers->setActor(Renderer::GetInstance()->GetCurrentScene()->findGameObject("goalieAI"), GOALKEEPER);
 	myControllers->setActor(Renderer::GetInstance()->GetCurrentScene()->findGameObject("aggroAI"), AGGRESSIVE);
-	//myControllers->setActor(Renderer::GetInstance()->GetCurrentScene()->findGameObject("aggroAI"), SHOOTER); // Whilst debugging
 }
 
 void GameScene::IncrementScore(int team)
@@ -137,27 +128,37 @@ void GameScene::UpdateScene(float dt)
 		}
 	}
 
+	float boost = floor(std::max(player->GetControllerComponent()->boost * 100.0f, 0.0f));
+	if (boost > 99.0f) {
+		boostComponent->Update(std::string("Boost:" + std::to_string(boost).substr(0, 3) + "%"));
+	}
+	else if (boost < 10.0f) {
+		boostComponent->Update(std::string("Boost:" + std::to_string(boost).substr(0, 1) + "%"));
+	} 
+	else {
+		boostComponent->Update(std::string("Boost:" + std::to_string(boost).substr(0, 2) + "%"));
+	}
+
 }
 
 void GameScene::SetupGameObjects()
 {
-	light1 = new GameObject("l");
+	light1 = new GameObject("light1");
 	light1->SetRenderComponent(new RenderComponent(lightMaterial, ModelLoader::LoadMGL(MODEL_DIR"Common/ico.mgl", true)));
 	light1->SetWorldTransform(Mat4Graphics::Translation(Vec3Graphics(0, 2, 0.3f)) *Mat4Graphics::Scale(Vec3Graphics(20, 20, 20)));
 	light1->SetBoundingRadius(20);
 
-	light2 = new GameObject("l");
+	light2 = new GameObject("light2");
 	light2->SetRenderComponent(new RenderComponent(lightMaterial, ModelLoader::LoadMGL(MODEL_DIR"Common/ico.mgl", true)));
 	light2->SetWorldTransform(Mat4Graphics::Translation(Vec3Graphics(600, 900, 600)) *Mat4Graphics::Scale(Vec3Graphics(2400, 2400, 2400)));
 	light2->SetBoundingRadius(2400);
 
 	ball = new BallGameObject("ball", ballMaterial);
 
-	player = new CarGameObject(Vec3Physics(195, 2, 0), QuatPhysics(0, 1, 0, 1), playerMaterial, "player");
-
-	shooterAI = new CarGameObject(Vec3Physics(-190, 2, 30), QuatPhysics::IDENTITY, aiMaterial, "shooterAI", COL_AI_CAR);
-
-	goalieAI = new CarGameObject(Vec3Physics(-330, 2, 0), QuatPhysics::IDENTITY, aiMaterial, "goalieAI", COL_AI_CAR);
+	player = new CarGameObject(Vec3Physics(195, 2, 0), QuatPhysics(0, 1, 0, 1), playerMaterial, RED_TEAM, "player");
+	shooterAI = new CarGameObject(Vec3Physics(-190, 2, 30), QuatPhysics::IDENTITY, aiMaterial, BLUE_TEAM, "shooterAI", COL_AI_CAR);
+	goalieAI = new CarGameObject(Vec3Physics(-330, 2, 0), QuatPhysics::IDENTITY, aiMaterial, BLUE_TEAM, "goalieAI", COL_AI_CAR);
+	aggroAI = new CarGameObject(Vec3Physics(-190, 2, -30), QuatPhysics(0, 0, 0, 1), ai2Material, BLUE_TEAM, "aggroAI", COL_AI_CAR);
 
 	pickupManager = new PickupManager(material);
 	for (auto pickupMapping : *(pickupManager->GetPickups()))
@@ -165,7 +166,6 @@ void GameScene::SetupGameObjects()
 		addGameObject(pickupMapping.second);
 	}
 
-	aggroAI = new CarGameObject(Vec3Physics(-190, 2, -30), QuatPhysics(0, 0, 0, 1), ai2Material, "aggroAI", COL_AI_CAR);
 
 	// Create Stadium
 	stadium = new Stadium(material, netMaterial, redPostMaterial, bluePostMaterial, "stadium");
@@ -264,10 +264,6 @@ void GameScene::SetupMaterials()
 	textMaterial = new Material(orthoShader);
 	playerMaterial = new Material(simpleShader);
 
-	playerMaterial = new Material(simpleShader);
-
-	aiMaterial->Set(ReservedMeshTextures.DIFFUSE.name, Texture::Get(MODEL_DIR"car/body1.bmp", true));
-	ai2Material->Set(ReservedMeshTextures.DIFFUSE.name, Texture::Get(MODEL_DIR"car/body2.bmp", true));
 	//particleMaterial->Set(ReservedMeshTextures.DIFFUSE.name, Texture::Get(TEXTURE_DIR"particle.tga", true));
 }
 
@@ -289,6 +285,8 @@ void GameScene::DrawGUI()
 	hudOrtho->AddGUIComponent(graphicsDebugTextComponent);
 #endif
 
+	boostComponent = new TextGUIComponent(guiMaterial, "Boost:0%", Vec3Graphics(0.45f, -0.9f, 0), Vec3Graphics(0.05f, 0.05f, 1));
+	hudOrtho->AddGUIComponent(boostComponent);
 	//Add Orthographic component to GUISystem
 	guiSystem->AddOrthoComponent(hudOrtho);
 }
@@ -363,14 +361,24 @@ void GameScene::ResetObject(GameObject& object) {
 		object.GetControllerComponent()->reset();
 
 }
+
 void GameScene::Setup()
 {
+	Scene::Setup();
+	scores[0] = 0;
+	scores[1] = 0;
+
+	SetupGameObjects();
+	SetupControls();
 	SetControllerActor();
 	SetupAI();
 	LoadAudio();
+
 }
 
 void GameScene::Cleanup()
 {
+	Scene::Cleanup();
+	ClearObjects();
 
 }
