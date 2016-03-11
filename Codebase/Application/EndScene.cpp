@@ -68,7 +68,6 @@ void EndScene::SetupMaterials()
 	bgMaterials[BLUE_WINS] = new Material(orthoShader);
 	bgMaterials[BLUE_WINS]->Set(ReservedMeshTextures.DIFFUSE.name, Texture::Get(TEXTURE_DIR"WINBLUE.png"));
 	bgMaterials[TIE] = new Material(orthoShader);
-	bgMaterials[TIE]->Set(ReservedMeshTextures.DIFFUSE.name, Texture::Get(TEXTURE_DIR"TIE.png"));
 
 	//textMaterial = new Material(orthoShader);
 }
@@ -77,6 +76,7 @@ void EndScene::DrawGUI()
 {
 	bgOrtho = new OrthoComponent(1.0f);
 	background = new MenuBackgroundGUI(bgMaterials[TIE]);
+	bgMaterials[TIE]->Set(ReservedMeshTextures.DIFFUSE.name, Texture::Get(TEXTURE_DIR"TIE.png"));
 	bgOrtho->AddGUIComponent(background);
 
 	menuOrtho = new MenuOrthoComponent(0.5);
