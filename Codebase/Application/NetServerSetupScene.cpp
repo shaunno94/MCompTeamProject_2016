@@ -16,16 +16,6 @@ NetServerSetupScene::NetServerSetupScene()
 
 NetServerSetupScene::~NetServerSetupScene()
 {
-	delete btnMaterial;
-	delete bgMaterial;
-	delete guiMaterial;
-	delete selectBtnMaterial;
-
-	delete cancelBtn;
-
-	delete ipText;
-	delete cancelText;
-
 	if (guiSystem)
 		delete guiSystem;
 }
@@ -135,6 +125,7 @@ void NetServerSetupScene::Setup()
 
 void NetServerSetupScene::Cleanup()
 {
+
 	Network::Clear();
 	delete server;
 	server = nullptr;

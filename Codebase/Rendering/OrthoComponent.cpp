@@ -13,9 +13,11 @@ OrthoComponent::~OrthoComponent()
 		for (int j = 0; j < m_elements[i]->GetChildren().size(); j++)
 		{
 			delete m_elements[i]->GetChildren()[j];
+			m_elements[i]->GetChildren()[j] = nullptr;
 			m_elements[i]->GetChildren().clear();
 		}
 		delete m_elements[i];
+		m_elements[i] = nullptr;
 		m_elements.clear();
 	}
 }

@@ -25,10 +25,6 @@ NetClientSetupScene::NetClientSetupScene()
 
 NetClientSetupScene::~NetClientSetupScene()
 {
-	delete btnMaterial;
-	delete bgMaterial;
-	delete guiMaterial;
-	delete selectBtnMaterial;
 	if (guiSystem)
 		delete guiSystem;
 }
@@ -39,8 +35,6 @@ void ConnectingPrint()
 
 void NetClientSetupScene::UpdateScene(float dt)
 {
-	m_Selected = menuOrtho->Update();
-
 	for (auto element : connectionOrtho->GetElements())
 		delete element;
 	connectionOrtho->GetElements().clear();
@@ -156,15 +150,8 @@ void NetClientSetupScene::SetupMaterials()
 void NetClientSetupScene::DrawGUI()
 {
 	connectionOrtho = new OrthoComponent(1.0f);
-
-	menuOrtho = new MenuOrthoComponent(0.5);
-	singleBtn = new ButtonGUIComponent(btnMaterial, selectBtnMaterial, Vec3Graphics(-0.7f, 0.7f, 0), Vec2Graphics(0.2f, 0.1f));
-
-	menuOrtho->AddGUIComponent(singleBtn);
-
 	guiSystem->AddOrthoComponent(connectionOrtho);
 
-	guiSystem->AddOrthoComponent(menuOrtho);
 }
 
 void NetClientSetupScene::LoadAudio()
@@ -198,6 +185,9 @@ void NetClientSetupScene::Cleanup()
 	Network::Clear();
 	delete client;
 	client = nullptr;
+
+
+
 }
 
 

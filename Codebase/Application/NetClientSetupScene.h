@@ -42,7 +42,6 @@ protected:
 	GameObject* test;
 	GUISystem* guiSystem;
 
-	
 	BaseShader* orthoShader;
 
 	Material* guiMaterial;
@@ -51,16 +50,8 @@ protected:
 	Material* btnMaterial;
 	Material* selectBtnMaterial;
 
-	OrthoComponent* bgOrtho;
 	OrthoComponent* connectionOrtho;
-	MenuOrthoComponent* menuOrtho;
 
-	MenuBackgroundGUI* menuBg;
-	ButtonGUIComponent* singleBtn;
-	ButtonGUIComponent* multiBtn;
-	ButtonGUIComponent* exitBtn;
-
-	int m_Selected;
 	bool m_IPGiven;
 	std::string m_IP;
 };
