@@ -12,6 +12,8 @@ public:
 	NetClientGameScene();
 	~NetClientGameScene();
 
+	void UpdateScene(float dt) override;
+
 	void Setup() override;
 	void Cleanup() override;
 };

@@ -12,6 +12,9 @@ NetServerSetupScene::NetServerSetupScene()
 	{
 		std::cout << "GUI not Initialised!" << std::endl;
 	}
+
+	SetupShaders();
+	SetupMaterials();
 }
 
 
@@ -78,9 +81,9 @@ void NetServerSetupScene::SetupMaterials()
 
 void NetServerSetupScene::DrawGUI()
 {
-	ipOrtho = new OrthoComponent(1.0f);
-	ipText = new TextGUIComponent(textMaterial, *(ips[0]), Vec3Graphics(-1.0f, -0.5, 0), Vec3Graphics(0.04f, 0.04f, 1));
-	ipOrtho->AddGUIComponent(ipText);
+		ipOrtho = new OrthoComponent(1.0f);
+		ipText = new TextGUIComponent(textMaterial, *(ips[0]), Vec3Graphics(-1.0f, -0.5, 0), Vec3Graphics(0.04f, 0.04f, 1));
+		ipOrtho->AddGUIComponent(ipText);
 
 	connectionOrtho = new OrthoComponent(1.0f);
 
@@ -121,8 +124,7 @@ void NetServerSetupScene::Setup()
 
 	ips = NetworkGameData::Instance.server->GetIpStr();
 
-	SetupShaders();
-	SetupMaterials();
+	
 	SetupGameObjects();
 	DrawGUI();
 	SetupControls();
@@ -131,6 +133,7 @@ void NetServerSetupScene::Setup()
 
 void NetServerSetupScene::Cleanup()
 {
+	Scene::Cleanup();
 	//Network::Clear();
 	for (std::string* ip : ips)
 	{

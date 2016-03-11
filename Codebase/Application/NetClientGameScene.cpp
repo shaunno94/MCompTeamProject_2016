@@ -154,4 +154,16 @@ void NetClientGameScene::Cleanup()
 	//NetworkGameData::Instance.client = nullptr;
 }
 
+void NetClientGameScene::UpdateScene(float dt)
+{
+	if (NetworkGameData::Instance.client->GetConnection())
+	{
+		GameScene::UpdateScene(dt);
+	}
+	else
+	{
+		Renderer::GetInstance()->SetCurrentScene(Renderer::GetInstance()->GetScene(END_SCENE));
+	}
+}
+
 #endif

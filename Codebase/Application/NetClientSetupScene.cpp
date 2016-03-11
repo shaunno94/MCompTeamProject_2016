@@ -14,12 +14,10 @@ NetClientSetupScene::NetClientSetupScene()
 		std::cout << "GUI not Initialised!" << std::endl;
 	}
 
-
 	SetupShaders();
 	SetupMaterials();
 	SetupGameObjects();
 	DrawGUI();
-	SetupControls();
 }
 
 
@@ -185,14 +183,8 @@ void NetClientSetupScene::Setup()
 	{
 		delete NetworkGameData::Instance.client;
 	}
-	if (NetworkGameData::Instance.client)
-		delete NetworkGameData::Instance.client;
 	NetworkGameData::Instance.client = new NetClient();
 
-	SetupShaders();
-	SetupMaterials();
-	SetupGameObjects();
-	DrawGUI();
 	SetupControls();
 
 	m_IPGiven = false;
