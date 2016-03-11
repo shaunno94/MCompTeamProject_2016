@@ -7,7 +7,7 @@ MenuOrthoComponent::MenuOrthoComponent(float z) : OrthoComponent(z)
 
 MenuOrthoComponent::~MenuOrthoComponent()
 {
-
+	
 }
 
 int MenuOrthoComponent::Update()
@@ -32,10 +32,3 @@ int MenuOrthoComponent::Update()
 	return m_Selection;
 }
 
-void MenuOrthoComponent::Render()
-{
-	for (unsigned int i = 0; i < m_elements.size(); i++)
-	{
-		m_elements[i]->Render();
-	}
-}

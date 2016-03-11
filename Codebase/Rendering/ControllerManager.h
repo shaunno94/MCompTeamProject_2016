@@ -11,7 +11,7 @@ public:
 	virtual void setProducer(GameObject* g, unsigned int type) = 0;
 	virtual void setActor(GameObject* g, unsigned int type) = 0;
 	virtual void update(float ms);
-
+	virtual void clear();
 protected:
 	std::vector<Controller*> controllers;
 };

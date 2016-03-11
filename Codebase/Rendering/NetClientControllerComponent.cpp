@@ -63,15 +63,15 @@ void NetClientControllerComponent::SelectPrevious()
 void NetClientControllerComponent::Submit()
 {
 
-	switch (m_parent->GetSelection())
-	{
-	case CLIENT_MENU_BACK:
-		Renderer::GetInstance()->SetCurrentScene(Renderer::GetInstance()->GetScene(MENU_SCENE));
-		break;
-	case CLIENT_MENU_START:
-		Renderer::GetInstance()->SetCurrentScene(Renderer::GetInstance()->GetScene(CLIENT_GAME_SCENE));
-		break;
-	default:
-		std::cout << "Selection Invalid!";
-	}
+	//switch (m_parent->GetSelection())
+	//{
+	//case CLIENT_MENU_BACK:
+	//	Renderer::GetInstance()->SetCurrentScene(Renderer::GetInstance()->GetScene(MENU_SCENE));
+	//	break;
+	//case CLIENT_MENU_START:
+	//	Renderer::GetInstance()->SetCurrentScene(Renderer::GetInstance()->GetScene(CLIENT_GAME_SCENE));
+	//	break;
+	//default:
+	//	std::cout << "Selection Invalid!";
+	//}
 }

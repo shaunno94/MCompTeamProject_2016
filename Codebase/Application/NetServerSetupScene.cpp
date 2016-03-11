@@ -16,12 +16,6 @@ NetServerSetupScene::NetServerSetupScene()
 
 NetServerSetupScene::~NetServerSetupScene()
 {
-	delete btnMaterial;
-	delete bgMaterial;
-	delete guiMaterial;
-	delete selectBtnMaterial;
-	delete ipText;
-	delete singleBtn;
 	if (guiSystem)
 		delete guiSystem;
 }
@@ -79,23 +73,30 @@ void NetServerSetupScene::SetupMaterials()
 	bgMaterial = new Material(orthoShader);
 	btnMaterial = new Material(orthoShader);
 	selectBtnMaterial = new Material(orthoShader);
-
-	//textMaterial = new Material(orthoShader);
+	textMaterial = new Material(orthoShader);
 }
 
 void NetServerSetupScene::DrawGUI()
 {
 	ipOrtho = new OrthoComponent(1.0f);
-	ipText = new TextGUIComponent(guiMaterial, *(ips[0]), Vec3Graphics(-1.0f, -0.5, 0), Vec3Graphics(0.04f, 0.04f, 1));
+	ipText = new TextGUIComponent(textMaterial, *(ips[0]), Vec3Graphics(-1.0f, -0.5, 0), Vec3Graphics(0.04f, 0.04f, 1));
 	ipOrtho->AddGUIComponent(ipText);
 
 	connectionOrtho = new OrthoComponent(1.0f);
 
 	menuOrtho = new MenuOrthoComponent(0.5);
-	singleBtn = new ButtonGUIComponent(btnMaterial, selectBtnMaterial, Vec3Graphics(-0.7f, 0.7f, 0), Vec2Graphics(0.2f, 0.1f));
 
-	menuOrtho->AddGUIComponent(singleBtn);
+	startBtn = new ButtonGUIComponent(btnMaterial, selectBtnMaterial, Vec3Graphics(0.3f, -0.7f, 0), Vec2Graphics(0.1f, 0.05f));
+	startText = new TextGUIComponent(textMaterial, "Start", Vec3Graphics(0.3f, -0.7, 0), Vec3Graphics(0.04f, 0.04f, 1));
 
+	cancelBtn = new ButtonGUIComponent(btnMaterial, selectBtnMaterial, Vec3Graphics(0.6f, -0.7f, 0), Vec2Graphics(0.1f, 0.05f));
+	cancelText = new TextGUIComponent(textMaterial, "Cancel", Vec3Graphics(0.6f, -0.7, 0), Vec3Graphics(0.04f, 0.04f, 1));
+
+	startBtn->AddChildObject(startText);
+	cancelBtn->AddChildObject(cancelText);
+
+	menuOrtho->AddGUIComponent(cancelBtn);
+	menuOrtho->AddGUIComponent(startBtn);
 	guiSystem->AddOrthoComponent(ipOrtho);
 	guiSystem->AddOrthoComponent(menuOrtho);
 	guiSystem->AddOrthoComponent(connectionOrtho);
@@ -114,7 +115,7 @@ void NetServerSetupScene::SetupControls()
 void NetServerSetupScene::Setup()
 {
 	Network::Init();
-	server = new NetServer(5, 5, 5);
+	server = new NetServer(10, 10, 10);
 
 	ips = server->GetIpStr();
 
@@ -128,6 +129,7 @@ void NetServerSetupScene::Setup()
 
 void NetServerSetupScene::Cleanup()
 {
+
 	Network::Clear();
 	delete server;
 	server = nullptr;

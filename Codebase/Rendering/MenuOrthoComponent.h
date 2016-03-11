@@ -10,8 +10,6 @@ public:
 	MenuOrthoComponent(float z);
 	virtual ~MenuOrthoComponent();
 
-	virtual void Render() override;
-
 	void SetSelection(unsigned int selection)
 	{
 		m_Selection = selection;

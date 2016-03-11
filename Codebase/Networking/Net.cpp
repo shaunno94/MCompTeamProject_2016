@@ -11,6 +11,7 @@ NetConnectionData::NetConnectionData(const std::string& address) : m_addressStr(
 {
 	m_peer = nullptr;
 	isPeer = true;
+	m_initialConnectMade = false;
 }
 
 NetConnectionData::NetConnectionData(ENetPeer* peer)
@@ -18,6 +19,7 @@ NetConnectionData::NetConnectionData(ENetPeer* peer)
 	static const size_t CONNECTION_NAME_MAX_LENGTH = 64;
 	char buffer[CONNECTION_NAME_MAX_LENGTH];
 
+	m_initialConnectMade = true;
 	m_peer = peer;
 	isPeer = peer ? true : false;
 	if (isPeer)
@@ -45,6 +47,9 @@ NetConnectionState NetConnectionData::GetState() const
 {
 	if (!isPeer)
 		return NetConnectionState::NetNonPeerConnection;
+
+	if (!m_initialConnectMade)
+		return NetConnectionState::NetPeerConnecting;
 
 	//destroyed
 	if (m_peer == nullptr)

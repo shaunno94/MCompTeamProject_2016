@@ -4,6 +4,7 @@
 #include "MenuScene.h"
 #include "EndScene.h"
 #include "NetServerSetupScene.h"
+#include "NetClientSetupScene.h"
 #include "Helpers/MeasuringTimer.h"
 //#include "Networking\Net.h"
 
@@ -51,12 +52,15 @@ int main(void)
 	GameScene* gameScene = new GameScene();
 	MenuScene* menuScene = new MenuScene();
 	NetServerSetupScene* serverScene = new NetServerSetupScene();
-	//EndScene* endScene = new EndScene();
+	EndScene* endScene = new EndScene();
+	NetClientSetupScene* clientScene = new NetClientSetupScene();
+
 
 	renderer.AddScene(menuScene);
 	renderer.AddScene(gameScene);
 	renderer.AddScene(serverScene);
-	//renderer.AddScene(endScene);
+	renderer.AddScene(clientScene);
+	renderer.AddScene(endScene);
 	
 	//Set current scene to the game
 	renderer.SetCurrentScene(menuScene);
@@ -85,6 +89,8 @@ int main(void)
 		MEASURING_TIMER_LOG_END();
 
 		MEASURING_TIMER_LOG_START("Renderer");
+		if (!renderer.GetCurrentScene())
+			break;
 		renderer.RenderScene(ms);
 		MEASURING_TIMER_LOG_END();
 
@@ -104,7 +110,7 @@ int main(void)
 	renderer.SetCurrentScene(nullptr);
 	delete menuScene;
 	delete gameScene;	
-	//delete endScene;
+	delete endScene;
 
 	return 0;
 }

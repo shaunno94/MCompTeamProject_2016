@@ -28,6 +28,11 @@ public:
 		return m_addressStr;
 	}
 
+	inline void SetInitialConnection(bool val = true)
+	{
+		m_initialConnectMade = val;
+	}
+
 protected:
 	/// <summary>
 	/// Creates connection to a server
@@ -42,6 +47,7 @@ protected:
 	~NetConnectionData();
 
 	ENetPeer* m_peer;
+	bool m_initialConnectMade;
 	std::string m_addressStr;
 };
 

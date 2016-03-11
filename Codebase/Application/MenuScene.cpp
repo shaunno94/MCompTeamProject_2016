@@ -119,28 +119,38 @@ void MenuScene::SetupMaterials()
 	redPostMaterial = new ExtendedMaterial(colourShader, true);
 	bluePostMaterial = new ExtendedMaterial(colourShader, true);
 
-	//textMaterial = new Material(orthoShader);
+	textMaterial = new Material(orthoShader);
 }
 
 void MenuScene::DrawGUI()
 {
-	bgOrtho = new OrthoComponent(1.0);
-	//menuBg = new MenuBackgroundGUI(bgMaterial);
-	//bgOrtho->AddGUIComponent(menuBg);
+	menuOrtho = new MenuOrthoComponent(0);
+	bgOrtho = new MenuOrthoComponent(0);
+	singleBtn = new ButtonGUIComponent(btnMaterial, selectBtnMaterial,   Vec3Graphics(-0.6f, 0.7f,0.0f), Vec2Graphics(0.3f, 0.05f));
+	hostGameBtn = new ButtonGUIComponent(btnMaterial, selectBtnMaterial, Vec3Graphics(-0.6f, 0.5f, 0.0f), Vec2Graphics(0.3f, 0.05f));
+	joinGameBtn = new ButtonGUIComponent(btnMaterial, selectBtnMaterial, Vec3Graphics(-0.6f, 0.3f, 0.0f), Vec2Graphics(0.3f, 0.05f));
+	exitBtn = new ButtonGUIComponent(btnMaterial, selectBtnMaterial, Vec3Graphics(-0.6f, 0.1f, 0.0f), Vec2Graphics(0.3f, 0.05f));
 
-	menuOrtho = new MenuOrthoComponent(0.5);
-	singleBtn = new ButtonGUIComponent(btnMaterial, selectBtnMaterial, Vec3Graphics(-0.7f, 0.7f, 0), Vec2Graphics(0.2f, 0.1f));
-	multiBtn = new ButtonGUIComponent(btnMaterial, selectBtnMaterial, Vec3Graphics(-0.7f, 0.4f, 0), Vec2Graphics(0.2f, 0.1f));
-	exitBtn = new ButtonGUIComponent(btnMaterial, selectBtnMaterial, Vec3Graphics(-0.7f, 0.1f, 0), Vec2Graphics(0.2f, 0.1f));
+	singleBtnText = new TextGUIComponent(textMaterial, "Single Player", Vec3Graphics(-0.9f, 0.7f, 0.0f), Vec3Graphics(0.04f, 0.04f, 1));
+	hostGameBtnText = new TextGUIComponent(textMaterial, "Host Game", Vec3Graphics(-0.9f, 0.5f, 0.0f), Vec3Graphics(0.04f, 0.04f, 1));
+	joinGameBtnText = new TextGUIComponent(textMaterial, "Join Game", Vec3Graphics(-0.9f, 0.3f, 0.0f), Vec3Graphics(0.04f, 0.04f, 1));
+	exitBtnText = new TextGUIComponent(textMaterial, "Quit", Vec3Graphics(-0.9f, 0.1f, 0.0f), Vec3Graphics(0.04f, 0.04f, 1));
 	titleImg = new MenuBackgroundGUI(bgMaterial);
 
+	singleBtn->AddChildObject(singleBtnText);
+	hostGameBtn->AddChildObject(hostGameBtnText);
+	joinGameBtn->AddChildObject(joinGameBtnText);
+	exitBtn->AddChildObject(exitBtnText);
+
 	menuOrtho->AddGUIComponent(singleBtn);
-	menuOrtho->AddGUIComponent(multiBtn);
+	menuOrtho->AddGUIComponent(hostGameBtn);
+	menuOrtho->AddGUIComponent(joinGameBtn);
 	menuOrtho->AddGUIComponent(exitBtn);
 	bgOrtho->AddGUIComponent(titleImg);
 
-	guiSystem->AddOrthoComponent(bgOrtho);
 	guiSystem->AddOrthoComponent(menuOrtho);
+	guiSystem->AddOrthoComponent(bgOrtho);
+
 }
 
 void MenuScene::LoadAudio()

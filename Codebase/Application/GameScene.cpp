@@ -6,6 +6,7 @@
 #include "constants.h"
 #include <algorithm>  
 
+
 GameScene::GameScene()
 {
 
@@ -78,10 +79,21 @@ void GameScene::UpdateScene(float dt)
 
 	if (currentTime > 180)
 	{
-		//Renderer::GetInstance()->SetCurrentScene(Renderer::GetInstance()->GetScene(3));
+		Scene* endScene = Renderer::GetInstance()->GetScene(END_SCENE);
+		team winner;
+		if (scores[0] > scores[1])
+			((EndScene*)endScene)->SetWinningTeam(BLUE_WINS);
+		else if (scores[0] < scores[1])
+			((EndScene*)endScene)->SetWinningTeam(RED_WINS);
+		else
+			((EndScene*)endScene)->SetWinningTeam(TIE);
+		Renderer::GetInstance()->SetCurrentScene(endScene);
 		currentTime = 0;
 		lastTime = 0;
+
 	}
+	else{
+
 	currentTime += dt / 1000.0f;
 
 	if (currentTime - lastTime > 1)
@@ -90,7 +102,7 @@ void GameScene::UpdateScene(float dt)
 		scoreboardComponent->Update(scores[0], scores[1], currentTime);
 		//GET_DEBUG_STREAM().str().substr()
 
-#ifdef _DEBUG
+#ifndef DEBUG_DRAW
 		
 		vector<std::string>tokens;
 		std::string t;
@@ -98,9 +110,9 @@ void GameScene::UpdateScene(float dt)
 			tokens.push_back(t.substr(2, std::string::npos));
 		}
 
-		float fpsStep = 1/(std::stof(tokens[1]) + std::stof(tokens[3])) * 1000;
+			float fpsStep = 1 / (std::stof(tokens[1]) + std::stof(tokens[3])) * 1000;
 		float physicsStep = std::stof(tokens[1]);
-		std::string fps = "FPS: " + std::to_string(fpsStep).substr(0,5);
+			std::string fps = "FPS: " + std::to_string(fpsStep).substr(0, 5);
 		std::string physics = "Physics: " + tokens[1].substr(0, 5);
 		std::string graphics = "Graphics: " + tokens[3].substr(0, 5);
 
@@ -141,7 +153,7 @@ void GameScene::UpdateScene(float dt)
 
 	float speed = floor(std::max(player->GetControllerComponent()->getForwardVelocity(), 0.0f)) / 2.0f;
 	if (speed > 99.0f) {
-		speedComponent->Update(std::string(std::to_string(speed).substr(0,3) + "mph"));
+			speedComponent->Update(std::string(std::to_string(speed).substr(0, 3) + "mph"));
 	}
 	else if (speed < 10.0f) {
 		speedComponent->Update(std::string(std::to_string(speed).substr(0, 1) + "mph"));
@@ -149,6 +161,7 @@ void GameScene::UpdateScene(float dt)
 	else {
 		speedComponent->Update(std::string(std::to_string(speed).substr(0, 2) + "mph"));
 	}
+}
 }
 
 void GameScene::SetupGameObjects()
@@ -249,11 +262,11 @@ void GameScene::SetupShaders()
 #endif
 	if (!pointlightShader->IsOperational())
 		std::cout << "Point light shader not operational!" << std::endl;
-	if(!simpleShader->IsOperational())
+	if (!simpleShader->IsOperational())
 		std::cout << "Simple shader not operational!" << std::endl;
 	if (!colourShader->IsOperational())
 		std::cout << "Colour shader not operational!" << std::endl;
-	if(!orthoShader->IsOperational())
+	if (!orthoShader->IsOperational())
 		std::cout << "ortho shader not operational!" << std::endl;
 }
 
@@ -391,6 +404,8 @@ void GameScene::Setup()
 
 void GameScene::Cleanup()
 {
+	/*ResetObjects();
+	scores[0] = scores[1] = 0;*/
 	Scene::Cleanup();
 	ClearObjects();
 

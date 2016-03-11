@@ -13,6 +13,8 @@ public:
 	void Update();
 	virtual void Render();
 
+	const float getDepth() { return depth; };
+
 	bool operator<(const OrthoComponent &rhs) const { return depth < rhs.depth; };
 
 	std::vector<GUIComponent*>& GetElements()

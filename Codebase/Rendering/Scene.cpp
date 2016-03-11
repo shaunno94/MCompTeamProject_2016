@@ -171,4 +171,6 @@ void Scene::ClearObjects()
 	opaqueObjects.clear();
 	ghostObjects.clear();
 	lightObjects.clear();
+	if (myControllers)
+	myControllers->clear();
 }

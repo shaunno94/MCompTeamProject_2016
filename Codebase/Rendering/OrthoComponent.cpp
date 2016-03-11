@@ -8,10 +8,18 @@ OrthoComponent::OrthoComponent(const float z)
 
 OrthoComponent::~OrthoComponent()
 {
-	for (auto &guiComp : m_elements)
-		delete guiComp;
-
-	m_elements.clear();
+	for (unsigned int i = 0; i < m_elements.size(); i++)
+	{
+		for (int j = 0; j < m_elements[i]->GetChildren().size(); j++)
+		{
+			delete m_elements[i]->GetChildren()[j];
+			m_elements[i]->GetChildren()[j] = nullptr;
+			m_elements[i]->GetChildren().clear();
+		}
+		delete m_elements[i];
+		m_elements[i] = nullptr;
+		m_elements.clear();
+	}
 }
 
 void OrthoComponent::AddGUIComponent(GUIComponent* element)
@@ -36,8 +44,12 @@ void OrthoComponent::RemoveGUIComponent(GUIComponent* element)
 
 void OrthoComponent::Render()
 {
-	std::sort(m_elements.begin(), m_elements.end());
-
-	for (unsigned int i = 0; i < m_elements.size(); ++i)
+	for (unsigned int i = 0; i < m_elements.size(); i++)
+	{
+		for (int j = 0; j < m_elements[i]->GetChildren().size(); j++)
+		{
+			dynamic_cast<GUIComponent*>(m_elements[i]->GetChildren()[j])->Render();
+		}
 		m_elements[i]->Render();
+}
 }

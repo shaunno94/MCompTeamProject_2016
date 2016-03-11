@@ -1,10 +1,9 @@
 #include "EndScene.h"
+#include "Rendering\Renderer.h"
 
 
 EndScene::EndScene()
 {
-	myControllers = new UIControllerManager();
-
 	guiSystem = new GUISystem();
 
 	if (!guiSystem->HasInitialised())
@@ -23,19 +22,30 @@ EndScene::EndScene()
 
 EndScene::~EndScene()
 {
-	delete btnMaterial;
-	delete bgMaterial;
 	delete guiMaterial;
-	delete selectBtnMaterial;
+	for (int i = 0; i < 3; i++)
+	{
+		delete bgMaterials[i];
+	}
 	if (guiSystem)
 		delete guiSystem;
 }
 
+void EndScene::Setup(){
+	background->GetRenderComponent()->m_Material = bgMaterials[winningTeam];
+}
 
 void EndScene::UpdateScene(float dt)
 {
-	myControllers->update(dt);
-	m_Selected = menuOrtho->Update();
+	//background->GetRenderComponent()->m_Material = bgMaterials[winningTeam];
+#ifndef ORBIS
+	if (Window::GetWindow().GetKeyboard()->KeyTriggered(KEYBOARD_SPACE) || Window::GetWindow().GetKeyboard()->KeyTriggered(KEYBOARD_RETURN))
+		Renderer::GetInstance()->SetCurrentScene(Renderer::GetInstance()->GetScene(0));
+#else
+	if (PS4Input::getPS4Input()->GetButtonTriggered(BTN_CROSS))
+		Renderer::GetInstance()->SetCurrentScene(Renderer::GetInstance()->GetScene(0));
+#endif // !ORBIS
+
 }
 
 void EndScene::SetupGameObjects()
@@ -58,9 +68,12 @@ void EndScene::SetupShaders()
 void EndScene::SetupMaterials()
 {
 	guiMaterial = new Material(orthoShader);
-	bgMaterial = new Material(orthoShader);
-	btnMaterial = new Material(orthoShader);
-	selectBtnMaterial = new Material(orthoShader);
+	bgMaterials[RED_WINS] = new Material(orthoShader);
+	bgMaterials[RED_WINS]->Set(ReservedMeshTextures.DIFFUSE.name, Texture::Get(TEXTURE_DIR"WINRED.png"));
+	bgMaterials[BLUE_WINS] = new Material(orthoShader);
+	bgMaterials[BLUE_WINS]->Set(ReservedMeshTextures.DIFFUSE.name, Texture::Get(TEXTURE_DIR"WINBLUE.png"));
+	bgMaterials[TIE] = new Material(orthoShader);
+	bgMaterials[TIE]->Set(ReservedMeshTextures.DIFFUSE.name, Texture::Get(TEXTURE_DIR"TIE.png"));
 
 	//textMaterial = new Material(orthoShader);
 }
@@ -68,15 +81,11 @@ void EndScene::SetupMaterials()
 void EndScene::DrawGUI()
 {
 	bgOrtho = new OrthoComponent(1.0f);
-	background = new MenuBackgroundGUI(bgMaterial);
+	background = new MenuBackgroundGUI(bgMaterials[TIE]);
 	bgOrtho->AddGUIComponent(background);
 
 	menuOrtho = new MenuOrthoComponent(0.5);
-	toMenuBtn = new ButtonGUIComponent(btnMaterial, selectBtnMaterial, Vec3Graphics(-0.7f, 0.7f, 0), Vec2Graphics(0.2f, 0.1f));
-	restartBtn = new ButtonGUIComponent(btnMaterial, selectBtnMaterial, Vec3Graphics(-0.7f, 0.4f, 0), Vec2Graphics(0.2f, 0.1f));
-
-	menuOrtho->AddGUIComponent(toMenuBtn);
-	menuOrtho->AddGUIComponent(restartBtn);
+	
 
 	guiSystem->AddOrthoComponent(bgOrtho);
 	guiSystem->AddOrthoComponent(menuOrtho);
@@ -89,7 +98,7 @@ void EndScene::LoadAudio()
 
 void EndScene::SetupControls()
 {
-	myControllers->setProducer(menuOrtho, 0);
+
 }
 
 

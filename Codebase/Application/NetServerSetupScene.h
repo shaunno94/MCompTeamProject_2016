@@ -38,7 +38,6 @@ public:
 protected:
 	UIControllerManager* myControllers;
 
-	GameObject* test;
 	GUISystem* guiSystem;
 
 	BaseShader* orthoShader;
@@ -54,11 +53,12 @@ protected:
 	MenuOrthoComponent* menuOrtho;
 
 	MenuBackgroundGUI* menuBg;
-	ButtonGUIComponent* singleBtn;
-	ButtonGUIComponent* multiBtn;
-	ButtonGUIComponent* exitBtn;
+	ButtonGUIComponent* startBtn;
+	ButtonGUIComponent* cancelBtn;
 
 	TextGUIComponent* ipText;
+	TextGUIComponent* startText;
+	TextGUIComponent* cancelText;
 
 	NetServer* server;
 	std::vector<std::string*> ips;

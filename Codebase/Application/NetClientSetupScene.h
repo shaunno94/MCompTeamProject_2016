@@ -7,7 +7,7 @@
 #include "Rendering\MenuOrthoComponent.h"
 #include "Rendering\TextGUIComponent.h"
 #include "Networking\Net.h"
-#include "Networking\NetServer.h"
+#include "Networking\NetClient.h"
 
 
 #ifndef ORBIS
@@ -22,6 +22,8 @@ public:
 	NetClientSetupScene();
 	~NetClientSetupScene();
 
+	virtual void Setup() override;
+	virtual void Cleanup() override;
 	virtual void UpdateScene(float dt) override;
 
 	void SetupGameObjects();
@@ -34,12 +36,12 @@ public:
 	GUISystem* getGUISystem(){ return guiSystem; }
 
 protected:
+	NetClient* client;
 	UIControllerManager* myControllers;
 
 	GameObject* test;
 	GUISystem* guiSystem;
 
-	
 	BaseShader* orthoShader;
 
 	Material* guiMaterial;
@@ -48,15 +50,9 @@ protected:
 	Material* btnMaterial;
 	Material* selectBtnMaterial;
 
-	OrthoComponent* bgOrtho;
 	OrthoComponent* connectionOrtho;
-	MenuOrthoComponent* menuOrtho;
 
-	MenuBackgroundGUI* menuBg;
-	ButtonGUIComponent* singleBtn;
-	ButtonGUIComponent* multiBtn;
-	ButtonGUIComponent* exitBtn;
-
-	int m_Selected;
+	bool m_IPGiven;
+	std::string m_IP;
 };
 
