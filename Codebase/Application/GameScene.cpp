@@ -77,7 +77,7 @@ void GameScene::UpdateScene(float dt)
 {
 	myControllers->update(dt);
 
-	if (currentTime > 10)
+	if (currentTime > 180)
 	{
 		Scene* endScene = Renderer::GetInstance()->GetScene(END_SCENE);
 		team winner;
