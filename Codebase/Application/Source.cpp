@@ -6,7 +6,8 @@
 #include "NetServerSetupScene.h"
 #include "NetClientSetupScene.h"
 #include "Helpers/MeasuringTimer.h"
-//#include "Networking\Net.h"
+#include "Networking\Net.h"
+#include "NetServerGameScene.h"
 
 const float TIME_STEP = 1.0f / 120.0f;
 const unsigned int SUB_STEPS = 4;
@@ -41,6 +42,11 @@ int main(void)
 #ifdef ORBIS
 	PS4Input input = PS4Input();
 #endif
+
+#ifndef ORBIS
+	Network::Init();
+#endif
+
 	SoundSystem::Initialise();
 	ParticleManager::Initialise();
 	if (ParticleManager::GetManager().HasInitialised())
@@ -51,20 +57,27 @@ int main(void)
 	//Create GameScene
 	GameScene* gameScene = new GameScene();
 	MenuScene* menuScene = new MenuScene();
-	NetServerSetupScene* serverScene = new NetServerSetupScene();
 	EndScene* endScene = new EndScene();
-	NetClientSetupScene* clientScene = new NetClientSetupScene();
-
 
 	renderer.AddScene(menuScene);
 	renderer.AddScene(gameScene);
+	renderer.AddScene(endScene);
+
+#ifndef ORBIS
+	NetServerSetupScene* serverScene = new NetServerSetupScene();
+	NetClientSetupScene* clientScene = new NetClientSetupScene();
+	NetServerGameScene* serverGame = new NetServerGameScene();
+
 	renderer.AddScene(serverScene);
 	renderer.AddScene(clientScene);
-	renderer.AddScene(endScene);
+	renderer.AddScene(serverGame);
+#endif
 	
 	//Set current scene to the game
 	renderer.SetCurrentScene(menuScene);
 	//renderer.SetCurrentScene(gameScene);
+
+	
 
 #ifdef _DEBUG
 	std::cout << "Renderer Memory Usage: " << renderer.GetRendererMemUsage() / (1024 * 1024) << " (MB)" << std::endl;

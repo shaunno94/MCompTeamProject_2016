@@ -68,7 +68,7 @@ protected:
 	void applyImpulseFromExplosion(CarGameObject* car);
 	GameObject* ball;
 	
-	GameObject* light1;
+	//GameObject* light1;
 	GameObject* light2;
 	
 	GameObject* player;
@@ -80,6 +80,8 @@ protected:
 	GameObject* stadium;
 	GameObject* redGoal;
 	GameObject* blueGoal;
+
+	std::vector<GameObject*> m_cars;
 
 	RigidPhysicsObject* ballPhysics;
 	RigidPhysicsObject* redGoalBox;

@@ -36,7 +36,6 @@ public:
 	GUISystem* getGUISystem(){ return guiSystem; }
 
 protected:
-	NetClient* client;
 	UIControllerManager* myControllers;
 
 	GameObject* test;

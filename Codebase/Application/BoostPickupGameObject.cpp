@@ -37,8 +37,11 @@ bool BoostPickupCollisionFilterStep::callback(btBroadphaseProxy* proxy0, btBroad
 		if (scene)
 		{
 			auto pickupObj = scene->GetPickupManager()->FindPickup(proxy1->m_uniqueId);
-			DisablePickupCallback callback(pickupObj, m_obj);
-			PhysicsEngineInstance::Instance()->contactPairTest(pickupObj->GetPhysicsComponent()->GetPhysicsBody(), m_obj->GetPhysicsComponent()->GetPhysicsBody(), callback);
+			if (pickupObj)
+			{
+				DisablePickupCallback callback(pickupObj, m_obj);
+				PhysicsEngineInstance::Instance()->contactPairTest(pickupObj->GetPhysicsComponent()->GetPhysicsBody(), m_obj->GetPhysicsComponent()->GetPhysicsBody(), callback);
+			}
 		}
 	}
 	else if (proxy1->m_uniqueId == m_broadphaseProxyId)
@@ -47,8 +50,11 @@ bool BoostPickupCollisionFilterStep::callback(btBroadphaseProxy* proxy0, btBroad
 		if (scene)
 		{
 			auto pickupObj = scene->GetPickupManager()->FindPickup(proxy0->m_uniqueId);
-			DisablePickupCallback callback(pickupObj, m_obj);
-			PhysicsEngineInstance::Instance()->contactPairTest(pickupObj->GetPhysicsComponent()->GetPhysicsBody(), m_obj->GetPhysicsComponent()->GetPhysicsBody(), callback);
+			if (pickupObj)
+			{
+				DisablePickupCallback callback(pickupObj, m_obj);
+				PhysicsEngineInstance::Instance()->contactPairTest(pickupObj->GetPhysicsComponent()->GetPhysicsBody(), m_obj->GetPhysicsComponent()->GetPhysicsBody(), callback);
+			}
 		}
 	}
 	return true;

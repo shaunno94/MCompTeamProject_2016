@@ -166,10 +166,10 @@ void GameScene::UpdateScene(float dt)
 
 void GameScene::SetupGameObjects()
 {
-	light1 = new GameObject("light1");
+	/*light1 = new GameObject("light1");
 	light1->SetRenderComponent(new RenderComponent(lightMaterial, ModelLoader::LoadMGL(MODEL_DIR"Common/ico.mgl", true)));
 	light1->SetWorldTransform(Mat4Graphics::Translation(Vec3Graphics(0, 2, 0.3f)) *Mat4Graphics::Scale(Vec3Graphics(20, 20, 20)));
-	light1->SetBoundingRadius(20);
+	light1->SetBoundingRadius(20);*/
 
 	light2 = new GameObject("light2");
 	light2->SetRenderComponent(new RenderComponent(lightMaterial, ModelLoader::LoadMGL(MODEL_DIR"Common/ico.mgl", true)));
@@ -209,6 +209,10 @@ void GameScene::SetupGameObjects()
 	blueGoalBox->GetPhysicsBody()->getBroadphaseProxy()->m_collisionFilterMask = COL_GOAL2;
 	blueGoal->SetPhysicsComponent(blueGoalBox);
 
+	m_cars.push_back(player);
+	m_cars.push_back(shooterAI);
+	m_cars.push_back(goalieAI);
+	m_cars.push_back(aggroAI);
 
 	addGameObject(stadium);
 	addGameObject(player);
@@ -329,10 +333,14 @@ void GameScene::TriggerExplosion()
 {
 	// Do other things before resetting scene fully
 
-	applyImpulseFromExplosion((CarGameObject*)player);
-	applyImpulseFromExplosion((CarGameObject*)shooterAI);
-	applyImpulseFromExplosion((CarGameObject*)goalieAI);
+	//applyImpulseFromExplosion((CarGameObject*)player);
+	//applyImpulseFromExplosion((CarGameObject*)shooterAI);
+	//applyImpulseFromExplosion((CarGameObject*)goalieAI);
 
+	for (auto obj : m_cars)
+	{
+		applyImpulseFromExplosion((CarGameObject*)obj);
+	}
 }
 
 void GameScene::applyImpulseFromExplosion(CarGameObject* car)
@@ -365,11 +373,11 @@ void GameScene::ResetObjects()
 	PhysicsEngineInstance::Instance()->clearForces();
 
 	//Reset player positions
+	for (auto obj : m_cars)
+	{
+		ResetObject(*obj);
+	}
 	ResetObject(*ball);
-	ResetObject(*player);
-	ResetObject(*shooterAI);
-	ResetObject(*goalieAI);
-	ResetObject(*aggroAI);
 
 	player->SetWorldTransform(Mat4Graphics::RotationY(-90) * Mat4Graphics::Translation(Vec3Graphics(100, 2, 0)));//have to reset this world transform too, for the camera
 	cam->reset();

@@ -19,7 +19,7 @@ PCNetProducerController::~PCNetProducerController()
 void PCNetProducerController::Sync(NetSessionWriter& writer)
 {
 	//if not the ball
-	if (m_id != 1)
+	if (m_id != 6)
 	{
 		this->CheckInput();
 	}

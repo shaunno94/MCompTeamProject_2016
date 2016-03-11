@@ -60,6 +60,15 @@
     <ClCompile Include="EndScene.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="NetServerGameScene.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="constants.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="NetClientGameScene.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Stadium.h">
@@ -99,6 +108,12 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="EndScene.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="NetServerGameScene.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="NetClientGameScene.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

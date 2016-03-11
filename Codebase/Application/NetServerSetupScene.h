@@ -60,7 +60,6 @@ protected:
 	TextGUIComponent* startText;
 	TextGUIComponent* cancelText;
 
-	NetServer* server;
 	std::vector<std::string*> ips;
 
 	int m_Selected;

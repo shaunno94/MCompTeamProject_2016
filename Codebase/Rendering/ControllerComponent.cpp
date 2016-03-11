@@ -203,6 +203,10 @@ void ControllerComponent::reset()
 	//world.SetTranslation(Vec3Physics(0, 0, 0));
 
 	btVector3 worldNorm = world;
+	if (world.x() == 0.0f, world.y() == 0.0f, world.z() == 0.0f)
+	{
+		worldNorm = btVector3(0, 0, 1);
+	}
 	worldNorm.normalize();
 
 	float dot = worldNorm.dot(btVector3(0, 0, 1));

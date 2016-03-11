@@ -68,19 +68,19 @@ void NetClientSetupScene::UpdateScene(float dt)
 		if (Window::GetKeyboard()->KeyTriggered(KEYBOARD_RETURN))
 		{
 			m_IPGiven = true;
-			client->ConnectToServer(m_IP);
+			NetworkGameData::Instance.client->ConnectToServer(m_IP);
 		}
 	}
 	else
 	{
-		auto connectionState = client->GetConnection()->GetState();
+		auto connectionState = NetworkGameData::Instance.client->GetConnection()->GetState();
 		switch (connectionState)
 		{
 		case NetPeerConnected:
 		{
-			if (!client->GetSession())
+			if (!NetworkGameData::Instance.client->GetSession())
 			{
-				auto* connections = client->GetSession()->GetMembers();
+				auto* connections = NetworkGameData::Instance.client->GetSession()->GetMembers();
 				size_t playerCount = connections->size();
 
 				for (size_t i = 0; i < playerCount; ++i)
@@ -90,9 +90,15 @@ void NetClientSetupScene::UpdateScene(float dt)
 						connectionOrtho->AddGUIComponent(new TextGUIComponent(guiMaterial, connection->name, Vec3Graphics(-1.0f, (-0.1f * i), 0), Vec3Graphics(0.04f, 0.04f, 1)));
 				}
 			}
+			//accepted as member
 			else
 			{
-				//goto game
+				if (!(*NetworkGameData::Instance.client->GetSession()->GetMembers())[NetworkGameData::Instance.client->GetSessionMemberId()]->ready)
+					NetworkGameData::Instance.client->Ready();
+				if (NetworkGameData::Instance.client->GetSession()->GetState() == NetSessionState::NetSessionActive)
+				{
+					Renderer::GetInstance()->SetCurrentScene(Renderer::GetInstance()->GetScene(CLIENT_GAME_SCENE));
+				}
 			}
 			break;
 		}
@@ -167,8 +173,14 @@ void NetClientSetupScene::SetupControls()
 
 void NetClientSetupScene::Setup()
 {
-	Network::Init();
-	client = new NetClient();
+	//Network::Init();
+	if (NetworkGameData::Instance.client)
+	{
+		delete NetworkGameData::Instance.client;
+	}
+	if (NetworkGameData::Instance.client)
+		delete NetworkGameData::Instance.client;
+	NetworkGameData::Instance.client = new NetClient();
 
 	SetupShaders();
 	SetupMaterials();
@@ -182,9 +194,7 @@ void NetClientSetupScene::Setup()
 
 void NetClientSetupScene::Cleanup()
 {
-	Network::Clear();
-	delete client;
-	client = nullptr;
+	//Network::Clear();
 	m_IP = "";
 }
 

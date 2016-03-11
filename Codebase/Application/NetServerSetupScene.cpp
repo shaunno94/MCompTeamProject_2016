@@ -1,4 +1,5 @@
 #include "NetServerSetupScene.h"
+#include "constants.h"
 
 
 NetServerSetupScene::NetServerSetupScene()
@@ -29,15 +30,14 @@ void NetServerSetupScene::UpdateScene(float dt)
 		delete element;
 	connectionOrtho->GetElements().clear();
 
-	size_t size = server->GetConnectionCount();
-	for (size_t i = 0; i < size; ++i)
+	while (NetworkGameData::Instance.server->GetSession()->GetMembers()->size() < NetworkGameData::posCount && NetworkGameData::Instance.server->GetConnectionCount() > 0)
 	{
-		NetConnectionDataInternal* connection = server->GetConnection(i);
+		NetConnectionDataInternal* connection = NetworkGameData::Instance.server->GetConnection(0);
 		if (connection)
-			server->AddToSession(server->GetConnection(i));
+			NetworkGameData::Instance.server->AddToSession(NetworkGameData::Instance.server->GetConnection(0));
 	}
 
-	auto* connections = server->GetSession()->GetMembers();
+	auto* connections = NetworkGameData::Instance.server->GetSession()->GetMembers();
 	size_t playerCount = connections->size();
 
 	for (size_t i = 0; i < playerCount; ++i)
@@ -114,10 +114,12 @@ void NetServerSetupScene::SetupControls()
 
 void NetServerSetupScene::Setup()
 {
-	Network::Init();
-	server = new NetServer(10, 10, 10);
+	//Network::Init();
+	if (NetworkGameData::Instance.server)
+		delete NetworkGameData::Instance.server;
+	NetworkGameData::Instance.server = new NetServer(10, 10, 10);
 
-	ips = server->GetIpStr();
+	ips = NetworkGameData::Instance.server->GetIpStr();
 
 	SetupShaders();
 	SetupMaterials();
@@ -129,11 +131,7 @@ void NetServerSetupScene::Setup()
 
 void NetServerSetupScene::Cleanup()
 {
-
-	Network::Clear();
-	delete server;
-	server = nullptr;
-
+	//Network::Clear();
 	for (std::string* ip : ips)
 	{
 		delete ip;

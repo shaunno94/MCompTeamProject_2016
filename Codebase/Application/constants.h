@@ -1,11 +1,13 @@
 #pragma once
 
+#include "Math\nclglMath.h"
+
 enum SCENES
 {
 	MENU_SCENE,
 	GAME_SCENE,
-	SERVER_SETUP_SCENE,
 	END_SCENE,
+	SERVER_SETUP_SCENE,
 	CLIENT_SETUP_SCENE,
 	SERVER_GAME_SCENE,
 	CLIENT_GAME_SCENE
@@ -16,7 +18,24 @@ enum TEAMS {
 	BLUE_TEAM
 };
 
+#ifndef ORBIS
 
+#include "Networking/NetServer.h"
+#include "Networking/NetClient.h"
+
+struct NetworkGameData
+{
+	static const unsigned int posCount = 6;
+	Vec3Physics pos[posCount];
+	QuatPhysics quat[posCount];
+	NetServer* server;
+	NetClient* client;
+
+	static NetworkGameData Instance;
+};
+
+
+#endif
 
 #ifndef ORBIS
 #include "Rendering\KeyboardController.h"

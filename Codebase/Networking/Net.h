@@ -72,6 +72,11 @@ class NetHost
 public:
 	std::vector<std::string*> GetIpStr();
 
+	inline int GetSessionMemberId()
+	{
+		return m_sessionMemberId;
+	}
+
 protected:
 	NetHost(float updateFlushTimeout);
 
