@@ -38,6 +38,6 @@ void ButtonGUIComponent::Update()
 
 void ButtonGUIComponent::AddText(Material* textMaterial, const std::string& text)
 {
-	m_Text =  new TextGUIComponent(textMaterial, text, Vec3Graphics(m_pos.x - 0.3f, m_pos.y + 0.02f, 0.0f), Vec3Graphics(m_scale.x / 10, m_scale.y, 0));
+	m_Text =  new TextGUIComponent(textMaterial, text, Vec3Graphics(m_pos.x - 0.3f, m_pos.y + 0.02f, 0.0f), Vec3Graphics(0.03f,0.05f, 0));
 	AddChildObject(m_Text);
 }

@@ -86,10 +86,10 @@ void NetServerSetupScene::DrawGUI()
 
 	menuOrtho = new MenuOrthoComponent(0.5);
 
-	startBtn = new ButtonGUIComponent(btnMaterial, selectBtnMaterial, Vec3Graphics(-0.6f, 0.7f, 0.0f), Vec2Graphics(0.3f, 0.05f));
+	startBtn = new ButtonGUIComponent(btnMaterial, selectBtnMaterial, Vec3Graphics(0.6f, -0.5f, 0.0f), Vec2Graphics(0.3f, 0.05f));
 	startBtn->AddText(textMaterial, "Start");
 
-	cancelBtn = new ButtonGUIComponent(btnMaterial, selectBtnMaterial, Vec3Graphics(-0.6f, 0.5f, 0.0f), Vec2Graphics(0.3f, 0.05f));
+	cancelBtn = new ButtonGUIComponent(btnMaterial, selectBtnMaterial, Vec3Graphics(0.6f, -0.7f, 0.0f), Vec2Graphics(0.3f, 0.05f));
 	cancelBtn->AddText(textMaterial, "Cancel");
 
 	menuOrtho->AddGUIComponent(cancelBtn);
