@@ -1,4 +1,6 @@
 #include "MenuScene.h"
+#include "Stadium.h"
+#include "BallGameObject.h"
 
 
 MenuScene::MenuScene()
@@ -6,7 +8,7 @@ MenuScene::MenuScene()
 	myControllers = new UIControllerManager();
 
 	guiSystem = new GUISystem();
-	
+
 	if (!guiSystem->HasInitialised())
 	{
 		std::cout << "GUI not Initialised!" << std::endl;
@@ -15,9 +17,10 @@ MenuScene::MenuScene()
 
 	SetupShaders();
 	SetupMaterials();
-	SetupGameObjects();
 	DrawGUI();
 	SetupControls();
+
+	lightMesh = ModelLoader::LoadMGL(MODEL_DIR"Common/ico.mgl", true);
 }
 
 
@@ -27,40 +30,94 @@ MenuScene::~MenuScene()
 	delete bgMaterial;
 	delete guiMaterial;
 	delete selectBtnMaterial;
+	delete material;
+	delete netMaterial;
+	delete redPostMaterial;
+	delete bluePostMaterial;
+	delete ballMaterial;
+
+	if (myControllers)
+	{
+		delete myControllers;
+		myControllers = nullptr;
+	}
+
 	if (guiSystem)
 		delete guiSystem;
+
+	delete lightMesh;
 }
 
 
 void MenuScene::UpdateScene(float dt)
 {
-	myControllers->update(dt);
+	player->SetLocalTransform(player->GetLocalTransform() * Mat4Graphics::Translation(playerTranslation) * Mat4Graphics::RotationY(-dt / 100.0f) * Mat4Graphics::Translation(-playerTranslation));
 	m_Selected = menuOrtho->Update();
+	myControllers->update(dt);
 }
 
 void MenuScene::SetupGameObjects()
 {
 
+	player = new GameObject("player");
+
+	light2 = new GameObject("l");
+	light2->SetRenderComponent(new RenderComponent(lightMaterial, lightMesh));
+	light2->SetWorldTransform(Mat4Graphics::Translation(Vec3Graphics(600, 900, 600)) *Mat4Graphics::Scale(Vec3Graphics(2400, 2400, 2400)));
+	light2->SetBoundingRadius(2400);
+
+	ball = new BallGameObject("ball", ballMaterial);
+	stadium = new Stadium(material, netMaterial, redPostMaterial, bluePostMaterial, "stadium");
+
+	attachCam(player);
+	getCamera()->autocam = true;
+
+	addGameObject(player);
+	addGameObject(stadium);
+	addGameObject(ball);
+
+	addLightObject(light2);
 }
 
 void MenuScene::SetupShaders()
 {
 #ifndef ORBIS
-	orthoShader = new OGLShader(MENU_VERT, MENU_FRAG);
+	simpleShader = new OGLShader(SIMPLESHADER_VERT, SIMPLESHADER_FRAG);
+	colourShader = new OGLShader(SIMPLESHADER_VERT, COLOURSHADER_FRAG);
+	pointlightShader = new OGLShader(POINTLIGHTSHADER_VERT, POINTLIGHTSHADER_FRAG);
+	orthoShader = new OGLShader(GUI_VERT, GUI_FRAG);
 #else
-
+	simpleShader = new PS4Shader(SIMPLESHADER_VERT, SIMPLESHADER_FRAG);
+	colourShader = new PS4Shader(SIMPLESHADER_VERT, SIMPLESHADER_FRAG);
+	pointlightShader = new PS4Shader(POINTLIGHTSHADER_VERT, POINTLIGHTSHADER_FRAG);
+	orthoShader = new PS4Shader(GUI_VERT, GUI_FRAG);
 #endif
-
+	if (!pointlightShader->IsOperational())
+		std::cout << "Point light shader not operational!" << std::endl;
+	if (!simpleShader->IsOperational())
+		std::cout << "Simple shader not operational!" << std::endl;
+	if (!colourShader->IsOperational())
+		std::cout << "Colour shader not operational!" << std::endl;
 	if (!orthoShader->IsOperational())
-		std::cout << "Shader not opertational!" << std::endl;
+		std::cout << "ortho shader not operational!" << std::endl;
 }
 
 void MenuScene::SetupMaterials()
 {
+
+	lightMaterial = new LightMaterial(pointlightShader);
+	lightMaterial->shadowType = _2D;
+
 	guiMaterial = new Material(orthoShader);
 	bgMaterial = new Material(orthoShader);
 	btnMaterial = new Material(orthoShader);
 	selectBtnMaterial = new Material(orthoShader);
+
+	material = new Material(simpleShader);
+	netMaterial = new Material(simpleShader, true);
+	ballMaterial = new Material(simpleShader);
+	redPostMaterial = new ExtendedMaterial(colourShader, true);
+	bluePostMaterial = new ExtendedMaterial(colourShader, true);
 
 	//textMaterial = new Material(orthoShader);
 }
@@ -68,8 +125,8 @@ void MenuScene::SetupMaterials()
 void MenuScene::DrawGUI()
 {
 	bgOrtho = new OrthoComponent(1.0f);
-	menuBg = new MenuBackgroundGUI(bgMaterial);
-	bgOrtho->AddGUIComponent(menuBg);
+	//menuBg = new MenuBackgroundGUI(bgMaterial);
+	//bgOrtho->AddGUIComponent(menuBg);
 
 	menuOrtho = new MenuOrthoComponent(0.5);
 	singleBtn = new ButtonGUIComponent(btnMaterial, selectBtnMaterial, Vec3Graphics(-0.7f, 0.7f, 0), Vec2Graphics(0.2f, 0.1f));
@@ -94,6 +151,18 @@ void MenuScene::SetupControls()
 	myControllers->setProducer(menuOrtho,0);
 }
 
+void MenuScene::Cleanup()
+{
+	Scene::Cleanup();
+	ClearObjects();
+}
+
+void MenuScene::Setup()
+{
+	Scene::Setup();
+
+	SetupGameObjects();
+}
 
 
 

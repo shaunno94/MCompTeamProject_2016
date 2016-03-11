@@ -24,7 +24,10 @@ DebugDraw* DebugDraw::Instance()
 
 void DebugDraw::Release()
 {
-	delete DebugInstance;
+	if (DebugInstance) {
+		delete DebugInstance;
+		DebugInstance = nullptr;
+	}
 }
 
 DebugDraw::~DebugDraw()

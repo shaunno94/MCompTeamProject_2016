@@ -25,6 +25,7 @@ private:
 	Texture* m_postTexture;
 
 	Mesh* m_postMesh;
-
+	Mesh* m_stadiumMesh;
+	std::vector<Mesh*> m_walls;
 };
 

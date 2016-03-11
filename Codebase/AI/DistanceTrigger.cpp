@@ -34,19 +34,14 @@ bool DistanceTrigger::HasTriggered()
 	btVector3 parentOrigin = m_parent->GetPhysicsComponent()->GetPhysicsBody()->getWorldTransform().getOrigin()* btVector3(1, 0, 1);
 	btVector3 objBOrigin = m_objectB->GetPhysicsComponent()->GetPhysicsBody()->getWorldTransform().getOrigin()* btVector3(1, 0, 1);
 
-	float distance = (parentOrigin - objBOrigin).length();
+	float distanceSquare = ((parentOrigin * btVector3(1, 0, 1)) - (objBOrigin * btVector3(1, 0, 1))).length2();
 	float triggerSquare = (m_triggerDistance * m_triggerDistance);
-	if (m_triggerWhenLessThan) {
-		if ((m_parent->GetPhysicsComponent()->GetPhysicsBody()->getWorldTransform().getOrigin() - m_objectB->GetPhysicsComponent()->GetPhysicsBody()->getWorldTransform().getOrigin()).length2() <= (m_triggerDistance * m_triggerDistance)) {
-		//	std::cout << "Shoot -> position \t\t distance =  " << distance << "\t trigger = " << m_triggerDistance << std::endl;
-			return true;
-		}
+
+	if ((m_triggerWhenLessThan) && (distanceSquare <= triggerSquare)) {
+		return true;
 	}
-	else {
-		if ((m_parent->GetPhysicsComponent()->GetPhysicsBody()->getWorldTransform().getOrigin() - m_objectB->GetPhysicsComponent()->GetPhysicsBody()->getWorldTransform().getOrigin()).length2() >= (m_triggerDistance * m_triggerDistance)) {
-		//	std::cout << "Shoot -> position \t\t distance =  " << distance << "\t trigger = " << m_triggerDistance << std::endl;
-			return true;
-		}
+	else if ((!m_triggerWhenLessThan) && (distanceSquare >= triggerSquare)) {
+		return true;
 	}
 	return false;
 	

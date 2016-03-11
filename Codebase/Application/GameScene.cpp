@@ -3,69 +3,59 @@
 #include "GoalCollisionFilterStep.h"
 #include "PickupManager.h"
 #include "AI/constants.h"
+#include "constants.h"
 
 
 GameScene::GameScene()
 {
+
 	//initialise conroller manager
 	myControllers = new LocalControlManager();
 
-	//Initialise Bullet physics engine.
-	PhysicsEngineInstance::Instance()->setGravity(btVector3(0, -9.81, 0));
-
-#ifndef ORBIS
-	ParticleManager::Initialise();
-
-	if (ParticleManager::GetManager().HasInitialised())
-	{
-		std::cout << "Particle Manager not Initialised" << std::endl;
-	}
-#endif
 	guiSystem = new GUISystem();
 	if (!guiSystem->HasInitialised())
 	{
 		std::cout << "GUI not Initialised!" << std::endl;
 	}
-	scores[0] = 0;
-	scores[1] = 0;
-
-#if DEBUG_DRAW
-	PhysicsEngineInstance::Instance()->setDebugDrawer(DebugDraw::Instance());
-	DebugDraw::Context(Renderer::GetInstance());
-#endif
 
 	SetupShaders();
 	SetupMaterials();
-	SetupGameObjects();
 	DrawGUI();
-	SetupControls();
 }
 
 
 GameScene::~GameScene()
 {
-	PhysicsEngineInstance::Release();
 
-#ifndef ORBIS
-	ParticleManager::Destroy();
-#endif
+	delete material;
+	delete netMaterial;
+	delete redPostMaterial;
+	delete bluePostMaterial;
+	delete ballMaterial;
 
-	if (guiSystem)
+	delete playerMaterial;
+	delete aiMaterial;
+	delete ai2Material;
+	delete particleMaterial;
+	delete guiMaterial;
+	delete textMaterial;
+
+	delete pickupManager;
+
+	delete myControllers;
+	myControllers = nullptr;
+
 		delete guiSystem;
+	guiSystem = nullptr;
 
-	//delete pickupManager;
 
-#if DEBUG_DRAW
-	DebugDraw::Release();
-#endif
 }
 
 void GameScene::SetControllerActor()
 {
 	myControllers->setActor(Renderer::GetInstance()->GetCurrentScene()->findGameObject("shooterAI"), SHOOTER);
 	myControllers->setActor(Renderer::GetInstance()->GetCurrentScene()->findGameObject("goalieAI"), GOALKEEPER);
-	//myControllers->setActor(Renderer::GetInstance()->GetCurrentScene()->findGameObject("aggroAI"), AGGRESSIVE);
-	myControllers->setActor(Renderer::GetInstance()->GetCurrentScene()->findGameObject("aggroAI"), SHOOTER); // Whilst debugging
+	myControllers->setActor(Renderer::GetInstance()->GetCurrentScene()->findGameObject("aggroAI"), AGGRESSIVE);
 }
 
 void GameScene::IncrementScore(int team)
@@ -88,7 +78,7 @@ void GameScene::UpdateScene(float dt)
 
 	if (currentTime > 10)
 	{
-		Scene* endScene = Renderer::GetInstance()->GetScene(3);
+		Scene* endScene = Renderer::GetInstance()->GetScene(END_SCENE);
 		team winner;
 		if (scores[0] > scores[1])
 			((EndScene*)endScene)->SetWinningTeam(BLUE_TEAM);
@@ -163,11 +153,11 @@ void GameScene::SetupGameObjects()
 
 	ball = new BallGameObject("ball", ballMaterial);
 
-	player = new CarGameObject(Vec3Physics(100, 2, 0), QuatPhysics(0, 1, 0, 1), playerMaterial, "player");
+	player = new CarGameObject(Vec3Physics(195, 2, 0), QuatPhysics(0, 1, 0, 1), playerMaterial, "player");
 
 	shooterAI = new CarGameObject(Vec3Physics(-190, 2, 30), QuatPhysics::IDENTITY, aiMaterial, "shooterAI", COL_AI_CAR);
 
-	goalieAI = new CarGameObject(Vec3Physics(-230, 2, 0), QuatPhysics::IDENTITY, aiMaterial, "goalieAI", COL_AI_CAR);
+	goalieAI = new CarGameObject(Vec3Physics(-330, 2, 0), QuatPhysics::IDENTITY, aiMaterial, "goalieAI", COL_AI_CAR);
 
 	pickupManager = new PickupManager(material);
 	for (auto pickupMapping : *(pickupManager->GetPickups()))
@@ -180,21 +170,21 @@ void GameScene::SetupGameObjects()
 	// Create Stadium
 	stadium = new Stadium(material, netMaterial, redPostMaterial, bluePostMaterial, "stadium");
 
-	goal1 = new GameObject("goal1");
-	goalBox = new RigidPhysicsObject();
-	goalBox->CreateCollisionShape(Vec3Physics(7.0, 15.0, 35.0) * 1.5f, CUBOID);
-	goalBox->CreatePhysicsBody(0.0, Vec3Physics(268, 17, 0) * 1.5f, QuatPhysics::IDENTITY, Vec3Physics::ONES, true);
-	goalBox->GetPhysicsBody()->getBroadphaseProxy()->m_collisionFilterGroup = COL_GROUP_DEFAULT;
-	goalBox->GetPhysicsBody()->getBroadphaseProxy()->m_collisionFilterMask = COL_GOAL1;
-	goal1->SetPhysicsComponent(goalBox);
+	redGoal = new GameObject("redGoal");
+	redGoalBox = new RigidPhysicsObject();
+	redGoalBox->CreateCollisionShape(Vec3Physics(7.0, 15.0, 35.0) * 1.5f, CUBOID);
+	redGoalBox->CreatePhysicsBody(0.0, Vec3Physics(268, 17, 0) * 1.5f, QuatPhysics::IDENTITY, Vec3Physics::ONES, true);
+	redGoalBox->GetPhysicsBody()->getBroadphaseProxy()->m_collisionFilterGroup = COL_GROUP_DEFAULT;
+	redGoalBox->GetPhysicsBody()->getBroadphaseProxy()->m_collisionFilterMask = COL_GOAL1;
+	redGoal->SetPhysicsComponent(redGoalBox);
 
-	goal2 = new GameObject("goal2");
-	goalBox2 = new RigidPhysicsObject();
-	goalBox2->CreateCollisionShape(Vec3Physics(7.0, 15.0, 35.0) * 1.5f, CUBOID);
-	goalBox2->CreatePhysicsBody(0.0, Vec3Physics(-268, 17, 0) * 1.5f, QuatPhysics::IDENTITY, Vec3Physics::ONES, true);
-	goalBox2->GetPhysicsBody()->getBroadphaseProxy()->m_collisionFilterGroup = COL_GROUP_DEFAULT;
-	goalBox2->GetPhysicsBody()->getBroadphaseProxy()->m_collisionFilterMask = COL_GOAL2;
-	goal2->SetPhysicsComponent(goalBox2);
+	blueGoal = new GameObject("blueGoal");
+	blueGoalBox = new RigidPhysicsObject();
+	blueGoalBox->CreateCollisionShape(Vec3Physics(7.0, 15.0, 35.0) * 1.5f, CUBOID);
+	blueGoalBox->CreatePhysicsBody(0.0, Vec3Physics(-268, 17, 0) * 1.5f, QuatPhysics::IDENTITY, Vec3Physics::ONES, true);
+	blueGoalBox->GetPhysicsBody()->getBroadphaseProxy()->m_collisionFilterGroup = COL_GROUP_DEFAULT;
+	blueGoalBox->GetPhysicsBody()->getBroadphaseProxy()->m_collisionFilterMask = COL_GOAL2;
+	blueGoal->SetPhysicsComponent(blueGoalBox);
 
 
 	addGameObject(stadium);
@@ -203,8 +193,8 @@ void GameScene::SetupGameObjects()
 	addGameObject(shooterAI);
 	addGameObject(goalieAI);
 	addGameObject(aggroAI);
-	addGameObject(goal1);
-	addGameObject(goal2);
+	addGameObject(redGoal);
+	addGameObject(blueGoal);
 
 	addLightObject(light2);
 
@@ -375,13 +365,23 @@ void GameScene::ResetObject(GameObject& object) {
 }
 void GameScene::Setup()
 {
+	Scene::Setup();
+	scores[0] = 0;
+	scores[1] = 0;
+
+	SetupGameObjects();
+	SetupControls();
 	SetControllerActor();
 	SetupAI();
 	LoadAudio();
+
 }
 
 void GameScene::Cleanup()
 {
-	ResetObjects();
-	scores[0] = scores[1] = 0;
+	/*ResetObjects();
+	scores[0] = scores[1] = 0;*/
+	Scene::Cleanup();
+	ClearObjects();
+
 }

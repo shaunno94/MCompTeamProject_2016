@@ -31,7 +31,6 @@ bool OnTargetTrigger::HasTriggered()
 
 	btScalar dot = aiToBall.dot(ballToGoal);
 
-
 	if (dot > m_targetAccuracy) {
 		return true;
 	}

@@ -5,12 +5,8 @@
 #include "Rendering\OGLShader.h"
 #include "Rendering\MenuBackgroundGUI.h"
 #include "Rendering\MenuOrthoComponent.h"
-
-
-#ifndef ORBIS
-const string MENU_VERT = SHADER_DIR"TexturedVertex.glsl";
-const string MENU_FRAG = SHADER_DIR"TexturedFragment.glsl";
-#endif
+#include "Rendering\ExtendedMaterial.h"
+#include "constants.h"
 
 class MenuScene :
 	public Scene
@@ -30,13 +26,24 @@ public:
 
 	GUISystem* getGUISystem(){ return guiSystem; }
 
+	virtual void Cleanup() override;
+
+	virtual void Setup() override;
+
+
 protected:
 	UIControllerManager* myControllers;
 
-	GameObject* test;
+	GameObject* player;
+	GameObject* stadium;
+	GameObject* ball;
+	GameObject* light2;
+
 	GUISystem* guiSystem;
 
-	
+	BaseShader* simpleShader;
+	BaseShader* colourShader;
+	BaseShader* pointlightShader;
 	BaseShader* orthoShader;
 
 	Material* guiMaterial;
@@ -44,6 +51,14 @@ protected:
 	Material* bgMaterial;
 	Material* btnMaterial;
 	Material* selectBtnMaterial;
+
+	LightMaterial* lightMaterial;
+
+	Material* material;
+	Material* netMaterial;
+	Material* ballMaterial;
+	ExtendedMaterial* redPostMaterial;
+	ExtendedMaterial* bluePostMaterial;
 
 	OrthoComponent* bgOrtho;
 	MenuOrthoComponent* menuOrtho;
@@ -53,6 +68,11 @@ protected:
 	ButtonGUIComponent* multiBtn;
 	ButtonGUIComponent* exitBtn;
 
+	Mesh* lightMesh;
+
 	int m_Selected;
+
+	float rotation;
+	const Vec3Graphics playerTranslation = Vec3Graphics(100, 20, 0);
 };
 

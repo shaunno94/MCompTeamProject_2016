@@ -10,6 +10,8 @@ OrthoComponent::~OrthoComponent()
 {
 	for (auto &guiComp : m_elements)
 		delete guiComp;
+
+	m_elements.clear();
 }
 
 void OrthoComponent::AddGUIComponent(GUIComponent* element)

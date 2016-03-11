@@ -1,16 +1,29 @@
 #include "ParticleManager.h"
 
-ParticleManager* ParticleManager::particleManager;
+ParticleManager* ParticleManager::particleManager = nullptr;
 
 ParticleManager::ParticleManager()
 {
 	init = true;
 }
 
-bool ParticleManager::Initialise()	{
-	particleManager = new ParticleManager();
+ParticleManager::~ParticleManager()
+{
+	for (auto system : particleManager->m_Systems)
+	{
+		delete system;
+	}
+	particleManager->m_Systems.clear();
+	init = false;
+}
 
-	if (!particleManager->HasInitialised()) {
+bool ParticleManager::Initialise()
+{
+	if (!particleManager)
+		particleManager = new ParticleManager();
+
+	if (!particleManager->HasInitialised())
+	{
 		return false;
 	}
 	return true;
@@ -56,5 +69,6 @@ void ParticleManager::Render(float delta)
 
 void ParticleManager::Destroy()
 {
-	particleManager->m_Systems.clear();
+	delete particleManager;
+	particleManager = nullptr;
 }
