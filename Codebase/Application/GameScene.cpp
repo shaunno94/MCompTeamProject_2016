@@ -128,6 +128,17 @@ void GameScene::UpdateScene(float dt)
 		}
 	}
 
+	float boost = floor(std::max(player->GetControllerComponent()->boost * 100.0f, 0.0f));
+	if (boost > 99.0f) {
+		boostComponent->Update(std::string("Boost:" + std::to_string(boost).substr(0, 3) + "%"));
+	}
+	else if (boost < 10.0f) {
+		boostComponent->Update(std::string("Boost:" + std::to_string(boost).substr(0, 1) + "%"));
+	} 
+	else {
+		boostComponent->Update(std::string("Boost:" + std::to_string(boost).substr(0, 2) + "%"));
+	}
+
 }
 
 void GameScene::SetupGameObjects()
@@ -274,6 +285,8 @@ void GameScene::DrawGUI()
 	hudOrtho->AddGUIComponent(graphicsDebugTextComponent);
 #endif
 
+	boostComponent = new TextGUIComponent(guiMaterial, "Boost:0%", Vec3Graphics(0.45f, -0.9f, 0), Vec3Graphics(0.05f, 0.05f, 1));
+	hudOrtho->AddGUIComponent(boostComponent);
 	//Add Orthographic component to GUISystem
 	guiSystem->AddOrthoComponent(hudOrtho);
 }

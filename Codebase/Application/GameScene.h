@@ -109,6 +109,7 @@ protected:
 	ControllerComponent* cc;
 
 	OrthoComponent* hudOrtho;
+	TextGUIComponent* boostComponent;
 	TextGUIComponent* FPSDebugTextComponent;
 	TextGUIComponent* physicsDebugTextComponent;
 	TextGUIComponent* graphicsDebugTextComponent;
